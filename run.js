@@ -1,6 +1,8 @@
-var server = require('./_core')();
+var server = require('./_core')({
+  cwd: process.cwd()
+});
 
-require('./_core/router')(process.cwd(), server);
+server.use(require('./_core/router'));
 
 var app = server.listen(8000);
 // console.log(server);

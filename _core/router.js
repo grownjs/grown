@@ -14,8 +14,12 @@ function _error(code, message) {
   return errObj;
 }
 
-module.exports = function (cwd, server) {
-  var _routeMappings = require(path.join(cwd, 'config', 'routeMappings.js'));
+module.exports = function (server, options) {
+  if (typeof options.cwd !== 'string' || !fs.existsSync(options.cwd)) {
+    throw new Error('expecting `options.cwd` to be a valid directory, given `' + options.cwd + '`');
+  }
+
+  var _routeMappings = require(path.join(options.cwd, 'config', 'routeMappings.js'));
   var router = _routeMappings(routeMappings);
   var match = {};
 
@@ -29,7 +33,7 @@ module.exports = function (cwd, server) {
     var controller = _handler[0];
     var action = _handler[1] || route.action;
 
-    var controllerFile = path.join(cwd, 'controllers', controller + 'Controller.js');
+    var controllerFile = path.join(options.cwd, 'controllers', controller + 'Controller.js');
 
     if (!fs.existsSync(controllerFile)) {
       throw new Error('missing controller ' + controllerFile);
@@ -56,13 +60,13 @@ module.exports = function (cwd, server) {
     match[verb] = router.map(match[verb]);
   });
 
-  var _middlewares = require(path.join(cwd, 'config', 'middlewares.js'));
+  var _middlewares = require(path.join(options.cwd, 'config', 'middlewares.js'));
   var fixedMiddlewares = {};
 
-  glob.sync('middlewares/**/*.js', { cwd: cwd, nodir: true }).forEach(function (middleware) {
+  glob.sync('middlewares/**/*.js', { cwd: options.cwd, nodir: true }).forEach(function (middleware) {
     var middlewareName = path.basename(middleware.replace(/\/index\.js$/, ''), '.js');
 
-    fixedMiddlewares[middlewareName] = path.join(cwd, middleware);
+    fixedMiddlewares[middlewareName] = path.join(options.cwd, middleware);
   });
 
   function _require(map) {
@@ -76,7 +80,7 @@ module.exports = function (cwd, server) {
           throw new Error('undefined `' + name + '` middleware');
         }
 
-        var middleware = buildFactory(require(fixedMiddlewares[name]));
+        var middleware = buildFactory(require(fixedMiddlewares[name]), options);
 
         list.push({
           name: middleware.name || name,
@@ -111,7 +115,7 @@ module.exports = function (cwd, server) {
     return tasks;
   }
 
-  server.mount(function (conn, options) {
+  server.mount(function (conn, _options) {
     var handler;
     var method = conn.req.method.toLowerCase();
     var url = conn.req.url.split('?')[0];
@@ -159,7 +163,7 @@ module.exports = function (cwd, server) {
         _controllers[handler.controller].pipeline[handler.action] = _pipeline;
       }
 
-      _pipeline(conn, options);
+      _pipeline(conn, _options);
     } else {
       throw _error(404, 'Not found');
     }

@@ -1,3 +1,3 @@
-module.exports = function () {
-  console.log('A');
+module.exports = function (conn, options) {
+  console.log('A', options);
 };
