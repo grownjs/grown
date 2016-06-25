@@ -1,4 +1,6 @@
 var pipelineFactory = require('./lib/pipeline');
+var buildFactory = require('./lib/factory');
+
 var routeMappings = require('route-mappings');
 var glob = require('glob');
 var path = require('path');
@@ -74,11 +76,11 @@ module.exports = function (cwd, server) {
           throw new Error('undefined `' + name + '` middleware');
         }
 
-        var middleware = require(fixedMiddlewares[name]);
+        var middleware = buildFactory(require(fixedMiddlewares[name]));
 
         list.push({
-          name: name,
-          call: middleware
+          name: middleware.name || name,
+          call: middleware.call
         });
       }
     }, this);
@@ -101,7 +103,7 @@ module.exports = function (cwd, server) {
 
         tasks.push({
           name: handler.controller + '.' + task,
-          call: _controllers[handler.controller].instance[task]
+          call: [_controllers[handler.controller].instance, task]
         });
       });
     }
@@ -147,7 +149,7 @@ module.exports = function (cwd, server) {
 
         _pipeline.push({
           name: handler.controller + '.' + handler.action,
-          call: controllerInstance[handler.action]
+          call: [controllerInstance, handler.action]
         });
 
         _push.apply(_pipeline, _pipe(Controller.after, handler));

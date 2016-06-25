@@ -12,8 +12,14 @@ module.exports = function (label, pipeline) {
       if (!cb) {
         done();
       } else {
+        var value;
+
         try {
-          var value = cb.call.apply(null, args.concat(_args));
+          if (Array.isArray(cb.call)) {
+            value = cb.call[0][cb.call[1]].apply(cb.call[0], args.concat(_args));
+          } else {
+            value = cb.call.apply(null, args.concat(_args));
+          }
         } catch (e) {
           return done(e);
         }
