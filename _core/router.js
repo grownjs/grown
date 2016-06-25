@@ -125,7 +125,7 @@ module.exports = function (server, options) {
     }
 
     if (match[method] && (handler = match[method](url, 1))) {
-      conn.req.route = handler.route;
+      conn.handler = handler;
 
       if (!_controllers[handler.controller].instance) {
         var Controller = require(_controllers[handler.controller].filepath);
