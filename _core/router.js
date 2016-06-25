@@ -1,0 +1,170 @@
+var pipelineFactory = require('./lib/pipeline');
+var routeMappings = require('route-mappings');
+var glob = require('glob');
+var path = require('path');
+var fs = require('fs');
+
+var _push = Array.prototype.push;
+
+function _error(code, message) {
+  var errObj = new Error(message);
+  errObj.statusCode = code;
+  return errObj;
+}
+
+module.exports = function (cwd, server) {
+  var _routeMappings = require(path.join(cwd, 'config', 'routeMappings.js'));
+  var router = _routeMappings(routeMappings);
+  var match = {};
+
+  var _controllers = {};
+
+  router.routes.forEach(function (route) {
+    var _handler = route.handler.slice().concat(route.to ? [route.to] : []);
+
+    _handler = _handler.join('.').split('.');
+
+    var controller = _handler[0];
+    var action = _handler[1] || route.action;
+
+    var controllerFile = path.join(cwd, 'controllers', controller + 'Controller.js');
+
+    if (!fs.existsSync(controllerFile)) {
+      throw new Error('missing controller ' + controllerFile);
+    }
+
+    _controllers[controller] = {
+      filepath: controllerFile,
+      instance: null,
+      pipeline: {}
+    };
+
+    if (!match[route.verb]) {
+      match[route.verb] = [];
+    }
+
+    match[route.verb].push({
+      controller: controller,
+      action: action,
+      route: route
+    });
+  });
+
+  Object.keys(match).forEach(function (verb) {
+    match[verb] = router.map(match[verb]);
+  });
+
+  var _middlewares = require(path.join(cwd, 'config', 'middlewares.js'));
+  var fixedMiddlewares = {};
+
+  glob.sync('middlewares/**/*.js', { cwd: cwd, nodir: true }).forEach(function (middleware) {
+    var middlewareName = path.basename(middleware.replace(/\/index\.js$/, ''), '.js');
+
+    fixedMiddlewares[middlewareName] = path.join(cwd, middleware);
+  });
+
+  function _require(map) {
+    var list = [];
+
+    map.forEach(function (name) {
+      if (_middlewares[name]) {
+        _push.apply(list, _require(_middlewares[name]));
+      } else if (list.indexOf(name) === -1) {
+        if (!fixedMiddlewares[name]) {
+          throw new Error('undefined `' + name + '` middleware');
+        }
+
+        var middleware = require(fixedMiddlewares[name]);
+
+        list.push({
+          name: name,
+          call: middleware
+        });
+      }
+    }, this);
+
+    return list;
+  }
+
+  if (_middlewares.before) {
+    server.mount(pipelineFactory('before', _require(['before'])));
+  }
+
+  function _pipe(from, handler) {
+    var tasks = [];
+
+    if (from && from[handler.action]) {
+      from[handler.action].forEach(function (task) {
+        if (!_controllers[handler.controller].instance[task]) {
+          throw new Error('undefined `' + handler.controller + '.' + task + '` handler');
+        }
+
+        tasks.push({
+          name: handler.controller + '.' + task,
+          call: _controllers[handler.controller].instance[task]
+        });
+      });
+    }
+
+    return tasks;
+  }
+
+  server.mount(function (conn, options) {
+    var handler;
+    var method = conn.req.method.toLowerCase();
+    var url = conn.req.url.split('?')[0];
+
+    if (!match[method]) {
+      throw _error(405, 'Method not allowed');
+    }
+
+    if (match[method] && (handler = match[method](url, 1))) {
+      conn.req.route = handler.route;
+
+      if (!_controllers[handler.controller].instance) {
+        var Controller = require(_controllers[handler.controller].filepath);
+        var isClass = typeof Controller === 'function' && Controller.constructor && Controller.name;
+
+        _controllers[handler.controller].instance = isClass ? new Controller() : Controller;
+      }
+
+      var controllerInstance = _controllers[handler.controller].instance;
+
+      if (!controllerInstance[handler.action]) {
+        throw new Error('undefined `' + handler.controller + '.' + handler.action + '` handler');
+      }
+
+      var _pipeline = _controllers[handler.controller].pipeline[handler.action];
+
+      if (!_pipeline) {
+        _pipeline = [];
+
+        if (Array.isArray(handler.route.middleware)) {
+          _push.apply(_pipeline, _require(handler.route.middleware));
+        }
+
+        _push.apply(_pipeline, _pipe(Controller.before, handler));
+
+        _pipeline.push({
+          name: handler.controller + '.' + handler.action,
+          call: controllerInstance[handler.action]
+        });
+
+        _push.apply(_pipeline, _pipe(Controller.after, handler));
+
+        _pipeline = pipelineFactory('router', _pipeline);
+
+        _controllers[handler.controller].pipeline[handler.action] = _pipeline;
+      }
+
+      _pipeline(conn, options);
+    } else {
+      throw _error(404, 'Not found');
+    }
+  });
+
+  if (_middlewares.after) {
+    server.mount(pipelineFactory('after', _require(['after'])));
+  }
+};
+
