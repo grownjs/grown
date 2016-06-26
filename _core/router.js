@@ -10,8 +10,13 @@ var _push = Array.prototype.push;
 
 function _error(code, message) {
   var errObj = new Error(message);
+  errObj.statusMessage = message;
   errObj.statusCode = code;
   return errObj;
+}
+
+function _end(conn) {
+  return conn.res.finished;
 }
 
 module.exports = function (server, options) {
@@ -93,7 +98,7 @@ module.exports = function (server, options) {
   }
 
   if (_middlewares.before) {
-    server.mount(pipelineFactory('before', _require(['before'])));
+    server.mount(pipelineFactory('before', _require(['before']), _end));
   }
 
   function _pipe(from, handler) {
@@ -164,7 +169,7 @@ module.exports = function (server, options) {
 
         _push.apply(_pipeline, _pipe(Controller.after, handler));
 
-        _pipeline = pipelineFactory('router', _pipeline);
+        _pipeline = pipelineFactory('router', _pipeline, _end);
 
         _controllers[handler.controller].pipeline[handler.action] = _pipeline;
       }
@@ -176,6 +181,6 @@ module.exports = function (server, options) {
   });
 
   if (_middlewares.after) {
-    server.mount(pipelineFactory('after', _require(['after'])));
+    server.mount(pipelineFactory('after', _require(['after']), _end));
   }
 };

@@ -20,31 +20,48 @@ module.exports = function (label, pipeline, callback) {
         var value;
 
         try {
+          var skip;
+
+          if (callback) {
+            skip = callback.apply(null, args.concat(_args));
+          }
+
+          if (skip === true) {
+            return done();
+          }
+
           if (Array.isArray(cb.call)) {
             value = cb.call[0][cb.call[1]].apply(cb.call[0], args.concat(_args));
           } else {
             value = cb.call.apply(null, args.concat(_args));
           }
         } catch (e) {
+          e.label = label;
           return done(e);
         }
 
-        Promise.resolve(value)
-          .catch(function (error) {
-            done(error);
-          })
-          .then(function () {
-            next(done);
-          });
+        if (!value) {
+          return next(done);
+        }
+
+        if (typeof value.then === 'function' && typeof value.catch === 'function') {
+          value
+            .then(function () {
+              next(done);
+            })
+            .catch(function (error) {
+              error.label = label;
+              done(error);
+            });
+        } else {
+          next(done);
+        }
       }
     }
 
     next(function (error) {
-      if (callback) {
-        callback(error);
-      }
-
       if (error) {
+        error.label = label;
         throw error;
       }
     });

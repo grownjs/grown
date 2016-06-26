@@ -7,26 +7,19 @@ module.exports = function (context, protocol) {
     var hostname = port ? host : host + ':' + protocol.globalAgent.defaultPort;
     var app = context.hosts[hostname] || context.hosts[hostname + ':' + port] || context.hosts['0.0.0.0:' + port];
 
-    function fail(errorObj) {
-      res.statusMessage = 'Error(host): ' + errorObj;
-      res.statusCode = errorObj.statusCode || 500;
-      res.end(res.statusMessage);
-    }
-
     if (app) {
       connFactory(app, req, res, function (conn) {
         try {
           context.dispatch(conn);
         } catch (e) {
           // internal server error
-          fail(e);
+          var _msg = e.statusMessage || e.message || e.toString();
+
+          res.statusMessage = 'Error(' + (e.label || 'host') + '): ' + _msg;
+          res.statusCode = e.statusCode || 500;
+          res.end(res.statusMessage);
         }
       });
-    } else {
-      // not implemented
-      res.statusMessage = 'Error(host): Host not found';
-      res.statusCode = 501;
-      res.end(res.statusMessage);
     }
   };
 };

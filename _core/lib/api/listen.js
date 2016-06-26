@@ -1,9 +1,11 @@
 var serverFactory = require('../conn/server');
 var url = require('url');
 
-module.exports = function (context) {
+module.exports = function (context, container) {
   context.listen = function (location, options, callback) {
     var app = {};
+
+    app.container = container;
 
     callback = typeof options == 'function' ? options : callback;
     options = !options || typeof options == 'function' ? {} : options;
