@@ -122,13 +122,12 @@ module.exports = function (server, options) {
 
   server.mount(function (conn, _options) {
     var handler;
-    var method = conn.req.method.toLowerCase();
 
-    if (!match[method]) {
+    if (!match[conn.method]) {
       throw _error(405, 'Method not allowed');
     }
 
-    if (match[method] && (handler = match[method](conn.path, 1))) {
+    if (match[conn.method] && (handler = match[conn.method](conn.path, 1))) {
       conn.handler = handler;
       conn.params = {};
 

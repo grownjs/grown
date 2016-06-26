@@ -30,7 +30,7 @@ Conn.prototype = {
   },
   header: function (name, value) {
     if (!(name && value)) {
-      return this.res.getHeader(name);
+      return this.req.headers[name];
     }
 
     this.res.setHeader(name, value);
@@ -62,10 +62,10 @@ Conn.prototype = {
 };
 
 function parseBody(conn, callback) {
-  if (conn.path.length > 1 && conn.req.headers['content-type'] || conn.req.headers['transfer-encoding']) {
+  if (conn.header('content-type') || conn.header('transfer-encoding')) {
     conn.body = '';
 
-    var _type = conn.req.headers['content-type'] ? conn.req.headers['content-type'].toString() : '';
+    var _type = conn.header('content-type') || '';
     var _multipart = _type.indexOf('multipart/form-data');
 
     if (_multipart === -1) {
