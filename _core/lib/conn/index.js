@@ -10,7 +10,6 @@ function Conn(app, req, res) {
   this.res = res;
   this.body = '';
   this.data = {};
-  this.path = req.url.split('?')[0];
   this.query = qs.parse(req.url.split('?')[1] || '');
   this.params = {};
   this.multipart = null;
@@ -26,7 +25,7 @@ Conn.prototype = {
   },
   json: function (data) {
     this.header('content-type', 'application/json');
-    this.end(JSON.stringify(data));
+    this.end(JSON.stringify(data || this.data));
   },
   header: function (name, value) {
     if (!(name && value)) {

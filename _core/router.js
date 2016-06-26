@@ -128,7 +128,7 @@ module.exports = function (server, options) {
       throw _error(405, 'Method Not Allowed');
     }
 
-    if (match[_method] && (handler = match[_method](conn.path, 1))) {
+    if (match[_method] && (handler = match[_method](conn.req.url, 1))) {
       conn.handler = handler;
       conn.params = {};
 
