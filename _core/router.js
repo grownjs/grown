@@ -118,14 +118,20 @@ module.exports = function (server, options) {
   server.mount(function (conn, _options) {
     var handler;
     var method = conn.req.method.toLowerCase();
-    var url = conn.req.url.split('?')[0];
 
     if (!match[method]) {
       throw _error(405, 'Method not allowed');
     }
 
-    if (match[method] && (handler = match[method](url, 1))) {
+    if (match[method] && (handler = match[method](conn.path, 1))) {
       conn.handler = handler;
+      conn.params = {};
+
+      if (handler.matcher) {
+        handler.matcher.keys.forEach(function(key, i) {
+          conn.params[key] = handler.matcher.values[i];
+        });
+      }
 
       if (!_controllers[handler.controller].instance) {
         var Controller = require(_controllers[handler.controller].filepath);

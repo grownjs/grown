@@ -1,5 +1,10 @@
-module.exports = function (label, pipeline) {
-  var _args = Array.prototype.slice.call(arguments, 2);
+module.exports = function (label, pipeline, callback) {
+  var _args = Array.prototype.slice.call(arguments, 3);
+
+  if (typeof callback !== 'function') {
+    _args.unshift(callback);
+    callback = null;
+  }
 
   return function () {
     var args = Array.prototype.slice.call(arguments);
@@ -35,6 +40,10 @@ module.exports = function (label, pipeline) {
     }
 
     next(function (error) {
+      if (callback) {
+        callback(error);
+      }
+
       if (error) {
         throw error;
       }
