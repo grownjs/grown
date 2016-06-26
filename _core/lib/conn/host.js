@@ -14,18 +14,14 @@ module.exports = function (context, protocol) {
     }
 
     if (app) {
-      try {
-        connFactory(app, req, res, function (err, conn) {
-          if (err) {
-            fail(err);
-          }
-
+      connFactory(app, req, res, function (conn) {
+        try {
           context.dispatch(conn);
-        });
-      } catch (e) {
-        // internal server error
-        fail(e);
-      }
+        } catch (e) {
+          // internal server error
+          fail(e);
+        }
+      });
     } else {
       // not implemented
       res.statusMessage = 'Error(host): Host not found';

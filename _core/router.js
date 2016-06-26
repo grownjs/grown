@@ -179,4 +179,3 @@ module.exports = function (server, options) {
     server.mount(pipelineFactory('after', _require(['after'])));
   }
 };
-
