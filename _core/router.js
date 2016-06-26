@@ -121,13 +121,14 @@ module.exports = function (server, options) {
   }
 
   server.mount(function (conn, _options) {
+    var _method = conn.req.method.toLowerCase();
     var handler;
 
-    if (!match[conn.method]) {
-      throw _error(405, 'Method not allowed');
+    if (!match[_method]) {
+      throw _error(405, 'Method Not Allowed');
     }
 
-    if (match[conn.method] && (handler = match[conn.method](conn.path, 1))) {
+    if (match[_method] && (handler = match[_method](conn.path, 1))) {
       conn.handler = handler;
       conn.params = {};
 
@@ -175,7 +176,7 @@ module.exports = function (server, options) {
 
       _pipeline(conn, _options);
     } else {
-      throw _error(404, 'Not found');
+      throw _error(404, 'Not Found');
     }
   });
 

@@ -15,7 +15,7 @@ module.exports = function (options) {
     pipeline: [{
       name: '_end',
       call: function () {
-        var _err = new Error('Not implemented');
+        var _err = new Error('Not Implemented');
         _err.statusCode = 501;
         throw _err;
       }

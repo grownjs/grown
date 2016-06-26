@@ -1,4 +1,5 @@
 var status_codes = require('http').STATUS_CODES;
+var methods = require('http').METHODS;
 var url = require('url');
 var qs = require('qs');
 
@@ -12,7 +13,6 @@ function Conn(app, req, res) {
   this.path = req.url.split('?')[0];
   this.query = qs.parse(req.url.split('?')[1] || '');
   this.params = {};
-  this.method = req.method.toLowerCase();
   this.multipart = null;
 }
 
@@ -97,5 +97,24 @@ function parseBody(conn, callback) {
 }
 
 module.exports = function (app, req, res, callback) {
-  parseBody(new Conn(app, req, res), callback);
+  parseBody(new Conn(app, req, res), function (conn) {
+    req.originalMethod = req.originalMethod || req.method;
+
+    if (req.originalMethod === 'POST') {
+      var _method = (conn.header('x-http-method-override') || conn.header('x-method-override')
+        || conn.header('x-http-method') || conn.header('_method')
+        || '').split(/ *, */)[0];
+
+      _method = (_method || conn.body._method || conn.query._method || '').toUpperCase();
+
+      delete conn.body._method;
+      delete conn.query._method;
+
+      if (methods.indexOf(_method) > -1) {
+        req.method = _method;
+      }
+    }
+
+    callback(conn);
+  });
 };
