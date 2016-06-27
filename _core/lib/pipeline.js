@@ -21,7 +21,6 @@ module.exports = function (label, pipeline, _callback) {
             value = cb.call(conn, options);
           }
         } catch (e) {
-          e.label = label;
           return done(e);
         }
 
@@ -34,25 +33,32 @@ module.exports = function (label, pipeline, _callback) {
             .then(function () {
               next(done);
             })
-            .catch(function (error) {
-              error.label = label;
-              done(error);
-            });
+            .catch(done);
         } else {
           next(done);
         }
       }
     }
 
-    next(function (err) {
-      if (_callback) {
-        _callback(err, conn, options);
-      }
+    return new Promise(function (resolve, reject) {
+      next(function (err) {
+        if (err) {
+          err.pipeline = err.pipeline || [];
+          err.pipeline.push(label);
 
-      if (err) {
-        err.label = label;
-        throw err;
-      }
+          err.data = err.data || [];
+        }
+
+        if (_callback) {
+          _callback(err, conn, options);
+        }
+
+        if (err) {
+          reject(err);
+        } else {
+          resolve();
+        }
+      });
     });
   };
 };
