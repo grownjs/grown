@@ -23,6 +23,9 @@ module.exports = function (context, protocol) {
         });
       }
 
+      // TODO: send to logger...
+      console.log(e);
+
       if (conn.header('content-type') === 'application/json' && conn.env === 'development') {
         e.data.push({
           errorInfo: {
@@ -46,7 +49,8 @@ module.exports = function (context, protocol) {
           });
         }
 
-        conn.end(_msg);
+        // TODO: error page?
+        conn.end(conn.env === 'development' ? _msg : null);
       }
     }
 
