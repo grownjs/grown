@@ -3,63 +3,6 @@ var methods = require('http').METHODS;
 var url = require('url');
 var qs = require('qs');
 
-function Conn(app, req, res) {
-  this.env = process.env.NODE_ENV || 'development';
-  this.app = app;
-  this.req = req;
-  this.res = res;
-  this.body = '';
-  this.data = {};
-  this.query = qs.parse(req.url.split('?')[1] || '');
-  this.params = {};
-  this.multipart = null;
-}
-
-Conn.prototype = {
-  end: function (data) {
-    this.res.end(data);
-  },
-  html: function (data) {
-    this.header('content-type', 'text/html; charset=utf-8');
-    this.end(data);
-  },
-  json: function (data) {
-    this.header('content-type', 'application/json');
-    this.end(JSON.stringify(data || this.data));
-  },
-  header: function (name, value) {
-    if (!(name && value)) {
-      return this.req.headers[name];
-    }
-
-    this.res.setHeader(name, value);
-  },
-  status: function (code, message) {
-    this.res.statusCode = code;
-    this.res.statusMessage = message || status_codes[code];
-  },
-  redirect: function (location, statusCode) {
-    var _uri = url.parse(location);
-    var _query = '';
-
-    if (_uri.query) {
-      _query = qs.stringify(qs.parse(_uri.query));
-    }
-
-    var _location = [
-      _uri.protocol ? _uri.protocol + '//' : '',
-      _uri.hostname ? _uri.hostname : '',
-      _uri.port ? ':' + _uri.port : '',
-      _uri.pathname ? _uri.pathname : '',
-      _query ? '?' + _query : ''
-    ].join('');
-
-    this.header('location', _location);
-    this.status(statusCode || 302);
-    this.end();
-  }
-};
-
 function parseBody(conn, callback) {
   if (conn.header('content-type') || conn.header('transfer-encoding')) {
     conn.body = '';
@@ -94,6 +37,72 @@ function parseBody(conn, callback) {
     callback(conn);
   }
 }
+
+function fixURL(location) {
+  var _uri = url.parse(location);
+  var _query = '';
+
+  if (_uri.query) {
+    _query = qs.stringify(qs.parse(_uri.query));
+  }
+
+  return [
+    _uri.protocol ? _uri.protocol + '//' : '',
+    _uri.hostname ? _uri.hostname : '',
+    _uri.port ? ':' + _uri.port : '',
+    _uri.pathname ? _uri.pathname : '',
+    _query ? '?' + _query : ''
+  ].join('');
+}
+
+function Conn(app, req, res) {
+  this.env = process.env.NODE_ENV || 'development';
+  this.app = app;
+  this.req = req;
+  this.res = res;
+  this.body = '';
+  this.data = {};
+  this.query = qs.parse(req.url.split('?')[1] || '');
+  this.params = {};
+  this.multipart = null;
+}
+
+Conn.prototype = {
+  end: function (data) {
+    if (typeof data === 'number') {
+      this.status(data);
+      data = this.res.statusMessage;
+    }
+
+    this.res.end(data);
+  },
+  html: function (data) {
+    this.header('content-type', 'text/html; charset=utf-8');
+    this.end(data);
+  },
+  json: function (data) {
+    this.header('content-type', 'application/json');
+    this.end(JSON.stringify(data || this.data));
+  },
+  header: function (name, value) {
+    if (!(name && value)) {
+      return this.req.headers[name];
+    }
+
+    this.res.setHeader(name, value);
+  },
+  status: function (code, message) {
+    this.res.statusCode = code;
+    this.res.statusMessage = message || status_codes[code];
+  },
+  redirect: function (location, statusCode) {
+    var _location = fixURL(location);
+
+    this.header('location', _location);
+    this.status(statusCode || 302);
+    this.end();
+  }
+};
 
 module.exports = function (app, req, res, callback) {
   parseBody(new Conn(app, req, res), function (conn) {
