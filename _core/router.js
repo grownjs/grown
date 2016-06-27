@@ -42,7 +42,6 @@ module.exports = function (server, options) {
 
     _controllers[controller] = {
       filepath: controllerFile,
-      instance: null,
       pipeline: {}
     };
 
@@ -134,8 +133,11 @@ module.exports = function (server, options) {
         });
       }
 
-      if (!_controllers[handler.controller].instance) {
-        var Controller = require(_controllers[handler.controller].filepath);
+      var Controller = _controllers[handler.controller].original;
+
+      if (!Controller) {
+        Controller = _controllers[handler.controller].original = require(_controllers[handler.controller].filepath);
+
         var isClass = typeof Controller === 'function' && Controller.constructor && Controller.name;
 
         _controllers[handler.controller].instance = isClass ? new Controller() : Controller;
