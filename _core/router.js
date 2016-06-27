@@ -15,10 +15,6 @@ function _error(code, message) {
   return errObj;
 }
 
-function _end(conn) {
-  return conn.res.finished;
-}
-
 module.exports = function (server, options) {
   if (typeof options.cwd !== 'string' || !fs.existsSync(options.cwd)) {
     throw new Error('expecting `options.cwd` to be a valid directory, given `' + options.cwd + '`');
@@ -98,7 +94,7 @@ module.exports = function (server, options) {
   }
 
   if (_middlewares.before) {
-    server.mount(pipelineFactory('before', _require(['before']), _end));
+    server.mount(pipelineFactory('before', _require(['before'])));
   }
 
   function _pipe(from, handler) {
@@ -169,7 +165,7 @@ module.exports = function (server, options) {
 
         _push.apply(_pipeline, _pipe(Controller.after, handler));
 
-        _pipeline = pipelineFactory('router', _pipeline, _end);
+        _pipeline = pipelineFactory('router', _pipeline);
 
         _controllers[handler.controller].pipeline[handler.action] = _pipeline;
       }
@@ -181,6 +177,6 @@ module.exports = function (server, options) {
   });
 
   if (_middlewares.after) {
-    server.mount(pipelineFactory('after', _require(['after']), _end));
+    server.mount(pipelineFactory('after', _require(['after'])));
   }
 };

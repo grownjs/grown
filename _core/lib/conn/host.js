@@ -10,7 +10,7 @@ module.exports = function (context, protocol) {
     if (app) {
       connFactory(app, req, res, function (conn) {
         try {
-          context.dispatch(conn);
+          context.dispatch(conn, app.container.options);
         } catch (e) {
           // internal server error
           var _msg = e.statusMessage || e.message || e.toString();

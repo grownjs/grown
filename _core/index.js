@@ -12,14 +12,7 @@ module.exports = function (options) {
 
   var container = {
     options: options || {},
-    pipeline: [{
-      name: '_end',
-      call: function () {
-        var _err = new Error('Not Implemented');
-        _err.statusCode = 501;
-        throw _err;
-      }
-    }]
+    pipeline: []
   };
 
   useFactory(context, container);

@@ -1,14 +1,5 @@
-module.exports = function (label, pipeline, callback) {
-  var _args = Array.prototype.slice.call(arguments, 3);
-
-  if (typeof callback !== 'function') {
-    _args.unshift(callback);
-    callback = null;
-  }
-
-  return function () {
-    var args = Array.prototype.slice.call(arguments);
-
+module.exports = function (label, pipeline, _callback) {
+  return function (conn, options) {
     var _pipeline = pipeline.slice();
 
     function next(done) {
@@ -20,20 +11,14 @@ module.exports = function (label, pipeline, callback) {
         var value;
 
         try {
-          var skip;
-
-          if (callback) {
-            skip = callback.apply(null, args.concat(_args));
-          }
-
-          if (skip === true) {
+          if (conn.res.finished) {
             return done();
           }
 
           if (Array.isArray(cb.call)) {
-            value = cb.call[0][cb.call[1]].apply(cb.call[0], args.concat(_args));
+            value = cb.call[0][cb.call[1]](conn, options);
           } else {
-            value = cb.call.apply(null, args.concat(_args));
+            value = cb.call(conn, options);
           }
         } catch (e) {
           e.label = label;
@@ -59,10 +44,14 @@ module.exports = function (label, pipeline, callback) {
       }
     }
 
-    next(function (error) {
-      if (error) {
-        error.label = label;
-        throw error;
+    next(function (err) {
+      if (_callback) {
+        _callback(err, conn, options);
+      }
+
+      if (err) {
+        err.label = label;
+        throw err;
       }
     });
   };
