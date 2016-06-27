@@ -12,7 +12,12 @@ module.exports = function (context, protocol) {
       res.statusCode = e.statusCode || 500;
       res.setHeader('Content-Type', 'text/plain');
 
-      var _msg = (e.name || 'Error') + '(' + (e.pipeline || ['host']).join('.') + '): '
+      e.pipeline = e.pipeline || [];
+      e.pipeline.push('host');
+
+      e.data = e.data || [];
+
+      var _msg = (e.name || 'Error') + '(' + e.pipeline.join('.') + '): '
         + (e.statusMessage || e.message || e.toString());
 
       var _stack = (e.stack || '').replace(/.*Error:.+?\n/, '');
