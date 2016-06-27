@@ -174,21 +174,21 @@ module.exports = function (server, options) {
 
         _pipeline = pipelineFactory('router', _pipeline, function (err, conn) {
           if (err && conn.env === 'development') {
-            var _info = {
-              handler: conn.handler,
-              params: conn.params,
-              path: conn.req.url.split('?')[0]
-            };
+            var _path = conn.req.url.split('?')[0];
 
             err.data.push({
-              routerInfo: _info
+              routerInfo: {
+                handler: conn.handler,
+                params: conn.params,
+                path: _path
+              }
             });
 
             err.text.push([
               'routerInfo:',
               '  handler: ' + conn.handler.controller + '.' + conn.handler.action,
               '  params: ' + JSON.stringify(conn.params, null, 2).split('\n').join('\n          '),
-              '  path: ' + _info.path
+              '  path: ' + _path
             ].join('\n'));
           }
         });
