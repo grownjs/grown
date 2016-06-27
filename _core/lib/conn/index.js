@@ -82,10 +82,12 @@ Conn.prototype = {
   },
   header: function (name, value) {
     if (!(name && value)) {
-      return this.req.headers[name];
+      return this.req.headers[name.toLowerCase()];
     }
 
-    this.res.setHeader(name, value);
+    this.res.setHeader(name.replace(/(^|-)(\w)/g, function (_, pre, char) {
+      return pre + char.toUpperCase();
+    }), value);
   },
   status: function (code, message) {
     this.res.statusCode = code;

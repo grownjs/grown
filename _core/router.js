@@ -25,6 +25,7 @@ module.exports = function (server, options) {
   var match = {};
 
   var _controllers = {};
+  var _routes = [];
 
   router.routes.forEach(function (route) {
     var _handler = route.handler.slice().concat(route.to ? [route.to] : []);
@@ -49,11 +50,15 @@ module.exports = function (server, options) {
       match[route.verb] = [];
     }
 
-    match[route.verb].push({
+    var _route = {
       controller: controller,
       action: action,
       route: route
-    });
+    };
+
+    _routes.push(_route);
+
+    match[route.verb].push(_route);
   });
 
   Object.keys(match).forEach(function (verb) {
@@ -167,12 +172,31 @@ module.exports = function (server, options) {
 
         _push.apply(_pipeline, _pipe(Controller.after, handler));
 
-        _pipeline = pipelineFactory('router', _pipeline);
+        _pipeline = pipelineFactory('router', _pipeline, function (err, conn) {
+          if (err && conn.env === 'development') {
+            var _info = {
+              handler: conn.handler,
+              params: conn.params,
+              path: conn.req.url.split('?')[0]
+            };
+
+            err.data.push({
+              routerInfo: _info
+            });
+
+            err.text.push([
+              'routerInfo:',
+              '  handler: ' + conn.handler.controller + '.' + conn.handler.action,
+              '  params: ' + JSON.stringify(conn.params, null, 2).split('\n').join('\n          '),
+              '  path: ' + _info.path
+            ].join('\n'));
+          }
+        });
 
         _controllers[handler.controller].pipeline[handler.action] = _pipeline;
       }
 
-      _pipeline(conn, _options);
+      return _pipeline(conn, _options);
     } else {
       throw _error(404, 'Not Found');
     }

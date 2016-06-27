@@ -47,6 +47,7 @@ module.exports = function (label, pipeline, _callback) {
           err.pipeline.push(label);
 
           err.data = err.data || [];
+          err.text = err.text || [];
         }
 
         if (_callback) {
