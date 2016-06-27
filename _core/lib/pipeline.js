@@ -1,4 +1,4 @@
-module.exports = function (label, pipeline, _callback) {
+module.exports = function _pipelineFactory(label, pipeline, _callback) {
   return function (conn, options) {
     var _pipeline = pipeline.slice();
 
@@ -9,6 +9,16 @@ module.exports = function (label, pipeline, _callback) {
         done();
       } else {
         var value;
+
+        conn.next = _pipeline.length ? function () {
+          var _dispatch = _pipelineFactory('*' + label, _pipeline.slice());
+
+          _pipeline = [];
+
+          return _dispatch(conn, options);
+        } : function _next() {
+          throw new Error('undefined next() middleware');
+        };
 
         try {
           if (conn.res.finished) {
