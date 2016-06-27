@@ -13,11 +13,17 @@ module.exports = function (context, protocol) {
           context.dispatch(conn, app.container.options);
         } catch (e) {
           // internal server error
-          var _msg = e.statusMessage || e.message || e.toString();
-
-          res.statusMessage = 'Error(' + (e.label || 'host') + '): ' + _msg;
+          res.statusMessage = e.statusMessage || e.message || e.toString();
           res.statusCode = e.statusCode || 500;
-          res.end(res.statusMessage);
+          res.setHeader('Content-Type', 'text/plain');
+
+          var _msg = 'Error(' + (e.label || 'host') + '): ' + res.statusMessage;
+
+          if (e.stack) {
+            _msg += '\n' + e.stack.replace(/Error:.+?\n/, '');
+          }
+
+          res.end(_msg);
         }
       });
     }
