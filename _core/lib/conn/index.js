@@ -4,36 +4,32 @@ var url = require('url');
 var qs = require('qs');
 
 function parseBody(conn, callback) {
-  if (conn.header('content-type') || conn.header('transfer-encoding')) {
-    conn.body = '';
+  conn.body = '';
 
-    var _type = conn.header('content-type') || '';
-    var _multipart = _type.indexOf('multipart/form-data');
+  var _type = conn.header('content-type') || '';
+  var _multipart = _type.indexOf('multipart/form-data');
 
-    if (_multipart === -1) {
-      conn.req.on('data', function (data) {
-        conn.body += data;
-      });
+  if (_multipart === -1) {
+    conn.req.on('data', function (data) {
+      conn.body += data;
+    });
 
-      conn.req.on('end', function () {
-        if (_type === 'application/json') {
-          try {
-            conn.body = JSON.parse(conn.body);
-          } catch (error) {
-            // TODO: proper handling?
-          }
-        } else if (_type.indexOf('application/x-www-form-urlencoded') > -1) {
-          conn.body = qs.parse(conn.body);
+    conn.req.on('end', function () {
+      if (_type === 'application/json') {
+        try {
+          conn.body = JSON.parse(conn.body);
+        } catch (error) {
+          // TODO: proper handling?
         }
+      } else if (_type.indexOf('application/x-www-form-urlencoded') > -1) {
+        conn.body = qs.parse(conn.body);
+      }
 
-        conn.multipart = false;
-        callback(conn);
-      });
-    } else {
-      conn.multipart = true;
+      conn.multipart = false;
       callback(conn);
-    }
+    });
   } else {
+    conn.multipart = true;
     callback(conn);
   }
 }
@@ -104,25 +100,29 @@ Conn.prototype = {
   }
 };
 
-module.exports = function (app, req, res, callback) {
-  parseBody(new Conn(app, req, res), function (conn) {
-    req.originalMethod = req.originalMethod || req.method;
+module.exports = function _conn(app, req, res, callback) {
+  var conn = new Conn(app, req, res);
 
-    if (req.originalMethod === 'POST') {
-      var _method = (conn.header('x-http-method-override') || conn.header('x-method-override')
-        || conn.header('x-http-method') || conn.header('_method')
-        || '').split(/ *, */)[0];
+  req.originalMethod = req.originalMethod || req.method;
 
-      _method = (_method || conn.body._method || conn.query._method || '').toUpperCase();
+  if (req.originalMethod === 'POST') {
+    var _method = (conn.header('x-http-method-override') || conn.header('x-method-override')
+      || conn.header('x-http-method') || conn.header('_method')
+      || '').split(/ *, */)[0];
 
-      delete conn.body._method;
-      delete conn.query._method;
+    _method = (_method || conn.body._method || conn.query._method || '').toUpperCase();
 
-      if (methods.indexOf(_method) > -1) {
-        req.method = _method;
-      }
+    delete conn.body._method;
+    delete conn.query._method;
+
+    if (methods.indexOf(_method) > -1) {
+      req.method = _method;
     }
+  }
 
+  if (conn.header('content-type') || conn.header('transfer-encoding')) {
+    parseBody(conn, callback);
+  } else {
     callback(conn);
-  });
+  }
 };
