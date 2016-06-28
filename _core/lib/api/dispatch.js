@@ -8,5 +8,7 @@ module.exports = function (context, container) {
       errObj.statusCode = 501;
       throw errObj;
     }
+
+    console.log('END BRO!');
   });
 };

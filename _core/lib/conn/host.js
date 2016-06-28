@@ -8,16 +8,10 @@ module.exports = function (context, protocol) {
     var app = context.hosts[hostname] || context.hosts[hostname + ':' + port] || context.hosts['0.0.0.0:' + port];
 
     function fail(e, conn) {
-      res.statusMessage = e.statusMessage || res.statusMessage;
-      res.statusCode = e.statusCode || 500;
-      res.setHeader('Content-Type', 'text/plain');
-
-      e.pipeline = e.pipeline || [];
-      e.pipeline.push('host');
-
+      e.pipeline = e.pipeline || ['host'];
       e.data = e.data || [];
 
-      var _msg = (e.name || 'Error') + '(' + e.pipeline.join('.') + '): '
+      var _msg = (e.name || 'Error') + '(' + e.pipeline[0] + '): '
         + (e.statusMessage || e.message || e.toString());
 
       var _stack = (e.stack || '').replace(/.*Error:.+?\n/, '');
@@ -30,6 +24,15 @@ module.exports = function (context, protocol) {
 
       // TODO: send to logger...
       console.log(e);
+
+      if (conn.res.finished) {
+        console.log(':(');
+        return;
+      }
+
+      res.statusMessage = e.statusMessage || res.statusMessage;
+      res.statusCode = e.statusCode || 500;
+      res.setHeader('Content-Type', 'text/plain');
 
       if (conn.header('content-type') === 'application/json' && conn.env === 'development') {
         e.data.push({

@@ -1,6 +1,7 @@
 module.exports = function _pipelineFactory(label, pipeline, _callback) {
   return function (conn, options) {
     var _pipeline = pipeline.slice();
+    var _stack = [];
 
     function next(done) {
       var cb = _pipeline.shift();
@@ -10,8 +11,14 @@ module.exports = function _pipelineFactory(label, pipeline, _callback) {
       } else {
         var value;
 
+        _stack.push(cb.name);
+
+        if (conn.res.finished) {
+          return done(new Error('TOO EARLY'));
+        }
+
         conn.next = _pipeline.length ? function () {
-          var _dispatch = _pipelineFactory('*' + label, _pipeline.slice());
+          var _dispatch = _pipelineFactory(cb.name, _pipeline.slice());
 
           _pipeline = [];
 
@@ -21,10 +28,6 @@ module.exports = function _pipelineFactory(label, pipeline, _callback) {
         };
 
         try {
-          if (conn.res.finished) {
-            return done();
-          }
-
           if (Array.isArray(cb.call)) {
             value = cb.call[0][cb.call[1]](conn, options);
           } else {
@@ -43,7 +46,9 @@ module.exports = function _pipelineFactory(label, pipeline, _callback) {
             .then(function () {
               next(done);
             })
-            .catch(done);
+            .catch(function (error) {
+              done(error);
+            });
         } else {
           next(done);
         }
@@ -53,15 +58,19 @@ module.exports = function _pipelineFactory(label, pipeline, _callback) {
     return new Promise(function (resolve, reject) {
       next(function (err) {
         if (err) {
-          err.pipeline = err.pipeline || [];
-          err.pipeline.push(label);
-
           err.data = err.data || [];
           err.text = err.text || [];
+          err.pipeline = err.pipeline || [];
+
+          Array.prototype.push.apply(err.pipeline, _stack);
         }
 
         if (_callback) {
           _callback(err, conn, options);
+        }
+
+        if (!err && conn.res.finished) {
+          err = new Error('TOO EARLY');
         }
 
         if (err) {
