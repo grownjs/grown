@@ -65,12 +65,13 @@ module.exports = function _pipelineFactory(label, pipeline, _callback) {
           Array.prototype.push.apply(err.pipeline, _stack);
         }
 
-        if (_callback) {
-          _callback(err, conn, options);
-        }
-
         if (!err && conn.res.finished) {
           err = new Error('TOO EARLY');
+          err.pipeline = _stack;
+        }
+
+        if (_callback) {
+          _callback(err, conn, options);
         }
 
         if (err) {

@@ -58,7 +58,7 @@ module.exports = function (context, protocol) {
         }
 
         // TODO: error page?
-        conn.end(conn.env === 'development' ? _msg : null);
+        conn._body = conn.env === 'development' ? _msg : conn._body;
       }
     }
 
