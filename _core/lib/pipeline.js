@@ -1,3 +1,11 @@
+function _next(promise, callback) {
+  if (typeof callback === 'function') {
+    return promise.then(callback);
+  }
+
+  return promise;
+}
+
 module.exports = function _pipelineFactory(label, pipeline, _callback) {
   return function (conn, options) {
     var _pipeline = pipeline.slice();
@@ -27,15 +35,9 @@ module.exports = function _pipelineFactory(label, pipeline, _callback) {
 
           _pipeline = [];
 
-          var _promise = _dispatch(conn, options);
-
-          if (typeof _resume === 'function') {
-            return _promise.then(_resume);
-          }
-
-          return _promise;
-        } : function _next(_resume) {
-          return Promise.resolve(typeof _resume === 'function' ? _resume() : undefined);
+          return _next(_dispatch(conn, options), _resume);
+        } : function (_resume) {
+          return _next(Promise.resolve(conn), _resume);
         };
 
         try {
@@ -92,7 +94,7 @@ module.exports = function _pipelineFactory(label, pipeline, _callback) {
         if (err) {
           reject(err);
         } else {
-          resolve();
+          resolve(conn);
         }
       });
     });
