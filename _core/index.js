@@ -12,7 +12,8 @@ module.exports = function (options) {
 
   var container = {
     options: options || {},
-    pipeline: []
+    pipeline: [],
+    extensions: {}
   };
 
   useFactory(context, container);

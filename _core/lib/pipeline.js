@@ -68,17 +68,16 @@ module.exports = function _pipelineFactory(label, pipeline, _callback) {
 
     return new Promise(function (resolve, reject) {
       next(function (err) {
+        if (!err && conn.res.finished) {
+          err = new Error('Conn Already Finished');
+        }
+
         if (err) {
           err.data = err.data || [];
           err.text = err.text || [];
           err.pipeline = err.pipeline || [];
 
           Array.prototype.push.apply(err.pipeline, _stack);
-        }
-
-        if (!err && conn.res.finished) {
-          err = new Error('Conn Already Finished');
-          err.pipeline = _stack;
         }
 
         if (_callback) {

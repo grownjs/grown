@@ -11,7 +11,7 @@ module.exports = function (context, protocol) {
       e.pipeline = e.pipeline || ['host'];
       e.data = e.data || [];
 
-      var _msg = (e.name || 'Error') + '(' + e.pipeline.join('.') + '): '
+      var _msg = (e.name || 'Error') + '(' + e.pipeline[0] + '): '
         + (e.statusMessage || e.message || e.toString());
 
       var _stack = (e.stack || '').replace(/.*Error:.+?\n/, '');
