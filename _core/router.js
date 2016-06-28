@@ -117,10 +117,8 @@ module.exports = function (cwd) {
   }
 
   return function (server, container) {
-    container.extensions.routeMappings = {
-      urlFor: router.mappings,
-      _routes: _routes
-    };
+    container.extensions.routes = router.mappings;
+    container.extensions.routes.forEach = Array.prototype.forEach.bind(_routes);
 
     function run(conn, _options) {
       var _method = conn.req.method.toLowerCase();

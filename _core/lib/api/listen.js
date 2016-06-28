@@ -5,6 +5,11 @@ module.exports = function (context, container) {
   context.listen = function (location, options, callback) {
     var app = {};
 
+    Object.keys(container.extensions).forEach(function (key) {
+      app[key] = container.extensions[key];
+    });
+
+    // override
     app.container = container;
 
     callback = typeof options == 'function' ? options : callback;
