@@ -1,5 +1,4 @@
 var server = require('./_core')();
-var app = server.listen(8000);
 
 // x-response-time
 server.mount(function xResponseTime(conn) {
@@ -15,9 +14,19 @@ server.mount(function xResponseTime(conn) {
 server.use(require('./_core/router')(process.cwd()));
 
 server.mount(function MyApp(conn) {
-  if (conn.req.method === 'GET' && conn.req.url === '/x') {
-    conn.body = (conn.body || ':O').replace(':)', ':D');
+  if (conn.req.method === 'GET' && conn.req.url === '/_routerInfo') {
+    var _data = [];
+
+    conn.app.routes.forEach(function (route) {
+      _data.push(route);
+    });
+
+    conn.body = {
+      routeMappings: _data
+    };
   }
 });
 
-console.log('Listening at ' + app.location.href);
+module.exports = server;
+
+// server.listen(8000);
