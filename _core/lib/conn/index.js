@@ -58,7 +58,6 @@ function newConn(app, req, res) {
     res: res,
     body: null, // output: String Buffer Stream Object
     input: {}, // input-form or body-parsed params
-    params: {}, // params from route-mappings
     multipart: null,
     type: req.headers['content-type'] || '',
     query: qs.parse(req.url.split('?')[1] || '')

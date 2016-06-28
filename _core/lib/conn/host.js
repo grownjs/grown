@@ -72,9 +72,7 @@ module.exports = function (context, protocol) {
             });
         } catch (e) {
           // internal server error
-          if (!conn.res.finished) {
-            fail(e, conn);
-          }
+          fail(e, conn);
         }
       });
     }

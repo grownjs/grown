@@ -34,8 +34,8 @@ module.exports = function _pipelineFactory(label, pipeline, _callback) {
           }
 
           return _promise;
-        } : function _next() {
-          return Promise.resolve();
+        } : function _next(_resume) {
+          return Promise.resolve(typeof _resume === 'function' ? _resume() : undefined);
         };
 
         try {
@@ -82,7 +82,11 @@ module.exports = function _pipelineFactory(label, pipeline, _callback) {
         }
 
         if (_callback) {
-          _callback(err, conn, options);
+          try {
+            _callback(err, conn, options);
+          } catch (_err) {
+            err = _err;
+          }
         }
 
         if (err) {
