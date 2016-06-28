@@ -30,14 +30,16 @@ module.exports = function _pipelineFactory(label, pipeline, _callback) {
           return done(new Error('TOO EARLY'));
         }
 
-        conn.next = _pipeline.length ? function (_resume) {
+        conn.next = function (_resume) {
+          if (!_pipeline.length) {
+            return _next(Promise.resolve(conn), _resume);
+          }
+
           var _dispatch = _pipelineFactory(cb.name, _pipeline.slice());
 
           _pipeline = [];
 
           return _next(_dispatch(conn, options), _resume);
-        } : function (_resume) {
-          return _next(Promise.resolve(conn), _resume);
         };
 
         try {
