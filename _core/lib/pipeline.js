@@ -21,13 +21,9 @@ module.exports = function _pipelineFactory(label, pipeline, _callback) {
 
         _stack.push(cb.name);
 
-        if (conn.body !== null) {
+        if (conn.res.finished || conn.body !== null) {
           // short-circuit
-          return done();
-        }
-
-        if (conn.res.finished) {
-          return done(new Error('Conn Already Finished'));
+          return done(conn.res.finished ? new Error('Conn Already Finished') : undefined);
         }
 
         conn.next = function (_resume) {
