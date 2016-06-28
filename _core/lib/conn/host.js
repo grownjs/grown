@@ -30,11 +30,11 @@ module.exports = function (context, protocol) {
         return;
       }
 
-      res.statusMessage = e.statusMessage || res.statusMessage;
-      res.statusCode = e.statusCode || 500;
-      res.setHeader('Content-Type', 'text/plain');
+      conn
+        .set('content-type', 'text/plain')
+        .status(e.statusCode || 500, e.statusMessage || conn.res.statusMessage);
 
-      if (conn.header('content-type') === 'application/json' && conn.env === 'development') {
+      if (conn.type === 'application/json' && conn.env === 'development') {
         e.data.push({
           errorInfo: {
             pipeline: e.pipeline || ['host'],
@@ -45,7 +45,7 @@ module.exports = function (context, protocol) {
           }
         });
 
-        conn.json(e.data);
+        conn.send(e.data);
       } else {
         if (_stack) {
           _msg += '\n' + _stack;
@@ -58,7 +58,7 @@ module.exports = function (context, protocol) {
         }
 
         // TODO: error page?
-        conn._body = conn.env === 'development' ? _msg : conn._body;
+        conn.send(conn.env === 'development' ? _msg : conn.body);
       }
     }
 

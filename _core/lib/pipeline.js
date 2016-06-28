@@ -13,18 +13,29 @@ module.exports = function _pipelineFactory(label, pipeline, _callback) {
 
         _stack.push(cb.name);
 
+        if (conn.body !== null) {
+          // short-circuit
+          return done();
+        }
+
         if (conn.res.finished) {
           return done(new Error('TOO EARLY'));
         }
 
-        conn.next = _pipeline.length ? function () {
+        conn.next = _pipeline.length ? function (_resume) {
           var _dispatch = _pipelineFactory(cb.name, _pipeline.slice());
 
           _pipeline = [];
 
-          return _dispatch(conn, options);
+          var _promise = _dispatch(conn, options);
+
+          if (typeof _resume === 'function') {
+            return _promise.then(_resume);
+          }
+
+          return _promise;
         } : function _next() {
-          throw new Error('undefined next() middleware');
+          return Promise.resolve();
         };
 
         try {
