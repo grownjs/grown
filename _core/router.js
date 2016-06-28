@@ -16,106 +16,111 @@ function _error(code, message) {
 }
 
 module.exports = function (cwd) {
-  return function (server, options) {
-    if (typeof cwd !== 'string' || !fs.existsSync(cwd)) {
-      throw new Error('expecting `cwd` to be a valid directory, given `' + cwd + '`');
+  if (typeof cwd !== 'string' || !fs.existsSync(cwd)) {
+    throw new Error('expecting `cwd` to be a valid directory, given `' + cwd + '`');
+  }
+
+  var _routeMappings = require(path.join(cwd, 'config', 'routeMappings.js'));
+  var router = _routeMappings(routeMappings);
+  var match = {};
+
+  var _controllers = {};
+  var _routes = [];
+
+  router.routes.forEach(function (route) {
+    var _handler = route.handler.slice().concat(route.to ? [route.to] : []);
+
+    _handler = _handler.join('.').split('.');
+
+    var controller = _handler[0];
+    var action = _handler[1] || route.action;
+
+    var controllerFile = path.join(cwd, 'controllers', controller + 'Controller.js');
+
+    if (!fs.existsSync(controllerFile)) {
+      throw new Error('missing controller ' + controllerFile);
     }
 
-    var _routeMappings = require(path.join(cwd, 'config', 'routeMappings.js'));
-    var router = _routeMappings(routeMappings);
-    var match = {};
+    _controllers[controller] = {
+      filepath: controllerFile,
+      pipeline: {}
+    };
 
-    var _controllers = {};
-    var _routes = [];
+    if (!match[route.verb]) {
+      match[route.verb] = [];
+    }
 
-    router.routes.forEach(function (route) {
-      var _handler = route.handler.slice().concat(route.to ? [route.to] : []);
+    var _route = {
+      controller: controller,
+      action: action,
+      route: route
+    };
 
-      _handler = _handler.join('.').split('.');
+    _routes.push(_route);
 
-      var controller = _handler[0];
-      var action = _handler[1] || route.action;
+    match[route.verb].push(_route);
+  });
 
-      var controllerFile = path.join(cwd, 'controllers', controller + 'Controller.js');
+  Object.keys(match).forEach(function (verb) {
+    match[verb] = router.map(match[verb]);
+  });
 
-      if (!fs.existsSync(controllerFile)) {
-        throw new Error('missing controller ' + controllerFile);
-      }
+  var _middlewares = require(path.join(cwd, 'config', 'middlewares.js'));
+  var fixedMiddlewares = {};
 
-      _controllers[controller] = {
-        filepath: controllerFile,
-        pipeline: {}
-      };
+  glob.sync('middlewares/**/*.js', { cwd: cwd, nodir: true }).forEach(function (middleware) {
+    var middlewareName = path.basename(middleware.replace(/\/index\.js$/, ''), '.js');
 
-      if (!match[route.verb]) {
-        match[route.verb] = [];
-      }
+    fixedMiddlewares[middlewareName] = path.join(cwd, middleware);
+  });
 
-      var _route = {
-        controller: controller,
-        action: action,
-        route: route
-      };
+  function _require(map, options) {
+    var list = [];
 
-      _routes.push(_route);
-
-      match[route.verb].push(_route);
-    });
-
-    Object.keys(match).forEach(function (verb) {
-      match[verb] = router.map(match[verb]);
-    });
-
-    var _middlewares = require(path.join(cwd, 'config', 'middlewares.js'));
-    var fixedMiddlewares = {};
-
-    glob.sync('middlewares/**/*.js', { cwd: cwd, nodir: true }).forEach(function (middleware) {
-      var middlewareName = path.basename(middleware.replace(/\/index\.js$/, ''), '.js');
-
-      fixedMiddlewares[middlewareName] = path.join(cwd, middleware);
-    });
-
-    function _require(map) {
-      var list = [];
-
-      map.forEach(function (name) {
-        if (_middlewares[name]) {
-          _push.apply(list, _require(_middlewares[name]));
-        } else if (list.indexOf(name) === -1) {
-          if (!fixedMiddlewares[name]) {
-            throw new Error('undefined `' + name + '` middleware');
-          }
-
-          var middleware = buildFactory(require(fixedMiddlewares[name]), options);
-
-          list.push({
-            name: middleware.name || name,
-            call: middleware.call
-          });
+    map.forEach(function (name) {
+      if (_middlewares[name]) {
+        _push.apply(list, _require(_middlewares[name], options));
+      } else if (list.indexOf(name) === -1) {
+        if (!fixedMiddlewares[name]) {
+          throw new Error('undefined `' + name + '` middleware');
         }
-      }, this);
 
-      return list;
-    }
+        var middleware = buildFactory(require(fixedMiddlewares[name]), options);
 
-    function _pipe(from, handler) {
-      var tasks = [];
-
-      if (from && from[handler.action]) {
-        from[handler.action].forEach(function (task) {
-          if (!_controllers[handler.controller].instance[task]) {
-            throw new Error('undefined `' + handler.controller + '.' + task + '` handler');
-          }
-
-          tasks.push({
-            name: handler.controller + '.' + task,
-            call: [_controllers[handler.controller].instance, task]
-          });
+        list.push({
+          name: middleware.name || name,
+          call: middleware.call
         });
       }
+    }, this);
 
-      return tasks;
+    return list;
+  }
+
+  function _pipe(from, handler) {
+    var tasks = [];
+
+    if (from && from[handler.action]) {
+      from[handler.action].forEach(function (task) {
+        if (!_controllers[handler.controller].instance[task]) {
+          throw new Error('undefined `' + handler.controller + '.' + task + '` handler');
+        }
+
+        tasks.push({
+          name: handler.controller + '.' + task,
+          call: [_controllers[handler.controller].instance, task]
+        });
+      });
     }
+
+    return tasks;
+  }
+
+  return function (server, container) {
+    container.extensions.routeMappings = {
+      urlFor: router.mappings,
+      _routes: _routes
+    };
 
     function run(conn, _options) {
       var _method = conn.req.method.toLowerCase();
@@ -157,7 +162,7 @@ module.exports = function (cwd) {
           _pipeline = [];
 
           if (Array.isArray(handler.route.middleware)) {
-            _push.apply(_pipeline, _require(handler.route.middleware));
+            _push.apply(_pipeline, _require(handler.route.middleware, _options));
           }
 
           _push.apply(_pipeline, _pipe(Controller.pipeline, handler));
@@ -167,26 +172,7 @@ module.exports = function (cwd) {
             call: [controllerInstance, handler.action]
           });
 
-          _pipeline = pipelineFactory('router', _pipeline, function (err, conn) {
-            if (err && conn.env === 'development') {
-              var _path = conn.req.url.split('?')[0];
-
-              err.data.push({
-                routerInfo: {
-                  handler: conn.handler,
-                  params: conn.params,
-                  path: _path
-                }
-              });
-
-              err.text.push([
-                'routerInfo:',
-                '  handler: ' + conn.handler.controller + '.' + conn.handler.action,
-                '  params: ' + JSON.stringify(conn.params, null, 2).split('\n').join('\n          '),
-                '  path: ' + _path
-              ].join('\n'));
-            }
-          });
+          _pipeline = pipelineFactory('router', _pipeline);
 
           _controllers[handler.controller].pipeline[handler.action] = _pipeline;
         }
@@ -197,7 +183,7 @@ module.exports = function (cwd) {
       }
     }
 
-    server.mount(function (conn, _options) {
+    server.mount(function RouteMappings(conn, _options) {
       return conn.next(function () {
         if (conn.body === null) {
           return run(conn, _options);
