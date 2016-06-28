@@ -98,10 +98,6 @@ module.exports = function (cwd) {
       return list;
     }
 
-    if (_middlewares.before) {
-      server.mount(pipelineFactory('before', _require(['before'])));
-    }
-
     function _pipe(from, handler) {
       var tasks = [];
 
@@ -121,7 +117,7 @@ module.exports = function (cwd) {
       return tasks;
     }
 
-    server.mount(function (conn, _options) {
+    function run(conn, _options) {
       var _method = conn.req.method.toLowerCase();
       var handler;
 
@@ -164,14 +160,12 @@ module.exports = function (cwd) {
             _push.apply(_pipeline, _require(handler.route.middleware));
           }
 
-          _push.apply(_pipeline, _pipe(Controller.before, handler));
+          _push.apply(_pipeline, _pipe(Controller.pipeline, handler));
 
           _pipeline.push({
             name: handler.controller + '.' + handler.action,
             call: [controllerInstance, handler.action]
           });
-
-          _push.apply(_pipeline, _pipe(Controller.after, handler));
 
           _pipeline = pipelineFactory('router', _pipeline, function (err, conn) {
             if (err && conn.env === 'development') {
@@ -201,10 +195,14 @@ module.exports = function (cwd) {
       } else {
         throw _error(404, 'Not Found');
       }
-    });
-
-    if (_middlewares.after) {
-      server.mount(pipelineFactory('after', _require(['after'])));
     }
+
+    server.mount(function (conn, _options) {
+      return conn.next(function () {
+        if (conn.body === null) {
+          return run(conn, _options);
+        }
+      });
+    });
   };
 };
