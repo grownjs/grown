@@ -27,7 +27,7 @@ module.exports = function _pipelineFactory(label, pipeline, _callback) {
         }
 
         if (conn.res.finished) {
-          return done(new Error('TOO EARLY'));
+          return done(new Error('Conn Already Finished'));
         }
 
         conn.next = function (_resume) {
@@ -81,7 +81,7 @@ module.exports = function _pipelineFactory(label, pipeline, _callback) {
         }
 
         if (!err && conn.res.finished) {
-          err = new Error('TOO EARLY');
+          err = new Error('Conn Already Finished');
           err.pipeline = _stack;
         }
 

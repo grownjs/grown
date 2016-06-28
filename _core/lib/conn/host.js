@@ -11,7 +11,7 @@ module.exports = function (context, protocol) {
       e.pipeline = e.pipeline || ['host'];
       e.data = e.data || [];
 
-      var _msg = (e.name || 'Error') + '(' + e.pipeline[0] + '): '
+      var _msg = (e.name || 'Error') + '(' + e.pipeline.join('.') + '): '
         + (e.statusMessage || e.message || e.toString());
 
       var _stack = (e.stack || '').replace(/.*Error:.+?\n/, '');
@@ -26,13 +26,12 @@ module.exports = function (context, protocol) {
       console.log(e);
 
       if (conn.res.finished) {
-        console.log(':(');
         return;
       }
 
-      conn
-        .set('content-type', 'text/plain')
-        .status(e.statusCode || 500, e.statusMessage || conn.res.statusMessage);
+      conn.res.setHeader('Content-Type', 'text/plain');
+      conn.res.statusCode = e.statusCode || 500;
+      conn.res.statusMessage = e.statusMessage || conn.res.statusMessage;
 
       if (conn.type === 'application/json' && conn.env === 'development') {
         e.data.push({
@@ -45,7 +44,8 @@ module.exports = function (context, protocol) {
           }
         });
 
-        conn.send(e.data);
+        conn.res.setHeader('Content-Type', 'application/json');
+        conn.res.end(JSON.stringify(e.data));
       } else {
         if (_stack) {
           _msg += '\n' + _stack;
@@ -58,7 +58,7 @@ module.exports = function (context, protocol) {
         }
 
         // TODO: error page?
-        conn.send(conn.env === 'development' ? _msg : conn.body);
+        conn.res.end(conn.env === 'development' ? _msg : conn.body);
       }
     }
 

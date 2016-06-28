@@ -64,15 +64,16 @@ function newConn(app, req, res) {
   };
 
   var _headers = {};
-  var _finished;
 
   function _pending() {
-    if (_finished) {
-      throw new Error('ALREADY END?');
+    if (conn.res.finished) {
+      throw new Error('Conn Already Finished');
     }
   }
 
   conn.end = function () {
+    _pending();
+
     if (arguments.length === 2) {
       conn.status.apply(null, arguments);
     }
@@ -80,8 +81,6 @@ function newConn(app, req, res) {
     if (arguments.length === 1) {
       conn.body = arguments[0];
     }
-
-    _finished = true;
 
     return conn;
   };
@@ -104,8 +103,6 @@ function newConn(app, req, res) {
 
     conn.status(_code);
     conn.res.end(_body);
-
-    _finished = true;
 
     return conn;
   };
@@ -163,7 +160,7 @@ function newConn(app, req, res) {
     _pending();
 
     if (!status_codes[code]) {
-      throw new Error('UNKNOWN STATUS CODE');
+      throw new Error('Invalid statusCode: ' + code);
     }
 
     conn.res.statusCode = code;

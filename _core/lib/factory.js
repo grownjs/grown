@@ -12,7 +12,7 @@ module.exports = function (Factory, options) {
   }
 
   if (Factory.length === 4 || Factory.length === 3) {
-    throw new Error('middleware `' + Factory + '` not supported');
+    throw new Error('Middleware `' + Factory + '` not supported');
   }
 
   return {
