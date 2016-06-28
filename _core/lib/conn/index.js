@@ -33,6 +33,17 @@ function _parseBody(conn, callback) {
   }
 }
 
+function _sendBody(conn, code, body) {
+  if (typeof body === 'object') {
+    conn.res.setHeader('Content-Type', 'application/json');
+
+    body = JSON.stringify(body);
+  }
+
+  conn.res.statusCode = code;
+  conn.res.end(body);
+}
+
 function _fixURL(location) {
   var _uri = url.parse(location);
   var _query = '';
@@ -65,17 +76,9 @@ function newConn(app, req, res) {
 
   var _headers = {};
 
-  function _pending() {
-    if (conn.res.finished) {
-      throw new Error('Conn Already Finished');
-    }
-  }
-
   conn.end = function () {
-    _pending();
-
-    if (arguments.length === 2) {
-      conn.status.apply(null, arguments);
+    if (arguments.length === 2 || typeof arguments[0] === 'number') {
+      return conn.status.apply(null, arguments);
     }
 
     if (arguments.length === 1) {
@@ -86,23 +89,18 @@ function newConn(app, req, res) {
   };
 
   conn.send = function (code, message) {
-    _pending();
+    if (conn.res.finished) {
+      throw new Error('Conn Already Finished');
+    }
 
     Object.keys(_headers).forEach(function (key) {
       conn.res.setHeader(key, _headers[key]);
     });
 
     var _code = typeof code === 'number' ? code : conn.res.statusCode;
-    var _body = typeof code !== 'number' ? code : message || code || conn.body;
+    var _body = typeof code === 'string' ? code : message || conn.body;
 
-    if (typeof _body === 'object') {
-      conn.res.setHeader('Content-Type', 'application/json');
-
-      _body = JSON.stringify(_body);
-    }
-
-    conn.status(_code);
-    conn.res.end(_body);
+    _sendBody(conn, _code, _body);
 
     return conn;
   };
@@ -118,8 +116,6 @@ function newConn(app, req, res) {
   };
 
   conn.set = function (name, value, multiple) {
-    _pending();
-
     if (typeof name === 'object') {
       Object.keys(name).forEach(function (key) {
         conn.set(key, name[key]);
@@ -148,8 +144,6 @@ function newConn(app, req, res) {
   };
 
   conn.unset = function (keys) {
-    _pending();
-
     (Array.isArray(keys) ? keys : Array.prototype.slice.call(arguments))
       .forEach(function (key) {
         delete _headers[key.toLowerCase()];
@@ -157,8 +151,6 @@ function newConn(app, req, res) {
   };
 
   conn.status = function (code, message) {
-    _pending();
-
     if (!status_codes[code]) {
       throw new Error('Invalid statusCode: ' + code);
     }
@@ -170,11 +162,10 @@ function newConn(app, req, res) {
   };
 
   conn.redirect = function (location, statusCode) {
-    _pending();
-
     return conn
-      .set('location', _fixURL(location))
-      .end(typeof statusCode === 'number' ? statusCode : 302);
+      .end(typeof statusCode === 'number' ? statusCode : 302)
+      .end(conn.body || conn.res.statusMessage || '')
+      .set('location', _fixURL(location));
   };
 
   return conn;

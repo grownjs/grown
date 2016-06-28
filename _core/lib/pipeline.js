@@ -23,7 +23,7 @@ module.exports = function _pipelineFactory(label, pipeline, _callback) {
 
         if (conn.res.finished || conn.body !== null) {
           // short-circuit
-          return done(conn.res.finished ? new Error('Conn Already Finished') : undefined);
+          return done();
         }
 
         conn.next = function (_resume) {
