@@ -1,3 +1,7 @@
+if (typeof Promise === 'undefined') {
+  global.Promise = require('es6-promise').Promise;
+}
+
 var useFactory = require('./lib/api/use');
 var mountFactory = require('./lib/api/mount');
 var listenFactory = require('./lib/api/listen');

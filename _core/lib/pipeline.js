@@ -6,16 +6,50 @@ function _next(promise, callback) {
   return promise;
 }
 
+function _run(iterator) {
+  return new Promise(function (resolve, reject) {
+    function next(err, value) {
+      if (err) {
+        return reject(err);
+      }
+
+      var result = iterator.next(value);
+
+      if (!result.done) {
+        if (typeof result.value == 'function') {
+          var _value = result.value();
+
+          if (typeof _value.then === 'function' && typeof _value.catch === 'function') {
+            _value
+              .then(function (value) {
+                next(undefined, value);
+              })
+              .catch(next);
+          } else {
+            next(undefined, value);
+          }
+        } else {
+          next(err, value);
+        }
+      } else {
+        resolve();
+      }
+    }
+
+    next();
+  });
+}
+
 module.exports = function _pipelineFactory(label, pipeline, _callback) {
   return function (conn, options) {
     var _pipeline = pipeline.slice();
     var _stack = [];
 
-    function next(done) {
+    function next(end) {
       var cb = _pipeline.shift();
 
       if (!cb) {
-        done();
+        end();
       } else {
         var value;
 
@@ -23,7 +57,7 @@ module.exports = function _pipelineFactory(label, pipeline, _callback) {
 
         if (conn.res.finished || conn.body !== null) {
           // short-circuit
-          return done();
+          return end();
         }
 
         conn.next = function (_resume) {
@@ -39,29 +73,31 @@ module.exports = function _pipelineFactory(label, pipeline, _callback) {
         };
 
         try {
-          if (Array.isArray(cb.call)) {
+          if (Array.isArray(cb.call) && typeof cb.call[1] === 'string') {
             value = cb.call[0][cb.call[1]](conn, options);
+          } else if (typeof cb.call.prototype.next === 'function') {
+            value = _run(cb.call(conn, options));
           } else {
             value = cb.call(conn, options);
           }
         } catch (e) {
-          return done(e);
+          return end(e);
         }
 
         if (!value) {
-          return next(done);
+          return next(end);
         }
 
         if (typeof value.then === 'function' && typeof value.catch === 'function') {
           value
             .then(function () {
-              next(done);
+              next(end);
             })
             .catch(function (error) {
-              done(error);
+              end(error);
             });
         } else {
-          next(done);
+          next(end);
         }
       }
     }
