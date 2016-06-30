@@ -12,7 +12,7 @@ function _error(code, message) {
   var errObj = new Error(message);
   errObj.statusMessage = message;
   errObj.statusCode = code;
-  return errObj;
+  throw errObj;
 }
 
 module.exports = function (cwd) {
@@ -125,14 +125,14 @@ module.exports = function (cwd) {
       var handler;
 
       if (!match[_method]) {
-        throw _error(405, 'Method Not Allowed');
+        return _error(405, 'Method Not Allowed');
       }
 
       if (match[_method] && (handler = match[_method](conn.req.url, 1))) {
         conn.handler = handler;
         conn.params = {};
 
-        if (handler.matcher) {
+        if (handler.matcher && handler.matcher.keys) {
           handler.matcher.keys.forEach(function(key, i) {
             conn.params[key] = handler.matcher.values[i];
           });
@@ -177,7 +177,7 @@ module.exports = function (cwd) {
 
         return _pipeline(conn, _options);
       } else {
-        throw _error(404, 'Not Found');
+        _error(404, 'Not Found');
       }
     }
 
