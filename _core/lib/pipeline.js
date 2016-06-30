@@ -1,3 +1,5 @@
+/* global Promise */
+
 function _next(promise, callback) {
   if (typeof callback === 'function') {
     return promise.then(callback);

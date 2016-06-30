@@ -4,11 +4,15 @@ module.exports = function (Factory, options) {
       name: Factory.name || 'object',
       call: [Factory, 'dispatch']
     };
-  } else if (Factory.prototype.dispatch) {
+  } else if (Factory.prototype && Factory.prototype.dispatch) {
     return {
       name: Factory.name || 'class',
       call: [new Factory(options), 'dispatch']
     };
+  }
+
+  if (typeof Factory !== 'function') {
+    throw new Error('Middleware `' + Factory + '` should be a function');
   }
 
   if (Factory.length === 4 || Factory.length === 3) {
