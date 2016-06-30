@@ -1,4 +1,7 @@
 /* global Promise */
+if (typeof Promise === 'undefined') {
+  global.Promise = require('es6-promise').Promise;
+}
 
 function _when(promise, callback) {
   if (typeof callback === 'function') {
