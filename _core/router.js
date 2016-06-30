@@ -17,7 +17,7 @@ function _error(code, message) {
 
 module.exports = function (cwd) {
   if (typeof cwd !== 'string' || !fs.existsSync(cwd)) {
-    throw new Error('expecting `cwd` to be a valid directory, given `' + cwd + '`');
+    throw new Error('Expecting `cwd` to be a valid directory, given `' + cwd + '`');
   }
 
   var _routeMappings = require(path.join(cwd, 'config', 'routeMappings.js'));
@@ -38,7 +38,7 @@ module.exports = function (cwd) {
     var controllerFile = path.join(cwd, 'controllers', controller + 'Controller.js');
 
     if (!fs.existsSync(controllerFile)) {
-      throw new Error('missing controller ' + controllerFile);
+      throw new Error('Missing controller ' + controllerFile);
     }
 
     _controllers[controller] = {
@@ -82,7 +82,7 @@ module.exports = function (cwd) {
         _push.apply(list, _require(_middlewares[name], options));
       } else if (list.indexOf(name) === -1) {
         if (!fixedMiddlewares[name]) {
-          throw new Error('undefined `' + name + '` middleware');
+          throw new Error('Undefined `' + name + '` middleware');
         }
 
         var middleware = buildFactory(require(fixedMiddlewares[name]), options);
@@ -103,7 +103,7 @@ module.exports = function (cwd) {
     if (from && from[handler.action]) {
       from[handler.action].forEach(function (task) {
         if (!_controllers[handler.controller].instance[task]) {
-          throw new Error('undefined `' + handler.controller + '.' + task + '` handler');
+          throw new Error('Undefined `' + handler.controller + '.' + task + '` handler');
         }
 
         tasks.push({
@@ -151,7 +151,7 @@ module.exports = function (cwd) {
         var controllerInstance = _controllers[handler.controller].instance;
 
         if (!controllerInstance[handler.action]) {
-          throw new Error('undefined `' + handler.controller + '.' + handler.action + '` handler');
+          throw new Error('Undefined `' + handler.controller + '.' + handler.action + '` handler');
         }
 
         var _pipeline = _controllers[handler.controller].pipeline[handler.action];

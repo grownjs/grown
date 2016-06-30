@@ -23,7 +23,7 @@ module.exports = function (context, protocol) {
       }
 
       // TODO: send to logger...
-      console.log(e.stack);
+      // console.log(e.stack);
 
       if (conn.res.finished) {
         return;
