@@ -81,9 +81,7 @@ function newConn(app, req, res) {
       return conn.status.apply(null, arguments);
     }
 
-    if (arguments.length === 1) {
-      conn.body = arguments[0];
-    }
+    conn.body = arguments[0] || conn.body || '';
 
     return conn;
   };
