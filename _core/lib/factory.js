@@ -1,26 +1,54 @@
 module.exports = function (Factory, options) {
   if (Factory.dispatch) {
     return {
-      name: Factory.name || 'object',
-      call: [Factory, 'dispatch']
+      name: Factory.name || 'anonymous',
+      call: [Factory, 'dispatch'],
+      type: 'object'
     };
-  } else if (Factory.prototype && Factory.prototype.dispatch) {
+  }
+
+  if (Factory.prototype && typeof Factory.prototype.dispatch === 'function') {
     return {
-      name: Factory.name || 'class',
-      call: [new Factory(options), 'dispatch']
+      name: Factory.name || 'anonymous',
+      call: [new Factory(options), 'dispatch'],
+      type: 'method'
     };
   }
 
   if (typeof Factory !== 'function') {
-    throw new Error('Middleware `' + Factory + '` should be a function');
+    if (typeof Factory.call === 'function') {
+      Factory.name = Factory.name || 'anonymous';
+      Factory.type = Factory.type || 'factory';
+
+      return Factory;
+    }
+
+    if (typeof Factory.next === 'function') {
+      return {
+        name: Factory.name || 'anonymous',
+        call: Factory,
+        type: 'iterator'
+      };
+    }
+
+    throw new Error('Middleware `' + Factory + '` should be callable');
   }
 
-  if (Factory.length === 4 || Factory.length === 3) {
+  if (typeof Factory.prototype.next === 'function') {
+    return {
+      name: Factory.name || 'anonymous',
+      call: Factory,
+      type: 'generator'
+    };
+  }
+
+  if (Factory.length > 2) {
     throw new Error('Middleware `' + Factory + '` not supported');
   }
 
   return {
     name: Factory.name || 'anonymous',
-    call: Factory
+    call: Factory,
+    type: 'function'
   };
 };

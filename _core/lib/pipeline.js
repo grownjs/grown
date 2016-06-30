@@ -1,6 +1,6 @@
 /* global Promise */
 
-function _next(promise, callback) {
+function _when(promise, callback) {
   if (typeof callback === 'function') {
     return promise.then(callback);
   }
@@ -8,42 +8,56 @@ function _next(promise, callback) {
   return promise;
 }
 
-function _run(iterator) {
-  return new Promise(function (resolve, reject) {
-    function next(err, value) {
-      if (err) {
-        return reject(err);
-      }
+function _run(task, state, options) {
+  switch (task.type) {
+    case 'method':
+    case 'object':
+      return task.call[0][task.call[1]](state, options);
 
-      var result = iterator.next(value);
+    case 'factory':
+    case 'function':
+      return task.call(state, options);
 
-      if (!result.done) {
-        if (typeof result.value == 'function') {
-          var _value = result.value();
+    case 'iterator':
+    case 'generator':
+      var _iterator = task.type === 'generator' ? task.call(state, options) : task.call;
 
-          if (typeof _value.then === 'function' && typeof _value.catch === 'function') {
-            _value
-              .then(function (value) {
-                next(undefined, value);
-              })
-              .catch(next);
-          } else {
-            next(undefined, value);
+      return new Promise(function (resolve, reject) {
+        function next(err, value) {
+          if (err) {
+            return reject(err);
           }
-        } else {
-          next(err, value);
-        }
-      } else {
-        resolve();
-      }
-    }
 
-    next();
-  });
+          var result = _iterator.next(value, options);
+
+          if (!result.done) {
+            if (typeof result.value == 'function') {
+              var _value = result.value(value);
+
+              if (typeof _value.then === 'function' && typeof _value.catch === 'function') {
+                _value
+                  .then(function (value) {
+                    next(undefined, value);
+                  })
+                  .catch(next);
+              } else {
+                next(undefined, value);
+              }
+            } else {
+              next(err, value);
+            }
+          } else {
+            resolve(value);
+          }
+        }
+
+        next(undefined, state);
+      });
+  }
 }
 
 module.exports = function _pipelineFactory(label, pipeline, _callback) {
-  return function (conn, options) {
+  return function (state, options) {
     var _pipeline = pipeline.slice();
     var _stack = [];
 
@@ -57,31 +71,25 @@ module.exports = function _pipelineFactory(label, pipeline, _callback) {
 
         _stack.push(cb.name);
 
-        if (conn.res.finished || conn.body !== null) {
+        if (state.done) {
           // short-circuit
           return end();
         }
 
-        conn.next = function (_resume) {
+        state.next = function (_resume) {
           if (!_pipeline.length) {
-            return _next(Promise.resolve(conn), _resume);
+            return _when(Promise.resolve(state), _resume);
           }
 
           var _dispatch = _pipelineFactory(cb.name, _pipeline.slice());
 
           _pipeline = [];
 
-          return _next(_dispatch(conn, options), _resume);
+          return _when(_dispatch(state, options), _resume);
         };
 
         try {
-          if (Array.isArray(cb.call) && typeof cb.call[1] === 'string') {
-            value = cb.call[0][cb.call[1]](conn, options);
-          } else if (typeof cb.call.prototype.next === 'function') {
-            value = _run(cb.call(conn, options));
-          } else {
-            value = cb.call(conn, options);
-          }
+          value = _run(cb, state, options);
         } catch (e) {
           return end(e);
         }
@@ -106,21 +114,18 @@ module.exports = function _pipelineFactory(label, pipeline, _callback) {
 
     return new Promise(function (resolve, reject) {
       next(function (err) {
-        if (!err && conn.res.finished) {
-          err = new Error('Conn Already Finished');
+        if (!err && state.done) {
+          err = new Error('state Already Finished');
         }
 
         if (err) {
-          err.data = err.data || [];
-          err.text = err.text || [];
           err.pipeline = err.pipeline || [];
-
           Array.prototype.push.apply(err.pipeline, _stack);
         }
 
         if (_callback) {
           try {
-            _callback(err, conn, options);
+            _callback(err, state, options);
           } catch (_err) {
             err = _err;
           }
@@ -129,7 +134,7 @@ module.exports = function _pipelineFactory(label, pipeline, _callback) {
         if (err) {
           reject(err);
         } else {
-          resolve(conn);
+          resolve(state);
         }
       });
     });
