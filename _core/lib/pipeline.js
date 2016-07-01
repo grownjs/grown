@@ -28,7 +28,8 @@ function _run(task, state, options) {
       return new Promise(function (resolve, reject) {
         function next(err, value) {
           if (err) {
-            return reject(err);
+            reject(err);
+            return;
           }
 
           var result = _iterator.next(value, options);
@@ -36,15 +37,26 @@ function _run(task, state, options) {
           if (!result.done) {
             var _scalar = typeof result.value === 'string' || typeof result.value === 'number' || typeof result.value === 'boolean';
 
-            if (_scalar || Array.isArray(result.value) || !result.value) {
-              return next(undefined, result.value);
+            if (_scalar || Array.isArray(result.value) || typeof result.value === 'undefined' || result.value === null) {
+              next(undefined, result.value);
+              return;
+            }
+
+            if (typeof result.value.then === 'function' && typeof result.value.catch === 'function') {
+              result.value
+                .then(function (_value) {
+                  next(undefined, _value);
+                })
+                .catch(next);
+              return;
             }
 
             var _next = (typeof result.value === 'function' || result.value.call || result.value.next)
               ? buildFactory(result.value) : result;
 
             if (_next.value) {
-              return next(undefined, _next.value);
+              next(undefined, _next.value);
+              return;
             }
 
             var _value = _run(_next, state, options);
