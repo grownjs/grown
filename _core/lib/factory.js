@@ -1,26 +1,11 @@
 module.exports = function (Factory, options) {
-  if (Factory.dispatch) {
-    return {
-      name: Factory.name || 'anonymous',
-      call: [Factory, 'dispatch'],
-      type: 'object'
-    };
-  }
-
-  if (Factory.prototype && typeof Factory.prototype.dispatch === 'function') {
-    return {
-      name: Factory.name || 'anonymous',
-      call: [new Factory(options), 'dispatch'],
-      type: 'method'
-    };
-  }
-
   if (typeof Factory !== 'function') {
     if (typeof Factory.call === 'function') {
-      Factory.name = Factory.name || 'anonymous';
-      Factory.type = Factory.type || 'factory';
-
-      return Factory;
+      return {
+        name: Factory.name || 'anonymous',
+        call: [Factory, 'call'],
+        type: 'method'
+      };
     }
 
     if (typeof Factory.next === 'function') {
@@ -39,6 +24,14 @@ module.exports = function (Factory, options) {
       name: Factory.name || 'anonymous',
       call: Factory,
       type: 'generator'
+    };
+  }
+
+  if (typeof Factory.prototype.call === 'function') {
+    return {
+      name: Factory.name || 'anonymous',
+      call: [new Factory(options), 'call'],
+      type: 'method'
     };
   }
 

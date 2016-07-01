@@ -1,3 +1,5 @@
+var buildFactory = require('./factory');
+
 /* global Promise */
 if (typeof Promise === 'undefined') {
   global.Promise = require('es6-promise').Promise;
@@ -14,10 +16,8 @@ function _when(promise, callback) {
 function _run(task, state, options) {
   switch (task.type) {
     case 'method':
-    case 'object':
       return task.call[0][task.call[1]](state, options);
 
-    case 'factory':
     case 'function':
       return task.call(state, options);
 
@@ -34,23 +34,32 @@ function _run(task, state, options) {
           var result = _iterator.next(value, options);
 
           if (!result.done) {
-            if (typeof result.value == 'function') {
-              var _value = result.value(value);
+            var _scalar = typeof result.value === 'string' || typeof result.value === 'number' || typeof result.value === 'boolean';
 
-              if (typeof _value.then === 'function' && typeof _value.catch === 'function') {
-                _value
-                  .then(function (value) {
-                    next(undefined, value);
-                  })
-                  .catch(next);
-              } else {
-                next(undefined, value);
-              }
+            if (_scalar || Array.isArray(result.value) || !result.value) {
+              return next(undefined, result.value);
+            }
+
+            var _next = (typeof result.value === 'function' || result.value.call || result.value.next)
+              ? buildFactory(result.value) : result;
+
+            if (_next.value) {
+              return next(undefined, _next.value);
+            }
+
+            var _value = _run(_next, state, options);
+
+            if (typeof _value.then === 'function' && typeof _value.catch === 'function') {
+              _value
+                .then(function (value) {
+                  next(undefined, value);
+                })
+                .catch(next);
             } else {
-              next(err, value);
+              next(undefined, _value);
             }
           } else {
-            resolve(value);
+            resolve(result.value);
           }
         }
 
