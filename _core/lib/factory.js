@@ -19,7 +19,7 @@ module.exports = function (Factory, options) {
     throw new Error('Middleware `' + Factory + '` should be callable');
   }
 
-  if (typeof Factory.prototype.next === 'function') {
+  if (typeof Factory.prototype.next === 'function' || typeof Factory.prototype.throw === 'function') {
     return {
       name: Factory.name || 'anonymous',
       call: Factory,
