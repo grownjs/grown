@@ -1,6 +1,13 @@
 {
-  "name": "grown",
+  "name": "homegrown",
   "version": "0.0.0",
-  "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
-  "license": "MIT"
+  "description": "Hand crafted NodeJS web framework",
+  "author": "Alvaro Cabrera",
+  "license": "MIT",
+  "dependencies": {
+    "def-module": "^0.0.1",
+    "es6-promise": "^3.2.1",
+    "qs": "^6.2.0",
+    "route-mappings": "^0.2.2"
+  }
 }
