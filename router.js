@@ -65,7 +65,9 @@ module.exports = function (cwd) {
     match[verb] = router.map(match[verb]);
   });
 
-  var _middlewares = require(path.join(cwd, 'config', 'middlewares.js'));
+  var _middlewaresFile = path.join(cwd, 'config', 'middlewares.js');
+  var _middlewares = fs.existsSync(_middlewaresFile) ? require(_middlewaresFile) : [];
+
   var fixedMiddlewares = {};
 
   glob.sync('middlewares/**/*.js', { cwd: cwd, nodir: true }).forEach(function (middleware) {
