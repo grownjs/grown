@@ -1,38 +1,57 @@
-var assert = require('assert');
-var mock = require('./mock');
+module.exports = function (server) {
+  var _fn;
 
-mock({
-  app: {
-    container: {
-      options: {}
-    }
-  },
-  host: {
-    protocol: 'http',
-    port: 8000
-  },
-  server: {
-    instance: require('./run')
-  },
-  tests: {
-    'it should responds to / with 404': function (req, res, next, client) {
-      req.url = '/';
+  function makeRequest(next) {
+    var app = server.listen('test://');
 
-      client(req, res, function () {
-        assert.equal(res.statusMessage, 'Not Found');
-        assert.equal(res.statusCode, 404);
-        next();
-      });
-    },
-    'it should responds to /x with JSON': function (req, res, next, client) {
-      req.url = '/x';
+    var _end;
 
-      client(req, res, function () {
-        assert.equal(res._body, '{"input":{},"query":{},"params":{"value":"x"}}');
-        assert.equal(res.statusMessage, 'OK');
-        assert.equal(res.statusCode, 200);
-        next();
-      });
-    }
+    var req = {
+      _data: null,
+      url: '/',
+      query: '',
+      method: 'GET',
+      headers: { host: app.location.host },
+      on: function (k, fn) { k === 'data' ? fn(req._data) : fn(); }
+    };
+
+    var res = {
+      _headers: {},
+      finished: false,
+      statusCode: 200,
+      statusMessage: 'OK',
+      end: function (data) {
+        res._body = data;
+        _end(res);
+      },
+      setHeader: function (k, v) { res._headers[k] = v; }
+    };
+
+    next(req, function (end) {
+      if (_fn) {
+        _fn(req, res);
+      }
+
+      _end = end;
+    });
   }
-});
+
+  makeRequest.makeProtocol = function () {
+    return {
+      createServer: function (_options, _client) {
+        if (typeof _options === 'function') {
+          _client = _options;
+          _options = null;
+        }
+
+        return {
+          listen: function () {
+            _fn = _client;
+          }
+        };
+      }
+    };
+  };
+
+  return makeRequest;
+};
