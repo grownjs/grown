@@ -22,17 +22,20 @@ module.exports = function (server) {
       statusMessage: 'OK',
       end: function (data) {
         res._body = data;
-        _end(res);
+
+        if (_end) {
+          _end(res);
+        }
       },
       setHeader: function (k, v) { res._headers[k] = v; }
     };
 
     next(req, function (end) {
+      _end = end;
+
       if (_fn) {
         _fn(req, res);
       }
-
-      _end = end;
     });
   }
 
