@@ -2,7 +2,7 @@ server = require('../..')()
 client = require('../../test')(server)
 server.protocols.test = client.makeProtocol()
 
-describe 'conn', ->
+describe '#conn', ->
   it 'should responds to unsupported requests with 501', (done) ->
     client (req, next) ->
       req.url = '/'

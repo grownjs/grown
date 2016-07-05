@@ -1,10 +1,11 @@
+path = require('path')
 server = require('../..')()
 client = require('../../test')(server)
 server.protocols.test = client.makeProtocol()
 
-describe 'router', ->
+describe '#router', ->
   it 'should responds to unsupported requests with 405', (done) ->
-    server.use require('../../router')(__dirname + '/../../example')
+    server.use require('../../router')(path.resolve(__dirname, '../../example'))
 
     client (req, next) ->
       req.url = '/'
