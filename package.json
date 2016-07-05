@@ -4,6 +4,13 @@
   "description": "Hand crafted NodeJS web framework",
   "author": "Alvaro Cabrera",
   "license": "MIT",
+  "scripts": {
+    "dev": "jasmine-node spec --coffee --verbose --autoTest --watchFolders lib",
+    "dev:lint": "eslint lib spec",
+    "dev:spec": "jasmine-node spec --coffee --noStackTrace --captureExceptions",
+    "cover": "istanbul cover --root lib --x '**/spec/**' -- jasmine-node --coffee spec",
+    "cover:up": "codecov --file=coverage/lcov.info --disable=gcov -e TRAVIS_NODE_VERSION"
+  },
   "dependencies": {
     "def-module": "^0.0.1",
     "es6-promise": "^3.2.1",
