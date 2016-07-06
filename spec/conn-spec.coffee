@@ -1,5 +1,5 @@
-server = require('../..')()
-client = require('../../test')(server)
+server = require('..')()
+client = require('../test')(server)
 server.protocols.test = client.makeProtocol()
 
 describe '#conn', ->
@@ -23,3 +23,5 @@ describe '#conn', ->
         expect(res.statusCode).toEqual 200
         expect(res._body).toEqual 'OSOM'
         done()
+
+# TODO: conn: _method, redirect, status, unset, set, get, send, end
