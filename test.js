@@ -4,34 +4,51 @@ module.exports = function (server) {
   function makeRequest(next) {
     var app = server.listen('test://');
 
-    var _end;
+    var _opts = {
+      end: false,
+      data: null,
+      body: null,
+      headers: {}
+    };
 
     var req = {
-      _data: null,
+      // test interface
+      setData: function (data) {
+        _opts.data = data;
+      },
+
+      // known interface
       url: '/',
       query: '',
       method: 'GET',
       headers: { host: app.location.host },
-      on: function (k, fn) { k === 'data' ? fn(req._data) : fn(); }
+      on: function (k, fn) { k === 'data' ? fn(_opts.data) : fn(); }
     };
 
     var res = {
-      _headers: {},
+      // test interface
+      getBody: function () {
+        return _opts.body;
+      },
+
+      // known interface
       finished: false,
       statusCode: 200,
       statusMessage: 'OK',
       end: function (data) {
-        res._body = data;
+        res.finished = true;
+        _opts.body = data;
 
-        if (_end) {
-          _end(res);
+        if (_opts.end) {
+          _opts.end(res);
         }
       },
-      setHeader: function (k, v) { res._headers[k] = v; }
+      getHeader: function (k) { return _opts.headers[k]; },
+      setHeader: function (k, v) { _opts.headers[k] = v; }
     };
 
     next(req, function (end) {
-      _end = end;
+      _opts.end = end;
 
       if (_fn) {
         _fn(req, res);
