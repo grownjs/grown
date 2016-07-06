@@ -47,10 +47,10 @@ module.exports = function (server) {
           _options = null;
         }
 
+        _fn = _client;
+
         return {
-          listen: function () {
-            _fn = _client;
-          }
+          listen: function () {}
         };
       }
     };
