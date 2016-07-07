@@ -146,25 +146,25 @@ describe '#conn', ->
         expect(res.getHeader('Baz')).toBeUndefined()
         done()
 
-  # it 'should emit the response and its headers through `send()`', (done) ->
-  #   $.server.mount (conn) ->
-  #     conn.send 'SEND'
+  it 'should emit the response and its headers through `send()`', (done) ->
+    $.server.mount (conn) ->
+      conn.send 'SEND'
 
-  #   $.client (req, next) ->
-  #     next (e, res) ->
-  #       expect(e).toBeUndefined()
-  #       expect(res._getBody()).toEqual 'SEND'
-  #       done()
+    $.client (req, next) ->
+      next (e, res) ->
+        expect(e.message).toEqual 'Not Implemented'
+        expect(res._getBody()).toEqual 'SEND'
+        done()
 
   it 'should set the `conn.body` and/or statusCode through `end()`', (done) ->
     $.server.mount (conn) ->
-      #conn.end 201, 'END'
+      conn.end 201, 'END'
       conn.end 'DONE'
 
     $.client (req, next) ->
       next (e, res) ->
         expect(e).toBeUndefined()
-        #expect(res.statusMessage).toEqual 'END'
-        #expect(res.statusCode).toEqual 201
+        expect(res.statusMessage).toEqual 'END'
+        expect(res.statusCode).toEqual 201
         expect(res._getBody()).toEqual 'DONE'
         done()
