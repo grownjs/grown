@@ -12,9 +12,7 @@
     "cover:up": "codecov --file=coverage/lcov.info --disable=gcov -e TRAVIS_NODE_VERSION"
   },
   "dependencies": {
-    "def-module": "^0.0.1",
     "es6-promise": "^3.2.1",
-    "formidable": "^1.0.17",
     "qs": "^6.2.0",
     "route-mappings": "^0.2.2"
   }
