@@ -66,12 +66,8 @@ module.exports = function (server) {
         };
 
         _fn(_req, _res, function (e) {
-          if (e) {
-            console.log('OH NOES', e);
-          }
-
           if (_opts.end) {
-            _opts.end(_res);
+            _opts.end(e, _res);
           }
         });
       }
