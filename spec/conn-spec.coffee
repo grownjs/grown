@@ -1,7 +1,7 @@
 $ = ->
   $.server = require('..')()
   $.client = require('../test')($.server)
-  $.server.protocols.test = $.client.makeProtocol()
+  $.server.protocols.test = $.client.protocol()
 
 describe '#conn', ->
   beforeEach $
@@ -161,6 +161,7 @@ describe '#conn', ->
 
     it 'supports body-parser for urlencoded payloads', (done) ->
       $.server.mount require('body-parser').urlencoded(extended: true)
+
       $.client (req, next) ->
         req._pushData('baz=buzz')
         req.headers['content-type'] = 'application/x-www-form-urlencoded'
@@ -169,3 +170,18 @@ describe '#conn', ->
           expect(e).toBeUndefined()
           expect(req.body).toEqual { baz: 'buzz' }
           done()
+
+  describe 'conn-like middleware support', ->
+    it 'supports plain functions', (done) ->
+      $.server.mount -> done()
+      $.client.fetch()
+
+    it 'supports promise values', (done) ->
+      $.server.mount (conn) ->
+        new Promise (resolve) ->
+          setTimeout ->
+            resolve()
+            done()
+          , 1
+
+      $.client.fetch()
