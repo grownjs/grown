@@ -75,7 +75,7 @@ module.exports = function (server) {
     });
   }
 
-  makeRequest.makeProtocol = function () {
+  makeRequest.protocol = function () {
     return {
       createServer: function (_options, _client) {
         if (typeof _options === 'function') {

@@ -1,7 +1,7 @@
 path = require('path')
 server = require('..')()
 client = require('../test')(server)
-server.protocols.test = client.makeProtocol()
+server.protocols.test = client.protocol()
 
 describe '#router', ->
   it 'should responds to unsupported requests with 405', (done) ->
