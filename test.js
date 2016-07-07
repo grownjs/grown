@@ -1,3 +1,5 @@
+var Readable = require('stream').Readable;
+
 module.exports = function (server) {
   var _fn;
 
@@ -6,52 +8,72 @@ module.exports = function (server) {
 
     var _opts = {
       end: false,
-      data: null,
       body: null,
+      buffer: [],
       headers: {}
     };
 
-    var req = {
-      // test interface
-      setData: function (data) {
-        _opts.data = data;
-      },
+    var _req = new Readable();
 
-      // known interface
-      url: '/',
-      query: '',
-      method: 'GET',
-      headers: { host: app.location.host },
-      on: function (k, fn) { k === 'data' ? fn(_opts.data) : fn(); }
+    _req._read = function () {
+      _opts.buffer.forEach(function (data) {
+        _req.push(data);
+      });
+
+      _req.push(null);
     };
 
-    var res = {
-      // test interface
-      getBody: function () {
-        return _opts.body;
-      },
+    // known interface
+    _req.url = '/';
+    _req.query = '';
+    _req.method = 'GET';
+    _req.headers = {};
+    _req.headers = { host: app.location.host };
 
-      // known interface
-      finished: false,
-      statusCode: 200,
-      statusMessage: 'OK',
-      end: function (data) {
-        res.finished = true;
-        _opts.body = data;
+    // initial length
+    _req.headers['content-length'] = 0;
 
-        if (_opts.end) {
-          _opts.end(res);
-        }
-      },
-      getHeader: function (k) { return _opts.headers[k]; },
-      setHeader: function (k, v) { _opts.headers[k] = v; }
+    // test interface
+    _req._pushData = function (data) {
+      _opts.buffer.push(data);
+      _req.headers['content-length'] += data.length;
     };
 
-    next(req, function (end) {
+    next(_req, function (end) {
       _opts.end = end;
 
       if (_fn) {
-        _fn(req, res);
+        var _res = {};
+
+        // known interface
+        _res.finished = false;
+        _res.statusCode = 200;
+        _res.statusMessage = 'OK';
+
+        _res.end = function (data) {
+          _res.finished = true;
+          _opts.body = data;
+
+          return _res;
+        };
+
+        _res.getHeader = function (k) { return _opts.headers[k]; };
+        _res.setHeader = function (k, v) { _opts.headers[k] = v; };
+
+        // test interface
+        _res._getBody = function () {
+          return _opts.body;
+        };
+
+        _fn(_req, _res, function (e) {
+          if (e) {
+            console.log('OH NOES', e);
+          }
+
+          if (_opts.end) {
+            _opts.end(_res);
+          }
+        });
       }
     });
   }
