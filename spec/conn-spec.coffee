@@ -131,6 +131,16 @@ describe '#conn', ->
         done()
 
   describe 'known express-middleware', ->
+    it 'supports error-handling middleware', (done) ->
+      $.server.mount (e, req, res, next) ->
+        expect(e.message).toEqual 'D:'
+        done()
+
+      $.server.mount ->
+        throw new Error 'D:'
+
+      $.client.fetch()
+
     it 'supports method-override for hacking `req.method`', (done) ->
       $.server.mount require('method-override')()
 
