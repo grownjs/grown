@@ -66,7 +66,8 @@ module.exports = function (server) {
         };
 
         _fn(_req, _res, function (e) {
-          if (_opts.end) {
+          if (_opts.end && !_opts.end._finished) {
+            _opts.end._finished = true;
             _opts.end(e, _res);
           }
         });
@@ -89,6 +90,37 @@ module.exports = function (server) {
         };
       }
     };
+  };
+
+  makeRequest.fetch = function (method, path, opts) {
+    return new Promise(function (resolve, reject) {
+      makeRequest(function (req, next) {
+        var _method = typeof method === 'string' && typeof path === 'string' ? method : 'get';
+        var _path = typeof path === 'string' ? path : method || '/';
+        var _opts = typeof path === 'object' ? _path : opts || {};
+
+        if (typeof method === 'object') {
+          _opts = method;
+          _method = 'get';
+          _path = '/';
+        }
+
+        req.url = _path;
+        req.method = _method.toUpperCase();
+
+        Object.keys(_opts).forEach(function (_key) {
+          req[_key] = _opts[_key];
+        });
+
+        next(function (e, res) {
+          if (e) {
+            reject(e);
+          } else {
+            resolve(res);
+          }
+        });
+      });
+    });
   };
 
   return makeRequest;
