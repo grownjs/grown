@@ -1,4 +1,5 @@
 var Readable = require('stream').Readable;
+var Writable = require('stream').Writable;
 
 module.exports = function (server) {
   var _fn;
@@ -43,19 +44,26 @@ module.exports = function (server) {
       _opts.end = end;
 
       if (_fn) {
-        var _res = {};
+        var _res = new Writable();
+        var _end = _res.end;
+
+        // by-pass
+        _res.end = function (chunk) {
+          _res.finished = true;
+
+          if (chunk) {
+            _opts.body = chunk;
+          }
+
+          _end.call(_res);
+
+          return _res;
+        };
 
         // known interface
         _res.finished = false;
         _res.statusCode = 200;
         _res.statusMessage = 'OK';
-
-        _res.end = function (data) {
-          _res.finished = true;
-          _opts.body = data;
-
-          return _res;
-        };
 
         _res.getHeader = function (k) { return _opts.headers[k]; };
         _res.setHeader = function (k, v) { _opts.headers[k] = v; };
