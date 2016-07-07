@@ -185,3 +185,39 @@ describe '#conn', ->
           , 1
 
       $.client.fetch()
+
+    it 'supports primitive classes', (done) ->
+      class Dummy
+        call: -> done()
+
+      $.server.mount Dummy
+      $.client.fetch()
+
+    it 'supports plain-old callbacks', (done) ->
+      dummy =
+        call: -> done()
+
+      $.server.mount dummy
+      $.client.fetch()
+
+    it 'supports iterator-like callbacks', (done) ->
+      dummy =
+        next: -> { done: true, value: done() }
+
+      $.server.mount dummy
+      $.client.fetch()
+
+    it 'supports generator-like callbacks', (done) ->
+      e = null
+
+      try
+        _generator = eval('(function*(){yield done})')
+
+        $.server.mount _generator
+        $.client.fetch()
+      catch _e
+        e = _e
+        done()
+
+      if parseFloat(process.version.substr(1)) >= 4.0
+        expect(e).toBe null
