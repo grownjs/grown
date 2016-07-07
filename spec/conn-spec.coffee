@@ -3,6 +3,8 @@ $ = ->
   $.client = require('../test')($.server)
   $.server.protocols.test = $.client.protocol()
 
+STATUS_CODES = require('http').STATUS_CODES
+
 describe '#conn', ->
   beforeEach $
 
@@ -10,7 +12,7 @@ describe '#conn', ->
     $.client (req, next) ->
       next (e, res) ->
         expect(e).toBeUndefined()
-        expect(res.statusMessage).toEqual 'Not Implemented'
+        expect(res.statusMessage).toEqual STATUS_CODES[501]
         expect(res.statusCode).toEqual 501
         done()
 
@@ -57,7 +59,7 @@ describe '#conn', ->
       next (e, res) ->
         expect(e).toBeUndefined()
         expect(res.getHeader('Location')).toEqual '/y'
-        expect(res.statusMessage).toEqual 'Found'
+        expect(res.statusMessage).toEqual STATUS_CODES[302]
         expect(res.statusCode).toEqual 302
         done()
 
@@ -68,7 +70,7 @@ describe '#conn', ->
     $.client (req, next) ->
       next (e, res) ->
         expect(e).toBeUndefined()
-        expect(res.statusMessage).toEqual 'Not Found'
+        expect(res.statusMessage).toEqual STATUS_CODES[404]
         expect(res.statusCode).toEqual 404
         done()
 
