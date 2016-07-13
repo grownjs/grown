@@ -50,18 +50,19 @@ describe '#conn', ->
 
   it 'should responds to redirections through `redirect()`', (done) ->
     $.server.mount (conn) ->
-      conn.redirect('/y')
+      conn.redirect('/y?a=b')
 
     $.client (req, next) ->
       next (e, res) ->
         expect(e).toBeUndefined()
-        expect(res.getHeader('Location')).toEqual '/y'
+        expect(res.getHeader('Location')).toEqual '/y?a=b'
         expect(res.statusMessage).toEqual STATUS_CODES[302]
         expect(res.statusCode).toEqual 302
         done()
 
   it 'should responds to any statusCode through `status()`', (done) ->
     $.server.mount (conn) ->
+      expect(-> conn.status()).toThrow()
       conn.status(404)
 
     $.client (req, next) ->
@@ -73,6 +74,8 @@ describe '#conn', ->
 
   it 'should append headers to the response through `set()`', (done) ->
     $.server.mount (conn) ->
+      conn.set { candy: 'does' }
+      conn.set 'candy', 'nothing', true
       conn.set 'foo', 'bar'
       conn.end()
 
@@ -80,16 +83,19 @@ describe '#conn', ->
       next (e, res) ->
         expect(e).toBeUndefined()
         expect(res.getHeader('Foo')).toEqual 'bar'
+        expect(res.getHeader('Candy')).toEqual ['does', 'nothing']
         done()
 
   it 'should return headers from the request through `get()`', (done) ->
     $.server.mount (conn) ->
       $.host = conn.get('host')
+      $.undef = conn.get('undef', 'def')
 
     $.client (req, next) ->
       next (e, res) ->
         expect(e).toBeUndefined()
         expect($.host).toEqual ':80'
+        expect($.undef).toEqual 'def'
         done()
 
   it 'should delete headers from the response through `unset()`', (done) ->
@@ -128,6 +134,19 @@ describe '#conn', ->
         expect(res.statusCode).toEqual 201
         expect(res._getBody()).toEqual 'DONE'
         done()
+
+  it 'should validate `conn.input` properly', (done) ->
+    $.server.mount (conn) ->
+      expect(-> conn.input).toThrow()
+      done()
+    $.client.fetch()
+
+  it 'should validate `conn.send` properly', (done) ->
+    $.server.mount (conn) ->
+      conn.res.finished = true
+      expect(-> conn.send()).toThrow()
+      done()
+    $.client.fetch()
 
   describe 'conn-like middleware support', ->
     it 'supports plain functions', (done) ->
