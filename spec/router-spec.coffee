@@ -1,12 +1,15 @@
-path = require('path')
+{ resolve } = require('path')
 
 $ = require('./_protocol')
+
+useConfig = (name) ->
+  $.server.use require('../router')(resolve(__dirname, '../examples', name))
 
 describe '#router', ->
   beforeEach $
 
   it 'should responds to unsupported requests with 405', (done) ->
-    $.server.use require('../router')(path.resolve(__dirname, '../example'))
+    useConfig 'no-routes'
 
     $.client (req, next) ->
       next (e, res) ->
