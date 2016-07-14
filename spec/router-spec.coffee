@@ -66,6 +66,14 @@ describe '#router', ->
       expect($.handler.action).toEqual 'test_params'
       done()
 
+  it 'should fail when requiring any broken source', (done) ->
+    useConfig 'valid-routes'
+
+    $.client.fetch('/broken/handler').then (res) ->
+      expect(res.statusMessage).toEqual 'Unexpected token ,'
+      expect(res.statusCode).toEqual 501
+      done()
+
   it 'should fail on invalid route-middlewares', (done) ->
     useConfig 'with-middlewares'
 
