@@ -21,6 +21,7 @@
     "body-parser": "^1.15.2",
     "csurf": "^1.9.0",
     "express-session": "^1.14.0",
-    "method-override": "^2.3.6"
+    "method-override": "^2.3.6",
+    "serve-static": "^1.11.1"
   }
 }
