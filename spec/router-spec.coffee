@@ -44,11 +44,41 @@ describe '#router', ->
       expect(res.statusCode).toEqual 200
       done()
 
+  it 'should responds to unmatched routes with 404', (done) ->
+    useConfig 'valid-routes'
+
+    $.client.fetch('/not/found').then (res) ->
+      expect(res.statusMessage).toEqual 'Not Found'
+      expect(res.statusCode).toEqual 404
+      done()
+
+  it 'should append `req.params` and `req.handler` when a route matches', (done) ->
+    $.server.mount (conn) ->
+      conn.next ->
+        $.params = conn.req.params
+        $.handler = conn.req.handler
+
+    useConfig 'valid-routes'
+
+    $.client.fetch('/x').then ->
+      expect($.params).toEqual { value: 'x' }
+      expect($.handler.controller).toEqual 'Example'
+      expect($.handler.action).toEqual 'test_params'
+      done()
+
   it 'should fail on invalid route-middlewares', (done) ->
     useConfig 'with-middlewares'
 
     $.client.fetch('/no').then (res) ->
       expect(res.statusMessage).toEqual 'Middleware `[object Object]` should be callable (invalid)'
+      expect(res.statusCode).toEqual 501
+      done()
+
+  it 'should fail on unknown route-middlewares', (done) ->
+    useConfig 'with-middlewares'
+
+    $.client.fetch('/err').then (res) ->
+      expect(res.statusMessage).toEqual 'Undefined `err` middleware'
       expect(res.statusCode).toEqual 501
       done()
 
@@ -73,7 +103,3 @@ describe '#router', ->
     $.client.fetch('/surely').then (res) ->
       expect(res._getBody()).toEqual 'OSOM!'
       done()
-
-# TODO:
-# app-container-extensions
-# no-method-allowed, not-found
