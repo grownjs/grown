@@ -9,7 +9,8 @@
     "dev:lint": "eslint lib spec",
     "dev:spec": "jasmine-node spec --coffee --noStackTrace --captureExceptions",
     "cover": "istanbul cover --root lib --x '**/spec/**' -- jasmine-node --coffee spec",
-    "cover:up": "codecov --file=coverage/lcov.info --disable=gcov -e TRAVIS_NODE_VERSION"
+    "cover:up": "codecov --file=coverage/lcov.info --disable=gcov -e TRAVIS_NODE_VERSION",
+    "example": "NODE_PATH=.. node examples/_runner.js"
   },
   "dependencies": {
     "es6-promise": "^3.2.1",

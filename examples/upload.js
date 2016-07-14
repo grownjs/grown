@@ -2,7 +2,9 @@ var server = require('homegrown')();
 
 var IncomingForm = require('formidable').IncomingForm;
 
-server.listen(5000);
+server.listen(5000, function (app) {
+  console.log('Listening on', app.location.href);
+});
 
 server.mount(function (conn) {
   if (conn.type.indexOf('multipart') === -1) {
