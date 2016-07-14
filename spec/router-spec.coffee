@@ -3,7 +3,7 @@
 $ = require('./_protocol')
 
 useConfig = (name) ->
-  $.server.use require('../router')(resolve(__dirname, '../examples', name))
+  $.server.use require('../router')(resolve(__dirname, '_fixtures', name))
 
 describe '#router', ->
   beforeEach $
