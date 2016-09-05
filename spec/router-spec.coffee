@@ -70,7 +70,7 @@ describe '#router', ->
     useConfig 'valid-routes'
 
     $.client.fetch('/broken/handler').then (res) ->
-      expect(res.statusMessage).toEqual 'Unexpected token ,'
+      expect(res.statusMessage).toContain 'Unexpected token'
       expect(res.statusCode).toEqual 501
       done()
 
