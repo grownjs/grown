@@ -8,14 +8,14 @@ describe '#factory', ->
   it 'supports plain objects with .call', ->
     fn = { call: -> 42 }
 
-    expect(factory(fn).name).toEqual 'anonymous'
+    expect(factory(fn).name).toEqual 'call'
     expect(factory(fn).call).toEqual [fn, 'call']
     expect(factory(fn).type).toEqual 'method'
 
   it 'supports iterators', ->
     fn = { next: -> { done: true, value: 42 } }
 
-    expect(factory(fn).name).toEqual 'anonymous'
+    expect(factory(fn).name).toEqual 'next'
     expect(factory(fn).call).toEqual fn
     expect(factory(fn).type).toEqual 'iterator'
 
@@ -29,7 +29,7 @@ describe '#factory', ->
 
     if parseFloat(process.version.substr(1)) >= 4.0
       expect(e).toBe null
-      expect(factory(fn).name).toEqual 'anonymous'
+      expect(factory(fn).name).toEqual '*'
       expect(factory(fn).call).toEqual fn
       expect(factory(fn).type).toEqual 'generator'
 
@@ -45,7 +45,7 @@ describe '#factory', ->
     fn = (req, res, next) -> next()
     err = (req, res, next) -> next(42)
 
-    expect(factory(fn).name).toEqual 'anonymous'
+    expect(factory(fn).name).toEqual 'fn'
     expect(factory(fn).type).toEqual 'function'
 
     conn =
@@ -61,7 +61,7 @@ describe '#factory', ->
     fn = (err, req, res, next) -> next()
     err = (err, req, res, next) -> next(err)
 
-    expect(factory(err).name).toEqual 'anonymous'
+    expect(factory(err).name).toEqual 'err'
     expect(factory(err).type).toEqual 'function'
 
     conn =
@@ -76,6 +76,6 @@ describe '#factory', ->
   it 'supports plain functions', ->
     fn = -> 42
 
-    expect(factory(fn).name).toEqual 'anonymous'
+    expect(factory(fn).name).toEqual 'fn'
     expect(factory(fn).call).toEqual fn
     expect(factory(fn).type).toEqual 'function'
