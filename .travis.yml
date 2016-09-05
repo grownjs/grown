@@ -1,0 +1,11 @@
+language: node_js
+node_js:
+  - 4
+  - 6
+  - iojs
+script:
+  - 'npm run cover'
+after_success:
+  - 'npm run cover:up'
+notifications:
+  email: false
