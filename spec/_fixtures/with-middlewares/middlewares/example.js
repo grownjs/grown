@@ -1,5 +1,5 @@
-module.exports = function (conn) {
-  return conn.next(function () {
+module.exports = (conn) => {
+  return conn.next(() => {
     if (conn.body) {
       conn.body += '!';
     }

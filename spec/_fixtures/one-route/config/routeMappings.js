@@ -1,4 +1,4 @@
-module.exports = function (routeMappings) {
+module.exports = (routeMappings) => {
   return routeMappings()
     .get('/', 'Home.index');
 };

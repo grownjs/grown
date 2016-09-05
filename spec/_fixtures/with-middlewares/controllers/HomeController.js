@@ -1,21 +1,21 @@
 module.exports = {
   pipeline: {
     err: 'undef',
-    test: '_suffix'
+    test: '_suffix',
   },
-  _suffix: function (conn) {
-    return conn.next(function () {
+  _suffix(conn) {
+    return conn.next(() => {
       if (conn.body) {
         conn.body += '!';
       }
     });
   },
-  index: function (conn) {
+  index(conn) {
     conn.body = 'OSOM';
   },
-  test: function (conn) {
+  test(conn) {
     return this.index(conn);
   },
-  err: function () {
-  }
+  err() {
+  },
 };

@@ -1,8 +1,8 @@
 module.exports = {
-  im_exists: function (conn) {
+  im_exists(conn) {
     conn.body = 'OSOM';
   },
-  test_params: function (conn) {
+  test_params(conn) {
     return this.im_exists(conn);
-  }
+  },
 };

@@ -1,4 +1,4 @@
-module.exports = function (routeMappings) {
+module.exports = (routeMappings) => {
   return routeMappings()
     .get('/no', { to: 'Home.index', middleware: 'invalid' })
     .get('/yes', { to: 'Home.index', middleware: 'test' })
