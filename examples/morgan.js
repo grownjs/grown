@@ -1,7 +1,7 @@
-var server = require('homegrown')();
+const server = require('grown')();
 
 server.mount(require('morgan')('dev'));
 
-server.listen(5000, function (app) {
+server.listen(5000, (app) => {
   console.log('Listening on', app.location.href);
 });

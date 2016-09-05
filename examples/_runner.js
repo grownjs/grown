@@ -1,1 +1,1 @@
-require('./' + process.argv.slice(2)[0]);
+require(`./${process.argv.slice(2)[0]}`);
