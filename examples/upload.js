@@ -1,4 +1,6 @@
-const server = require('grown')();
+'use strict';
+
+const server = require('..')();
 
 const IncomingForm = require('formidable').IncomingForm;
 
@@ -6,11 +8,7 @@ server.listen(5000, (app) => {
   console.log('Listening on', app.location.href);
 });
 
-server.mount((conn) => {
-  if (conn.type.indexOf('multipart') === -1) {
-    return;
-  }
-
+function processForm(conn) {
   return new Promise((resolve, reject) => {
     const form = new IncomingForm({
       multiples: true,
@@ -33,6 +31,10 @@ server.mount((conn) => {
       }
     });
   });
+}
+
+server.mount((conn) => {
+  return conn.type.indexOf('multipart') === -1 || processForm(conn);
 });
 
 server.mount((conn) => {

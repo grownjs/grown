@@ -1,4 +1,6 @@
-const server = require('grown')();
+'use strict';
+
+const server = require('..')();
 
 server.mount(require('morgan')('dev'));
 

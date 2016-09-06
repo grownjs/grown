@@ -1,4 +1,6 @@
-const server = require('grown')();
+'use strict';
+
+const server = require('..')();
 
 server.mount(require('serve-static')(__dirname));
 server.mount(require('serve-index')(__dirname));

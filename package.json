@@ -10,7 +10,7 @@
     "dev:spec": "jasmine-node spec --coffee --noStackTrace --captureExceptions",
     "cover": "istanbul cover --root lib --x '**/spec/**' -- jasmine-node --coffee spec",
     "cover:up": "codecov --file=coverage/lcov.info --disable=gcov -e TRAVIS_NODE_VERSION",
-    "example": "NODE_PATH=.. node examples/_runner.js",
+    "example": "node examples/_runner.js",
     "test": "npm run dev:lint && npm run dev:spec"
   },
   "dependencies": {
