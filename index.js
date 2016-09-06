@@ -1,3 +1,5 @@
+'use strict';
+
 const useFactory = require('./lib/api/use');
 const mountFactory = require('./lib/api/mount');
 const listenFactory = require('./lib/api/listen');
