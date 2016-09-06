@@ -6,7 +6,7 @@ module.exports = {
   _suffix(conn) {
     return conn.next(() => {
       if (conn.body) {
-        conn.body += '!';
+        conn.body = `${conn.body}!`;
       }
     });
   },

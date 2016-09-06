@@ -31,7 +31,7 @@ describe '#router', ->
     useConfig 'valid-routes'
 
     $.client.fetch('/no').then (res) ->
-      expect(res.statusMessage).toEqual 'Undefined `Example.not_exists` handler'
+      expect(res.statusMessage).toMatch /Undefined .+? handler/
       expect(res.statusCode).toEqual 501
       done()
 
@@ -78,7 +78,7 @@ describe '#router', ->
     useConfig 'with-middlewares'
 
     $.client.fetch('/no').then (res) ->
-      expect(res.statusMessage).toEqual 'Middleware `[object Object]` should be callable (invalid)'
+      expect(res.statusMessage).toMatch /Middleware .+? should be callable/
       expect(res.statusCode).toEqual 501
       done()
 
@@ -86,7 +86,7 @@ describe '#router', ->
     useConfig 'with-middlewares'
 
     $.client.fetch('/err').then (res) ->
-      expect(res.statusMessage).toEqual 'Undefined `err` middleware'
+      expect(res.statusMessage).toMatch /Undefined .+? middleware/
       expect(res.statusCode).toEqual 501
       done()
 
@@ -101,7 +101,7 @@ describe '#router', ->
     useConfig 'with-middlewares'
 
     $.client.fetch('/maybe').then (res) ->
-      expect(res.statusMessage).toEqual 'Undefined `Home.undef` handler'
+      expect(res.statusMessage).toMatch /Undefined .+? handler/
       expect(res.statusCode).toEqual 501
       done()
 

@@ -122,16 +122,15 @@ describe '#conn', ->
         expect(res._getBody()).toEqual 'SEND'
         done()
 
-  it 'should set the `conn.body` and/or statusCode through `end()`', (done) ->
+  it 'should set the `conn.body` through `end()`', (done) ->
     $.server.mount (conn) ->
-      conn.end 201, 'END'
       conn.end 'DONE'
 
     $.client (req, next) ->
       next (e, res) ->
         expect(e).toBeUndefined()
-        expect(res.statusMessage).toEqual 'END'
-        expect(res.statusCode).toEqual 201
+        expect(res.statusMessage).toEqual 'OK'
+        expect(res.statusCode).toEqual 200
         expect(res._getBody()).toEqual 'DONE'
         done()
 
