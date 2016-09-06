@@ -1,19 +1,19 @@
-var useFactory = require('./lib/api/use');
-var mountFactory = require('./lib/api/mount');
-var listenFactory = require('./lib/api/listen');
-var dispatchFactory = require('./lib/api/dispatch');
+const useFactory = require('./lib/api/use');
+const mountFactory = require('./lib/api/mount');
+const listenFactory = require('./lib/api/listen');
+const dispatchFactory = require('./lib/api/dispatch');
 
-module.exports = function (options) {
-  var context = {
+module.exports = (options) => {
+  const context = {
     hosts: {},
     servers: {},
-    protocols: {}
+    protocols: {},
   };
 
-  var container = {
+  const container = {
     options: options || {},
     pipeline: [],
-    extensions: {}
+    extensions: {},
   };
 
   useFactory(context, container);

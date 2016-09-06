@@ -1,16 +1,16 @@
 {
   "env": {
     "es6": true,
-    "node": true
+    "node": true,
+    "browser": true
   },
-  "rules": {
-    "quotes": [2, "single", "avoid-escape"],
-    "semi": [2, "always"],
-    "no-unused-vars": 2,
-    "no-extra-semi": 2,
-    "no-undef": 2
-  },
+  "extends": "airbnb-base",
   "parserOptions": {
     "sourceType": "module"
+  },
+  "rules" : {
+    "no-param-reassign": [0, {}],
+    "no-underscore-dangle": [0, {}],
+    "arrow-body-style": [0, "always"]
   }
 }
