@@ -45,9 +45,6 @@ describe '#factory', ->
     fn = (req, res, next) -> next()
     err = (req, res, next) -> next(42)
 
-    expect(factory(fn).name).toEqual 'fn'
-    expect(factory(fn).type).toEqual 'function'
-
     conn =
       next: -> new Promise (resolve) ->
         resolve conn
@@ -61,9 +58,6 @@ describe '#factory', ->
     fn = (err, req, res, next) -> next()
     err = (err, req, res, next) -> next(err)
 
-    expect(factory(err).name).toEqual 'err'
-    expect(factory(err).type).toEqual 'function'
-
     conn =
       next: -> new Promise (resolve, reject) ->
         reject(42)
@@ -75,7 +69,4 @@ describe '#factory', ->
 
   it 'supports plain functions', ->
     fn = -> 42
-
-    expect(factory(fn).name).toEqual 'fn'
-    expect(factory(fn).call).toEqual fn
-    expect(factory(fn).type).toEqual 'function'
+    expect(factory(fn).call()).toEqual 42
