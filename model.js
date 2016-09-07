@@ -3,65 +3,136 @@
 const Sequelize = require('sequelize');
 
 const sequelize = new Sequelize({
-  dialect: 'sqlite',
-  storage: 'db.sqlite',
+  username: 'acabrera',
+  database: 'acabrera',
+  dialect: 'postgres',
+
+  // storage: ':memory:',
+  // dialect: 'sqlite',
+
+  logging: false,
   define: {
     timestamps: false,
     freezeTableName: true,
   },
 });
 
+function omit(obj, keys, _pick) {
+  const copy = {};
+
+  Object.keys(obj).forEach((key) => {
+    if (_pick ? keys.indexOf(key) > -1 : keys.indexOf(key) === -1) {
+      copy[key] = obj[key];
+    }
+  });
+
+  return copy;
+}
+
+function pick(obj, keys) {
+  return omit(obj, keys, true);
+}
+
+function type(key, value, params) {
+  if (!value) {
+    return Sequelize[key];
+  }
+
+  if (typeof value !== 'function') {
+    return Sequelize[key](value);
+  }
+
+  return Sequelize[key](value, params);
+}
+
 const definitions = {
   string: (definition) => {
     switch (definition.format) {
-      case 'date-time': return Sequelize.DATE;
-      case 'date': return Sequelize.DATEONLY;
-      case 'time': return Sequelize.TIME;
-      case 'now': return Sequelize.NOW;
+      case 'date-time': return type('DATE');
+      case 'date': return type('DATEONLY');
+      case 'time': return type('TIME');
+      case 'now': return type('NOW');
 
-      case 'json': return Sequelize.JSON;
-      case 'jsonb': return Sequelize.JSONB;
+      case 'json': return type('JSON');
+      case 'jsonb': return type('JSONB');
+      case 'blob': return type('BLOB', pick(definition, ['length']));
 
       case 'uuid':
       case 'uuidv4':
-        return Sequelize.UUIDV4;
+        return type('UUIDV4');
 
-      case 'uuidv1': return Sequelize.UUIDV1;
+      case 'uuidv1': return type('UUIDV1');
 
-      case 'char': return Sequelize.NOW;
-      case 'text': return Sequelize.TEXT;
+      case 'char': return type('CHAR', pick(definition, ['length', 'binary']));
+      case 'text': return type('TEXT');
 
       case 'int64':
       case 'bigint':
-        return Sequelize.BIGINT;
+        return type('BIGINT', pick(definition, ['unsigned', 'zerofill']));
 
-      case 'int32': return Sequelize.INTEGER;
+      case 'int32': return type('STRING', pick(definition, ['unsigned', 'zerofill']));
 
       case 'number':
-      case 'decimal':
-        return Sequelize.DECIMAL;
+        return type('DECIMAL', pick(definition, ['unsigned', 'zerofill']));
 
       case 'real':
       case 'float':
       case 'double':
       case 'boolean':
-        return Sequelize[definition.format.toUpperCase()];
+      case 'decimal':
+        return type(definition.format.toUpperCase(), pick(definition, ['unsigned', 'zerofill']));
 
       default:
-        return Sequelize.STRING;
+        return type('STRING', pick(definition, ['length', 'binary']));
     }
   },
 
-  number: () => Sequelize.DECIMAL,
-  integer: () => Sequelize.INTEGER,
+  null: () => type('VIRTUAL'),
+  number: () => type('DECIMAL'),
+  integer: () => type('INTEGER'),
+  boolean: () => type('BOOLEAN'),
 
-  // special types
-  array: () => Sequelize.ARRAY,
-  range: () => Sequelize.RANGE,
-  hstore: () => Sequelize.HSTORE,
-  virtual: () => Sequelize.VIRTUAL,
-  geometry: () => Sequelize.GEOMETRY,
-  geography: () => Sequelize.GEOGRAPHY,
+  // postgres only
+  array: (definition) => {
+    if (!definition || !definition.items.type || !definitions[definition.items.type]) {
+      throw new Error(`Invalid definition for '${definition}'`);
+    }
+
+    return type('ARRAY', definitions[definition.items.type]());
+  },
+
+  // mixed
+  object: type('JSON'),
+
+  // virtual types
+  virtual: (definition) => {
+    const _params = pick(definition,
+        ['fields', 'return', 'length', 'binary', 'unsigned', 'zerofill']);
+
+    const _return = _params.return || null;
+    const _fields = _params.fields || [];
+
+    if (!_return) {
+      return type('VIRTUAL');
+    }
+
+    const _value = Sequelize[_return.toUpperCase()];
+
+    if (!_value) {
+      throw new Error(`Invalid definition for '${_return}'`);
+    }
+
+    delete _params.return;
+    delete _params.fields;
+
+    return type('VIRTUAL', _value(_params), _fields);
+  },
+
+  // more types...
+  range: () => type('RANGE'),
+  hstore: () => type('HSTORE'),
+  geometry: () => type('GEOMETRY'),
+  geography: () => type('GEOGRAPHY'),
 };
 
 function convertSchema(definition) {
@@ -70,7 +141,7 @@ function convertSchema(definition) {
   }
 
   if (typeof definitions[definition.type] === 'function') {
-    return definitions[definition.type](definition);
+    return definitions[definition.type](omit(definition, ['type']));
   }
 
   if (!definition.properties) {
@@ -91,13 +162,15 @@ function convertSchema(definition) {
 }
 
 module.exports = (name, props) => {
-  const definition = {};
+  const _schema = props
+    ? convertSchema(props.$schema)
+    : null;
 
-  Object.keys(props).forEach((key) => {
-    if (key !== '$schema') {
-      definition[key] = props[key];
-    }
-  });
+  let _definition;
 
-  return sequelize.define(name, convertSchema(props.$schema), definition);
+  if (props) {
+    _definition = omit(props, ['$schema']);
+  }
+
+  return sequelize.define(name, _schema, _definition);
 };
