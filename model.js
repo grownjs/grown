@@ -98,7 +98,7 @@ const definitions = {
   },
 
   // mixed
-  object: type('JSON'),
+  object: type('JSONB'),
 
   // virtual types
   virtual: (definition) => {
