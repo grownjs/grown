@@ -1,3 +1,5 @@
+sudo: required
+dist: trusty
 services:
   - postgresql
 language: node_js
