@@ -26,13 +26,15 @@
     "eslint": "^3.4.0",
     "eslint-config-airbnb-base": "^5.0.3",
     "eslint-plugin-import": "^1.14.0",
-    "express-session": "^1.14.0",
+    "express-session": "^1.14.1",
     "formidable": "^1.0.17",
     "istanbul": "^0.4.3",
     "jasmine-node": "2.0.0-beta4",
     "method-override": "^2.3.6",
     "morgan": "^1.7.0",
+    "sequelize": "^3.24.1",
     "serve-index": "^1.8.0",
-    "serve-static": "^1.11.1"
+    "serve-static": "^1.11.1",
+    "sqlite3": "^3.1.4"
   }
 }
