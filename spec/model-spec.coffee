@@ -6,7 +6,7 @@ describe '#model', ->
       beforeEach ->
         t.setup 'sqlite', ':memory:'
 
-      #it 'support null', t('integer', null)
+      it 'support null', t('null', null)
       it 'support string', t('string', 'OK')
       it 'support number', t('number', '1.1')
       it 'support integer', t('integer', 1)

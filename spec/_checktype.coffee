@@ -16,7 +16,7 @@ module.exports = (type, value, params) ->
       , conn
 
     T.sync(force: true).then ->
-      params = { value } if value?
+      params = { value }
 
       T.create(params).then (test) ->
         expect(test.get('value')).toEqual value
