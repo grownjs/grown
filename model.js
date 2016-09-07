@@ -2,17 +2,6 @@
 
 const Sequelize = require('sequelize');
 
-const sequelize = new Sequelize({
-  database: 'travis_ci_test',
-  username: 'postgres',
-  dialect: 'postgres',
-  logging: false,
-  define: {
-    timestamps: false,
-    freezeTableName: true,
-  },
-});
-
 function omit(obj, keys, _pick) {
   const copy = {};
 
@@ -157,7 +146,7 @@ function convertSchema(definition) {
   return _props;
 }
 
-module.exports = (name, props) => {
+module.exports = (name, props, sequelize) => {
   const _schema = props
     ? convertSchema(props.$schema)
     : null;
