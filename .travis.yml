@@ -1,8 +1,12 @@
+services:
+  - postgresql
 language: node_js
 node_js:
   - 4
   - 6
   - iojs
+before_script:
+  - psql -c 'create database travis_ci_test;' -U postgres
 script:
   - 'npm run cover'
 after_success:

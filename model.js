@@ -3,13 +3,9 @@
 const Sequelize = require('sequelize');
 
 const sequelize = new Sequelize({
-  username: 'acabrera',
-  database: 'acabrera',
+  database: 'travis_ci_test',
+  username: 'postgres',
   dialect: 'postgres',
-
-  // storage: ':memory:',
-  // dialect: 'sqlite',
-
   logging: false,
   define: {
     timestamps: false,
