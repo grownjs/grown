@@ -18,16 +18,16 @@ function pick(obj, keys) {
   return omit(obj, keys, true);
 }
 
-function type(key, value, params) {
-  if (!value) {
-    return Sequelize[key];
+function type(key, arg1, arg2) {
+  if (arg2) {
+    return Sequelize[key](arg1, arg2);
   }
 
-  if (typeof value !== 'function') {
-    return Sequelize[key](value);
+  if (arg1) {
+    return Sequelize[key](arg1);
   }
 
-  return Sequelize[key](value, params);
+  return Sequelize[key]();
 }
 
 const definitions = {
@@ -73,21 +73,26 @@ const definitions = {
   },
 
   null: () => type('VIRTUAL'),
-  number: () => type('DECIMAL'),
-  integer: () => type('INTEGER'),
   boolean: () => type('BOOLEAN'),
+
+  number: (definition) => type('DECIMAL', definition),
+  integer: (definition) => type('INTEGER', definition),
 
   // postgres only
   array: (definition) => {
-    if (!definition || !definition.items.type || !definitions[definition.items.type]) {
+    if (!definition.items
+      || !definition.items.type
+      || !definitions[definition.items.type]) {
       throw new Error(`Invalid definition for '${definition}'`);
     }
 
-    return type('ARRAY', definitions[definition.items.type]());
+    return type('ARRAY', definitions[definition.items.type](definition.items));
   },
-
-  // mixed
-  object: type('JSON'),
+  object: () => type('JSON'),
+  range: () => type('RANGE'),
+  hstore: () => type('HSTORE'),
+  geometry: () => type('GEOMETRY'),
+  geography: () => type('GEOGRAPHY'),
 
   // virtual types
   virtual: (definition) => {
@@ -101,23 +106,15 @@ const definitions = {
       return type('VIRTUAL');
     }
 
-    const _value = Sequelize[_return.toUpperCase()];
-
-    if (!_value) {
-      throw new Error(`Invalid definition for '${_return}'`);
+    if (!definitions[_return]) {
+      throw new Error(`Unknown definition '${_return}'`);
     }
 
     delete _params.return;
     delete _params.fields;
 
-    return type('VIRTUAL', _value(_params), _fields);
+    return type('VIRTUAL', definitions[_return](_params), _fields);
   },
-
-  // more types...
-  range: () => type('RANGE'),
-  hstore: () => type('HSTORE'),
-  geometry: () => type('GEOMETRY'),
-  geography: () => type('GEOGRAPHY'),
 };
 
 function convertSchema(definition) {
@@ -126,7 +123,12 @@ function convertSchema(definition) {
   }
 
   if (typeof definitions[definition.type] === 'function') {
-    return definitions[definition.type](omit(definition, ['type']));
+    const _value = definitions[definition.type](omit(definition, ['type']));
+    const _params = pick(definition, ['get', 'set', 'validate']);
+
+    _params.type = _value;
+
+    return _params;
   }
 
   if (!definition.properties) {
