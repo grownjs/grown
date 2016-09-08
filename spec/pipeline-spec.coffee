@@ -23,6 +23,12 @@ describe '#pipeline', ->
     expect(-> pipeline('x', ->)).toThrow()
     expect(-> pipeline('x', [], -1)).toThrow()
 
+  it 'should fail on unsupported pipeline types', (done) ->
+    p = pipeline('x', [type: 'undefined'])
+    p().catch (err) ->
+      expect(err.message).toMatch /Unsupported .+? pipeline/
+      done()
+
   it 'should fail if the pipeline is already done', ->
     expect(-> pipeline('x', [])(done: true)).toThrow()
 

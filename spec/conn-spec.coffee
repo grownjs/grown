@@ -5,6 +5,13 @@ $ = require('./_protocol')
 describe '#conn', ->
   beforeEach $
 
+  it 'has read-only properties', ->
+    $.server.mount (conn) ->
+      expect(-> conn.app = null).toThrow()
+      done()
+
+    $.client.fetch()
+
   it 'should responds to unsupported requests with 501', (done) ->
     $.client (req, next) ->
       next (e, res) ->
