@@ -2,12 +2,13 @@ Sequelize = require('sequelize')
 model = require('../model')
 conn = null
 
-module.exports = (type, value, params) ->
+module.exports = (type, actual, expected, params...) ->
   (done) ->
     _value =
       type: type
 
-    _value[k] = v for k, v of params
+    params.forEach (props) ->
+      _value[k] = v for k, v of props
 
     T = model "test_#{type}",
       $schema:
@@ -16,10 +17,8 @@ module.exports = (type, value, params) ->
       , conn
 
     T.sync(force: true).then ->
-      params = { value }
-
-      T.create(params).then (test) ->
-        expect(test.get('value')).toEqual value
+      T.create({ value: actual }).then (test) ->
+        expect(test.get('value')).toEqual expected
         done()
 
 module.exports.setup = (dialect, storage) ->
