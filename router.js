@@ -145,7 +145,7 @@ module.exports = (cwd) => {
     return tasks;
   }
 
-  return (server, container) => {
+  return (container) => {
     container.extensions.routes = _routes;
 
     function run(conn, _options) {
@@ -223,7 +223,7 @@ module.exports = (cwd) => {
       }
     }
 
-    server.mount((conn, _options) => {
+    container.context.mount((conn, _options) => {
       return conn.next(() => {
         /* istanbul ignore else */
         if (conn.body === null) {
