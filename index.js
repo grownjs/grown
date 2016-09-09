@@ -1,11 +1,13 @@
 'use strict';
 
+const _servers = [];
+
 const useFactory = require('./lib/api/use');
 const mountFactory = require('./lib/api/mount');
 const listenFactory = require('./lib/api/listen');
 const dispatchFactory = require('./lib/api/dispatch');
 
-module.exports = (options) => {
+function _factory(options) {
   const context = {
     hosts: {},
     servers: {},
@@ -18,10 +20,16 @@ module.exports = (options) => {
     extensions: {},
   };
 
+  _servers.push(context);
+
   useFactory(context, container);
   mountFactory(context, container);
   listenFactory(context, container);
   dispatchFactory(context, container);
 
   return context;
-};
+}
+
+module.exports = _factory;
+
+_factory.servers = () => _servers;
