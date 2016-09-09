@@ -7,7 +7,7 @@ module.exports = (server) => {
   let _fn;
 
   function makeRequest(next) {
-    const app = server.listen({ protocol: 'test' });
+    const _server = server.listen({ protocol: 'test' });
 
     const _opts = {
       end: false,
@@ -31,7 +31,7 @@ module.exports = (server) => {
     _req.query = '';
     _req.method = 'GET';
     _req.headers = {};
-    _req.headers = { host: app.location.host };
+    _req.headers = { host: _server.location.host };
 
     // initial length
     _req.headers['content-length'] = 0;
@@ -97,7 +97,7 @@ module.exports = (server) => {
         _fn = _client;
 
         return {
-          open() {},
+          listen() {},
         };
       },
     };
