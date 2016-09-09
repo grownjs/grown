@@ -117,30 +117,25 @@ describe '#pipeline', ->
         expect(error.message).toEqual 'KO'
         done()
 
-  try
-    _gen = eval('(function*(){})')
-  catch _e
+  describe 'generator support', ->
+    it 'can yield simple scalar values', (done) ->
+      fn = gen '...',
+        eval '(function* (state) { state.number = yield 42; })'
 
-  if _gen
-    describe 'generator support', ->
-      it 'can yield simple scalar values', (done) ->
-        fn = gen '...',
-          eval '(function* (state) { state.number = yield 42; })'
+      p = pipeline 'yield-scalar-values', [fn]
+      p().then (state) ->
+        expect(state.number).toEqual 42
+        done()
 
-        p = pipeline 'yield-scalar-values', [fn]
-        p().then (state) ->
-          expect(state.number).toEqual 42
-          done()
+    it 'can yield promise values', (done) ->
+      fn = gen '...',
+        eval '''
+          (function* (state) {
+            state.boolean = yield Promise.resolve(true);
+          })
+        '''
 
-      it 'can yield promise values', (done) ->
-        fn = gen '...',
-          eval '''
-            (function* (state) {
-              state.boolean = yield Promise.resolve(true);
-            })
-          '''
-
-        p = pipeline 'yield-promise-values', [fn]
-        p().then (state) ->
-          expect(state.boolean).toEqual true
-          done()
+      p = pipeline 'yield-promise-values', [fn]
+      p().then (state) ->
+        expect(state.boolean).toEqual true
+        done()
