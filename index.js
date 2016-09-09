@@ -51,4 +51,4 @@ function _factory(options) {
 
 module.exports = _factory;
 
-_factory.servers = () => _servers;
+_factory.farms = () => _servers;
