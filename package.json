@@ -1,7 +1,7 @@
 {
   "name": "grown",
   "version": "0.0.0",
-  "description": "Hand crafted NodeJS web framework",
+  "description": "Home grown nodejs web framework",
   "author": "Alvaro Cabrera",
   "license": "MIT",
   "scripts": {
