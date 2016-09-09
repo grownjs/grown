@@ -7,7 +7,7 @@ module.exports = (server) => {
   let _fn;
 
   function makeRequest(next) {
-    const app = server.listen('test://');
+    const app = server.listen({ protocol: 'test' });
 
     const _opts = {
       end: false,
@@ -97,7 +97,7 @@ module.exports = (server) => {
         _fn = _client;
 
         return {
-          listen() {},
+          open() {},
         };
       },
     };
