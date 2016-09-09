@@ -39,8 +39,8 @@ describe '#listen', ->
     expect(@context.listen(parseUrl('http://local.dev:8081')).port).toEqual 8081
 
   it 'should expose a close() function', (done) ->
-    app = @context.listen =>
-      app.close()
+    ctx = @context.listen =>
+      ctx.close()
       expect(@closed).toBe true
       done()
 

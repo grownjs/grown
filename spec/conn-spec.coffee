@@ -7,7 +7,7 @@ describe '#conn', ->
 
   it 'has read-only properties', ->
     $.server.mount (conn) ->
-      expect(-> conn.app = null).toThrow()
+      expect(-> conn.ctx = null).toThrow()
       done()
 
     $.client.fetch()
