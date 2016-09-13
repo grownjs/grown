@@ -1,5 +1,5 @@
 Sequelize = require('sequelize')
-model = require('../model')
+model = require('../models').m
 conn = null
 
 module.exports = (type, actual, expected, params...) ->

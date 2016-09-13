@@ -1,6 +1,12 @@
 'use strict';
 
+/* eslint-disable global-require */
+
 const Sequelize = require('sequelize');
+
+const glob = require('glob');
+const path = require('path');
+const fs = require('fs');
 
 function type(key, arg1, arg2) {
   if (arg2) {
@@ -122,6 +128,41 @@ function convertSchema(definition) {
   return _props;
 }
 
-module.exports = (name, props, sequelize) => {
+function _model(name, props, sequelize) {
   return sequelize.define(name, props ? convertSchema(props.$schema) : null, props);
-};
+}
+
+function _hook(cwd) {
+  return (container) => {
+    /* istanbul ignore else */
+    if (typeof cwd !== 'string' || !fs.existsSync(cwd)) {
+      throw new Error(`Expecting 'cwd' to be a valid directory, given '${cwd}'`);
+    }
+
+    let _sequelize;
+
+    const _config = require(path.join(cwd, 'config', 'database.js'));
+    const _connect = () => {
+      if (!_sequelize) {
+        _sequelize = new Sequelize(_config);
+      }
+
+      return _sequelize;
+    };
+
+    function _define(name, props, sequelize) {
+      return _model(name, props, sequelize || _connect());
+    }
+
+    container.extensions.models = {};
+
+    glob.sync('models/**/*.js', { cwd, nodir: true }).forEach((model) => {
+      const modelName = path.basename(model.replace(/\/index\.js$/, ''), '.js');
+
+      container.extensions.models[modelName] = require(path.join(cwd, model))(_define);
+    });
+  };
+}
+
+module.exports = _hook;
+module.exports.m = _model;
