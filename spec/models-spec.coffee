@@ -27,4 +27,5 @@ describe '#model', ->
             foo:
               type: 'string'
 
-      it 'support virtual values', t('virtual', 42, 42)
+    describe 'virtual types (sequelize)', ->
+      it 'support any values', t('virtual', 42, 42)

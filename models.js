@@ -129,7 +129,7 @@ function convertSchema(definition) {
 }
 
 function _model(name, props, $schema, sequelize) {
-  return sequelize.define(name, convertSchema($schema.properties), props);
+  return sequelize.define(name, $schema ? convertSchema($schema) : null, props);
 }
 
 function _hook(cwd) {

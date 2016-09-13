@@ -10,11 +10,9 @@ module.exports = (type, actual, expected, params...) ->
     params.forEach (props) ->
       _value[k] = v for k, v of props
 
-    T = model "test_#{type}",
-      $schema:
-        properties:
-          value: _value
-      , conn
+    schema = properties: value: _value
+
+    T = model "test_#{type}", null, schema, conn
 
     T.sync(force: true).then ->
       T.create({ value: actual }).then (test) ->
