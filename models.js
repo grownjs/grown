@@ -154,6 +154,7 @@ function _hook(cwd) {
     glob.sync('models/**/*.js', { cwd, nodir: true }).forEach((model) => {
       const definition = require(path.join(cwd, model));
       const $schema = definition.$schema || {};
+      const _models = {};
 
       delete definition.$schema;
 
@@ -166,7 +167,20 @@ function _hook(cwd) {
         .replace(/^_/, '')
         .toLowerCase();
 
-      container.extensions.models[modelName] = _model(tableName, definition, $schema, _sequelize);
+      Object.defineProperty(container.extensions.models, modelName, {
+        configurable: false,
+        enumerable: true,
+        get() {
+          if (!_models[modelName]) {
+            _models[modelName] = _model(tableName, definition, $schema, _sequelize);
+          }
+
+          return _models[modelName];
+        },
+        set() {
+          throw new Error(`Model '${name}' is already defined`);
+        },
+      });
     });
   };
 }
