@@ -151,22 +151,20 @@ function _hook(cwd) {
 
     container.extensions.models = {};
 
-    glob.sync('models/**/*Model.js', { cwd, nodir: true }).forEach((model) => {
+    glob.sync('models/**/*.js', { cwd, nodir: true }).forEach((model) => {
       const definition = require(path.join(cwd, model));
-
-      const modelName = definition.name || path.relative('models', model)
-        .replace(/\.js$/, '')
-        .replace(/Model$/, '');
-
-      const tableName = definition.table || modelName
-        .replace(/(<=\w)[A-Z]/g, ($0) => `_${$0}`)
-        .toLowerCase();
-
       const $schema = definition.$schema || {};
 
-      if (!$schema.id) {
-        $schema.id = modelName;
-      }
+      delete definition.$schema;
+
+      const modelName = $schema.id || definition.name || path.relative('models', model)
+        .replace(/(index)?\.js/, '')
+        .replace(/Model(\/|$)/g, '');
+
+      const tableName = definition.table || modelName
+        .replace(/[A-Z]/g, ($0) => `_${$0}`)
+        .replace(/^_/, '')
+        .toLowerCase();
 
       container.extensions.models[modelName] = _model(tableName, definition, $schema, _sequelize);
     });
