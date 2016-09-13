@@ -1,5 +1,7 @@
 'use strict';
 
+const _env = require('dotenv');
+
 const _servers = [];
 
 const useFactory = require('./lib/api/use');
@@ -40,6 +42,13 @@ function _factory(options) {
   useFactory(container);
   mountFactory(container);
   listenFactory(container);
+
+  Object.defineProperty(container, '_configure', {
+    configurable: false,
+    enumerable: false,
+    writable: false,
+    value: (_opts) => _env.config(_opts || { silent: true }),
+  });
 
   Object.defineProperty(container, '_dispatch', {
     configurable: false,
