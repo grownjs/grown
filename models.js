@@ -128,8 +128,8 @@ function convertSchema(definition) {
   return _props;
 }
 
-function _model(name, props, sequelize) {
-  return sequelize.define(name, props ? convertSchema(props.$schema) : null, props);
+function _model(name, props, $schema, sequelize) {
+  return sequelize.define(name, convertSchema($schema.properties), props);
 }
 
 function _hook(cwd) {
@@ -162,7 +162,13 @@ function _hook(cwd) {
         .replace(/(<=\w)[A-Z]/g, ($0) => `_${$0}`)
         .toLowerCase();
 
-      container.extensions.models[modelName] = _model(tableName, definition, _sequelize);
+      const $schema = definition.$schema || {};
+
+      if (!$schema.id) {
+        $schema.id = modelName;
+      }
+
+      container.extensions.models[modelName] = _model(tableName, definition, $schema, _sequelize);
     });
   };
 }
