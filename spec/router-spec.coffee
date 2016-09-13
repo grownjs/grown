@@ -31,7 +31,7 @@ describe '#router', ->
     useConfig 'valid-routes'
 
     $.client.fetch('/no').then (res) ->
-      expect(res.statusMessage).toMatch /Undefined .+? handler/
+      expect(res._getBody()).toMatch /Undefined .+? handler/
       expect(res.statusCode).toEqual 501
       done()
 
@@ -70,7 +70,7 @@ describe '#router', ->
     useConfig 'valid-routes'
 
     $.client.fetch('/broken/handler').then (res) ->
-      expect(res.statusMessage).toContain 'Unexpected token'
+      expect(res._getBody()).toContain 'Unexpected token'
       expect(res.statusCode).toEqual 501
       done()
 
@@ -78,7 +78,7 @@ describe '#router', ->
     useConfig 'with-middlewares'
 
     $.client.fetch('/no').then (res) ->
-      expect(res.statusMessage).toMatch /Middleware .+? should be callable/
+      expect(res._getBody()).toMatch /Middleware .+? should be callable/
       expect(res.statusCode).toEqual 501
       done()
 
@@ -86,7 +86,7 @@ describe '#router', ->
     useConfig 'with-middlewares'
 
     $.client.fetch('/err').then (res) ->
-      expect(res.statusMessage).toMatch /Undefined .+? middleware/
+      expect(res._getBody()).toMatch /Undefined .+? middleware/
       expect(res.statusCode).toEqual 501
       done()
 
@@ -101,7 +101,7 @@ describe '#router', ->
     useConfig 'with-middlewares'
 
     $.client.fetch('/maybe').then (res) ->
-      expect(res.statusMessage).toMatch /Undefined .+? handler/
+      expect(res._getBody()).toMatch /Undefined .+? handler/
       expect(res.statusCode).toEqual 501
       done()
 

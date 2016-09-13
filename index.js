@@ -16,7 +16,7 @@ function _dispatch(err, conn) {
       const errObj = err || new Error('Not Implemented');
 
       errObj.statusMessage = errObj.statusMessage || errObj.message;
-      errObj.statusCode = errObj.statusCode || 501;
+      errObj.statusCode = errObj.statusCode || 500;
 
       throw errObj;
     } else {
