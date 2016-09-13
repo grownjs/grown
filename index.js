@@ -7,6 +7,22 @@ const mountFactory = require('./lib/api/mount');
 const listenFactory = require('./lib/api/listen');
 const pipelineFactory = require('./lib/pipeline');
 
+function _dispatch(err, conn) {
+  /* istanbul ignore else */
+  if (!conn.res.finished || !err) {
+    if (conn.body === null && conn.res.statusCode === 200) {
+      const errObj = err || new Error('Not Implemented');
+
+      errObj.statusMessage = errObj.statusMessage || errObj.message;
+      errObj.statusCode = errObj.statusCode || 501;
+
+      throw errObj;
+    } else {
+      conn.send(conn.body);
+    }
+  }
+}
+
 function _factory(options) {
   const container = {
     context: {
@@ -29,21 +45,7 @@ function _factory(options) {
     configurable: false,
     enumerable: false,
     writable: false,
-    value: pipelineFactory('_dispatch', container.pipeline, (err, conn) => {
-      /* istanbul ignore else */
-      if (!conn.res.finished || !err) {
-        if (conn.body === null && conn.res.statusCode === 200) {
-          const errObj = err || new Error('Not Implemented');
-
-          errObj.statusMessage = errObj.statusMessage || errObj.message;
-          errObj.statusCode = errObj.statusCode || 501;
-
-          throw errObj;
-        } else {
-          conn.send(conn.body);
-        }
-      }
-    }),
+    value: pipelineFactory('_dispatch', container.pipeline, _dispatch),
   });
 
   return container.context;
