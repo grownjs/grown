@@ -139,27 +139,30 @@ function _hook(cwd) {
       throw new Error(`Expecting 'cwd' to be a valid directory, given '${cwd}'`);
     }
 
-    let _sequelize;
+    const _defaults = require(path.join(cwd, 'config', 'database.js'));
+    const _options = _defaults[process.env.NODE_ENV || 'dev'];
+    const _config = _options || _defaults;
 
-    const _config = require(path.join(cwd, 'config', 'database.js'));
-    const _connect = () => {
-      if (!_sequelize) {
-        _sequelize = new Sequelize(_config);
-      }
+    // db-migrate
+    _config.driver = _config.dialect;
+    _config.filename = _config.storage;
 
-      return _sequelize;
-    };
-
-    function _define(name, props, sequelize) {
-      return _model(name, props, sequelize || _connect());
-    }
+    const _sequelize = new Sequelize(_config);
 
     container.extensions.models = {};
 
-    glob.sync('models/**/*.js', { cwd, nodir: true }).forEach((model) => {
-      const modelName = path.basename(model.replace(/\/index\.js$/, ''), '.js');
+    glob.sync('models/**/*Model.js', { cwd, nodir: true }).forEach((model) => {
+      const definition = require(path.join(cwd, model));
 
-      container.extensions.models[modelName] = require(path.join(cwd, model))(_define);
+      const modelName = definition.name || path.relative('models', model)
+        .replace(/\.js$/, '')
+        .replace(/Model$/, '');
+
+      const tableName = definition.table || modelName
+        .replace(/(<=\w)[A-Z]/g, ($0) => `_${$0}`)
+        .toLowerCase();
+
+      container.extensions.models[modelName] = _model(tableName, definition, _sequelize);
     });
   };
 }
