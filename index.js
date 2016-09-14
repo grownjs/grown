@@ -2,7 +2,7 @@
 
 const _env = require('dotenv');
 
-const _servers = [];
+const _farms = [];
 
 const useFactory = require('./lib/api/use');
 const mountFactory = require('./lib/api/mount');
@@ -16,7 +16,7 @@ function _dispatch(err, conn) {
       const errObj = err || new Error('Not Implemented');
 
       errObj.statusMessage = errObj.statusMessage || errObj.message;
-      errObj.statusCode = errObj.statusCode || 500;
+      errObj.statusCode = errObj.statusCode || 501;
 
       throw errObj;
     } else {
@@ -25,7 +25,7 @@ function _dispatch(err, conn) {
   }
 }
 
-function _factory(options) {
+module.exports = function _factory(options) {
   const container = {
     context: {
       hosts: {},
@@ -37,7 +37,7 @@ function _factory(options) {
     extensions: {},
   };
 
-  _servers.push(container);
+  _farms.push(container);
 
   useFactory(container);
   mountFactory(container);
@@ -58,8 +58,6 @@ function _factory(options) {
   });
 
   return container.context;
-}
+};
 
-module.exports = _factory;
-
-_factory.farms = () => _servers;
+module.exports.farms = () => _farms;
