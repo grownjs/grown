@@ -20,18 +20,11 @@ describe '#factory', ->
     expect(factory(fn).type).toEqual 'iterator'
 
   it 'supports generators', ->
-    e = null
+    fn = `(function*(){yield 42})`
 
-    try
-      fn = eval('(function*(){yield 42})')
-    catch _e
-      e = _e
-
-    if parseFloat(process.version.substr(1)) >= 4.0
-      expect(e).toBe null
-      expect(factory(fn).name).toEqual '*'
-      expect(factory(fn).call).toEqual fn
-      expect(factory(fn).type).toEqual 'generator'
+    expect(factory(fn).name).toEqual 'fn'
+    expect(factory(fn).call).toEqual fn
+    expect(factory(fn).type).toEqual 'generator'
 
   it 'supports class-like methods', ->
     fn = class Klass

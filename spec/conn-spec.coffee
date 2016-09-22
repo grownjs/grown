@@ -151,8 +151,10 @@ describe '#conn', ->
     $.server.mount (conn) ->
       conn.res.finished = true
       expect(-> conn.send()).toThrow()
+    $.client.fetch().catch (e) ->
+      expect(e.statusCode).toEqual 501
+      expect(e.statusMessage).toEqual 'Not Implemented'
       done()
-    $.client.fetch()
 
   describe 'conn-like middleware support', ->
     it 'supports plain functions', (done) ->
@@ -191,16 +193,5 @@ describe '#conn', ->
       $.client.fetch()
 
     it 'supports generator-like callbacks', (done) ->
-      e = null
-
-      try
-        _generator = eval('(function*(){yield done})')
-
-        $.server.mount _generator
-        $.client.fetch()
-      catch _e
-        e = _e
-        done()
-
-      if parseFloat(process.version.substr(1)) >= 4.0
-        expect(e).toBe null
+      $.server.mount `(function*(){yield done})`
+      $.client.fetch()

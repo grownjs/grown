@@ -73,6 +73,7 @@ describe 'session support', ->
 
     $.server.mount (conn) ->
       expect(conn.req.session.foo).toEqual 'bar'
+      conn.end()
       done()
 
     $.client.fetch()
@@ -83,6 +84,7 @@ describe 'session support', ->
     $.server.mount (conn) ->
       expect(typeof conn.req.csrfToken).toBe 'function'
       expect(conn.req.session.csrfSecret).not.toBeUndefined()
+      conn.end()
       done()
 
     $.client.fetch()
