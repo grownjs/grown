@@ -22,7 +22,12 @@ describe '#factory', ->
   it 'supports generators', ->
     fn = `(function*(){yield 42})`
 
-    expect(factory(fn).name).toEqual 'fn'
+    # v4 reports *
+    # v6 reports fn
+
+    _fn = if process.version.indexOf('v6') === -1 then '*' else 'fn'
+
+    expect(factory(fn).name).toEqual _fn
     expect(factory(fn).call).toEqual fn
     expect(factory(fn).type).toEqual 'generator'
 
