@@ -24,7 +24,7 @@
     "body-parser": "^1.15.2",
     "codecov": "^1.0.1",
     "csurf": "^1.9.0",
-    "eslint": "^3.4.0",
+    "eslint": "^3.5.0",
     "eslint-config-airbnb-base": "^5.0.3",
     "eslint-plugin-import": "^1.14.0",
     "express-session": "^1.14.1",
