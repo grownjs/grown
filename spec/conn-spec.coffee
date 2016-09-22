@@ -37,11 +37,12 @@ describe '#conn', ->
       $.query = conn.query
 
     $.client (req, next) ->
-      req.url = '/?foo=bar&baz[]=buzz'
+      req.url = '/?foo=bar&baz=buzz'
 
       next (e, res) ->
         expect(e).toBeUndefined()
-        expect($.query).toEqual { foo: 'bar', baz: ['buzz'] }
+        expect($.query.foo).toEqual 'bar'
+        expect($.query.baz).toEqual 'buzz'
         done()
 
   it 'should responds if `conn.body` is not null', (done) ->
