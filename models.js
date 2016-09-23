@@ -158,7 +158,7 @@ function _hook(cwd) {
 
       delete definition.$schema;
 
-      const modelName = $schema.id || definition.name || path.relative('models', model)
+      const modelName = $schema.id || path.relative('models', model)
         .replace(/(index)?\.js/, '')
         .replace(/Model(\/|$)/g, '');
 
