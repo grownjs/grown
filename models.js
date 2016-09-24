@@ -134,6 +134,8 @@ function _model(name, props, $schema, sequelize) {
 
 function _hook(cwd) {
   return (container) => {
+    container.extensions.models = {};
+
     /* istanbul ignore else */
     if (typeof cwd !== 'string' || !fs.existsSync(cwd)) {
       throw new Error(`Expecting 'cwd' to be a valid directory, given '${cwd}'`);
@@ -148,8 +150,6 @@ function _hook(cwd) {
     _config.filename = _config.storage;
 
     const _sequelize = new Sequelize(_config);
-
-    container.extensions.models = {};
 
     glob.sync('models/**/*.js', { cwd, nodir: true }).forEach((model) => {
       const definition = require(path.join(cwd, model));
