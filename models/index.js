@@ -8,125 +8,7 @@ const glob = require('glob');
 const path = require('path');
 const fs = require('fs');
 
-function type(key, arg1, arg2) {
-  if (arg2) {
-    return Sequelize[key](arg1, arg2);
-  }
-
-  if (arg1) {
-    return Sequelize[key](arg1);
-  }
-
-  return Sequelize[key]();
-}
-
-const definitions = {
-  string: (definition) => {
-    switch (definition.format) {
-      case 'date-time': return type('DATE');
-      case 'date': return type('DATEONLY');
-      case 'time': return type('TIME');
-      case 'now': return type('NOW');
-
-      case 'json': return type('JSON');
-      case 'jsonb': return type('JSONB');
-      case 'blob': return type('BLOB', definition);
-
-      case 'uuid':
-      case 'uuidv4':
-        return type('UUIDV4');
-
-      case 'uuidv1': return type('UUIDV1');
-
-      case 'char': return type('CHAR', definition);
-      case 'text': return type('TEXT');
-
-      case 'int64':
-      case 'bigint':
-        return type('BIGINT', definition);
-
-      case 'int32': return type('STRING', definition);
-
-      case 'number':
-        return type('DECIMAL', definition);
-
-      case 'real':
-      case 'float':
-      case 'double':
-      case 'boolean':
-      case 'decimal':
-        return type(definition.format.toUpperCase(), definition);
-
-      default:
-        return type('STRING', definition);
-    }
-  },
-
-  null: () => type('VIRTUAL'),
-  boolean: () => type('BOOLEAN'),
-
-  number: (definition) => type('DECIMAL', definition),
-  integer: (definition) => type('INTEGER', definition),
-
-  // postgres only
-  array: (definition) => {
-    if (!definition.items
-      || !definition.items.type
-      || !definitions[definition.items.type]) {
-      throw new Error(`Invalid definition for '${definition}'`);
-    }
-
-    return type('ARRAY', definitions[definition.items.type](definition.items));
-  },
-  object: () => type('JSON'),
-  range: () => type('RANGE'),
-  hstore: () => type('HSTORE'),
-  geometry: () => type('GEOMETRY'),
-  geography: () => type('GEOGRAPHY'),
-
-  // virtual types
-  virtual: (definition) => {
-    if (!definition.return) {
-      return type('VIRTUAL');
-    }
-
-    if (!definitions[definition.return]) {
-      throw new Error(`Unknown definition '${definition.return}'`);
-    }
-
-    return type('VIRTUAL', definitions[definition.return](definition), definition.fields || []);
-  },
-};
-
-function convertSchema(definition) {
-  if (Array.isArray(definition.enum)) {
-    return Sequelize.ENUM.call(null, definition.enum);
-  }
-
-  if (typeof definitions[definition.type] === 'function') {
-    const _value = definitions[definition.type](definition);
-
-    definition.type = _value;
-
-    return definition;
-  }
-
-  if (!definition.properties) {
-    return definition;
-  }
-
-  const _props = {};
-
-  Object.keys(definition.properties).forEach((key) => {
-    const _value = definition.properties[key];
-
-    if (typeof _value === 'object' && !Array.isArray(_value)) {
-      _props[key] = convertSchema(_value);
-    }
-  });
-
-  return _props;
-}
+const convertSchema = require('./types');
 
 function _model(name, props, $schema, sequelize) {
   return sequelize.define(name, $schema ? convertSchema($schema) : null, props);
@@ -144,6 +26,7 @@ function _hook(cwd) {
     const _defaults = require(path.join(cwd, 'config', 'database.js'));
     const _options = _defaults[process.env.NODE_ENV || 'dev'];
     const _config = _options || _defaults;
+    const _models = {};
 
     // db-migrate
     _config.driver = _config.dialect;
@@ -154,7 +37,6 @@ function _hook(cwd) {
     glob.sync('models/**/*.js', { cwd, nodir: true }).forEach((model) => {
       const definition = require(path.join(cwd, model));
       const $schema = definition.$schema || {};
-      const _models = {};
 
       delete definition.$schema;
 
@@ -167,14 +49,12 @@ function _hook(cwd) {
         .replace(/^_/, '')
         .toLowerCase();
 
+      _models[modelName] = _model(tableName, definition, $schema, _sequelize);
+
       Object.defineProperty(container.extensions.models, modelName, {
         configurable: false,
         enumerable: true,
         get() {
-          if (!_models[modelName]) {
-            _models[modelName] = _model(tableName, definition, $schema, _sequelize);
-          }
-
           return _models[modelName];
         },
         set() {
