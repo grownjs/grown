@@ -53,7 +53,7 @@ describe '#conn', ->
       next (e, res) ->
         expect(e).toBeUndefined()
         expect(res.statusCode).toEqual 200
-        expect(res._getBody()).toEqual 'OSOM'
+        expect(res.output).toEqual 'OSOM'
         done()
 
   it 'should responds to redirections through `redirect()`', (done) ->
@@ -127,7 +127,7 @@ describe '#conn', ->
     $.client (req, next) ->
       next (e, res) ->
         expect(e.message).toEqual 'Not Implemented'
-        expect(res._getBody()).toEqual 'SEND'
+        expect(res.output).toEqual 'SEND'
         done()
 
   it 'should set the `conn.body` through `end()`', (done) ->
@@ -139,7 +139,7 @@ describe '#conn', ->
         expect(e).toBeUndefined()
         expect(res.statusMessage).toEqual 'OK'
         expect(res.statusCode).toEqual 200
-        expect(res._getBody()).toEqual 'DONE'
+        expect(res.output).toEqual 'DONE'
         done()
 
   it 'should validate `conn.input` properly', (done) ->

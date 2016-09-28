@@ -31,7 +31,7 @@ describe '#router', ->
     useConfig 'valid-routes'
 
     $.client.fetch('/no').then (res) ->
-      expect(res._getBody()).toMatch /Undefined .+? handler/
+      expect(res.output).toMatch /Undefined .+? handler/
       expect(res.statusCode).toEqual 501
       done()
 
@@ -39,7 +39,7 @@ describe '#router', ->
     useConfig 'valid-routes'
 
     $.client.fetch('/yes').then (res) ->
-      expect(res._getBody()).toEqual 'OSOM'
+      expect(res.output).toEqual 'OSOM'
       expect(res.statusMessage).toEqual 'OK'
       expect(res.statusCode).toEqual 200
       done()
@@ -70,7 +70,7 @@ describe '#router', ->
     useConfig 'valid-routes'
 
     $.client.fetch('/broken/handler').then (res) ->
-      expect(res._getBody()).toContain 'Unexpected token'
+      expect(res.output).toContain 'Unexpected token'
       expect(res.statusCode).toEqual 501
       done()
 
@@ -78,7 +78,7 @@ describe '#router', ->
     useConfig 'with-middlewares'
 
     $.client.fetch('/no').then (res) ->
-      expect(res._getBody()).toMatch /Middleware .+? should be callable/
+      expect(res.output).toMatch /Middleware .+? should be callable/
       expect(res.statusCode).toEqual 501
       done()
 
@@ -86,7 +86,7 @@ describe '#router', ->
     useConfig 'with-middlewares'
 
     $.client.fetch('/err').then (res) ->
-      expect(res._getBody()).toMatch /Undefined .+? middleware/
+      expect(res.output).toMatch /Undefined .+? middleware/
       expect(res.statusCode).toEqual 501
       done()
 
@@ -94,14 +94,14 @@ describe '#router', ->
     useConfig 'with-middlewares'
 
     $.client.fetch('/yes').then (res) ->
-      expect(res._getBody()).toEqual 'OSOM!'
+      expect(res.output).toEqual 'OSOM!'
       done()
 
   it 'should fail on invalid pipeline-handlers', (done) ->
     useConfig 'with-middlewares'
 
     $.client.fetch('/maybe').then (res) ->
-      expect(res._getBody()).toMatch /Undefined .+? handler/
+      expect(res.output).toMatch /Undefined .+? handler/
       expect(res.statusCode).toEqual 501
       done()
 
@@ -109,5 +109,5 @@ describe '#router', ->
     useConfig 'with-middlewares'
 
     $.client.fetch('/surely').then (res) ->
-      expect(res._getBody()).toEqual 'OSOM!'
+      expect(res.output).toEqual 'OSOM!'
       done()

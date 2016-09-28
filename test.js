@@ -73,7 +73,14 @@ module.exports = (server) => {
         _res.setHeader = (k, v) => { _opts.headers[k] = v; };
 
         // test interface
-        _res._getBody = () => _opts.body;
+        Object.defineProperty(_res, 'output', {
+          get() {
+            return _opts.body;
+          },
+          set() {
+            throw new Error('Output is already defined');
+          },
+        });
 
         _fn(_req, _res, (e) => {
           /* istanbul ignore else */
