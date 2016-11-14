@@ -1,6 +1,4 @@
-'use strict';
-
-const server = require('..')();
+const server = require('..').new();
 
 server.mount(require('serve-index')(__dirname));
 server.mount(require('serve-static')(__dirname));
