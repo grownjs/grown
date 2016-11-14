@@ -1,6 +1,6 @@
 describe '#server', ->
   it 'should fail on unsupported protocols', ->
-    server = require('..')()
+    server = require('..').new()
 
     server.protocols.http =
     server.protocols.https =

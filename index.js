@@ -25,7 +25,7 @@ function _dispatch(err, conn) {
   }
 }
 
-module.exports = function _factory(options) {
+module.exports.new = (options) => {
   const container = {
     context: {
       hosts: {},
@@ -61,3 +61,4 @@ module.exports = function _factory(options) {
 };
 
 module.exports.farms = () => _farms;
+module.exports.version = require('./package.json').version;

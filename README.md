@@ -1,41 +1,140 @@
-# grown
+# Homegrown
 
-[![travis-ci](https://api.travis-ci.org/pateketrueke/grown.svg)](https://travis-ci.org/pateketrueke/grown) [![codecov](https://codecov.io/gh/pateketrueke/grown/branch/master/graph/badge.svg)](https://codecov.io/gh/pateketrueke/grown)
+[![travis-ci](https://api.travis-ci.org/pateketrueke/homegrown.svg)](https://travis-ci.org/pateketrueke/homegrown) [![codecov](https://codecov.io/gh/pateketrueke/homegrown/branch/master/graph/badge.svg)](https://codecov.io/gh/pateketrueke/homegrown)
 
 Experimental DSL for web applications.
 
 ```bash
-$ npm i grown -S
+$ npm i homegrown -S
 ```
 
-## Servers
+## Farms
 
-By calling `grown()` you can create new web servers.
+Use `farms()` to retrieve all created instances, e.g.
 
 ```js
-const grown = require('grown');
-const server1 = grown();
-const server2 = grown();
+const homegrown = require('homegrown');
+
+homegrown.farms().forEach((farm) => {
+  // context reference
+  farm.context;
+  // options from new() factory
+  farm.options;
+  // pipeline reference from passed mount() callbacks
+  farm.pipeline;
+  // extensions are be copied to all created server instances
+  farm.extensions;
+});
 ```
 
-Each server instance has the following properties and methods:
+By calling `new()` you can create a new farm of web servers, e.g.
 
-- `hosts` &mdash; applications grouped by host
-- `servers` &mdash; listeners grouped by port
-- `protocols` &mdash;
+```js
+const farm1 = homegrown.new();
+```
 
-## Listeners
+Each farm instance has the following properties and methods:
 
-- `listen()` &mdash;
+### `use()`
 
-## Dispatching
+Plugin support for extra functionality, e.g.
 
-- `dispatch()` &mdash;
+```js
+farm1.use((container) => {
+  container.context;
+  container.options;
+  container.pipeline;
+  container.extensions;
+});
+```
 
-## Middlewares
+### `mount()`
 
-- `mount()` &mdash;
+Register a new callback on the main loop, e.g.
 
-## Extensions
+```js
+farm1.mount((conn) => {
+  // shared application context
+  conn.ctx;
+  // request and response
+  conn.req;
+  conn.res;
+  // current environment (default: dev)
+  conn.env;
+  // normalized query
+  conn.query;
+  // normalized input-body
+  conn.input;
+  // normalized content-type
+  conn.type;
+  // dynamic response getter/setter
+  conn.body;
+  // finalize response
+  conn.end();
+  // prepare final response
+  conn.send();
+  // read request headers
+  conn.get();
+  // write response headers
+  conn.set();
+  // remove response haders
+  conn.unset();
+  // set response status
+  conn.status();
+  // perform redirects
+  conn.redirect();
+});
+```
 
-- `use()` &mdash;
+### `listen()`
+
+Instantiate a new request listener, e.g.
+
+```js
+farm1.listen(3000, (app) => {
+  // instance of Url
+  app.location;
+  // normalized host/port
+  app.port;
+  app.host;
+  // close instantiated server
+  app.close();
+});
+```
+
+### `hosts`
+
+Instantiated applications grouped by host, e.g.
+
+```js
+{
+  '0.0.0.0:3000': {
+    // object created by listen()
+  }
+}
+```
+
+### `servers`
+
+Created listeners grouped by port, e.g.
+
+```js
+{
+  '3000': {
+    // object returned by farm1.protocols[$protocol].createServer(...)
+    // where $protocol can be "http", "https" or "test", etc.
+  }
+}
+```
+
+### `protocols`
+
+Required support for used protocols, e.g.
+
+```js
+{
+  // supported protocols can be overloaded or faked completely,
+  // see https://github.com/pateketrueke/homegrown/blob/master/test.js
+  http: require('http')
+}
+```
