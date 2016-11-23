@@ -11,7 +11,7 @@ const pipelineFactory = require('./lib/pipeline');
 
 function _dispatch(err, conn) {
   /* istanbul ignore else */
-  if (conn.res._hasBody || conn.res._headerSent) {
+  if (conn.res._hasBody && conn.res._headerSent) {
     conn.res.end();
     return;
   }
