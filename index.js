@@ -11,6 +11,12 @@ const pipelineFactory = require('./lib/pipeline');
 
 function _dispatch(err, conn) {
   /* istanbul ignore else */
+  if (conn.res._hasBody || conn.res._headerSent) {
+    conn.res.end();
+    return;
+  }
+
+  /* istanbul ignore else */
   if (!conn.res.finished || !err) {
     if (conn.body === null && conn.res.statusCode === 200) {
       const errObj = err || new Error('Not Implemented');
