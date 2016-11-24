@@ -10,7 +10,7 @@ describe '#listen', ->
       @closed = true
 
     @container =
-      context:
+      _context:
         hosts: {}
         servers: {}
         protocols: {}
@@ -18,7 +18,7 @@ describe '#listen', ->
       pipeline: []
       extensions: {}
 
-    @container.context.protocols =
+    @container._context.protocols =
       http:
         createServer: =>
           listen: (port, host, callback) =>
@@ -28,21 +28,21 @@ describe '#listen', ->
     listenFactory(@container)
 
   it 'should be called (quick-check)', ->
-    @container.context.listen 'http://'
+    @container._context.listen 'http://'
     expect(@called).toBe true
 
   it 'supports many settings formats', ->
-    expect(@container.context.listen().port).toEqual 80
-    expect(@container.context.listen(8081).port).toEqual 8081
-    expect(@container.context.listen('local.dev').host).toEqual 'local.dev'
-    expect(@container.context.listen(parseUrl('http://local.dev:8081')).port).toEqual 8081
+    expect(@container._context.listen().port).toEqual 80
+    expect(@container._context.listen(8081).port).toEqual 8081
+    expect(@container._context.listen('local.dev').host).toEqual 'local.dev'
+    expect(@container._context.listen(parseUrl('http://local.dev:8081')).port).toEqual 8081
 
   it 'should expose a close() function', (done) ->
-    ctx = @container.context.listen =>
+    ctx = @container._context.listen =>
       ctx.close()
       expect(@closed).toBe true
       done()
 
   it 'should reuse already defined resources', ->
-    @container.context.servers[5000] = true
-    @container.context.listen(5000)
+    @container._context.servers[5000] = true
+    @container._context.listen(5000)

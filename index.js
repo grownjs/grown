@@ -33,7 +33,7 @@ function _dispatch(err, conn) {
 
 module.exports.new = (options) => {
   const container = {
-    context: {
+    _context: {
       hosts: {},
       servers: {},
       protocols: {},
@@ -63,8 +63,8 @@ module.exports.new = (options) => {
     value: pipelineFactory('_dispatch', container.pipeline, _dispatch),
   });
 
-  return container.context;
+  return container._context;
 };
 
-module.exports.farms = () => _farms;
+module.exports.farms = cb => _farms.forEach(cb);
 module.exports.version = require('./package.json').version;

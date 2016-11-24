@@ -223,7 +223,7 @@ module.exports = (cwd) => {
       }
     }
 
-    container.context.mount((conn, _options) => {
+    container._context.mount((conn, _options) => {
       return conn.next(() => {
         /* istanbul ignore else */
         if (conn.body === null) {
