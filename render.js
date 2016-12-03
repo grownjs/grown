@@ -1,6 +1,8 @@
 const path = require('path');
 const fs = require('fs');
 
+/* eslint-disable global-require */
+
 module.exports = (cwd) => {
   /* istanbul ignore else */
   if (typeof cwd !== 'string' || !fs.existsSync(cwd)) {
@@ -29,8 +31,22 @@ module.exports = (cwd) => {
       _cachedPaths[_id] = _lookup(view.src);
     }
 
-    /* eslint-disable global-require */
-    return require(_cachedPaths[_id])(view.data);
+    const locals = {};
+
+    Object.keys(view.data).forEach((key) => {
+      if (typeof view.data[key] !== 'undefined' && view.data[key] !== null) {
+        locals[key] = view.data[key];
+      }
+    });
+
+    const render = () => require(_cachedPaths[_id])(locals);
+
+    return Promise.all(Object.keys(locals).map((key) =>
+      Promise.resolve(locals[key]).then((value) => {
+        locals[key] = value;
+      })
+    ))
+    .then(render);
   }
 
   return (container) => {
