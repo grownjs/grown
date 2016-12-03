@@ -30,7 +30,7 @@ module.exports = (cwd) => {
     }
 
     /* eslint-disable global-require */
-    return require(_cachedPaths[_id])();
+    return require(_cachedPaths[_id])(view.data);
   }
 
   return (container) => {
