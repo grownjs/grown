@@ -4,8 +4,8 @@
 
 const STATUS_CODES = require('http').STATUS_CODES;
 
-const pipelineFactory = require('../lib/pipeline');
-const buildFactory = require('../lib/factory');
+const pipelineFactory = require('./lib/pipeline');
+const buildFactory = require('./lib/factory');
 
 const routeMappings = require('route-mappings');
 const glob = require('glob');
