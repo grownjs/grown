@@ -71,25 +71,27 @@ module.exports = (cwd) => {
       });
     };
 
+    function _view(conn, blocks) {
+      const src = _lookup('layouts/default');
+
+      conn.body = require(src)(blocks);
+    }
+
     container._context.mount((conn) =>
       conn.next(() => {
         const _chunks = _views.splice(0, _views.length);
 
         /* istanbul ignore else */
-        if (_chunks.length) {
-          return Promise.all(_chunks.map(_render))
-            .then((results) => {
-              const _blocks = {};
+        return Promise.all(_chunks.map(_render))
+          .then((results) => {
+            const _blocks = {};
 
-              _chunks.forEach((_chunk) => {
-                _blocks[_chunk.block] = results.shift();
-              });
-
-              const src = _lookup('layouts/default');
-
-              conn.body = require(src)(_blocks);
+            _chunks.forEach((_chunk) => {
+              _blocks[_chunk.block] = results.shift();
             });
-        }
+
+            _view(conn, _blocks);
+          });
       }));
   };
 };
