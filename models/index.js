@@ -58,7 +58,7 @@ function _hook(cwd) {
 
       _models[modelName] = _model(tableName, definition, $schema, _sequelize);
 
-      if (_environment === 'dev') {
+      if (_environment !== 'prod') {
         _tasks.push(() => _models[modelName].sync());
       }
 
