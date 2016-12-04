@@ -15,7 +15,7 @@ describe '#model', ->
       expect(sample.length > 0).toBe true
       expect(sample[0]).toEqual { value: 'OK' }
 
-      expect(FakeModel.fake().findOne().value).toEqual 'OK'
+      expect(FakeModel.findOne().value).toEqual 'OK'
 
   describe 'JSON-Schema -> Sequelize models', ->
     describe 'basic types (sqlite3)', ->
