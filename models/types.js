@@ -1,5 +1,57 @@
 const Sequelize = require('sequelize');
 
+function constraintSchema(definition) {
+  definition.validate = definition.validate || {};
+  definition.validate.is = definition.validate.is || {};
+
+  const min = definition.minLength || definition.minimum || undefined;
+  const max = definition.maxLength || definition.maximum || undefined;
+
+  if (definition.type === 'string') {
+    if (min || max) {
+      definition.validate.is.len = [min, max];
+    }
+
+    if (definition.pattern) {
+      definition.validate.is.is = new RegExp(definition.pattern, 'i');
+    }
+
+    switch (definition.format) {
+      case 'email':
+        definition.validate.is.isEmail = true;
+        break;
+
+      default:
+        // nothing to do?
+    }
+  }
+
+  if (definition.type === 'number' || definition.type === 'integer') {
+    if (definition.type === 'number') {
+      definition.validate.is.isNumeric = true;
+    }
+
+    if (definition.type === 'integer') {
+      definition.validate.is.isInt = true;
+    }
+
+    if (min >= 0) {
+      definition.validate.is.min = min;
+    }
+
+    if (max) {
+      definition.validate.is.max = max;
+    }
+  }
+
+  delete definition.minLength;
+  delete definition.maxLength;
+  delete definition.minimum;
+  delete definition.maximum;
+  delete definition.pattern;
+  delete definition.format;
+}
+
 function type(key, arg1, arg2) {
   if (arg2) {
     return Sequelize[key](arg1, arg2);
@@ -102,6 +154,8 @@ module.exports = function convertSchema(definition) {
     Object.keys(definition).forEach((key) => {
       _schema[key] = definition[key];
     });
+
+    // constraintSchema(_schema);
 
     _schema.type = _value;
 
