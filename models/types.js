@@ -9,7 +9,7 @@ function constraintSchema(definition) {
 
   if (definition.type === 'string') {
     if (min || max) {
-      definition.validate.is.len = [min, max];
+      definition.validate.is.len = [min || 0, max || Infinity];
     }
 
     if (definition.pattern) {
@@ -149,15 +149,18 @@ module.exports = function convertSchema(definition) {
 
   if (typeof definitions[definition.type] === 'function') {
     const _schema = {};
-    const _value = definitions[definition.type](definition);
 
     Object.keys(definition).forEach((key) => {
       _schema[key] = definition[key];
     });
 
-    // constraintSchema(_schema);
+    if (_schema.minLength || _schema.maxLength
+      || _schema.minimum || _schema.maximum
+      || _schema.pattern || _schema.format) {
+      constraintSchema(_schema);
+    }
 
-    _schema.type = _value;
+    _schema.type = definitions[definition.type](definition);
 
     return _schema;
   }
