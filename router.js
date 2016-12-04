@@ -34,6 +34,7 @@ module.exports = (cwd) => {
   const router = _routeMappings(routeMappings);
   const match = {};
 
+  const _urlFor = router.mappings;
   const _controllers = {};
   const _routes = [];
 
@@ -146,7 +147,10 @@ module.exports = (cwd) => {
   }
 
   return (container) => {
-    container.extensions.routes = _routes;
+    const _map = container.extensions.routes = router.mappings;
+
+    _map.forEach = Array.prototype.forEach.bind(_routes);
+    _map.map = Array.prototype.map.bind(_routes);
 
     function run(conn, _options) {
       const _method = conn.req.method.toLowerCase();
