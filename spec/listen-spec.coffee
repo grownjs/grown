@@ -17,6 +17,7 @@ describe '#listen', ->
       options: {}
       pipeline: []
       extensions: {}
+      initializers: []
 
     @container._context.protocols =
       http:
@@ -41,7 +42,7 @@ describe '#listen', ->
     ctx = @container._context.listen =>
       ctx.close()
       expect(@closed).toBe true
-      done()
+    ctx.start().then(=> done())
 
   it 'should reuse already defined resources', ->
     @container._context.servers[5000] = true
