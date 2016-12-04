@@ -7,89 +7,89 @@ module.exports = (server) => {
   let _fn;
 
   function makeRequest(next) {
-    const _server = server.listen({ protocol: 'test' });
+    server.listen({ protocol: 'test' }).then((_server) => {
+      const _opts = {
+        end: false,
+        body: null,
+        buffer: [],
+        headers: {},
+      };
 
-    const _opts = {
-      end: false,
-      body: null,
-      buffer: [],
-      headers: {},
-    };
+      const _req = new Readable();
 
-    const _req = new Readable();
+      _req._read = () => {
+        _opts.buffer.forEach((data) => {
+          _req.push(data);
+        });
 
-    _req._read = () => {
-      _opts.buffer.forEach((data) => {
-        _req.push(data);
+        _req.push(null);
+      };
+
+      // known interface
+      _req.url = '/';
+      _req.query = '';
+      _req.method = 'GET';
+      _req.headers = {};
+      _req.headers = { host: _server.location.host };
+
+      // initial length
+      _req.headers['content-length'] = 0;
+
+      // test interface
+      _req._pushData = (data) => {
+        _opts.buffer.push(data);
+        _req.headers['content-length'] += data.length;
+      };
+
+      next(_req, (end) => {
+        _opts.end = end;
+
+        /* istanbul ignore else */
+        if (_fn) {
+          const _res = new Writable();
+          const _end = _res.end;
+
+          // by-pass
+          _res.end = (chunk) => {
+            _res.finished = true;
+
+            /* istanbul ignore else */
+            if (chunk) {
+              _opts.body = chunk;
+            }
+
+            _end.call(_res);
+
+            return _res;
+          };
+
+          // known interface
+          _res.finished = false;
+          _res.statusCode = 200;
+          _res.statusMessage = 'OK';
+
+          _res.getHeader = (k) => _opts.headers[k];
+          _res.setHeader = (k, v) => { _opts.headers[k] = v; };
+
+          // test interface
+          Object.defineProperty(_res, 'output', {
+            get() {
+              return _opts.body;
+            },
+            set() {
+              throw new Error('Output is already defined');
+            },
+          });
+
+          _fn(_req, _res, (e) => {
+            /* istanbul ignore else */
+            if (_opts.end && !_opts.end._finished) {
+              _opts.end._finished = true;
+              _opts.end(e, _res);
+            }
+          });
+        }
       });
-
-      _req.push(null);
-    };
-
-    // known interface
-    _req.url = '/';
-    _req.query = '';
-    _req.method = 'GET';
-    _req.headers = {};
-    _req.headers = { host: _server.location.host };
-
-    // initial length
-    _req.headers['content-length'] = 0;
-
-    // test interface
-    _req._pushData = (data) => {
-      _opts.buffer.push(data);
-      _req.headers['content-length'] += data.length;
-    };
-
-    next(_req, (end) => {
-      _opts.end = end;
-
-      /* istanbul ignore else */
-      if (_fn) {
-        const _res = new Writable();
-        const _end = _res.end;
-
-        // by-pass
-        _res.end = (chunk) => {
-          _res.finished = true;
-
-          /* istanbul ignore else */
-          if (chunk) {
-            _opts.body = chunk;
-          }
-
-          _end.call(_res);
-
-          return _res;
-        };
-
-        // known interface
-        _res.finished = false;
-        _res.statusCode = 200;
-        _res.statusMessage = 'OK';
-
-        _res.getHeader = (k) => _opts.headers[k];
-        _res.setHeader = (k, v) => { _opts.headers[k] = v; };
-
-        // test interface
-        Object.defineProperty(_res, 'output', {
-          get() {
-            return _opts.body;
-          },
-          set() {
-            throw new Error('Output is already defined');
-          },
-        });
-
-        _fn(_req, _res, (e) => {
-          /* istanbul ignore else */
-          if (_opts.end && !_opts.end._finished) {
-            _opts.end._finished = true;
-            _opts.end(e, _res);
-          }
-        });
-      }
     });
   }
 
@@ -103,9 +103,7 @@ module.exports = (server) => {
 
         _fn = _client;
 
-        return {
-          listen() {},
-        };
+        return { listen(port, host, callback) { callback(); } };
       },
     };
   };
