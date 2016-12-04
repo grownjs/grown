@@ -96,11 +96,16 @@ module.exports = function convertSchema(definition) {
   }
 
   if (typeof definitions[definition.type] === 'function') {
+    const _schema = {};
     const _value = definitions[definition.type](definition);
 
-    definition.type = _value;
+    Object.keys(definition).forEach((key) => {
+      _schema[key] = definition[key];
+    });
 
-    return definition;
+    _schema.type = _value;
+
+    return _schema;
   }
 
   if (!definition.properties) {

@@ -8,10 +8,15 @@ const glob = require('glob');
 const path = require('path');
 const fs = require('fs');
 
+const fakeSchema = require('./fake');
 const convertSchema = require('./types');
 
 function _model(name, props, $schema, sequelize) {
-  return sequelize.define(name, $schema ? convertSchema($schema) : null, props);
+  const model = sequelize.define(name, $schema ? convertSchema($schema) : null, props);
+
+  model.$schemaDefinition = $schema;
+
+  return fakeSchema(model);
 }
 
 function _hook(cwd) {
