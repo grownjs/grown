@@ -1,6 +1,22 @@
 t = require('./_checktype')
 
 describe '#model', ->
+  describe 'JSON-Schema -> Faking support', ->
+    it 'should fake simple objects', ->
+      t.setup 'sqlite', ':memory:'
+
+      FakeModel = t.define('test',
+        properties: value: enum: ['OK']
+        required: ['value']
+      ).fake()
+
+      sample = FakeModel.findAll()
+
+      expect(sample.length > 0).toBe true
+      expect(sample[0]).toEqual { value: 'OK' }
+
+      expect(FakeModel.fake().findOne().value).toEqual 'OK'
+
   describe 'JSON-Schema -> Sequelize models', ->
     describe 'basic types (sqlite3)', ->
       beforeEach ->

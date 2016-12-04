@@ -30,3 +30,5 @@ module.exports.setup = (dialect, storage) ->
       timestamps: false
       freezeTableName: true
   null
+
+module.exports.define = (name, schema) -> model name, null, schema, conn
