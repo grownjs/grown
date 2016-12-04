@@ -41,12 +41,14 @@ module.exports = (cwd) => {
 
     const render = () => require(_cachedPaths[_id])(locals);
 
-    return Promise.all(Object.keys(locals).map((key) =>
-      Promise.resolve(locals[key]).then((value) => {
-        locals[key] = value;
-      })
-    ))
-    .then(render);
+    function reduce(obj) {
+      return Promise.all(Object.keys(obj).map((key) =>
+        Promise.resolve(obj[key]).then((value) => {
+          obj[key] = value;
+        })));
+    }
+
+    return reduce(locals).then(render);
   }
 
   return (container) => {
