@@ -1,5 +1,13 @@
 const Sequelize = require('sequelize');
 
+const KEYWORDS = [
+  'definitions', '$ref', 'required', 'pattern', 'format', 'enum',
+  'minLength', 'maxLength', 'minimum', 'maximum', 'exclusiveMinimum',
+  'exclusiveMaximum', 'multipleOf', 'items', 'minItems', 'maxItems', 'uniqueItems',
+  'additionalItems', 'allOf', 'oneOf', 'anyOf', 'properties', 'minProperties', 'maxProperties',
+  'patternProperties', 'additionalProperties', 'dependencies', 'not',
+];
+
 function constraintSchema(definition) {
   definition.validate = definition.validate || {};
 
@@ -59,34 +67,17 @@ function constraintSchema(definition) {
 }
 
 function dropKeywords(definition) {
-  delete definition.definitions;
-  delete definition.$ref;
-  delete definition.required;
-  delete definition.pattern;
-  delete definition.format;
-  delete definition.enum;
-  delete definition.minLength;
-  delete definition.maxLength;
-  delete definition.minimum;
-  delete definition.maximum;
-  delete definition.exclusiveMinimum;
-  delete definition.exclusiveMaximum;
-  delete definition.multipleOf;
-  delete definition.items;
-  delete definition.minItems;
-  delete definition.maxItems;
-  delete definition.uniqueItems;
-  delete definition.additionalItems;
-  delete definition.allOf;
-  delete definition.oneOf;
-  delete definition.anyOf;
-  delete definition.properties;
-  delete definition.minProperties;
-  delete definition.maxProperties;
-  delete definition.patternProperties;
-  delete definition.additionalProperties;
-  delete definition.dependencies;
-  delete definition.not;
+  Object.keys(KEYWORDS).forEach((key) => {
+    delete definition[key];
+  });
+}
+
+function hasKeywords(definition) {
+  for (let i = 0, c = KEYWORDS.length; i < c; i += 1) {
+    if (Object.prototype.hasOwnProperty.call(definition, KEYWORDS[i])) {
+      return true;
+    }
+  }
 }
 
 function type(key, arg1, arg2) {
@@ -191,15 +182,12 @@ module.exports = function convertSchema(definition) {
       _schema[key] = definition[key];
     });
 
-    if (_schema.minLength || _schema.maxLength
-      || _schema.minimum || _schema.maximum
-      || _schema.pattern || _schema.format) {
+    if (hasKeywords(_schema)) {
       constraintSchema(_schema);
+      dropKeywords(_schema);
     }
 
-    _schema.type = definitions[definition.type](definition);
-
-    dropKeywords(_schema);
+    _schema.type = definitions[definition.type](_schema);
 
     return _schema;
   }
