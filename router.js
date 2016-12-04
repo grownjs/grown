@@ -151,11 +151,9 @@ module.exports = (cwd) => {
     function run(conn, _options) {
       const _method = conn.req.method.toLowerCase();
 
-
       /* istanbul ignore else */
       if (!match[_method]) {
-        _error(405);
-        return;
+        return _error(405);
       }
 
       const _handler = match[_method](conn.req.url, 1);
@@ -217,17 +215,17 @@ module.exports = (cwd) => {
           _controllers[_handler.controller].pipeline[_handler.action] = _pipeline;
         }
 
-        _pipeline(conn, _options);
-      } else {
-        _error(404);
+        return _pipeline(conn, _options);
       }
+
+      return _error(404);
     }
 
     container._context.mount((conn, _options) => {
       return conn.next(() => {
         /* istanbul ignore else */
         if (conn.body === null) {
-          run(conn, _options);
+          return run(conn, _options);
         }
       });
     });
