@@ -9,12 +9,12 @@ const path = require('path');
 const fs = require('fs');
 
 const fakeSchema = require('./fake');
-const convertSchema = require('./types');
+const { cleanSchema, convertSchema } = require('./types');
 
 function _model(name, props, $schema, sequelize) {
   const model = sequelize.define(name, $schema ? convertSchema($schema) : null, props);
 
-  model.$schemaDefinition = $schema;
+  model.$schemaDefinition = $schema ? cleanSchema($schema) : null;
 
   return fakeSchema(model);
 }

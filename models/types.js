@@ -64,10 +64,9 @@ function constraintSchema(definition) {
       definition.validate.max = max;
     }
   }
-}
 
-function dropKeywords(definition) {
-  Object.keys(KEYWORDS).forEach((key) => {
+  // remove schema keywords
+  KEYWORDS.forEach((key) => {
     delete definition[key];
   });
 }
@@ -170,7 +169,32 @@ const definitions = {
   },
 };
 
-module.exports = function convertSchema(definition) {
+function cleanSchema(definition, hasDefinitions) {
+  if (!definition || typeof definition !== 'object') {
+    return definition;
+  }
+
+  const _defs = definition.definitions || definition.properties || definition.patternProperties;
+  const props = Object.keys(definition);
+  const keys = KEYWORDS.concat('type');
+  const obj = {};
+
+  props.forEach((prop) => {
+    if (hasDefinitions || keys.indexOf(prop) > -1) {
+      if (Array.isArray(definition[prop])) {
+        obj[prop] = definition[prop].map(value => cleanSchema(value, _defs));
+      } else if (typeof definition[prop] === 'object') {
+        obj[prop] = cleanSchema(definition[prop], _defs);
+      } else {
+        obj[prop] = definition[prop];
+      }
+    }
+  });
+
+  return obj;
+}
+
+function convertSchema(definition) {
   if (Array.isArray(definition.enum)) {
     return Sequelize.ENUM.call(null, definition.enum);
   }
@@ -184,7 +208,6 @@ module.exports = function convertSchema(definition) {
 
     if (hasKeywords(_schema)) {
       constraintSchema(_schema);
-      dropKeywords(_schema);
     }
 
     _schema.type = definitions[definition.type](_schema);
@@ -207,4 +230,9 @@ module.exports = function convertSchema(definition) {
   });
 
   return _props;
+}
+
+module.exports = {
+  cleanSchema,
+  convertSchema,
 };
