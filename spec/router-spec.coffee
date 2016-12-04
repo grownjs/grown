@@ -52,11 +52,11 @@ describe '#router', ->
       expect(res.statusCode).toEqual 404
       done()
 
-  it 'should append `req.params` and `req.handler` when a route matches', (done) ->
+  it 'should append `conn.params` and `conn.handler` when a route matches', (done) ->
     $.server.mount (conn) ->
       conn.next ->
-        $.params = conn.req.params
-        $.handler = conn.req.handler
+        $.params = conn.params
+        $.handler = conn.handler
 
     useConfig 'valid-routes'
 
