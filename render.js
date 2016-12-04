@@ -66,6 +66,14 @@ module.exports = (cwd) => {
 
       delete _locals.as;
 
+      if (container.extensions) {
+        Object.keys(container.extensions).forEach((key) => {
+          if (typeof _locals[key] === 'undefined') {
+            _locals[key] = container.extensions[key];
+          }
+        });
+      }
+
       _views.push({
         src: view || 'index',
         data: _locals,
