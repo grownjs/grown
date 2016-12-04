@@ -215,6 +215,12 @@ module.exports = (cwd) => {
           _controllers[_handler.controller].pipeline[_handler.action] = _pipeline;
         }
 
+        if (Controller.inject) {
+          Object.keys(Controller.inject).forEach((key) => {
+            conn[key] = Controller.inject[key](conn, _options);
+          });
+        }
+
         return _pipeline(conn, _options);
       }
 
