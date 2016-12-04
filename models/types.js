@@ -20,6 +20,20 @@ function constraintSchema(definition) {
         definition.validate.isEmail = true;
         break;
 
+      case 'date-time':
+      case 'datetime':
+        definition.validate.isDate = true;
+        break;
+
+      case 'ipv4':
+        definition.validate.isIPv4 = true;
+        break;
+
+      case 'ipv6':
+        definition.validate.isIPv6 = true;
+        break;
+
+      // TODO: hostname uri ...
       default:
         // nothing to do?
     }
@@ -42,13 +56,37 @@ function constraintSchema(definition) {
       definition.validate.max = max;
     }
   }
+}
 
+function dropKeywords(definition) {
+  delete definition.definitions;
+  delete definition.$ref;
+  delete definition.required;
+  delete definition.pattern;
+  delete definition.format;
+  delete definition.enum;
   delete definition.minLength;
   delete definition.maxLength;
   delete definition.minimum;
   delete definition.maximum;
-  delete definition.pattern;
-  delete definition.format;
+  delete definition.exclusiveMinimum;
+  delete definition.exclusiveMaximum;
+  delete definition.multipleOf;
+  delete definition.items;
+  delete definition.minItems;
+  delete definition.maxItems;
+  delete definition.uniqueItems;
+  delete definition.additionalItems;
+  delete definition.allOf;
+  delete definition.oneOf;
+  delete definition.anyOf;
+  delete definition.properties;
+  delete definition.minProperties;
+  delete definition.maxProperties;
+  delete definition.patternProperties;
+  delete definition.additionalProperties;
+  delete definition.dependencies;
+  delete definition.not;
 }
 
 function type(key, arg1, arg2) {
@@ -160,6 +198,8 @@ module.exports = function convertSchema(definition) {
     }
 
     _schema.type = definitions[definition.type](definition);
+
+    dropKeywords(_schema);
 
     return _schema;
   }
