@@ -62,7 +62,8 @@ module.exports = (cwd) => {
       }
 
       const _locals = locals || {};
-      const _target = _locals.as || 'main';
+      const _handler = container.extensions.handler || {};
+      const _target = _locals.as || _handler.action || 'index';
 
       delete _locals.as;
 
@@ -74,8 +75,10 @@ module.exports = (cwd) => {
         });
       }
 
+      const _path = [_handler.controller, _handler.action].join('/');
+
       _views.push({
-        src: view || 'index',
+        src: view || _path.replace(/^\//, '') || 'index',
         data: _locals,
         block: _target,
       });
