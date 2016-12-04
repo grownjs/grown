@@ -28,21 +28,24 @@ describe '#listen', ->
 
     listenFactory(@container)
 
-  it 'should be called (quick-check)', ->
-    @container._context.listen 'http://'
-    expect(@called).toBe true
+  it 'should be called (quick-check)', (done) ->
+    @container._context.listen('http://').then =>
+      expect(@called).toBe true
+      done()
 
-  it 'supports many settings formats', ->
-    expect(@container._context.listen().port).toEqual 80
-    expect(@container._context.listen(8081).port).toEqual 8081
-    expect(@container._context.listen('local.dev').host).toEqual 'local.dev'
-    expect(@container._context.listen(parseUrl('http://local.dev:8081')).port).toEqual 8081
+  it 'supports many settings formats', (done) ->
+    Promise.all([
+      @container._context.listen().then (server) -> expect(server.port).toEqual 80
+      @container._context.listen(8081).then (server) -> expect(server.port).toEqual 8081
+      @container._context.listen('local.dev').then (server) -> expect(server.host).toEqual 'local.dev'
+      @container._context.listen(parseUrl('http://local.dev:8081')).then (server) -> expect(server.port).toEqual 8081
+    ]).then -> done()
 
   it 'should expose a close() function', (done) ->
-    ctx = @container._context.listen =>
-      ctx.close()
+    ctx = @container._context.listen((server) =>
+      server.close()
       expect(@closed).toBe true
-    ctx.start().then(=> done())
+    ).then -> done()
 
   it 'should reuse already defined resources', ->
     @container._context.servers[5000] = true

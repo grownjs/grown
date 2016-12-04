@@ -1,10 +1,16 @@
 describe '#server', ->
-  it 'should fail on unsupported protocols', ->
+  it 'should fail on unsupported protocols', (done) ->
     server = require('..').new()
 
     server.protocols.http =
     server.protocols.https =
       createServer: ->
 
-    expect(-> server.listen 'http://').toThrow()
-    expect(-> server.listen 'https://').toThrow()
+    error = 0
+
+    Promise.all([
+      server.listen('http://').catch(-> error++)
+      server.listen('https://').catch(-> error++)
+    ]).then ->
+      expect(error).toEqual 2
+      done()
