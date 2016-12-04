@@ -82,6 +82,10 @@ module.exports = (cwd) => {
         const _chunks = _views.splice(0, _views.length);
 
         /* istanbul ignore else */
+        if (!_chunks.length) {
+          return;
+        }
+
         return Promise.all(_chunks.map(_render))
           .then((results) => {
             const _blocks = {};
