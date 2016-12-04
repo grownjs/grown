@@ -27,6 +27,7 @@ function _hook(cwd) {
     const _options = _defaults[process.env.NODE_ENV || 'dev'];
     const _config = _options || _defaults;
     const _models = {};
+    const _tasks = [];
 
     // db-migrate
     _config.driver = _config.dialect;
@@ -50,6 +51,7 @@ function _hook(cwd) {
         .toLowerCase();
 
       _models[modelName] = _model(tableName, definition, $schema, _sequelize);
+      _tasks.push(() => _models[modelName].sync());
 
       Object.defineProperty(container.extensions.models, modelName, {
         configurable: false,
@@ -62,6 +64,8 @@ function _hook(cwd) {
         },
       });
     });
+
+    return Promise.all(_tasks.map(cb => cb()));
   };
 }
 

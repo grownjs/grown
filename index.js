@@ -31,6 +31,7 @@ module.exports.new = (options) => {
     options: options || {},
     pipeline: [],
     extensions: {},
+    initializers: [],
   };
 
   _farms.push(container);
