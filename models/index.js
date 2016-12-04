@@ -29,7 +29,8 @@ function _hook(cwd) {
     }
 
     const _defaults = require(path.join(cwd, 'config', 'database.js'));
-    const _options = _defaults[process.env.NODE_ENV || 'dev'];
+    const _environment = process.env.NODE_ENV || 'dev';
+    const _options = _defaults[_environment];
     const _config = _options || _defaults;
     const _models = {};
     const _tasks = [];
@@ -56,7 +57,10 @@ function _hook(cwd) {
         .toLowerCase();
 
       _models[modelName] = _model(tableName, definition, $schema, _sequelize);
-      _tasks.push(() => _models[modelName].sync());
+
+      if (_environment === 'dev') {
+        _tasks.push(() => _models[modelName].sync());
+      }
 
       Object.defineProperty(container.extensions.models, modelName, {
         configurable: false,
