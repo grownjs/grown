@@ -88,14 +88,22 @@ module.exports = (cwd) => {
       });
     };
 
-    function _view(conn, blocks) {
-      const src = _lookup('layouts/default');
+    function _view(conn, start, blocks) {
+      let _layout = 'layouts/default';
 
-      conn.body = require(src)(blocks);
+      if (conn.handler._controller && conn.handler._controller.instance) {
+        _layout = `layouts/${conn.handler._controller.instance.layout || 'default'}`;
+      }
+
+      conn.body = require(_lookup(_layout))(blocks)
+        .replace(/{elapsed}/g, `${((new Date()) - start) / 1000}ms`);
     }
 
-    container._context.mount((conn) =>
-      conn.next(() => {
+    container._context.mount((conn) => {
+      const start = new Date();
+
+      return conn.next(() => {
+
         if (conn.handler._controller && conn.handler._controller.instance) {
           const _partials = conn.handler._controller.instance.render || {};
 
@@ -131,8 +139,9 @@ module.exports = (cwd) => {
               _blocks[_chunk.block] = results.shift();
             });
 
-            _view(conn, _blocks);
+            _view(conn, start, _blocks);
           });
-      }));
+      });
+    });
   };
 };
