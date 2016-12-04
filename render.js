@@ -51,6 +51,16 @@ module.exports = (cwd) => {
     return reduce(locals).then(render);
   }
 
+  function _fix(obj, locals) {
+    if (locals) {
+      Object.keys(locals).forEach((key) => {
+        if (typeof obj[key] === 'undefined') {
+          obj[key] = locals[key];
+        }
+      });
+    }
+  }
+
   return (container) => {
     const _views = [];
 
@@ -61,25 +71,13 @@ module.exports = (cwd) => {
         view = locals.src;
       }
 
+      const _copy = {};
       const _locals = locals || {};
       const _handler = container.extensions.handler || {};
       const _target = _locals.as || _handler.action || 'index';
 
-      delete _locals.as;
-
-      const _copy = {};
-
-      Object.keys(locals).forEach((key) => {
-        _copy[key] = _locals[key];
-      });
-
-      if (container.extensions) {
-        Object.keys(container.extensions).forEach((key) => {
-          if (typeof _copy[key] === 'undefined') {
-            _copy[key] = container.extensions[key];
-          }
-        });
-      }
+      _fix(_copy, _locals);
+      _fix(_copy, container.extensions);
 
       const _path = [_handler.controller, _handler.action].join('/');
 
@@ -98,25 +96,25 @@ module.exports = (cwd) => {
 
     container._context.mount((conn) =>
       conn.next(() => {
-        if (!(conn.handler._controller && conn.handler._controller.instance)) {
-          return;
+        if (conn.handler._controller && conn.handler._controller.instance) {
+          const _partials = conn.handler._controller.instance.render || {};
+
+          Object.keys(_partials).forEach((_target) => {
+            const _locals = {};
+
+            Object.keys(_partials[_target].data).forEach((key) => {
+              _locals[key] = _partials[_target].data[key](conn);
+            });
+
+            _fix(_locals, container.extensions);
+
+            _views.push({
+              src: _partials[_target].src || _target,
+              data: _locals,
+              block: _target.split('/').pop(),
+            });
+          });
         }
-
-        const _partials = conn.handler._controller.instance.render || {};
-
-        Object.keys(_partials).forEach((_target) => {
-          const _locals = {};
-
-          Object.keys(_partials[_target].data).forEach((key) => {
-            _locals[key] = _partials[_target].data[key](conn);
-          });
-
-          _views.push({
-            src: _partials[_target].src || _target,
-            data: _locals,
-            block: _target.split('/').pop(),
-          });
-        });
 
         const _chunks = _views.splice(0, _views.length);
 
