@@ -34,7 +34,6 @@ module.exports = (cwd) => {
   const router = _routeMappings(routeMappings);
   const match = {};
 
-  const _urlFor = router.mappings;
   const _controllers = {};
   const _routes = [];
 
@@ -224,6 +223,8 @@ module.exports = (cwd) => {
             conn[key] = Controller.inject[key](conn, _options);
           });
         }
+
+        _handler._controller = _controllers[_handler.controller];
 
         return _pipeline(conn, _options);
       }
