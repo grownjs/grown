@@ -163,13 +163,13 @@ module.exports = (cwd) => {
       const _handler = match[_method](conn.req.url, 1);
 
       if (_handler) {
-        conn.req.handler = _handler;
-        conn.req.params = {};
+        container.extensions.params = conn.params = {};
+        container.extensions.handler = conn.handler = _handler;
 
         /* istanbul ignore else */
         if (_handler.matcher && _handler.matcher.keys) {
           _handler.matcher.keys.forEach((key, i) => {
-            conn.req.params[key] = _handler.matcher.values[i];
+            conn.params[key] = _handler.matcher.values[i];
           });
         }
 
