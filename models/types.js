@@ -2,23 +2,22 @@ const Sequelize = require('sequelize');
 
 function constraintSchema(definition) {
   definition.validate = definition.validate || {};
-  definition.validate.is = definition.validate.is || {};
 
   const min = definition.minLength || definition.minimum || undefined;
   const max = definition.maxLength || definition.maximum || undefined;
 
   if (definition.type === 'string') {
     if (min || max) {
-      definition.validate.is.len = [min || 0, max || Infinity];
+      definition.validate.len = [min || 0, max || Infinity];
     }
 
     if (definition.pattern) {
-      definition.validate.is.is = new RegExp(definition.pattern, 'i');
+      definition.validate.is = new RegExp(definition.pattern, 'i');
     }
 
     switch (definition.format) {
       case 'email':
-        definition.validate.is.isEmail = true;
+        definition.validate.isEmail = true;
         break;
 
       default:
@@ -28,19 +27,19 @@ function constraintSchema(definition) {
 
   if (definition.type === 'number' || definition.type === 'integer') {
     if (definition.type === 'number') {
-      definition.validate.is.isNumeric = true;
+      definition.validate.isNumeric = true;
     }
 
     if (definition.type === 'integer') {
-      definition.validate.is.isInt = true;
+      definition.validate.isInt = true;
     }
 
     if (min >= 0) {
-      definition.validate.is.min = min;
+      definition.validate.min = min;
     }
 
     if (max) {
-      definition.validate.is.max = max;
+      definition.validate.max = max;
     }
   }
 
