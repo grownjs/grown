@@ -92,7 +92,8 @@ module.exports = (cwd) => {
       let _layout = 'layouts/default';
 
       if (conn.handler._controller && conn.handler._controller.instance) {
-        _layout = `layouts/${conn.handler._controller.instance.layout || 'default'}`;
+        _layout = `layouts/${conn.handler._controller.instance.layout
+          || conn.handler._controller.original.layout || 'default'}`;
       }
 
       conn.body = require(_lookup(_layout))(blocks)
@@ -104,7 +105,8 @@ module.exports = (cwd) => {
 
       return conn.next(() => {
         if (conn.handler._controller && conn.handler._controller.instance) {
-          const _partials = conn.handler._controller.instance.render || {};
+          const _partials = conn.handler._controller.instance.render
+            || conn.handler._controller.original.render || {};
 
           Object.keys(_partials).forEach((_target) => {
             const _locals = {};
