@@ -103,7 +103,6 @@ module.exports = (cwd) => {
       const start = new Date();
 
       return conn.next(() => {
-
         if (conn.handler._controller && conn.handler._controller.instance) {
           const _partials = conn.handler._controller.instance.render || {};
 
