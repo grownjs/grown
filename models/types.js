@@ -3,7 +3,7 @@ const Sequelize = require('sequelize');
 const KEYWORDS = [
   'definitions', '$ref', 'required', 'pattern', 'format', 'enum',
   'minLength', 'maxLength', 'minimum', 'maximum', 'exclusiveMinimum',
-  'exclusiveMaximum', 'multipleOf', 'items', 'minItems', 'maxItems', 'uniqueItems',
+  'exclusiveMaximum', 'multipleOf', 'minItems', 'maxItems', 'uniqueItems',
   'additionalItems', 'allOf', 'oneOf', 'anyOf', 'properties', 'minProperties', 'maxProperties',
   'patternProperties', 'additionalProperties', 'dependencies', 'not',
 ];
@@ -144,7 +144,7 @@ const definitions = {
     if (!definition.items
       || !definition.items.type
       || !definitions[definition.items.type]) {
-      throw new Error(`Invalid definition for '${definition}'`);
+      throw new Error(`Invalid definition for '${JSON.stringify(definition)}'`);
     }
 
     return type('ARRAY', definitions[definition.items.type](definition.items));
@@ -175,8 +175,9 @@ function cleanSchema(definition, hasDefinitions) {
   }
 
   const _defs = definition.definitions || definition.properties || definition.patternProperties;
+
+  const keys = KEYWORDS.concat('items', 'type');
   const props = Object.keys(definition);
-  const keys = KEYWORDS.concat('type');
   const obj = {};
 
   props.forEach((prop) => {
@@ -211,6 +212,8 @@ function convertSchema(definition) {
     }
 
     _schema.type = definitions[definition.type](_schema);
+
+    delete _schema.items;
 
     return _schema;
   }

@@ -5,17 +5,27 @@ describe '#model', ->
     it 'should fake simple objects', ->
       t.setup 'sqlite', ':memory:'
 
-      FakeModel = t.define('test',
-        properties: value: enum: ['OK']
-        required: ['value']
-      ).fake()
+      FakeModel = t.define 'test',
+        properties:
+          str: type: 'string'
+          num: type: 'number'
+          int: type: 'integer'
+          bol: type: 'boolean'
+          ary:
+            type: 'array'
+            minItems: 1
+            items:
+              type: 'string'
+          obj: type: 'object', properties: prop: type: 'string'
+        required: ['str', 'num', 'int', 'bol', 'ary', 'obj']
 
-      sample = FakeModel.findAll()
+      sample = FakeModel.fake().findOne()
 
-      expect(sample.length > 0).toBe true
-      expect(sample[0]).toEqual { value: 'OK' }
-
-      expect(FakeModel.findOne().value).toEqual 'OK'
+      expect(typeof sample.str).toEqual 'string'
+      expect(typeof sample.num).toEqual 'number'
+      expect(typeof sample.bol).toEqual 'boolean'
+      expect(typeof sample.ary).toEqual 'object'
+      expect(typeof sample.ary[0]).toEqual 'string'
 
   describe 'JSON-Schema -> Sequelize models', ->
     describe 'basic types (sqlite3)', ->
