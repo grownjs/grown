@@ -3,7 +3,7 @@ dist: trusty
 services:
   - postgresql
 addons:
-  postgresql: "9.4"
+  postgresql: "9.5"
 language: node_js
 node_js:
   - 4
