@@ -2,7 +2,7 @@ t = require('./_checktype')
 
 describe '#model', ->
   describe 'JSON-Schema -> Faking support', ->
-    it 'should fake simple objects (sqlite3)', ->
+    it 'should fake simple objects (sqlite3)', (done) ->
       t.setup 'sqlite', ':memory:'
 
       FakeModel = t.define 'test',
@@ -20,7 +20,16 @@ describe '#model', ->
       expect(typeof sample.int).toEqual 'number'
       expect(typeof sample.bol).toEqual 'boolean'
 
-    it 'should fake nested objects (postgres)', ->
+      FakeModel.sync().then ->
+        Promise.all([
+          FakeModel.create(str: 'OSOM')
+          FakeModel.findAll()
+        ]).then ([one, all]) ->
+          expect(one.get('str')).toEqual 'OSOM'
+          expect(all[0].get('str')).toEqual 'OSOM'
+          done()
+
+    it 'should fake nested objects (postgres)', (done) ->
       t.setup 'postgres'
 
       FakeModel = t.define 'test',
@@ -43,6 +52,17 @@ describe '#model', ->
       expect(typeof sample.ary).toEqual 'object'
       expect(typeof sample.ary[0]).toEqual 'string'
       expect(typeof sample.obj.prop).toEqual 'string'
+
+      FakeModel.sync().then ->
+        Promise.all([
+          FakeModel.create({ ary: ['OSOM'], obj: { prop: 'OSOM' } })
+          FakeModel.findAll()
+        ]).then ([one, all]) ->
+          expect(one.get('ary')).toEqual ['OSOM']
+          expect(all[0].get('ary')).toEqual ['OSOM']
+          expect(one.get('obj')).toEqual { prop: 'OSOM' }
+          expect(all[0].get('obj')).toEqual { prop: 'OSOM' }
+          done()
 
   describe 'JSON-Schema -> Sequelize models', ->
     describe 'basic types (sqlite3)', ->
