@@ -46,16 +46,13 @@ describe '#model', ->
         required: ['str', 'num', 'int', 'bol']
 
       FakeModel.sync()
-        .then ->
-          FakeModel.truncate()
-        .then ->
-          FakeModel.create(str: 'OSOM')
-        .then (one) ->
+        .then(-> FakeModel.truncate())
+        .then(-> FakeModel.create(str: 'OSOM'))
+        .then((one) -> expect(one.get('str')).toEqual 'OSOM')
+        .then(-> FakeModel.findAll())
+        .then(([one]) ->
           expect(one.get('str')).toEqual 'OSOM'
-          FakeModel.findAll()
-        .then ([one]) ->
-          expect(one.get('str')).toEqual 'OSOM'
-          done()
+          done())
 
     it 'should sync() nested objects (postgres)', (done) ->
       t.setup 'postgres'
@@ -76,18 +73,16 @@ describe '#model', ->
         required: ['ary', 'obj']
 
       FakeModel.sync()
-        .then ->
-          FakeModel.truncate()
-        .then ->
-          FakeModel.create({ ary: ['OSOM'], obj: { prop: 'OSOM' } })
-        .then (one) ->
+        .then(-> FakeModel.truncate())
+        .then(-> FakeModel.create({ ary: ['OSOM'], obj: { prop: 'OSOM' } }))
+        .then((one) ->
+          expect(one.get('ary')).toEqual ['OSOM']
+          expect(one.get('obj')).toEqual { prop: 'OSOM' })
+        .then(-> FakeModel.findAll())
+        .then(([one]) ->
           expect(one.get('ary')).toEqual ['OSOM']
           expect(one.get('obj')).toEqual { prop: 'OSOM' }
-          FakeModel.findAll()
-        .then ([one]) ->
-          expect(one.get('ary')).toEqual ['OSOM']
-          expect(one.get('obj')).toEqual { prop: 'OSOM' }
-          done()
+          done())
 
   describe 'JSON-Schema -> Sequelize models', ->
     describe 'basic types (sqlite3)', ->
