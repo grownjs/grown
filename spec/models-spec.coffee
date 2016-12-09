@@ -1,8 +1,40 @@
 t = require('./_checktype')
 
 describe '#model', ->
-  describe 'JSON-Schema -> Faking support', ->
-    it 'should fake simple objects (sqlite3)', (done) ->
+  describe 'JSON-Schema support', ->
+    it 'should fake() simple objects', ->
+      t.setup 'sqlite', ':memory:'
+
+      FakeModel = t.define 'test',
+        properties:
+          str: type: 'string'
+          num: type: 'number'
+          int: type: 'integer'
+          bol: type: 'boolean'
+          ary:
+            type: 'array'
+            minItems: 1
+            items:
+              type: 'string'
+          obj:
+            type: 'object'
+            properties:
+              prop:
+                type: 'string'
+            required: ['prop']
+        required: ['str', 'num', 'int', 'bol', 'ary', 'obj']
+
+      sample = FakeModel.fake().findOne()
+
+      expect(typeof sample.str).toEqual 'string'
+      expect(typeof sample.num).toEqual 'number'
+      expect(typeof sample.int).toEqual 'number'
+      expect(typeof sample.bol).toEqual 'boolean'
+      expect(typeof sample.ary).toEqual 'object'
+      expect(typeof sample.ary[0]).toEqual 'string'
+      expect(typeof sample.obj.prop).toEqual 'string'
+
+    it 'should sync() simple objects (sqlite3)', (done) ->
       t.setup 'sqlite', ':memory:'
 
       FakeModel = t.define 'test',
@@ -13,23 +45,19 @@ describe '#model', ->
           bol: type: 'boolean'
         required: ['str', 'num', 'int', 'bol']
 
-      sample = FakeModel.fake().findOne()
-
-      expect(typeof sample.str).toEqual 'string'
-      expect(typeof sample.num).toEqual 'number'
-      expect(typeof sample.int).toEqual 'number'
-      expect(typeof sample.bol).toEqual 'boolean'
-
-      FakeModel.sync().then ->
-        Promise.all([
+      FakeModel.sync()
+        .then ->
+          FakeModel.truncate()
+        .then ->
           FakeModel.create(str: 'OSOM')
-          FakeModel.findAll()
-        ]).then ([one, all]) ->
+        .then (one) ->
           expect(one.get('str')).toEqual 'OSOM'
-          expect(all[0].get('str')).toEqual 'OSOM'
+          FakeModel.findAll()
+        .then ([one]) ->
+          expect(one.get('str')).toEqual 'OSOM'
           done()
 
-    it 'should fake nested objects (postgres)', (done) ->
+    it 'should sync() nested objects (postgres)', (done) ->
       t.setup 'postgres'
 
       FakeModel = t.define 'test',
@@ -47,24 +75,18 @@ describe '#model', ->
             required: ['prop']
         required: ['ary', 'obj']
 
-      sample = FakeModel.fake().findOne()
-
-      expect(typeof sample.ary).toEqual 'object'
-      expect(typeof sample.ary[0]).toEqual 'string'
-      expect(typeof sample.obj.prop).toEqual 'string'
-
-      FakeModel.sync().then ->
-        Promise.all([
+      FakeModel.sync()
+        .then ->
+          FakeModel.truncate()
+        .then ->
           FakeModel.create({ ary: ['OSOM'], obj: { prop: 'OSOM' } })
-          FakeModel.findAll()
-        ]).then ([one, all]) ->
+        .then (one) ->
           expect(one.get('ary')).toEqual ['OSOM']
           expect(one.get('obj')).toEqual { prop: 'OSOM' }
-
-          # FIXME
-          console.log all
-          #expect(all[0].get('ary')).toEqual ['OSOM']
-          #expect(all[0].get('obj')).toEqual { prop: 'OSOM' }
+          FakeModel.findAll()
+        .then ([one]) ->
+          expect(one.get('ary')).toEqual ['OSOM']
+          expect(one.get('obj')).toEqual { prop: 'OSOM' }
           done()
 
   describe 'JSON-Schema -> Sequelize models', ->
