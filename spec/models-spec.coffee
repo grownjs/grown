@@ -62,8 +62,8 @@ describe '#model', ->
           expect(one.get('obj')).toEqual { prop: 'OSOM' }
 
           # FIXME
-          #expect(all[0].get('ary')).toEqual ['OSOM']
-          #expect(all[0].get('obj')).toEqual { prop: 'OSOM' }
+          expect(all[0].get('ary')).toEqual ['OSOM']
+          expect(all[0].get('obj')).toEqual { prop: 'OSOM' }
           done()
 
   describe 'JSON-Schema -> Sequelize models', ->
