@@ -25,7 +25,7 @@ module.exports.setup = (dialect, storage) ->
     database: if process.env.CI then 'travis_ci_test' else 'test'
     dialect: dialect
     storage: storage
-    logging: false
+    logging: true
     define:
       timestamps: false
       freezeTableName: true
