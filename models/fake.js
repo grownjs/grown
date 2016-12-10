@@ -1,3 +1,5 @@
+'use strict';
+
 const jsf = require('json-schema-faker');
 
 function _findAll(model) {

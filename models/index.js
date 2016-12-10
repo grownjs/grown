@@ -1,6 +1,7 @@
 'use strict';
 
 /* eslint-disable global-require */
+/* eslint-disable import/no-dynamic-require */
 
 const Sequelize = require('sequelize');
 
@@ -9,12 +10,12 @@ const path = require('path');
 const fs = require('fs');
 
 const fakeSchema = require('./fake');
-const { cleanSchema, convertSchema } = require('./types');
+const schemaTypes = require('./types');
 
 function _model(name, props, $schema, sequelize) {
-  const model = sequelize.define(name, $schema ? convertSchema($schema) : null, props);
+  const model = sequelize.define(name, $schema ? schemaTypes.convertSchema($schema) : null, props);
 
-  model.$schemaDefinition = $schema ? cleanSchema($schema) : null;
+  model.$schemaDefinition = $schema ? schemaTypes.cleanSchema($schema) : null;
 
   return fakeSchema(model);
 }
@@ -49,7 +50,7 @@ function _hook(cwd) {
       .replace(/Model(\/|$)/g, '');
 
     const tableName = definition.table || modelName
-      .replace(/[A-Z]/g, ($0) => `_${$0}`)
+      .replace(/[A-Z]/g, $0 => `_${$0}`)
       .replace(/^_/, '')
       .toLowerCase();
 
