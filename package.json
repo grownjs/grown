@@ -28,14 +28,11 @@
     "formidable": "^1.0.17",
     "istanbul": "^0.4.3",
     "jasmine-node": "2.0.0-beta4",
-    "json-schema-faker": "^0.4.0",
+    "json-schema-sequelizer": "pateketrueke/json-schema-sequelizer",
     "method-override": "^2.3.6",
     "morgan": "^1.7.0",
-    "pg": "6.1.0",
     "route-mappings": "^0.3.1",
-    "sequelize": "^3.24.1",
     "serve-index": "^1.8.0",
-    "serve-static": "^1.11.1",
-    "sqlite3": "^3.1.4"
+    "serve-static": "^1.11.1"
   }
 }
