@@ -36,10 +36,12 @@ function _hook(cwd) {
       .replace(/(index)?\.js/, '')
       .replace(/Model(\/|$)/g, '');
 
+    /* istanbul ignore else */
     if (!modelDefinition.$schema) {
       modelDefinition.$schema = {};
     }
 
+    /* istanbul ignore else */
     if (!modelDefinition.$schema.id) {
       modelDefinition.$schema.id = modelName;
     }
