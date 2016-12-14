@@ -1,6 +1,6 @@
 module.exports = {
-  dev: {
+  test: {
     dialect: 'sqlite',
-    storage: 'db.sqlite',
+    storage: ':memory:',
   },
 };
