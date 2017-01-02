@@ -1,6 +1,4 @@
-'use strict';
-
-const buildFactory = require('./factory');
+import buildFactory from './_factory';
 
 function _when(promise, callback) {
   /* istanbul ignore else */
@@ -33,7 +31,7 @@ function _run(task, state, options) {
 
           const result = _iterator.next(value, options);
 
-          if (!result.done) {
+          if (!result.halted) {
             /* istanbul ignore else */
             if (typeof result.value.then === 'function'
               && typeof result.value.catch === 'function') {
@@ -65,7 +63,7 @@ function _run(task, state, options) {
   }
 }
 
-module.exports = function _pipelineFactory(label, pipeline, _callback) {
+export default function _pipelineFactory(label, pipeline, _callback) {
   /* istanbul ignore else */
   if (!label) {
     throw new Error(`Label for pipelines are required, given '${label}'`);
@@ -86,11 +84,14 @@ module.exports = function _pipelineFactory(label, pipeline, _callback) {
     options = options || {};
 
     /* istanbul ignore else */
-    if (state.done) {
+    if (state.halted) {
       throw new Error(`Pipeline '${label}' Already Finished`);
     }
 
+    // slice to keep original pipeline unmodified
     let _pipeline = pipeline.slice();
+
+    // callstack for debug
     const _stack = [];
 
     function next(end) {
@@ -104,28 +105,31 @@ module.exports = function _pipelineFactory(label, pipeline, _callback) {
         _stack.push(cb.name);
 
         /* istanbul ignore else */
-        if (state.done) {
+        if (state.halted) {
           // short-circuit
-          if (typeof state.done === 'function') {
-            state.done(end);
-          } else {
-            end();
-          }
+          end();
           return;
         }
 
-        state.next = (_resume) => {
-          /* istanbul ignore else */
-          if (!_pipeline.length) {
-            return _when(Promise.resolve(state), _resume);
-          }
+        Object.defineProperty(state, 'next', {
+          configurable: false,
+          enumerable: true,
+          set() {
+            throw new Error("Property 'next' is read-only");
+          },
+          get(_resume) {
+            /* istanbul ignore else */
+            if (!_pipeline.length) {
+              return _when(Promise.resolve(state), _resume);
+            }
 
-          const _dispatch = _pipelineFactory(cb.name, _pipeline.slice());
+            const _dispatch = _pipelineFactory(cb.name, _pipeline.slice());
 
-          _pipeline = [];
+            _pipeline = [];
 
-          return _when(_dispatch(state, options), _resume);
-        };
+            return _when(_dispatch(state, options), _resume);
+          },
+        });
 
         try {
           value = _run(cb, state, options);
@@ -177,4 +181,4 @@ module.exports = function _pipelineFactory(label, pipeline, _callback) {
       });
     });
   };
-};
+}

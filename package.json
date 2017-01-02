@@ -5,13 +5,40 @@
   "author": "Alvaro Cabrera",
   "license": "MIT",
   "scripts": {
-    "dev": "jasmine-node spec --coffee --verbose --autoTest --watchFolders lib",
-    "dev:lint": "eslint lib spec",
-    "dev:spec": "jasmine-node spec --coffee --noStackTrace --captureExceptions",
-    "cover": "istanbul cover --root lib --x '**/spec/**' -- jasmine-node --coffee spec",
-    "cover:up": "codecov --file=coverage/lcov.info --disable=gcov -e TRAVIS_NODE_VERSION",
-    "example": "node examples/_runner.js",
-    "test": "npm run dev:lint && npm run dev:spec --"
+    "dev": "tarima -w",
+    "build": "tarima -fq",
+    "_dev": "jasmine-node spec --coffee --verbose --autoTest --watchFolders lib",
+    "_dev:lint": "eslint lib spec",
+    "_dev:spec": "jasmine-node spec --coffee --noStackTrace --captureExceptions",
+    "_cover": "istanbul cover --root lib --x '**/spec/**' -- jasmine-node --coffee spec",
+    "_cover:up": "codecov --file=coverage/lcov.info --disable=gcov -e TRAVIS_NODE_VERSION",
+    "_example": "node examples/_runner.js",
+    "_test": "npm run dev:lint && npm run dev:spec --"
+  },
+  "tarima": {
+    "dest": "lib",
+    "filter": [
+      "!_*",
+      "!**/_*",
+      "!**/_*/**"
+    ],
+    "rename": [
+      "**/src/**:{filepath/1}/{filename}.{extname}"
+    ],
+    "ignoreFiles": [
+      ".gitignore"
+    ],
+    "bundleOptions": {
+      "extensions": {
+        "js": "es6"
+      },
+      "rollup": {
+        "format": "cjs",
+        "plugins": [
+          "rollup-plugin-json"
+        ]
+      }
+    }
   },
   "dependencies": {
     "dotenv": "^2.0.0",
@@ -19,6 +46,8 @@
   },
   "devDependencies": {
     "body-parser": "^1.15.2",
+    "buble": "^0.15.1",
+    "chokidar": "^1.6.1",
     "codecov": "^1.0.1",
     "csurf": "^1.9.0",
     "eslint": "^3.5.0",
@@ -31,6 +60,8 @@
     "json-schema-sequelizer": "^0.0.2",
     "method-override": "^2.3.6",
     "morgan": "^1.7.0",
+    "rollup": "^0.39.2",
+    "rollup-plugin-json": "^2.1.0",
     "route-mappings": "^0.3.1",
     "sequelize": "^3.27.0",
     "serve-index": "^1.8.0",

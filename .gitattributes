@@ -1,1 +1,2 @@
 yarn.lock -diff
+lib/index.js -diff

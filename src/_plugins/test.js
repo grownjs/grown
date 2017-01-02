@@ -65,8 +65,8 @@ module.exports = (server) => {
 
           // known interface
           _res.finished = false;
-          _res.statusCode = 200;
-          _res.statusMessage = 'OK';
+          _res.statusCode = 501;
+          _res.statusMessage = 'Not Implemented';
 
           _res.getHeader = (k) => _opts.headers[k];
           _res.setHeader = (k, v) => { _opts.headers[k] = v; };

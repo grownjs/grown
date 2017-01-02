@@ -1,16 +1,10 @@
-'use strict';
+import serverFactory from '../_conn/server';
 
-const serverFactory = require('../conn/server');
 const url = require('url');
 
-module.exports = (container) => {
-  container._context.listen = (location, options, callback) => {
-    const _context = container._context;
+export default ($) => {
+  $.ctx.listen = (location, options, callback) => {
     const _server = {};
-
-    Object.keys(container.extensions).forEach((key) => {
-      _server[key] = container.extensions[key];
-    });
 
     if (typeof location === 'function') {
       callback = location;
@@ -49,8 +43,7 @@ module.exports = (container) => {
 
     /* eslint-disable global-require */
     /* eslint-disable import/no-dynamic-require */
-    _context.protocols[_protocolName]
-      = _context.protocols[_protocolName] || require(_protocolName);
+    $.protocols[_protocolName] = $.protocols[_protocolName] || require(_protocolName);
 
     let _close;
 
@@ -68,21 +61,19 @@ module.exports = (container) => {
           _close = this.close ? this.close.bind(this) : null;
         }
 
-        Promise.all(container.initializers).then(() => {
-          /* istanbul ignore else */
-          if (typeof callback === 'function') {
-            callback(_server, options);
-          }
-        }).catch(reject).then(() => resolve(_server));
+        Promise.all($.initializers)
+          .then(() => typeof callback === 'function' && callback(_server, options))
+          .then(() => resolve(_server))
+          .catch(reject);
       }
 
-      if (!_context.servers[_server.port]) {
-        _context.servers[_server.port] = serverFactory(_server, options, container, done);
+      if (!$.servers[_server.port]) {
+        $.servers[_server.port] = serverFactory($, _server, options, done);
       } else {
         done();
       }
 
-      _context.hosts[_server.location.host] = _server;
+      $.hosts[_server.location.host] = _server;
     });
   };
 };

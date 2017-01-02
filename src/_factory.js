@@ -1,5 +1,3 @@
-'use strict';
-
 function _expressMiddleware(callback) {
   return (conn) => {
     /* istanbul ignore else */
@@ -29,7 +27,7 @@ function _expressMiddleware(callback) {
   };
 }
 
-module.exports = (Factory, options, _name) => {
+export default (Factory, options, _name) => {
   const _suffix = _name ? ` (${_name})` : '';
 
   /* istanbul ignore else */

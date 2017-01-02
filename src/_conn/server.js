@@ -1,17 +1,15 @@
-'use strict';
+import hostFactory from './host';
 
-const hostFactory = require('./host');
-
-module.exports = (server, options, container, callback) => {
+export default ($, server, options, callback) => {
   const protocolName = server.location.protocol.replace(':', '');
-  const host = hostFactory(container, container._context.protocols[protocolName]);
+  const host = hostFactory($, $.protocols[protocolName]);
 
   let _server;
 
   if (protocolName === 'https') {
-    _server = container._context.protocols[protocolName].createServer(options, host);
+    _server = $.protocols[protocolName].createServer(options, host);
   } else {
-    _server = container._context.protocols[protocolName].createServer(host);
+    _server = $.protocols[protocolName].createServer(host);
   }
 
   /* istanbul ignore else */
