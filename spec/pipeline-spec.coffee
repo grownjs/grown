@@ -1,4 +1,4 @@
-pipeline = require('../lib/pipeline')
+pipeline = require('../lib/util').pipeline
 
 stub = (name, fn) ->
   call: fn
@@ -30,13 +30,13 @@ describe '#pipeline', ->
       done()
 
   it 'should fail if the pipeline is already done', ->
-    expect(-> pipeline('x', [])(done: true)).toThrow()
+    expect(-> pipeline('x', [])(halted: true)).toThrow()
 
-  it 'should short-circuit when state.done is true', (done) ->
+  it 'should short-circuit when state.halted is true', (done) ->
     count = 0
 
     fn = stub 'increment', (state) ->
-      state.done = true if count
+      state.halted = true if count
       count++
 
     p = pipeline 'short-circuit', [fn, fn, fn, fn, fn]
@@ -62,7 +62,7 @@ describe '#pipeline', ->
     it 'can resolve boolean values', (done) ->
       fn = next 'boolean', (state) ->
         state.boolean = true if typeof state is 'object'
-        { done: typeof state is 'boolean', value: true }
+        { halted: typeof state is 'boolean', value: true }
       p = pipeline 'boolean-values', [fn]
       p().then (state) ->
         expect(state.boolean).toBe true
@@ -71,7 +71,7 @@ describe '#pipeline', ->
     it 'can resolve number values', (done) ->
       fn = next 'number', (state) ->
         state.number = 42 if typeof state is 'object'
-        { done: typeof state is 'number', value: 42 }
+        { halted: typeof state is 'number', value: 42 }
       p = pipeline 'number-values', [fn]
       p().then (state) ->
         expect(state.number).toEqual 42
@@ -80,7 +80,7 @@ describe '#pipeline', ->
     it 'can resolve string values', (done) ->
       fn = next 'string', (state) ->
         state.string = 'ok' if typeof state is 'object'
-        { done: typeof state is 'string', value: 'ok' }
+        { halted: typeof state is 'string', value: 'ok' }
       p = pipeline 'string-values', [fn]
       p().then (state) ->
         expect(state.string).toEqual 'ok'
@@ -89,7 +89,7 @@ describe '#pipeline', ->
     it 'can resolve promise values', (done) ->
       fn = next 'promise', (state) ->
         state.promise = 42 if typeof state is 'object'
-        { done: typeof state isnt 'object', value: Promise.resolve(42) }
+        { halted: typeof state isnt 'object', value: Promise.resolve(42) }
       p = pipeline 'promise-values', [fn]
       p().then (state) ->
         expect(state.promise).toEqual 42
@@ -98,7 +98,7 @@ describe '#pipeline', ->
     it 'can resolve pipeline values', (done) ->
       fn = next 'pipe', (state) ->
         state.pipe = 42
-        { done: typeof state isnt 'object', value: (state) -> state.pipe += 42 }
+        { halted: typeof state isnt 'object', value: (state) -> state.pipe += 42 }
       p = pipeline 'pipe-values', [fn]
       p().then (state) ->
         expect(state.pipe).toEqual 84
@@ -108,7 +108,7 @@ describe '#pipeline', ->
       fn = next 'errors', (state) ->
         state.error = 1 if typeof state is 'object'
         {
-          done: typeof state isnt 'object'
+          halted: typeof state isnt 'object'
           value: new Promise(-> throw new Error 'KO')
         }
 

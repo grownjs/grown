@@ -31,7 +31,7 @@ function _run(task, state, options) {
 
           const result = _iterator.next(value, options);
 
-          if (!result.halted) {
+          if (!result.halted && result.value) {
             /* istanbul ignore else */
             if (typeof result.value.then === 'function'
               && typeof result.value.catch === 'function') {
@@ -111,25 +111,19 @@ export default function _pipelineFactory(label, pipeline, _callback) {
           return;
         }
 
-        Object.defineProperty(state, 'next', {
-          configurable: false,
-          enumerable: true,
-          set() {
-            throw new Error("Property 'next' is read-only");
-          },
-          get(_resume) {
-            /* istanbul ignore else */
-            if (!_pipeline.length) {
-              return _when(Promise.resolve(state), _resume);
-            }
+        // allow continuation
+        state.next = (_resume) => {
+          /* istanbul ignore else */
+          if (!_pipeline.length) {
+            return _when(Promise.resolve(state), _resume);
+          }
 
-            const _dispatch = _pipelineFactory(cb.name, _pipeline.slice());
+          const _dispatch = _pipelineFactory(cb.name, _pipeline.slice());
 
-            _pipeline = [];
+          _pipeline = [];
 
-            return _when(_dispatch(state, options), _resume);
-          },
-        });
+          return _when(_dispatch(state, options), _resume);
+        };
 
         try {
           value = _run(cb, state, options);
