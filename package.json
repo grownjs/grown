@@ -7,16 +7,19 @@
   "scripts": {
     "dev": "tarima -w",
     "build": "tarima -fq",
-    "_dev": "jasmine-node spec --coffee --verbose --autoTest --watchFolders lib",
+    "spec": "jasmine-node spec --coffee --verbose --autoTest --captureExceptions --watchFolders lib",
     "_dev:lint": "eslint lib spec",
     "_dev:spec": "jasmine-node spec --coffee --noStackTrace --captureExceptions",
     "_cover": "istanbul cover --root lib --x '**/spec/**' -- jasmine-node --coffee spec",
     "_cover:up": "codecov --file=coverage/lcov.info --disable=gcov -e TRAVIS_NODE_VERSION",
-    "_example": "node examples/_runner.js",
+    "example": "node examples/_runner.js",
     "_test": "npm run dev:lint && npm run dev:spec --"
   },
   "tarima": {
-    "dest": "lib",
+    "dest": ".",
+    "bundle": [
+      "**/*.js"
+    ],
     "filter": [
       "!_*",
       "!**/_*",

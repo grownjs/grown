@@ -1,7 +1,7 @@
-const server = require('..').new();
+const $ = require('..').new();
 
-server.mount(require('morgan')('dev'));
+$.ctx.mount(require('morgan')('dev'));
 
-server.listen(5000, (app) => {
+$.ctx.listen(5000, (app) => {
   console.log('Listening on', app.location.href);
 });

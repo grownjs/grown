@@ -2,6 +2,8 @@
 // cd homegrown
 // mkdir external && cd external
 // git clone https://github.com/uWebSockets/uWebSockets.git
+// cd uWebSockets
+// make
 // cd ..
 // yarn
 // yarn example uws

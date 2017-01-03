@@ -1,8 +1,8 @@
-const server = require('..').new();
+const $ = require('..').new();
 
 const IncomingForm = require('formidable').IncomingForm;
 
-server.listen(5000, (app) => {
+$.ctx.listen(5000, (app) => {
   console.log('Listening on', app.location.href);
 });
 
@@ -31,11 +31,11 @@ function processForm(conn) {
   });
 }
 
-server.mount((conn) => {
+$.ctx.mount((conn) => {
   return conn.type.indexOf('multipart') === -1 || processForm(conn);
 });
 
-server.mount((conn) => {
+$.ctx.mount((conn) => {
   if (conn.req.url === '/') {
     conn.body = `<form method="post" enctype="multipart/form-data" action="/upload">
   <input type="file" name="f" multiple><input type="submit" name="ok">

@@ -1,8 +1,8 @@
-const server = require('..').new();
+const $ = require('..').new();
 
-server.mount(require('serve-index')(__dirname));
-server.mount(require('serve-static')(__dirname));
+$.ctx.mount(require('serve-index')(__dirname));
+$.ctx.mount(require('serve-static')(__dirname));
 
-server.listen(5000, (app) => {
+$.ctx.listen(5000, (app) => {
   console.log('Listening on', app.location.href);
 });
