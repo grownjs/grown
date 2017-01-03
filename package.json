@@ -68,6 +68,7 @@
     "sequelize": "^3.27.0",
     "serve-index": "^1.8.0",
     "serve-static": "^1.11.1",
-    "sqlite3": "^3.1.8"
+    "sqlite3": "^3.1.8",
+    "tarima-cli": "gextech/tarima-cli"
   }
 }
