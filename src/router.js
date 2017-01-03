@@ -21,7 +21,7 @@ function _error(code) {
   throw errObj;
 }
 
-module.exports = (cwd) => {
+export default (cwd) => {
   /* istanbul ignore else */
   if (typeof cwd !== 'string' || !fs.existsSync(cwd)) {
     throw new Error(`Expecting 'cwd' to be a valid directory, given '${cwd}'`);
