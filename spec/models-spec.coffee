@@ -3,8 +3,8 @@
 $ = require('../models')(resolve(__dirname, '_fixtures/app'))
 
 describe '#models', ->
-  beforeEach ->
-    $ @ctx = extensions: {}
+  beforeEach (done) ->
+    $(@ctx = extensions: {}).then -> done()
 
   it 'should load all models hierarchically', ->
     expect(@ctx.extensions.models.Single).not.toBeUndefined()

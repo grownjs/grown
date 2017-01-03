@@ -4,7 +4,6 @@
 var JSONSchemaSequelizer = require('json-schema-sequelizer');
 var Sequelize = require('sequelize');
 
-var glob = require('glob');
 var path = require('path');
 var fs = require('fs');
 
@@ -23,35 +22,15 @@ var models = function (cwd) {
   _config.driver = _config.dialect;
   _config.filename = _config.storage;
 
-  // TODO: how to fulfill refs?
-  var _refs = [];
-  var _models = [];
+  return function ($) {
+    var dir = path.join(cwd, 'models');
+    var opts = new Sequelize(_config);
+    var refs = [];
 
-  glob.sync('models/**/*.js', { cwd: cwd, nodir: true }).forEach(function (model) {
-    var modelDefinition = require(path.join(cwd, model));
-
-    var modelName = path.relative('models', model)
-      .replace(/(index)?\.js/, '')
-      .replace(/Model(\/|$)/g, '');
-
-    /* istanbul ignore else */
-    if (!modelDefinition.$schema) {
-      modelDefinition.$schema = {};
-    }
-
-    /* istanbul ignore else */
-    if (!modelDefinition.$schema.id) {
-      modelDefinition.$schema.id = modelName;
-    }
-
-    _models.push(modelDefinition);
-  });
-
-  return function (container) {
-    var m = container.extensions.models =
-      new JSONSchemaSequelizer(new Sequelize(_config), _models, _refs);
-
-    return function () { return m.sync(); };
+    return new JSONSchemaSequelizer(opts, refs, dir)
+      .then(function (m) {
+        $.extensions.models = m;
+      });
   };
 };
 
