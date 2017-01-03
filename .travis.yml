@@ -11,8 +11,9 @@ node_js:
 before_script:
   - psql -c 'create database travis_ci_test;' -U postgres
 script:
-  - 'npm run cover'
+  - 'yarn build'
+  - 'yarn cover'
 after_success:
-  - 'npm run cover:up'
+  - 'yarn cover:up'
 notifications:
   email: false

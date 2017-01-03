@@ -6,14 +6,13 @@
   "license": "MIT",
   "scripts": {
     "dev": "tarima -w",
+    "dev:spec": "jasmine-node spec --coffee --verbose --autoTest --captureExceptions --watchFolders lib",
     "build": "tarima -fq",
-    "spec": "jasmine-node spec --coffee --verbose --autoTest --captureExceptions --watchFolders lib",
-    "_dev:lint": "eslint lib spec",
-    "_dev:spec": "jasmine-node spec --coffee --noStackTrace --captureExceptions",
-    "_cover": "istanbul cover --root lib --x '**/spec/**' -- jasmine-node --coffee spec",
-    "_cover:up": "codecov --file=coverage/lcov.info --disable=gcov -e TRAVIS_NODE_VERSION",
-    "example": "node examples/_runner.js",
-    "_test": "npm run dev:lint && npm run dev:spec --"
+    "lint": "eslint lib spec",
+    "spec": "jasmine-node spec --coffee --noStackTrace --captureExceptions",
+    "cover": "istanbul cover --root lib --x '**/spec/**' -- jasmine-node --coffee spec",
+    "cover:up": "codecov --file=coverage/lcov.info --disable=gcov -e TRAVIS_NODE_VERSION",
+    "example": "node examples/_runner.js"
   },
   "tarima": {
     "dest": ".",
