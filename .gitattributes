@@ -1,7 +1,1 @@
 yarn.lock -diff
-lib/*.js -diff
-index.js -diff
-models.js -diff
-render.js -diff
-router.js -diff
-test.js -diff
