@@ -1,12 +1,12 @@
-import { version } from '../package.json';
+var version = "0.1.0";
 
-const Homegrown = require('./lib/api');
+var Homegrown = require('./lib/api');
 
-const FARMS = [];
+var FARMS = [];
 
 function _closeAll() {
-  FARMS.forEach((farm) => {
-    Object.keys(farm.hosts).forEach((host) => {
+  FARMS.forEach(function (farm) {
+    Object.keys(farm.hosts).forEach(function (host) {
       farm.hosts[host].close();
     });
   });
@@ -14,13 +14,15 @@ function _closeAll() {
 
 // gracefully dies
 process.on('exit', _closeAll);
-process.on('SIGINT', () => process.exit());
+process.on('SIGINT', function () { return process.exit(); });
 
-export default {
-  version,
+var index = {
+  version: version,
 
-  new(defaults = {}) {
-    const $ = {
+  new: function new$1(defaults) {
+    if ( defaults === void 0 ) defaults = {};
+
+    var $ = {
       ctx: {},
       opts: {},
 
@@ -33,7 +35,7 @@ export default {
       initializers: [],
     };
 
-    Object.keys(defaults).forEach((key) => {
+    Object.keys(defaults).forEach(function (key) {
       $.opts[key] = defaults[key];
     });
 
@@ -48,11 +50,13 @@ export default {
     return $;
   },
 
-  burn() {
+  burn: function burn() {
     _closeAll();
   },
 
-  farms(cb) {
+  farms: function farms(cb) {
     FARMS.forEach(cb);
   },
 };
+
+module.exports = index;

@@ -3,7 +3,7 @@
 $ = require('./_protocol')
 
 useConfig = (name) ->
-  $.server.use require('../router')(resolve(__dirname, '_fixtures', name))
+  $.server.ctx.use require('../router')(resolve(__dirname, '_fixtures', name))
 
 describe '#router', ->
   beforeEach $
@@ -31,15 +31,16 @@ describe '#router', ->
     useConfig 'valid-routes'
 
     $.client.fetch('/no').then (res) ->
-      expect(res.output).toMatch /Undefined .+? handler/
       expect(res.statusCode).toEqual 501
+      expect(res.body).toMatch /Undefined .+? handler/
+      expect(res.body).toContain res.error.message
       done()
 
   it 'should responds to defined handlers with 200', (done) ->
     useConfig 'valid-routes'
 
     $.client.fetch('/yes').then (res) ->
-      expect(res.output).toEqual 'OSOM'
+      expect(res.body).toEqual 'OSOM'
       expect(res.statusMessage).toEqual 'OK'
       expect(res.statusCode).toEqual 200
       done()
@@ -53,7 +54,7 @@ describe '#router', ->
       done()
 
   it 'should append `conn.params` and `conn.handler` when a route matches', (done) ->
-    $.server.mount (conn) ->
+    $.server.ctx.mount (conn) ->
       conn.next ->
         $.params = conn.params
         $.handler = conn.handler
@@ -70,7 +71,7 @@ describe '#router', ->
     useConfig 'valid-routes'
 
     $.client.fetch('/broken/handler').then (res) ->
-      expect(res.output).toContain 'Unexpected token'
+      expect(res.body).toContain 'Unexpected token'
       expect(res.statusCode).toEqual 501
       done()
 
@@ -78,7 +79,7 @@ describe '#router', ->
     useConfig 'with-middlewares'
 
     $.client.fetch('/no').then (res) ->
-      expect(res.output).toMatch /Middleware .+? should be callable/
+      expect(res.body).toMatch /Middleware .+? should be callable/
       expect(res.statusCode).toEqual 501
       done()
 
@@ -86,7 +87,7 @@ describe '#router', ->
     useConfig 'with-middlewares'
 
     $.client.fetch('/err').then (res) ->
-      expect(res.output).toMatch /Undefined .+? middleware/
+      expect(res.body).toMatch /Undefined .+? middleware/
       expect(res.statusCode).toEqual 501
       done()
 
@@ -94,14 +95,14 @@ describe '#router', ->
     useConfig 'with-middlewares'
 
     $.client.fetch('/yes').then (res) ->
-      expect(res.output).toEqual 'OSOM!'
+      expect(res.body).toEqual 'OSOM!'
       done()
 
   it 'should fail on invalid pipeline-handlers', (done) ->
     useConfig 'with-middlewares'
 
     $.client.fetch('/maybe').then (res) ->
-      expect(res.output).toMatch /Undefined .+? handler/
+      expect(res.body).toMatch /Undefined .+? handler/
       expect(res.statusCode).toEqual 501
       done()
 
@@ -109,5 +110,5 @@ describe '#router', ->
     useConfig 'with-middlewares'
 
     $.client.fetch('/surely').then (res) ->
-      expect(res.output).toEqual 'OSOM!'
+      expect(res.body).toEqual 'OSOM!'
       done()

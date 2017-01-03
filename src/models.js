@@ -1,5 +1,3 @@
-'use strict';
-
 /* eslint-disable global-require */
 /* eslint-disable import/no-dynamic-require */
 
@@ -10,7 +8,7 @@ const glob = require('glob');
 const path = require('path');
 const fs = require('fs');
 
-function _hook(cwd) {
+export default (cwd) => {
   /* istanbul ignore else */
   if (typeof cwd !== 'string' || !fs.existsSync(cwd)) {
     throw new Error(`Expecting 'cwd' to be a valid directory, given '${cwd}'`);
@@ -55,6 +53,4 @@ function _hook(cwd) {
 
     return () => m.sync();
   };
-}
-
-module.exports = _hook;
+};

@@ -3,7 +3,7 @@ $ = require('./_protocol')
 describe '#test', ->
   beforeEach ->
     $()
-    $.server.mount (conn) ->
+    $.server.ctx.mount (conn) ->
       $.method = conn.req.method
       $.path = conn.req.url
       $.a = conn.req.a

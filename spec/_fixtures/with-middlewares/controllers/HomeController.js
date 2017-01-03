@@ -5,13 +5,13 @@ module.exports = {
   },
   _suffix(conn) {
     return conn.next(() => {
-      if (conn.body) {
-        conn.body = `${conn.body}!`;
+      if (conn.resp_body) {
+        conn.resp_body = `${conn.resp_body}!`;
       }
     });
   },
   index(conn) {
-    conn.body = 'OSOM';
+    conn.resp_body = 'OSOM';
   },
   test(conn) {
     return this.index(conn);

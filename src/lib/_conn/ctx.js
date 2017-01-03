@@ -43,6 +43,10 @@ function _methods(target, obj) {
       configurable: false,
       enumerable: true,
       get() {
+        if (typeof obj[key] === 'function' && !obj[key].length) {
+          return obj[key]();
+        }
+
         return obj[key];
       },
       set() {
@@ -53,7 +57,7 @@ function _methods(target, obj) {
 }
 
 // inject dynamic getter/setter properties
-function _props(target, state, keys) {
+function _props(target, state, keys, cb) {
   keys.forEach((key) => {
     Object.defineProperty(target, key, {
       configurable: false,
@@ -62,7 +66,15 @@ function _props(target, state, keys) {
         return state[key];
       },
       set(value) {
+        const oldValue = state[key];
+
         state[key] = value;
+
+        try {
+          cb(key, value, oldValue);
+        } catch (e) {
+          throw e;
+        }
       },
     });
   });
@@ -72,46 +84,49 @@ export default (container, server, req, res) => {
   const $ = _extend({}, container.extensions);
 
   const _state = {
-    finished: false,
-    charset: 'utf8',
-    headers: {},
-    status: 200,
-    body: '',
+    resp_headers: {},
+    resp_charset: 'utf8',
+    resp_body: null,
+    status: res.statusCode,
   };
 
   function _send() {
+    // set final status code
+    res.statusCode = _state.status;
+    res.statusMessage = statusCodes[res.statusCode];
+
     // normalize response haders
-    Object.keys(_state.headers).forEach((key) => {
-      $.res.setHeader(key.replace(/(^|-)(\w)/g,
-        (_, pre, char) => pre + char.toUpperCase()), _state.headers[key]);
+    Object.keys(_state.resp_headers).forEach((key) => {
+      res.setHeader(key.replace(/(^|-)(\w)/g,
+        (_, pre, char) => pre + char.toUpperCase()), _state.resp_headers[key]);
     });
 
     // normalize response body
-    let _output = _state.body;
+    let _output = _state.resp_body;
 
     /* istanbul ignore else */
     if (typeof _output === 'object') {
-      $.res.setHeader('Content-Type', 'application/json; charset=UTF-8');
+      res.setHeader('Content-Type', 'application/json; charset=UTF-8');
 
       _output = JSON.stringify(_output);
     }
 
     /* istanbul ignore else */
-    if (!$.res.getHeader('Content-Type')) {
-      $.res.setHeader('Content-Type', 'text/html; charset=UTF-8');
+    if (!res.getHeader('Content-Type')) {
+      res.setHeader('Content-Type', 'text/html; charset=UTF-8');
     }
 
     if (typeof _output === 'string' || _output instanceof Buffer) {
-      $.res.end(_output);
+      res.end(_output);
     } else {
-      $.res.end();
+      res.end();
     }
   }
 
   function _end() {
     /* istanbul ignore else */
-    if (_state.finished) {
-      throw new Error('Response Already Sent');
+    if (res.finished) {
+      throw new Error('Response already sent');
     }
   }
 
@@ -124,8 +139,8 @@ export default (container, server, req, res) => {
     env: process.env.NODE_ENV || 'dev',
 
     // current connection
-    host: server.location.host,
-    port: server.location.port,
+    host: server.location.host || server.host,
+    port: server.location.port || server.port,
     method: 'GET',
     path_info: () => req.url.split('?')[0].split('/').filter(x => x),
     script_name: path.relative(process.cwd(), process.argv[1]),
@@ -134,9 +149,10 @@ export default (container, server, req, res) => {
     req_headers: () => req.headers,
     type: (req.headers['content-type'] || '').split(';')[0],
     scheme: server.location.scheme,
+    handler: () => req.handler || {},
     path_params: () => req.params || {},
     body_params: () => req.body || {},
-    query_string: () => req.url.split('?')[1],
+    query_string: () => req.url.split('?')[1] || '',
     query_params: () => qs.parse(req.url.split('?')[1] || ''),
     params: () => _extend({}, $.query_params, $.body_params, $.path_params),
 
@@ -153,18 +169,11 @@ export default (container, server, req, res) => {
       }
 
       // normalize given status code
-      _state.status = typeof _code === 'number' ? _code : $.res.statusCode;
+      _state.status = typeof _code === 'number' ? _code : _state.status;
 
       // normalize given output
-      _state.body = typeof _code === 'string' ? _code : message || _state.body;
+      _state.resp_body = typeof _code === 'string' ? _code : message || _state.resp_body;
 
-      _send();
-
-      return $;
-    },
-
-    send_resp() {
-      _end();
       _send();
 
       return $;
@@ -172,7 +181,7 @@ export default (container, server, req, res) => {
 
     // get request headers by name
     get_req_header(name, defvalue) {
-      const _value = $.req.headers[name.toLowerCase()];
+      const _value = req.headers[name.toLowerCase()];
 
       /* istanbul ignore else */
       if (typeof _value === 'undefined') {
@@ -187,23 +196,23 @@ export default (container, server, req, res) => {
       /* istanbul ignore else */
       if (typeof name === 'object') {
         Object.keys(name).forEach((key) => {
-          $.put_resp_header(key, name[key]);
+          $.put_resp_header(key, name[key], multiple);
         });
 
         return $;
       }
 
       if (multiple === true) {
-        _state.headers[name] = _state.headers[name] || [];
+        _state.resp_headers[name] = _state.resp_headers[name] || [];
 
         /* istanbul ignore else */
-        if (!Array.isArray(_state.headers[name])) {
-          _state.headers[name] = [_state.headers[name]];
+        if (!Array.isArray(_state.resp_headers[name])) {
+          _state.resp_headers[name] = [_state.resp_headers[name]];
         }
 
-        _state.headers[name].push(value);
+        _state.resp_headers[name].push(value);
       } else {
-        _state.headers[name] = value;
+        _state.resp_headers[name] = value;
       }
 
       return $;
@@ -213,7 +222,7 @@ export default (container, server, req, res) => {
     delete_resp_header(keys) {
       (Array.isArray(keys) ? keys : [keys])
         .forEach((key) => {
-          delete _state.headers[key.toLowerCase()];
+          delete _state.resp_headers[key.toLowerCase()];
         });
 
       return $;
@@ -223,23 +232,10 @@ export default (container, server, req, res) => {
     redirect(location) {
       _end();
 
-      $.status(302);
-      $.put_resp_header('location', _fixURL(location));
+      _state.status = 302;
+      _state.resp_headers.location = _fixURL(location);
 
       _send();
-
-      return $;
-    },
-
-    // response status
-    status(code) {
-      /* istanbul ignore else */
-      if (!statusCodes[code]) {
-        throw new Error(`Invalid statusCode: ${code}`);
-      }
-
-      $.res.statusCode = code;
-      $.res.statusMessage = statusCodes[code];
 
       return $;
     },
@@ -247,10 +243,53 @@ export default (container, server, req, res) => {
 
   // dynamic props
   _props($, _state, [
+    'status',
     'resp_body',
     'resp_charset',
     'resp_headers',
-  ]);
+  ], (key, newValue, oldValue) => {
+    switch (key) {
+      case 'resp_body':
+        /* istanbul ignore else */
+        if (!((newValue instanceof Buffer) || typeof newValue === 'string')) {
+          throw new Error(`Invalid body: ${newValue}`);
+        }
+
+        _state.status = 200;
+
+        break;
+
+      case 'resp_charset':
+        /* istanbul ignore else */
+        if (!newValue) {
+          throw new Error(`Invalid charset: ${newValue}`);
+        }
+        break;
+
+      case 'resp_headers':
+        if ((!newValue && newValue !== null) && !Array.isArray(newValue)) {
+          throw new Error(`Invalid headers: ${newValue}`);
+        }
+        break;
+
+      case 'status':
+        /* istanbul ignore else */
+        if (!statusCodes[newValue]) {
+          throw new Error(`Invalid statusCode: ${newValue}`);
+        }
+
+        /* istanbul ignore else */
+        if (oldValue >= 500 && newValue < 500) {
+          throw new Error(`Avoid relaxing errors: ${oldValue} > ${newValue}`);
+        }
+
+        _state.status = res.statusCode = newValue;
+        break;
+
+      default:
+        throw new Error(`Unknown '${key}' property`);
+    }
+  });
 
   return $;
 };

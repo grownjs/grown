@@ -1,4 +1,4 @@
-factory = require('../lib/factory')
+factory = require('../lib/api').chain.factory
 
 describe '#factory', ->
   it 'should fail with unsupported values', ->

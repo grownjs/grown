@@ -1,13 +1,11 @@
-'use strict';
-
 const Readable = require('stream').Readable;
 const Writable = require('stream').Writable;
 
-module.exports = (server) => {
+export default (server) => {
   let _fn;
 
   function makeRequest(next) {
-    server.listen({ protocol: 'test' }).then((_server) => {
+    server.ctx.listen({ protocol: 'test' }).then((_server) => {
       const _opts = {
         end: false,
         body: null,
@@ -72,12 +70,12 @@ module.exports = (server) => {
           _res.setHeader = (k, v) => { _opts.headers[k] = v; };
 
           // test interface
-          Object.defineProperty(_res, 'output', {
+          Object.defineProperty(_res, 'body', {
             get() {
               return _opts.body;
             },
             set() {
-              throw new Error('Output is already defined');
+              throw new Error('Output body is already defined');
             },
           });
 
@@ -109,7 +107,7 @@ module.exports = (server) => {
   };
 
   makeRequest.fetch = (method, path, opts) => {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       makeRequest((req, next) => {
         let _method = typeof method === 'string' && typeof path === 'string' ? method : 'get';
         let _path = typeof path === 'string' ? path : method || '/';
@@ -130,11 +128,16 @@ module.exports = (server) => {
         });
 
         next((e, res) => {
-          if (e) {
-            reject(e);
-          } else {
-            resolve(res);
-          }
+          Object.defineProperty(res, 'error', {
+            get() {
+              return e;
+            },
+            set() {
+              throw new Error('Error cannot be set');
+            },
+          });
+
+          resolve(res);
         });
       });
     });

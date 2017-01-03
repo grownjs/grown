@@ -1,11 +1,8 @@
-'use strict';
-
 /* eslint-disable global-require */
 
-const STATUS_CODES = require('http').STATUS_CODES;
+const Homegrown = require('./lib/api');
 
-const pipelineFactory = require('./lib/pipeline');
-const buildFactory = require('./lib/factory');
+const STATUS_CODES = require('http').STATUS_CODES;
 
 const routeMappings = require('route-mappings');
 const glob = require('glob');
@@ -106,7 +103,7 @@ module.exports = (cwd) => {
           throw new Error(`Undefined '${name}' middleware`);
         }
 
-        const middleware = buildFactory(require(fixedMiddlewares[name]), options, name);
+        const middleware = Homegrown.chain.factory(require(fixedMiddlewares[name]), options, name);
 
         list.push({
           name: middleware.name || name,
@@ -145,8 +142,8 @@ module.exports = (cwd) => {
     return tasks;
   }
 
-  return (container) => {
-    const _map = container.extensions.routes = router.mappings;
+  return ($) => {
+    const _map = $.extensions.routes = router.mappings;
 
     _map.forEach = Array.prototype.forEach.bind(_routes);
     _map.map = Array.prototype.map.bind(_routes);
@@ -162,13 +159,13 @@ module.exports = (cwd) => {
       const _handler = match[_method](conn.req.url, 1);
 
       if (_handler) {
-        container.extensions.params = conn.params = {};
-        container.extensions.handler = conn.handler = _handler;
+        $.extensions.params = conn.req.params = {};
+        $.extensions.handler = conn.req.handler = _handler;
 
         /* istanbul ignore else */
         if (_handler.matcher && _handler.matcher.keys) {
           _handler.matcher.keys.forEach((key, i) => {
-            conn.params[key] = _handler.matcher.values[i];
+            $.extensions.params[key] = _handler.matcher.values[i];
           });
         }
 
@@ -213,7 +210,7 @@ module.exports = (cwd) => {
             type: 'method',
           });
 
-          _pipeline = pipelineFactory('router', _pipeline);
+          _pipeline = Homegrown.chain.pipeline('router', _pipeline);
 
           _controllers[_handler.controller].pipeline[_handler.action] = _pipeline;
         }
@@ -232,13 +229,12 @@ module.exports = (cwd) => {
       return _error(404);
     }
 
-    container._context.mount((conn, _options) => {
-      return conn.next(() => {
+    $.ctx.mount((conn, _options) =>
+      conn.next(() => {
         /* istanbul ignore else */
-        if (conn.body === null) {
+        if (conn.resp_body === null) {
           return run(conn, _options);
         }
-      });
-    });
+      }));
   };
 };

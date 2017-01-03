@@ -1,4 +1,4 @@
-pipeline = require('../lib/util').pipeline
+pipeline = require('../lib/api').chain.pipeline
 
 stub = (name, fn) ->
   call: fn

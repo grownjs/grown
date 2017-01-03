@@ -54,6 +54,7 @@ module.exports = (cwd) => {
   function _fix(obj, locals) {
     if (locals) {
       Object.keys(locals).forEach((key) => {
+        /* istanbul ignore else */
         if (typeof obj[key] === 'undefined') {
           obj[key] = locals[key];
         }
@@ -61,10 +62,10 @@ module.exports = (cwd) => {
     }
   }
 
-  return (container) => {
+  return ($) => {
     const _views = [];
 
-    container.extensions.render = (view, locals) => {
+    $.extensions.render = (view, locals) => {
       /* istanbul ignore else */
       if (typeof view === 'object') {
         locals = view;
@@ -73,16 +74,13 @@ module.exports = (cwd) => {
 
       const _copy = {};
       const _locals = locals || {};
-      const _handler = container.extensions.handler || {};
-      const _target = _locals.as || _handler.action || 'index';
+      const _target = _locals.as || 'index';
 
       _fix(_copy, _locals);
-      _fix(_copy, container.extensions);
-
-      const _path = [_handler.controller, _handler.action].join('/');
+      // _fix(_copy, $.extensions);
 
       _views.push({
-        src: view || _path.replace(/^\//, '') || 'index',
+        src: view || 'index',
         data: _copy,
         block: _target,
       });
@@ -91,20 +89,22 @@ module.exports = (cwd) => {
     function _view(conn, start, blocks) {
       let _layout = 'layouts/default';
 
-      if (conn.handler._controller && conn.handler._controller.instance) {
+      /* istanbul ignore else */
+      if (conn.handler && conn.handler._controller && conn.handler._controller.instance) {
         _layout = `layouts/${conn.handler._controller.instance.layout
-          || conn.handler._controller.original.layout || 'default'}`;
+            || conn.handler._controller.original.layout || 'default'}`;
       }
 
-      conn.body = require(_lookup(_layout))(blocks)
+      conn.resp_body = require(_lookup(_layout))(blocks)
         .replace(/{elapsed}/g, `${((new Date()) - start) / 1000}ms`);
     }
 
-    container._context.mount((conn) => {
+    $.ctx.mount((conn) => {
       const start = new Date();
 
       return conn.next(() => {
-        if (conn.handler._controller && conn.handler._controller.instance) {
+        /* istanbul ignore else */
+        if (conn.handler && conn.handler._controller && conn.handler._controller.instance) {
           const _partials = conn.handler._controller.instance.render
             || conn.handler._controller.original.render || {};
 
@@ -115,7 +115,7 @@ module.exports = (cwd) => {
               _locals[key] = _partials[_target].data[key](conn);
             });
 
-            _fix(_locals, container.extensions);
+            _fix(_locals, $.extensions);
 
             _views.push({
               src: _partials[_target].src || _target,
