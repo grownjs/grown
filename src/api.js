@@ -11,10 +11,12 @@ import server from './_conn/server';
 import factory from './_factory';
 import pipeline from './_pipeline';
 
+import test from './_plugs/test';
+import logger from './_plugs/logger';
 import models from './_plugs/models';
 import render from './_plugs/render';
 import router from './_plugs/router';
-import test from './_plugs/test';
+import upload from './_plugs/upload';
 
 export default {
   bind: {
@@ -34,9 +36,11 @@ export default {
     pipeline,
   },
   plugs: {
+    test,
+    logger,
     models,
     render,
     router,
-    test,
+    upload,
   },
 };

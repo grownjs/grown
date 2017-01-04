@@ -84,6 +84,7 @@ export default (container, server, req, res) => {
   const $ = _extend({}, container.extensions);
 
   const _state = {
+    resp_cookies: {},
     resp_headers: {},
     resp_charset: 'utf8',
     resp_body: null,
@@ -141,11 +142,12 @@ export default (container, server, req, res) => {
     // current connection
     host: server.location.host || server.host,
     port: server.location.port || server.port,
-    type: (req.headers['content-type'] || '').split(';')[0],
-    method: 'GET',
     scheme: server.location.scheme,
     remote_ip: '0.0.0.0',
     script_name: path.relative(process.cwd(), process.argv[1]),
+
+    type: () => (req.headers['content-type'] || '').split(';')[0],
+    method: () => req.method,
 
     params: () => _extend({}, $.query_params, $.body_params, $.path_params),
     handler: () => req.handler || {},
@@ -160,9 +162,56 @@ export default (container, server, req, res) => {
     send_file() {},
     before_send() {},
 
+    cookies: () => _extend({}, $.req_cookies, $.resp_cookies),
+    req_cookies: () => req.cookie || {},
+
+    put_resp_cookie(key, value, opts = {}) {
+      _state.resp_cookies[key] = { value, opts };
+
+      return $;
+    },
+
+    delete_resp_cookie(key) {
+      delete _state.resp_cookies[key];
+
+      return $;
+    },
+
+    update_resp_cookie(key, value, opts = {}) {
+      if (_state.resp_cookies[key]) {
+        _state.resp_cookies[key].value = value;
+        _extend(_state.resp_cookies[key].opts, opts);
+      }
+
+      return $;
+    },
+
+    session: () => req.session || {},
+
+    put_session(key, value) {
+      if (req.session) {
+        req.session[key] = value;
+      }
+
+      return $;
+    },
+
+    clear_session() {
+      req.session = {};
+
+      return $;
+    },
+
+    delete_session() {
+      delete req.session;
+
+      return $;
+    },
+
+    // TODO:
+    configure_session() {},
+
     req_headers: () => req.headers,
-    put_req_header() {},
-    update_req_header() {},
 
     // get request headers by name
     get_req_header(name, defvalue) {
@@ -175,6 +224,10 @@ export default (container, server, req, res) => {
 
       return _value;
     },
+
+    put_req_header() {},
+    delete_req_header() {},
+    update_req_header() {}, // if present
 
     get_resp_header() {},
     merge_resp_headers() {},
@@ -208,14 +261,13 @@ export default (container, server, req, res) => {
     },
 
     // remove headers from response
-    delete_resp_header(keys) {
-      (Array.isArray(keys) ? keys : [keys])
-        .forEach((key) => {
-          delete _state.resp_headers[key.toLowerCase()];
-        });
+    delete_resp_header(key) {
+      delete _state.resp_headers[key.toLowerCase()];
 
       return $;
     },
+
+    update_resp_header() {}, // if present
 
     put_status(code) {
       /* istanbul ignore else */
@@ -287,17 +339,6 @@ export default (container, server, req, res) => {
     },
     resp_cookies() {
       // TODO:
-      // resp_cookies
-      // fetch_cookies
-      // put_resp_cookie
-      // delete_resp_cookie
-
-      // get_session
-      // put_session
-      // fetch_session
-      // clear_session
-      // delete_session
-      // configure_session
     },
   });
 
