@@ -1,6 +1,6 @@
 import { version } from '../package.json';
 
-const Homegrown = require('./lib/api');
+const Homegrown = require('./api');
 
 const FARMS = [];
 

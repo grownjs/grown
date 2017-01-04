@@ -1,11 +1,6 @@
 *.log
+/lib
 /build
 /external
 /coverage
 /node_modules
-/lib/api.js
-/index.js
-/models.js
-/render.js
-/router.js
-/test.js

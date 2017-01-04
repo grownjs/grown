@@ -4,6 +4,7 @@
   "description": "Homegrown nodejs web framework",
   "author": "Alvaro Cabrera",
   "license": "MIT",
+  "main": "lib/index.js",
   "scripts": {
     "dev": "tarima -w",
     "dev:spec": "jasmine-node spec --coffee --verbose --autoTest --captureExceptions --watchFolders lib",
@@ -12,10 +13,11 @@
     "spec": "jasmine-node spec --coffee --noStackTrace --captureExceptions",
     "cover": "istanbul cover --root lib --x '**/spec/**' -- jasmine-node --coffee spec",
     "cover:up": "codecov --file=coverage/lcov.info --disable=gcov -e TRAVIS_NODE_VERSION",
-    "example": "node examples/_runner.js"
+    "example": "node examples/_runner.js",
+    "test": "yarn build && yarn cover"
   },
   "tarima": {
-    "dest": ".",
+    "dest": "lib",
     "bundle": [
       "**/*.js"
     ],

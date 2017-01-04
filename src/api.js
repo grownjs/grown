@@ -11,6 +11,11 @@ import server from './_conn/server';
 import factory from './_factory';
 import pipeline from './_pipeline';
 
+import models from './_plugs/models';
+import render from './_plugs/render';
+import router from './_plugs/router';
+import test from './_plugs/test';
+
 export default {
   bind: {
     configure,
@@ -27,5 +32,11 @@ export default {
   chain: {
     factory,
     pipeline,
+  },
+  plugs: {
+    models,
+    render,
+    router,
+    test,
   },
 };
