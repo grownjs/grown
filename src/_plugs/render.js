@@ -76,8 +76,8 @@ export default (cwd) => {
       const _locals = locals || {};
       const _target = _locals.as || 'index';
 
+      _fix(_copy, $.extensions);
       _fix(_copy, _locals);
-      // _fix(_copy, $.extensions);
 
       _views.push({
         src: view || 'index',
@@ -137,7 +137,15 @@ export default (cwd) => {
             const _blocks = {};
 
             _chunks.forEach((_chunk) => {
-              _blocks[_chunk.block] = results.shift();
+              if (_blocks[_chunk.block] && !Array.isArray(_blocks[_chunk.block])) {
+                _blocks[_chunk.block] = [_blocks[_chunk.block]];
+              }
+
+              if (Array.isArray(_blocks[_chunk.block])) {
+                _blocks[_chunk.block].push(results.shift());
+              } else {
+                _blocks[_chunk.block] = results.shift();
+              }
             });
 
             _view(conn, start, _blocks);
