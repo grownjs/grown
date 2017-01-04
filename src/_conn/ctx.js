@@ -57,21 +57,21 @@ function _methods(target, obj) {
 }
 
 // inject dynamic getter/setter properties
-function _props(target, state, keys, cb) {
-  keys.forEach((key) => {
-    Object.defineProperty(target, key, {
+function _props(target, state, props) {
+  Object.keys(props).forEach((prop) => {
+    Object.defineProperty(target, prop, {
       configurable: false,
       enumerable: true,
       get() {
-        return state[key];
+        return state[prop];
       },
       set(value) {
-        const oldValue = state[key];
+        const oldValue = state[prop];
 
-        state[key] = value;
+        state[prop] = value;
 
         try {
-          cb(key, value, oldValue);
+          props[prop](value, oldValue);
         } catch (e) {
           throw e;
         }
@@ -141,43 +141,28 @@ export default (container, server, req, res) => {
     // current connection
     host: server.location.host || server.host,
     port: server.location.port || server.port,
-    method: 'GET',
-    path_info: () => req.url.split('?')[0].split('/').filter(x => x),
-    script_name: path.relative(process.cwd(), process.argv[1]),
-    request_path: () => req.url.split('?')[0],
-    remote_ip: '0.0.0.0',
-    req_headers: () => req.headers,
     type: (req.headers['content-type'] || '').split(';')[0],
+    method: 'GET',
     scheme: server.location.scheme,
+    remote_ip: '0.0.0.0',
+    script_name: path.relative(process.cwd(), process.argv[1]),
+
+    params: () => _extend({}, $.query_params, $.body_params, $.path_params),
     handler: () => req.handler || {},
+    path_info: () => req.url.split('?')[0].split('/').filter(x => x),
     path_params: () => req.params || {},
     body_params: () => req.body || {},
+    request_path: () => req.url.split('?')[0],
+
     query_string: () => req.url.split('?')[1] || '',
     query_params: () => qs.parse(req.url.split('?')[1] || ''),
-    params: () => _extend({}, $.query_params, $.body_params, $.path_params),
 
-    // responds with the final body to the client
-    resp(code, message) {
-      _end();
+    send_file() {},
+    before_send() {},
 
-      let _code = code;
-
-      // shortcut for errors
-      if (code instanceof Error) {
-        message = code.message || code.toString();
-        _code = code.statusCode || 500;
-      }
-
-      // normalize given status code
-      _state.status = typeof _code === 'number' ? _code : _state.status;
-
-      // normalize given output
-      _state.resp_body = typeof _code === 'string' ? _code : message || _state.resp_body;
-
-      _send();
-
-      return $;
-    },
+    req_headers: () => req.headers,
+    put_req_header() {},
+    update_req_header() {},
 
     // get request headers by name
     get_req_header(name, defvalue) {
@@ -190,6 +175,10 @@ export default (container, server, req, res) => {
 
       return _value;
     },
+
+    get_resp_header() {},
+    merge_resp_headers() {},
+    put_resp_content_type() {},
 
     // set response headers
     put_resp_header(name, value, multiple) {
@@ -228,6 +217,17 @@ export default (container, server, req, res) => {
       return $;
     },
 
+    put_status(code) {
+      /* istanbul ignore else */
+      if (!statusCodes[code]) {
+        throw new Error(`Invalid statusCode: ${code}`);
+      }
+
+      _state.status = res.statusCode = code;
+
+      return $;
+    },
+
     // handle redirections
     redirect(location) {
       _end();
@@ -239,56 +239,66 @@ export default (container, server, req, res) => {
 
       return $;
     },
+
+    // responds with the final body to the client
+    resp(code, message) {
+      _end();
+
+      let _code = code;
+
+      // shortcut for errors
+      if (code instanceof Error) {
+        message = code.message || code.toString();
+        _code = code.statusCode || 500;
+      }
+
+      // normalize given status code
+      _state.status = typeof _code === 'number' ? _code : _state.status;
+
+      // normalize given output
+      _state.resp_body = typeof _code === 'string' ? _code : message || _state.resp_body;
+
+      _send();
+
+      return $;
+    },
   });
 
   // dynamic props
-  _props($, _state, [
-    'status',
-    'resp_body',
-    'resp_charset',
-    'resp_headers',
-  ], (key, newValue, oldValue) => {
-    switch (key) {
-      case 'resp_body':
-        /* istanbul ignore else */
-        if (!((newValue instanceof Buffer) || typeof newValue === 'string')) {
-          throw new Error(`Invalid body: ${newValue}`);
-        }
+  _props($, _state, {
+    resp_body(value) {
+      /* istanbul ignore else */
+      if (!((value instanceof Buffer) || typeof value === 'string')) {
+        throw new Error(`Invalid body: ${value}`);
+      }
 
-        _state.status = 200;
+      _state.status = 200;
+    },
+    resp_charset(value) {
+      /* istanbul ignore else */
+      if (!value) {
+        throw new Error(`Invalid charset: ${value}`);
+      }
+    },
+    resp_headers(value) {
+      if ((!value && value !== null) && !Array.isArray(value)) {
+        throw new Error(`Invalid headers: ${value}`);
+      }
+    },
+    resp_cookies() {
+      // TODO:
+      // resp_cookies
+      // fetch_cookies
+      // put_resp_cookie
+      // delete_resp_cookie
 
-        break;
-
-      case 'resp_charset':
-        /* istanbul ignore else */
-        if (!newValue) {
-          throw new Error(`Invalid charset: ${newValue}`);
-        }
-        break;
-
-      case 'resp_headers':
-        if ((!newValue && newValue !== null) && !Array.isArray(newValue)) {
-          throw new Error(`Invalid headers: ${newValue}`);
-        }
-        break;
-
-      case 'status':
-        /* istanbul ignore else */
-        if (!statusCodes[newValue]) {
-          throw new Error(`Invalid statusCode: ${newValue}`);
-        }
-
-        /* istanbul ignore else */
-        if (oldValue >= 500 && newValue < 500) {
-          throw new Error(`Avoid relaxing errors: ${oldValue} > ${newValue}`);
-        }
-
-        _state.status = res.statusCode = newValue;
-        break;
-
-      default:
-        throw new Error(`Unknown '${key}' property`);
-    }
+      // get_session
+      // put_session
+      // fetch_session
+      // clear_session
+      // delete_session
+      // configure_session
+    },
   });
 
   return $;
