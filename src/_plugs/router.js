@@ -1,6 +1,7 @@
 /* eslint-disable global-require */
 
-const Homegrown = require('./lib/api');
+import pipelineFactory from '../_pipeline';
+import buildFactory from '../_factory';
 
 const STATUS_CODES = require('http').STATUS_CODES;
 
@@ -103,7 +104,7 @@ export default (cwd) => {
           throw new Error(`Undefined '${name}' middleware`);
         }
 
-        const middleware = Homegrown.chain.factory(require(fixedMiddlewares[name]), options, name);
+        const middleware = buildFactory(require(fixedMiddlewares[name]), options, name);
 
         list.push({
           name: middleware.name || name,
@@ -210,7 +211,7 @@ export default (cwd) => {
             type: 'method',
           });
 
-          _pipeline = Homegrown.chain.pipeline('router', _pipeline);
+          _pipeline = pipelineFactory('router', _pipeline);
 
           _controllers[_handler.controller].pipeline[_handler.action] = _pipeline;
         }

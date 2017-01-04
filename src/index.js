@@ -55,4 +55,7 @@ export default {
   farms(cb) {
     FARMS.forEach(cb);
   },
+
+  // built-in plugins
+  plugs: Homegrown.plugs,
 };

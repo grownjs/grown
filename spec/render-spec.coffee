@@ -2,14 +2,16 @@
 
 $ = require('./_protocol')
 
+Homegrown = require('..')
+
 useConfig = (name) ->
-  $.server.ctx.use require('../render')(resolve(__dirname, '_fixtures', name))
+  $.server.ctx.use Homegrown.plugs.render(resolve(__dirname, '_fixtures', name))
 
 describe '#render', ->
   beforeEach $
 
   it 'should fail on undefined `cwd` option', ->
-    expect(-> $.server.use require('../render')()).toThrow()
+    expect(-> $.server.use Homegrown.plugs.render()).toThrow()
 
   it 'should render views as blocks', (done) ->
     useConfig 'app'

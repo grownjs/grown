@@ -2,14 +2,16 @@
 
 $ = require('./_protocol')
 
+Homegrown = require('../lib')
+
 useConfig = (name) ->
-  $.server.ctx.use require('../router')(resolve(__dirname, '_fixtures', name))
+  $.server.ctx.use Homegrown.plugs.router(resolve(__dirname, '_fixtures', name))
 
 describe '#router', ->
   beforeEach $
 
   it 'should fail on undefined `cwd` option', ->
-    expect(-> $.server.use require('../router')()).toThrow()
+    expect(-> $.server.use Homegrown.plugs.router()).toThrow()
 
   it 'should responds to unsupported requests with 405', (done) ->
     useConfig 'no-routes'

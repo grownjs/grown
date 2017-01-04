@@ -1,6 +1,8 @@
 { resolve } = require('path')
 
-$ = require('../models')(resolve(__dirname, '_fixtures/app'))
+Homegrown = require('../lib')
+
+$ = Homegrown.plugs.models(resolve(__dirname, '_fixtures/app'))
 
 describe '#models', ->
   beforeEach (done) ->
