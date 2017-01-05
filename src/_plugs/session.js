@@ -15,25 +15,35 @@ export default (defaults = {}) => {
         session: () => extend({}, conn.req.session),
 
         put_session(name, value) {
+          /* istanbul ignore else */
           if (!(name && value && typeof name === 'string' && typeof value === 'string')) {
             throw new Error(`Invalid put_session: '${name}' => '${value}'`);
           }
 
+          /* istanbul ignore else */
+          if (name === '*') {
+            throw new Error("Invalid put_session: '*'");
+          }
+
           conn.req.session[name] = value;
 
-          return $;
+          return conn;
         },
 
-        clear_session() {
-          conn.req.session = {};
+        delete_session(name) {
+          /* istanbul ignore else */
+          if (!(name && typeof name === 'string')) {
+            throw new Error(`Invalid resp_cookie: '${name}'`);
+          }
 
-          return $;
-        },
+          if (name === '*') {
+            conn.req.session = null;
+            conn.req.session = {};
+          } else {
+            conn.req.session[name] = null;
+          }
 
-        delete_session() {
-          conn.req.session = null;
-
-          return $;
+          return conn;
         },
 
         cookies: () => extend({}, conn.req.signedCookies, conn.req.cookies),
@@ -41,6 +51,7 @@ export default (defaults = {}) => {
         signed_cookies: () => extend({}, conn.req.signedCookies),
 
         get_req_cookie(name) {
+          /* istanbul ignore else */
           if (!(name && typeof name === 'string')) {
             throw new Error(`Invalid req_cookie: '${name}'`);
           }
@@ -49,6 +60,7 @@ export default (defaults = {}) => {
         },
 
         get_resp_cookie(name) {
+          /* istanbul ignore else */
           if (!(name && typeof name === 'string')) {
             throw new Error(`Invalid resp_cookie: '${name}'`);
           }
@@ -57,16 +69,23 @@ export default (defaults = {}) => {
         },
 
         put_resp_cookie(name, value, opts = {}) {
+          /* istanbul ignore else */
           if (!(name && value && typeof name === 'string' && typeof value === 'string')) {
             throw new Error(`Invalid resp_cookie: '${name}' => '${value}'`);
           }
 
+          /* istanbul ignore else */
+          if (name === '*') {
+            throw new Error("Invalid resp_cookie: '*'");
+          }
+
           conn.res.cookie(name, value, opts);
 
-          return $;
+          return conn;
         },
 
         merge_resp_cookies(cookies) {
+          /* istanbul ignore else */
           if (!(cookies && (typeof cookies === 'object' && !Array.isArray(cookies)))) {
             throw new Error(`Invalid resp_cookies: '${cookies}'`);
           }
@@ -75,17 +94,24 @@ export default (defaults = {}) => {
             conn.put_resp_cookie(key, cookies[key]);
           });
 
-          return $;
+          return conn;
         },
 
         delete_resp_cookie(name) {
+          /* istanbul ignore else */
           if (!(name && typeof name === 'string')) {
             throw new Error(`Invalid resp_cookie: '${name}'`);
           }
 
-          delete conn.req.cookies[name];
+          if (name === '*') {
+            Object.keys(conn.res.cookies).forEach((key) => {
+              conn.delete_resp_cookie(key);
+            });
+          } else {
+            conn.res.clearCookie(name);
+          }
 
-          return $;
+          return conn;
         },
       });
     });
