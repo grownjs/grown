@@ -19,14 +19,11 @@ describe '#conn', ->
 
     it 'should handle headers', (done) ->
       $.server.ctx.mount (conn) ->
-        conn.req_headers = { foo: 'bar', baz: 'buzz' }
-
-        conn.delete_req_header 'foo'
-        expect(conn.req_headers).toEqual { baz: 'buzz' }
-
-        conn.req_headers = {}
         conn.put_req_header 'x', 'y'
         expect(conn.get_req_header 'x').toEqual 'y'
+
+        conn.delete_req_header 'content-length'
+        expect(conn.req_headers).toEqual { host: ':80', x: 'y' }
         done()
 
       $.client.fetch()

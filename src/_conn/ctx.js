@@ -84,6 +84,7 @@ export default (container, server, req, res) => {
   const $ = _extend({}, container.extensions);
 
   const _state = {
+    type: 'text/html',
     status: res.statusCode,
     req_headers: req.headers || {},
     resp_headers: res.headers || {},
@@ -100,26 +101,25 @@ export default (container, server, req, res) => {
         res.statusCode = _state.status;
         res.statusMessage = statusCodes[res.statusCode];
 
+        // normalize response body
+        let _output = _state.resp_body;
+
+        /* istanbul ignore else */
+        if (_output !== null && typeof _output === 'object') {
+          _state.resp_headers['content-type'] = `application/json; charset=${_state.resp_charset}`;
+          _output = JSON.stringify(_output);
+        }
+
+        /* istanbul ignore else */
+        if (!_state.resp_headers['content-type']) {
+          _state.resp_headers['content-type'] = `${_state.type}; charset=${_state.resp_charset}`;
+        }
+
         // normalize response haders
         Object.keys(_state.resp_headers).forEach((key) => {
           res.setHeader(key.replace(/(^|-)(\w)/g,
             (_, pre, char) => pre + char.toUpperCase()), _state.resp_headers[key]);
         });
-
-        // normalize response body
-        let _output = _state.resp_body;
-
-        /* istanbul ignore else */
-        if (typeof _output === 'object') {
-          res.setHeader(`Content-Type', 'application/json; charset=${_state.resp_charset}`);
-
-          _output = JSON.stringify(_output);
-        }
-
-        /* istanbul ignore else */
-        if (!res.getHeader('Content-Type')) {
-          res.setHeader(`Content-Type', 'text/html; charset=${_state.resp_charset}`);
-        }
 
         if (typeof _output === 'string' || _output instanceof Buffer) {
           res.end(_output);
@@ -155,7 +155,7 @@ export default (container, server, req, res) => {
     remote_ip: '0.0.0.0',
     script_name: path.relative(process.cwd(), process.argv[1]),
 
-    type: () => (req.headers['content-type'] || '').split(';')[0],
+    type: () => (req.headers['content-type'] || '').split(';')[0] || null,
     method: () => req.method,
 
     params: () => _extend({}, $.path_params, $.query_params, $.body_params),
@@ -175,12 +175,14 @@ export default (container, server, req, res) => {
     },
 
     // request headers
+    req_headers: () => _state.req_headers,
+
     get_req_header(name, defvalue) {
       if (!(name && typeof name === 'string')) {
         throw new Error(`Invalid req_header: '${name}'`);
       }
 
-      const _value = req.headers[name.toLowerCase()];
+      const _value = _state.req_headers[name.toLowerCase()];
 
       /* istanbul ignore else */
       if (typeof _value === 'undefined') {
@@ -195,7 +197,7 @@ export default (container, server, req, res) => {
         throw new Error(`Invalid req_header: '${name}' => '${value}'`);
       }
 
-      req.headers[name.toLowerCase()] = value;
+      _state.req_headers[name.toLowerCase()] = value;
 
       return $;
     },
@@ -205,7 +207,7 @@ export default (container, server, req, res) => {
         throw new Error(`Invalid req_header: '${name}'`);
       }
 
-      delete req.headers[name.toLowerCase()];
+      delete _state.req_headers[name.toLowerCase()];
 
       return $;
     },
@@ -213,6 +215,16 @@ export default (container, server, req, res) => {
     // response headers
     get_resp_header(name) {
       return _state.resp_headers[name.toLowerCase()];
+    },
+
+    put_resp_header(name, value) {
+      if (!(name && value && typeof name === 'string' && typeof value === 'string')) {
+        throw new Error(`Invalid resp_header: '${name}' => '${value}'`);
+      }
+
+      _state.resp_headers[name] = value;
+
+      return $;
     },
 
     merge_resp_headers(headers) {
@@ -223,16 +235,6 @@ export default (container, server, req, res) => {
       Object.keys(headers).forEach((key) => {
         $.put_resp_header(key, headers[key]);
       });
-
-      return $;
-    },
-
-    put_resp_header(name, value) {
-      if (!(name && value && typeof name === 'string' && typeof value === 'string')) {
-        throw new Error(`Invalid resp_header: '${name}' => '${value}'`);
-      }
-
-      _state.resp_headers[name] = value;
 
       return $;
     },
@@ -252,7 +254,8 @@ export default (container, server, req, res) => {
         throw new Error(`Invalid type: '${mimeType}'`);
       }
 
-      _state.resp_headers['content-type'] = mimeType;
+      _state.resp_headers['content-type'] = `${mimeType}; charset=${_state.resp_charset}`;
+      _state.type = mimeType;
 
       return $;
     },
@@ -294,6 +297,11 @@ export default (container, server, req, res) => {
         _code = code.statusCode || 500;
       }
 
+      if (typeof code === 'string') {
+        message = code;
+        _code = 200;
+      }
+
       // normalize given status code
       _state.status = typeof _code === 'number' ? _code : _state.status;
 
@@ -308,13 +316,8 @@ export default (container, server, req, res) => {
 
   // dynamic props
   _props($, _state, {
-    req_headers(value) {
-      if (!value || (typeof value !== 'object' && Array.isArray(value))) {
-        throw new Error(`Invalid req_headers: '${value}'`);
-      }
-    },
     resp_headers(value) {
-      if (!value || (typeof value !== 'object' && Array.isArray(value))) {
+      if (!(value && (typeof value === 'object' && !Array.isArray(value)))) {
         throw new Error(`Invalid resp_headers: '${value}'`);
       }
     },
@@ -323,6 +326,8 @@ export default (container, server, req, res) => {
       if (!value) {
         throw new Error(`Invalid resp_charset: ${value}`);
       }
+
+      _state.resp_headers['content-type'] = `${_state.type}; charset=${value}`;
     },
     resp_body(value) {
       /* istanbul ignore else */
