@@ -5,91 +5,74 @@ $ = require('./_protocol')
 describe '#conn', ->
   beforeEach $
 
-  it 'has read-only properties', (done) ->
-    $.server.ctx.mount (conn) ->
-      expect(-> conn.req = null).toThrow()
-      expect(conn.req).not.toBeNull()
+  describe 'request', ->
+    it 'should handle params', (done) ->
+      $.server.ctx.mount (conn) ->
+        conn.req.url = '/?x=y'
+        conn.req.body = { a: 'b' }
+        conn.req.params = { m: 'n' }
 
-      # common api
-      expect(conn.env).toEqual 'test'
-      expect(conn.host).toEqual ':80'
-      expect(conn.port).toEqual 80
-      expect(conn.method).toEqual 'GET'
-      expect(conn.path_info).toEqual ['x']
-      expect(conn.script_name).toEqual 'node_modules/.bin/jasmine-node'
-      expect(conn.request_path).toEqual '/x'
-      expect(conn.remote_ip).toEqual '0.0.0.0'
-      expect(conn.req_headers).toEqual { host: ':80', 'content-length': 0 }
-      expect(conn.type).toEqual ''
-      expect(conn.scheme).toBeUndefined()
-      expect(conn.path_params).toEqual {}
-      expect(conn.body_params).toEqual {}
-      expect(conn.query_params.y).toEqual 'z'
-      expect(conn.query_string).toEqual 'y=z'
-      expect(conn.params).toEqual { y: 'z' }
-      expect(conn.resp_body).toEqual null
-      expect(conn.resp_charset).toEqual 'utf8'
-      expect(conn.resp_headers).toEqual {}
-      # expect(conn.status).toEqual 501
-
-      done()
-
-    $.client.fetch('/x?y=z')
-
-  it 'has read-only methods', (done) ->
-    $.server.ctx.mount (conn) ->
-      expect(typeof conn.resp).toEqual 'function'
-      expect(typeof conn.get_req_header).toEqual 'function'
-      expect(typeof conn.put_resp_header).toEqual 'function'
-      expect(typeof conn.delete_resp_header).toEqual 'function'
-      expect(typeof conn.redirect).toEqual 'function'
-      expect(typeof conn.next).toEqual 'function'
-      done()
-
-    $.client.fetch()
-
-  it 'should responds to unsupported requests with 501', (done) ->
-    $.client (req, next) ->
-      next (e, res) ->
-        expect(e).toBeUndefined()
-        expect(res.statusMessage).toEqual STATUS_CODES[501]
-        expect(res.statusCode).toEqual 501
+        expect(conn.params).toEqual { x: 'y', a: 'b', m: 'n' }
         done()
 
-  it 'should return the request content-type through `conn.type`', (done) ->
-    $.server.ctx.mount (conn) ->
-      $.type = conn.type
+      $.client.fetch()
 
-    $.client (req, next) ->
-      req.headers['content-type'] = 'application/json'
+    it 'should handle headers', (done) ->
+      $.server.ctx.mount (conn) ->
+        conn.req_headers = { foo: 'bar', baz: 'buzz' }
 
-      next (e, res) ->
-        expect(e).toBeUndefined()
-        expect($.type).toEqual 'application/json'
+        conn.delete_req_header 'foo'
+        expect(conn.req_headers).toEqual { baz: 'buzz' }
+
+        conn.req_headers = {}
+        conn.put_req_header 'x', 'y'
+        expect(conn.get_req_header 'x').toEqual 'y'
         done()
 
-  it 'should return the request query params through `conn.query_params`', (done) ->
-    $.server.ctx.mount (conn) ->
-      $.query = conn.query_params
+      $.client.fetch()
 
-    $.client (req, next) ->
-      req.url = '/?foo=bar&baz=buzz'
+  describe 'response', ->
+    it 'should responds to unsupported requests with 501', (done) ->
+      $.client (req, next) ->
+        next (e, res) ->
+          expect(e).toBeUndefined()
+          expect(res.statusMessage).toEqual STATUS_CODES[501]
+          expect(res.statusCode).toEqual 501
+          done()
 
-      next (e, res) ->
-        expect(e).toBeUndefined()
-        expect($.query.foo).toEqual 'bar'
-        expect($.query.baz).toEqual 'buzz'
+    it 'should handle headers', (done) ->
+      $.server.ctx.mount (conn) ->
+        conn.resp_headers = { foo: 'bar', baz: 'buzz' }
+
+        conn.delete_resp_header 'foo'
+        expect(conn.resp_headers).toEqual { baz: 'buzz' }
+
+        conn.resp_headers = {}
+        conn.put_resp_header 'x', 'y'
+        expect(conn.get_resp_header 'x').toEqual 'y'
+
+        conn.merge_resp_headers { a: 'b' }
+        expect(conn.resp_headers).toEqual { x: 'y', a: 'b' }
         done()
 
-  it 'should responds if `conn.resp_body` is not empty', (done) ->
-    $.server.ctx.mount (conn) ->
-      conn.resp_body = 'OSOM'
+      $.client.fetch()
 
-    $.client (req, next) ->
-      next (e, res) ->
-        expect(e).toBeUndefined()
+    it 'should handle content-type and charset', (done) ->
+      $.server.ctx.mount (conn) ->
+        conn.resp_charset = 'UTF-8'
+        conn.put_resp_content_type 'text/plain'
+
+      $.client.fetch().then (res) ->
+        expect(res.getHeader('Content-Type')).toEqual 'text/plain; charset=UTF-8'
+        done()
+
+    it 'should finalize the response through `resp()`', (done) ->
+      $.server.ctx.mount (conn) ->
+        conn.resp 'OK'
+
+      $.client.fetch().then (res) ->
         expect(res.statusCode).toEqual 200
-        expect(res.body).toEqual 'OSOM'
+        expect(res.getHeader('Content-Type')).toEqual 'text/html; charset=utf8'
         done()
 
   it 'should responds to redirections through `redirect()`', (done) ->
@@ -114,55 +97,6 @@ describe '#conn', ->
         expect(e).toBeUndefined()
         expect(res.statusMessage).toEqual STATUS_CODES[404]
         expect(res.statusCode).toEqual 404
-        done()
-
-  it 'should append headers to the response through `put_resp_header()`', (done) ->
-    $.server.ctx.mount (conn) ->
-      conn.merge_resp_headers { candy: 'does' }
-      conn.put_resp_header 'foo', 'bar'
-
-    $.client (req, next) ->
-      next (e, res) ->
-        expect(e).toBeUndefined()
-        expect(res.getHeader('Foo')).toEqual 'bar'
-        expect(res.getHeader('Candy')).toEqual 'does'
-        done()
-
-  it 'should return headers from the request through `get_req_header()`', (done) ->
-    $.server.ctx.mount (conn) ->
-      $.host = conn.get_req_header('host')
-      $.undef = conn.get_req_header('undef', 'def')
-
-    $.client (req, next) ->
-      next (e, res) ->
-        expect(e).toBeUndefined()
-        expect($.host).toEqual ':80'
-        expect($.undef).toEqual 'def'
-        done()
-
-  it 'should delete headers from the response through `delete_resp_header()`', (done) ->
-    $.server.ctx.mount (conn) ->
-      conn.put_resp_header 'foo', 'bar'
-      conn.put_resp_header 'baz', 'buzz'
-      conn.delete_resp_header 'baz'
-
-    $.client (req, next) ->
-      next (e, res) ->
-        expect(e).toBeUndefined()
-        expect(res.getHeader('Foo')).toEqual 'bar'
-        expect(res.getHeader('Baz')).toBeUndefined()
-        done()
-
-  it 'should emit the response and its headers through `resp()`', (done) ->
-    $.server.ctx.mount (conn) ->
-      conn.resp 'SEND'
-
-    $.client (req, next) ->
-      next (e, res) ->
-        expect(e).toBeUndefined()
-        expect(res.statusMessage).toEqual 'Not Implemented'
-        expect(res.statusCode).toEqual 501
-        expect(res.body).toEqual 'SEND'
         done()
 
   describe 'conn-like middleware support', ->
