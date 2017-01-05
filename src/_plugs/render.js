@@ -1,7 +1,7 @@
+/* eslint-disable global-require */
+
 const path = require('path');
 const fs = require('fs');
-
-/* eslint-disable global-require */
 
 export default (cwd) => {
   /* istanbul ignore else */

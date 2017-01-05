@@ -17,8 +17,16 @@ import models from './_plugs/models';
 import render from './_plugs/render';
 import router from './_plugs/router';
 import upload from './_plugs/upload';
+import session from './_plugs/session';
+
+import { extend, methods, props } from './_util';
 
 export default {
+  util: {
+    extend,
+    methods,
+    props,
+  },
   bind: {
     configure,
     dispatch,
@@ -42,5 +50,6 @@ export default {
     render,
     router,
     upload,
+    session,
   },
 };

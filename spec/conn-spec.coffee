@@ -60,7 +60,7 @@ describe '#conn', ->
         conn.put_resp_content_type 'text/plain'
 
       $.client.fetch().then (res) ->
-        expect(res.getHeader('Content-Type')).toEqual 'text/plain; charset=UTF-8'
+        expect(res.getHeader('content-type')).toEqual 'text/plain; charset=UTF-8'
         done()
 
     it 'should finalize the response through `resp()`', (done) ->
@@ -69,7 +69,7 @@ describe '#conn', ->
 
       $.client.fetch().then (res) ->
         expect(res.statusCode).toEqual 200
-        expect(res.getHeader('Content-Type')).toEqual 'text/html; charset=utf8'
+        expect(res.getHeader('content-type')).toEqual 'text/html; charset=utf8'
         done()
 
   it 'should responds to redirections through `redirect()`', (done) ->
@@ -81,7 +81,7 @@ describe '#conn', ->
         expect(e).toBeUndefined()
         expect(res.statusCode).toEqual 302
         expect(res.statusMessage).toEqual STATUS_CODES[302]
-        expect(res.getHeader('Location')).toEqual '/y?a=b'
+        expect(res.getHeader('location')).toEqual '/y?a=b'
         done()
 
   it 'should responds to any statusCode through `put_status()`', (done) ->

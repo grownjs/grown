@@ -1,3 +1,5 @@
+import { extend, methods, props } from '../_util';
+
 const statusCodes = require('http').STATUS_CODES;
 const qs = require('querystring');
 const url = require('url');
@@ -22,66 +24,8 @@ function _fixURL(location) {
   ].join('');
 }
 
-function _extend(target, ...args) {
-  args.forEach((source) => {
-    Object.keys(source).forEach((key) => {
-      /* istanbul ignore else */
-      if (typeof target[key] === 'undefined') {
-        target[key] = source[key];
-      }
-    });
-  });
-
-  return target;
-}
-
-// inject common methods or properties
-function _methods(target, obj) {
-  Object.keys(obj).forEach((key) => {
-    // static getter
-    Object.defineProperty(target, key, {
-      configurable: false,
-      enumerable: true,
-      get() {
-        if (typeof obj[key] === 'function' && !obj[key].length) {
-          return obj[key]();
-        }
-
-        return obj[key];
-      },
-      set() {
-        throw new Error(`Property '${key}' is read-only`);
-      },
-    });
-  });
-}
-
-// inject dynamic getter/setter properties
-function _props(target, state, props) {
-  Object.keys(props).forEach((prop) => {
-    Object.defineProperty(target, prop, {
-      configurable: false,
-      enumerable: true,
-      get() {
-        return state[prop];
-      },
-      set(value) {
-        const oldValue = state[prop];
-
-        state[prop] = value;
-
-        try {
-          props[prop](value, oldValue);
-        } catch (e) {
-          throw e;
-        }
-      },
-    });
-  });
-}
-
 export default (container, server, req, res) => {
-  const $ = _extend({}, container.extensions);
+  const $ = extend({}, container.extensions);
 
   const _state = {
     type: 'text/html',
@@ -117,9 +61,10 @@ export default (container, server, req, res) => {
 
         // normalize response haders
         Object.keys(_state.resp_headers).forEach((key) => {
-          res.setHeader(key.replace(/(^|-)(\w)/g,
-            (_, pre, char) => pre + char.toUpperCase()), _state.resp_headers[key]);
+          res.setHeader(key, _state.resp_headers[key]);
         });
+
+        res.writeHead(res.statusCode);
 
         if (typeof _output === 'string' || _output instanceof Buffer) {
           res.end(_output);
@@ -128,7 +73,7 @@ export default (container, server, req, res) => {
         }
       })
       .catch((err) => {
-        res.setHeader(`Content-Type', 'text/plain; charset=${_state.resp_charset}`);
+        res.setHeader(`content-type', 'text/plain; charset=${_state.resp_charset}`);
         res.end(err.stack || err.message || err.toString());
       });
   }
@@ -140,7 +85,7 @@ export default (container, server, req, res) => {
     }
   }
 
-  _methods($, {
+  methods($, {
     // standard request and response objects
     req,
     res,
@@ -158,11 +103,11 @@ export default (container, server, req, res) => {
     type: () => (req.headers['content-type'] || '').split(';')[0] || null,
     method: () => req.method,
 
-    params: () => _extend({}, $.path_params, $.query_params, $.body_params),
-    handler: () => req.handler || {},
+    params: () => extend({}, $.path_params, $.query_params, $.body_params),
+    handler: () => extend({}, req.handler || {}),
     path_info: () => req.url.split('?')[0].split('/').filter(x => x),
-    path_params: () => req.params || {},
-    body_params: () => req.body || {},
+    path_params: () => extend({}, req.params || {}),
+    body_params: () => extend({}, req.body || {}),
     request_path: () => req.url.split('?')[0],
 
     query_string: () => req.url.split('?')[1] || '',
@@ -175,7 +120,7 @@ export default (container, server, req, res) => {
     },
 
     // request headers
-    req_headers: () => _state.req_headers,
+    req_headers: () => extend({}, _state.req_headers),
 
     get_req_header(name, defvalue) {
       if (!(name && typeof name === 'string')) {
@@ -228,7 +173,7 @@ export default (container, server, req, res) => {
     },
 
     merge_resp_headers(headers) {
-      if (!headers || (typeof headers !== 'object' && Array.isArray(headers))) {
+      if (!(headers && (typeof headers === 'object' && !Array.isArray(headers)))) {
         throw new Error(`Invalid resp_headers: '${headers}'`);
       }
 
@@ -315,7 +260,7 @@ export default (container, server, req, res) => {
   });
 
   // dynamic props
-  _props($, _state, {
+  props($, {
     resp_headers(value) {
       if (!(value && (typeof value === 'object' && !Array.isArray(value)))) {
         throw new Error(`Invalid resp_headers: '${value}'`);
@@ -337,7 +282,7 @@ export default (container, server, req, res) => {
 
       _state.status = 200;
     },
-  });
+  }, _state);
 
   return $;
 };

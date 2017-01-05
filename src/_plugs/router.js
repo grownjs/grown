@@ -5,7 +5,6 @@ import buildFactory from '../_factory';
 
 const STATUS_CODES = require('http').STATUS_CODES;
 
-const routeMappings = require('route-mappings');
 const glob = require('glob');
 const path = require('path');
 const fs = require('fs');
@@ -28,8 +27,10 @@ export default (cwd) => {
     throw new Error(`Expecting 'cwd' to be a valid directory, given '${cwd}'`);
   }
 
-  const _routeMappings = require(path.join(cwd, 'config', 'routeMappings.js'));
-  const router = _routeMappings(routeMappings);
+  const RouteMappings = require('route-mappings');
+
+  const routeMappings = require(path.join(cwd, 'config', 'routeMappings.js'));
+  const router = routeMappings(RouteMappings);
   const match = {};
 
   const _controllers = {};

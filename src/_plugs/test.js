@@ -10,6 +10,7 @@ export default (server) => {
         end: false,
         body: null,
         buffer: [],
+        cookies: {},
         headers: {},
       };
 
@@ -25,10 +26,22 @@ export default (server) => {
 
       // known interface
       _req.url = '/';
+      _req.path = '';
+      _req.host = '';
+      _req.hostname = '';
       _req.query = '';
+      _req.secure = false;
+      _req.ip = '0.0.0.0';
       _req.method = 'GET';
       _req.headers = {};
       _req.headers = { host: _server.location.host };
+
+      _req.get = _req.header = (k) => _req.headers[k];
+      _req.set = (k, v) => { _req.headers[k] = v; };
+
+      _req.param = () => {};
+      _req.xhr = () => {};
+      _req.is = () => {};
 
       // initial length
       _req.headers['content-length'] = 0;
@@ -66,8 +79,25 @@ export default (server) => {
           _res.statusCode = 501;
           _res.statusMessage = 'Not Implemented';
 
-          _res.getHeader = (k) => _opts.headers[k];
-          _res.setHeader = (k, v) => { _opts.headers[k] = v; };
+          // TODO: mocks
+          _res.clearCookie = (k) => { delete _opts.cookies[k]; };
+          _res.cookie = (k, v, o = {}) => { _opts.cookies[k] = { value: v, opts: o }; };
+          _res.location = () => {};
+          _res.redirect = () => {};
+          _res.render = () => {};
+
+          _res.type = (v) => { _opts.headers['content-type'] = v; };
+          _res.format = () => {};
+
+          _res.send = () => {};
+          _res.json = () => {};
+          _res.jsonp = () => {};
+          _res.status = (s) => { _res.statusCode = s; };
+          _res.sendStatus = (s) => { _res.status(s); _res.send(); };
+
+          _res.writeHead = () => {};
+          _res.get = _res.getHeader = (k) => _opts.headers[k];
+          _res.set = _res.header = _res.setHeader = (k, v) => { _opts.headers[k] = v; };
 
           // test interface
           Object.defineProperty(_res, 'body', {
@@ -76,6 +106,24 @@ export default (server) => {
             },
             set() {
               throw new Error('Output body is already defined');
+            },
+          });
+
+          Object.defineProperty(_res, 'cookies', {
+            get() {
+              return _opts.cookies;
+            },
+            set() {
+              throw new Error('Response cookies are already defined');
+            },
+          });
+
+          Object.defineProperty(_res, 'headers', {
+            get() {
+              return _opts.headers;
+            },
+            set() {
+              throw new Error('Response headers are already defined');
             },
           });
 
