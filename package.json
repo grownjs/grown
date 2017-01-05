@@ -53,6 +53,8 @@
     "buble": "^0.15.1",
     "chokidar": "^1.6.1",
     "codecov": "^1.0.1",
+    "cookie-parser": "^1.4.3",
+    "cookie-session": "^2.0.0-alpha.2",
     "csurf": "^1.9.0",
     "eslint": "^3.5.0",
     "eslint-config-airbnb-base": "^5.0.3",
