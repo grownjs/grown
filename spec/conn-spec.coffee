@@ -118,15 +118,14 @@ describe '#conn', ->
 
   it 'should append headers to the response through `put_resp_header()`', (done) ->
     $.server.ctx.mount (conn) ->
-      conn.put_resp_header { candy: 'does' }
-      conn.put_resp_header 'candy', 'nothing', true
+      conn.merge_resp_headers { candy: 'does' }
       conn.put_resp_header 'foo', 'bar'
 
     $.client (req, next) ->
       next (e, res) ->
         expect(e).toBeUndefined()
         expect(res.getHeader('Foo')).toEqual 'bar'
-        expect(res.getHeader('Candy')).toEqual ['does', 'nothing']
+        expect(res.getHeader('Candy')).toEqual 'does'
         done()
 
   it 'should return headers from the request through `get_req_header()`', (done) ->
