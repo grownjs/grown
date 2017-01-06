@@ -7,8 +7,8 @@ export default (defaults = {}) => {
   const cookieParser = require('cookie-parser');
 
   return ($) => {
-    $.ctx.mount(cookieParser(defaults));
-    $.ctx.mount(cookieSession(defaults));
+    $.ctx.mount(cookieParser(extend({}, defaults)));
+    $.ctx.mount(cookieSession(extend({}, defaults)));
 
     $.ctx.mount((conn) => {
       methods(conn, {
