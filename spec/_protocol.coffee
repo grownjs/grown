@@ -5,5 +5,6 @@ $ = module.exports = ->
     delete $[k]
 
   $.server = Homegrown.new()
-  $.client = Homegrown.plugs.test($.server)
-  $.server.protocols.test = $.client.protocol()
+  $.server.ctx.use Homegrown.plugs.test()
+
+  null

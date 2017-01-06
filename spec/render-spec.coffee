@@ -19,7 +19,7 @@ describe '#render', ->
     $.server.ctx.mount (conn) ->
       conn.render 'example', foo: 'bar'
 
-    $.client.fetch().then (res) ->
+    $.server.fetch().then (res) ->
       expect(res.body).toContain '<!doctype html>'
       expect(res.body).toContain '<p>TEXT(bar)</p>'
       expect(res.body).toMatch /Done in \d\.\d+ms/
@@ -33,6 +33,6 @@ describe '#render', ->
       conn.render 'example', foo: 'FUU'
       conn.render 'example', foo: 'FUA'
 
-    $.client.fetch().then (res) ->
+    $.server.fetch().then (res) ->
       expect(res.body).toContain '<p>TEXT(FOO),TEXT(FUU),TEXT(FUA)</p>'
       done()

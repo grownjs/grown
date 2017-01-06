@@ -17,7 +17,7 @@ describe '#session', ->
 
       $.cookies = conn.cookies
 
-    $.client (req, next) ->
+    $.server.fetch (req, next) ->
       req.headers.cookie = 'foo=bar'
 
       next (e, res) ->

@@ -11,13 +11,13 @@ describe 'known express-middleware', ->
     $.server.ctx.mount ->
       throw new Error 'D:'
 
-    $.client.fetch()
+    $.server.fetch()
 
   describe 'input support', ->
     it 'supports `method-override` for hacking `req.method`', (done) ->
       $.server.ctx.mount require('method-override')()
 
-      $.client (req, next) ->
+      $.server.fetch (req, next) ->
         req.method = 'POST'
         req.headers['x-http-method-override'] = 'patch'
 
@@ -32,7 +32,7 @@ describe 'known express-middleware', ->
       $.server.ctx.mount (conn) ->
         $.params = conn.params
 
-      $.client (req, next) ->
+      $.server.fetch (req, next) ->
         req._pushData('{"foo":"bar"}')
         req.headers['content-type'] = 'application/json'
 
@@ -45,7 +45,7 @@ describe 'known express-middleware', ->
     it 'supports `body-parser` for urlencoded payloads', (done) ->
       $.server.ctx.mount require('body-parser').urlencoded(extended: true)
 
-      $.client (req, next) ->
+      $.server.fetch (req, next) ->
         req._pushData('baz=buzz')
         req.headers['content-type'] = 'application/x-www-form-urlencoded'
 
@@ -75,7 +75,7 @@ describe 'session support', ->
       expect(conn.req.session.foo).toEqual 'bar'
       done()
 
-    $.client.fetch()
+    $.server.fetch()
 
   it 'supports `csurf` for CSRF-protection', (done) ->
     $.server.ctx.mount require('csurf')()
@@ -85,4 +85,4 @@ describe 'session support', ->
       expect(conn.req.session.csrfSecret).not.toBeUndefined()
       done()
 
-    $.client.fetch()
+    $.server.fetch()

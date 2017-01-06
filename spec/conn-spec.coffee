@@ -15,7 +15,7 @@ describe '#conn', ->
         expect(conn.params).toEqual { x: 'y', a: 'b', m: 'n' }
         done()
 
-      $.client.fetch()
+      $.server.fetch()
 
     it 'should handle headers', (done) ->
       $.server.ctx.mount (conn) ->
@@ -26,11 +26,11 @@ describe '#conn', ->
         expect(conn.req_headers).toEqual { host: ':80', x: 'y' }
         done()
 
-      $.client.fetch()
+      $.server.fetch()
 
   describe 'response', ->
     it 'should responds to unsupported requests with 501', (done) ->
-      $.client (req, next) ->
+      $.server.fetch (req, next) ->
         next (e, res) ->
           expect(e).toBeUndefined()
           expect(res.statusMessage).toEqual STATUS_CODES[501]
@@ -52,14 +52,14 @@ describe '#conn', ->
         expect(conn.resp_headers).toEqual { x: 'y', a: 'b' }
         done()
 
-      $.client.fetch()
+      $.server.fetch()
 
     it 'should handle content-type and charset', (done) ->
       $.server.ctx.mount (conn) ->
         conn.resp_charset = 'UTF-8'
         conn.put_resp_content_type 'text/plain'
 
-      $.client.fetch().then (res) ->
+      $.server.fetch().then (res) ->
         expect(res.getHeader('content-type')).toEqual 'text/plain; charset=UTF-8'
         done()
 
@@ -67,7 +67,7 @@ describe '#conn', ->
       $.server.ctx.mount (conn) ->
         conn.resp 'OK'
 
-      $.client.fetch().then (res) ->
+      $.server.fetch().then (res) ->
         expect(res.statusCode).toEqual 200
         expect(res.getHeader('content-type')).toEqual 'text/html; charset=utf8'
         done()
@@ -76,7 +76,7 @@ describe '#conn', ->
     $.server.ctx.mount (conn) ->
       conn.redirect('/y?a=b')
 
-    $.client (req, next) ->
+    $.server.fetch (req, next) ->
       next (e, res) ->
         expect(e).toBeUndefined()
         expect(res.statusCode).toEqual 302
@@ -89,7 +89,7 @@ describe '#conn', ->
       expect(-> conn.put_status()).toThrow()
       conn.put_status(404)
 
-    $.client (req, next) ->
+    $.server.fetch (req, next) ->
       next (e, res) ->
         expect(e).toBeUndefined()
         expect(res.statusMessage).toEqual STATUS_CODES[404]
@@ -99,7 +99,7 @@ describe '#conn', ->
   describe 'conn-like middleware support', ->
     it 'supports plain functions', (done) ->
       $.server.ctx.mount -> done()
-      $.client.fetch()
+      $.server.fetch()
 
     it 'supports promise values', (done) ->
       $.server.ctx.mount (conn) ->
@@ -109,29 +109,29 @@ describe '#conn', ->
             done()
           , 1
 
-      $.client.fetch()
+      $.server.fetch()
 
     it 'supports primitive classes', (done) ->
       class Dummy
         call: -> done()
 
       $.server.ctx.mount Dummy
-      $.client.fetch()
+      $.server.fetch()
 
     it 'supports plain-old callbacks', (done) ->
       dummy =
         call: -> done()
 
       $.server.ctx.mount dummy
-      $.client.fetch()
+      $.server.fetch()
 
     it 'supports iterator-like callbacks', (done) ->
       dummy =
         next: -> { done: true, value: done() }
 
       $.server.ctx.mount dummy
-      $.client.fetch()
+      $.server.fetch()
 
     it 'supports generator-like callbacks', (done) ->
       $.server.ctx.mount `(function*(){yield done})`
-      $.client.fetch()
+      $.server.fetch()

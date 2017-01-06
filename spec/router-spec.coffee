@@ -16,7 +16,7 @@ describe '#router', ->
   it 'should responds to unsupported requests with 405', (done) ->
     useConfig 'no-routes'
 
-    $.client.fetch().then (res) ->
+    $.server.fetch().then (res) ->
       expect(res.statusMessage).toEqual 'Method Not Allowed'
       expect(res.statusCode).toEqual 405
       done()
@@ -24,7 +24,7 @@ describe '#router', ->
   it 'should responds to unhandled routes with 501', (done) ->
     expect(-> useConfig 'one-route').toThrow()
 
-    $.client.fetch().then (res) ->
+    $.server.fetch().then (res) ->
       expect(res.statusCode).toEqual 501
       expect(res.statusMessage).toEqual 'Not Implemented'
       done()
@@ -32,7 +32,7 @@ describe '#router', ->
   it 'should responds to undefined handlers with 501', (done) ->
     useConfig 'valid-routes'
 
-    $.client.fetch('/no').then (res) ->
+    $.server.fetch('/no').then (res) ->
       expect(res.statusCode).toEqual 501
       expect(res.body).toMatch /Undefined .+? handler/
       expect(res.body).toContain res.error.message
@@ -41,7 +41,7 @@ describe '#router', ->
   it 'should responds to defined handlers with 200', (done) ->
     useConfig 'valid-routes'
 
-    $.client.fetch('/yes').then (res) ->
+    $.server.fetch('/yes').then (res) ->
       expect(res.body).toEqual 'OSOM'
       expect(res.statusMessage).toEqual 'OK'
       expect(res.statusCode).toEqual 200
@@ -50,7 +50,7 @@ describe '#router', ->
   it 'should responds to unmatched routes with 404', (done) ->
     useConfig 'valid-routes'
 
-    $.client.fetch('/not/found').then (res) ->
+    $.server.fetch('/not/found').then (res) ->
       expect(res.statusMessage).toEqual 'Not Found'
       expect(res.statusCode).toEqual 404
       done()
@@ -63,7 +63,7 @@ describe '#router', ->
 
     useConfig 'valid-routes'
 
-    $.client.fetch('/x').then ->
+    $.server.fetch('/x').then ->
       expect($.params).toEqual { value: 'x' }
       expect($.handler.controller).toEqual 'Example'
       expect($.handler.action).toEqual 'test_params'
@@ -72,7 +72,7 @@ describe '#router', ->
   it 'should fail when requiring any broken source', (done) ->
     useConfig 'valid-routes'
 
-    $.client.fetch('/broken/handler').then (res) ->
+    $.server.fetch('/broken/handler').then (res) ->
       expect(res.body).toContain 'Unexpected token'
       expect(res.statusCode).toEqual 501
       done()
@@ -80,7 +80,7 @@ describe '#router', ->
   it 'should fail on invalid route-middlewares', (done) ->
     useConfig 'with-middlewares'
 
-    $.client.fetch('/no').then (res) ->
+    $.server.fetch('/no').then (res) ->
       expect(res.body).toMatch /Middleware .+? should be callable/
       expect(res.statusCode).toEqual 501
       done()
@@ -88,7 +88,7 @@ describe '#router', ->
   it 'should fail on unknown route-middlewares', (done) ->
     useConfig 'with-middlewares'
 
-    $.client.fetch('/err').then (res) ->
+    $.server.fetch('/err').then (res) ->
       expect(res.body).toMatch /Undefined .+? middleware/
       expect(res.statusCode).toEqual 501
       done()
@@ -96,14 +96,14 @@ describe '#router', ->
   it 'should run route-middlewares properly', (done) ->
     useConfig 'with-middlewares'
 
-    $.client.fetch('/yes').then (res) ->
+    $.server.fetch('/yes').then (res) ->
       expect(res.body).toEqual 'OSOM!'
       done()
 
   it 'should fail on invalid pipeline-handlers', (done) ->
     useConfig 'with-middlewares'
 
-    $.client.fetch('/maybe').then (res) ->
+    $.server.fetch('/maybe').then (res) ->
       expect(res.body).toMatch /Undefined .+? handler/
       expect(res.statusCode).toEqual 501
       done()
@@ -111,6 +111,6 @@ describe '#router', ->
   it 'should run pipeline-handlers properly', (done) ->
     useConfig 'with-middlewares'
 
-    $.client.fetch('/surely').then (res) ->
+    $.server.fetch('/surely').then (res) ->
       expect(res.body).toEqual 'OSOM!'
       done()
