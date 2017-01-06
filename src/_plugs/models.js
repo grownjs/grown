@@ -30,6 +30,8 @@ export default (cwd) => {
     return new JSONSchemaSequelizer(opts, refs, dir)
       .then((m) => {
         $.extensions.models = m;
+
+        return m.sync();
       });
   };
 };
