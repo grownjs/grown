@@ -1,56 +1,34 @@
-export default () => {
+/* eslint-disable global-require */
 
-  // const $ = require('..').new();
+import { extend, methods } from '../_util';
 
-  // const IncomingForm = require('formidable').IncomingForm;
+export default (defaults = {}) => {
+  const IncomingForm = require('formidable').IncomingForm;
 
-  // $.ctx.listen(5000, (app) => {
-  //   console.log('Listening on', app.location.href);
-  // });
+  function processForm(conn, opts) {
+    return new Promise((resolve, reject) => {
+      const form = new IncomingForm(extend({}, opts, defaults));
 
-  // function processForm(conn) {
-  //   return new Promise((resolve, reject) => {
-  //     const form = new IncomingForm({
-  //       multiples: true,
-  //       hash: 'md5',
-  //     });
+      form.parse(conn.req, (err, data, files) => {
+        if (err) {
+          reject(err);
+        } else {
+          // merge all params, multipart first
+          conn.req.body = extend({}, data, conn.req.body);
 
-  //     form.parse(conn.req, (err, fields, uploads) => {
-  //       if (err) {
-  //         reject(err);
-  //       } else {
-  //         conn.req.body = conn.req.body || {};
+          resolve(files);
+        }
+      });
+    });
+  }
 
-  //         Object.keys(fields).forEach((key) => {
-  //           conn.req.body[key] = fields[key];
-  //         });
-
-  //         conn.files = uploads;
-
-  //         resolve(conn);
-  //       }
-  //     });
-  //   });
-  // }
-
-  // $.ctx.mount((conn) => {
-  //   return conn.type.indexOf('multipart') === -1 || processForm(conn);
-  // });
-
-  // $.ctx.mount((conn) => {
-  //   if (conn.req.url === '/') {
-  //     conn.body = `<form method="post" enctype="multipart/form-data" action="/upload">
-  //   <input type="file" name="f" multiple><input type="submit" name="ok">
-  // </form>`;
-  //   }
-
-  //   if (conn.req.url === '/upload') {
-  //     conn.body = {
-  //       body: conn.req.body,
-  //       type: conn.type,
-  //       files: conn.files,
-  //     };
-  //   }
-  // });
-
+  return ($) => {
+    $.ctx.mount((conn) => {
+      methods(conn, {
+        upload_files(opts = {}) {
+          return (conn.type && conn.type.indexOf('multipart') === -1) || processForm(conn, opts);
+        },
+      });
+    });
+  };
 };

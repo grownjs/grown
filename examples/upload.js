@@ -1,52 +1,21 @@
 const $ = require('..').new();
 
-const IncomingForm = require('formidable').IncomingForm;
+$.ctx.use(require('..').plugs.upload());
 
 $.ctx.listen(5000, (app) => {
   console.log('Listening on', app.location.href);
 });
 
-function processForm(conn) {
-  return new Promise((resolve, reject) => {
-    const form = new IncomingForm({
-      multiples: true,
-      hash: 'md5',
-    });
-
-    form.parse(conn.req, (err, fields, uploads) => {
-      if (err) {
-        reject(err);
-      } else {
-        conn.req.body = conn.req.body || {};
-
-        Object.keys(fields).forEach((key) => {
-          conn.req.body[key] = fields[key];
-        });
-
-        conn.files = uploads;
-
-        resolve(conn);
-      }
-    });
-  });
-}
-
 $.ctx.mount((conn) => {
-  return conn.type.indexOf('multipart') === -1 || processForm(conn);
-});
-
-$.ctx.mount((conn) => {
-  if (conn.req.url === '/') {
-    conn.body = `<form method="post" enctype="multipart/form-data" action="/upload">
-  <input type="file" name="f" multiple><input type="submit" name="ok">
-</form>`;
+  if (conn.request_path === '/upload') {
+    return conn.upload_files().then((result) => {
+      conn.resp_body = result;
+    });
   }
 
-  if (conn.req.url === '/upload') {
-    conn.body = {
-      body: conn.req.body,
-      type: conn.type,
-      files: conn.files,
-    };
+  if (conn.request_path === '/') {
+    conn.resp_body = `<form method="post" enctype="multipart/form-data" action="/upload">
+  <input type="file" name="f" multiple><input type="submit" name="ok">
+</form>`;
   }
 });
