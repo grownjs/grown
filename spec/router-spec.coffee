@@ -114,3 +114,11 @@ describe '#router', ->
     $.server.fetch('/surely').then (res) ->
       expect(res.body).toEqual 'OSOM!'
       done()
+
+  describe 'inject', ->
+    useConfig 'with-middlewares'
+
+    it 'should inject sync values', (done) ->
+      $.server.fetch('/other-example').then (res) ->
+        #expect(res.body).toEqual 'OTHER'
+        done()
