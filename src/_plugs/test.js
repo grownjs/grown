@@ -1,11 +1,63 @@
 const Readable = require('stream').Readable;
 const Writable = require('stream').Writable;
 
-export default (server) => {
+function mock($) {
   let _fn;
 
-  function makeRequest(next) {
-    server.ctx.listen({ protocol: 'test' }).then((_server) => {
+  $.protocols.test = {
+    createServer(_options, _client) {
+      if (typeof _options === 'function') {
+        _client = _options;
+        _options = null;
+      }
+
+      _fn = _client;
+
+      return { listen(port, host, callback) { callback(); } };
+    },
+  };
+
+  return function makeRequest(...args) {
+    if (!args[0] || typeof args[0] === 'string' || typeof args[0] === 'object') {
+      return new Promise((resolve) => {
+        const [method, path, opts] = args;
+
+        return makeRequest((req, _next) => {
+          let _method = typeof method === 'string' && typeof path === 'string' ? method : 'get';
+          let _path = typeof path === 'string' ? path : method || '/';
+          let _opts = typeof path === 'object' ? path : opts || {};
+
+          /* istanbul ignore else */
+          if (typeof method === 'object') {
+            _opts = method;
+            _method = 'get';
+            _path = '/';
+          }
+
+          req.url = _path;
+          req.method = _method.toUpperCase();
+
+          Object.keys(_opts).forEach((_key) => {
+            req[_key] = _opts[_key];
+          });
+
+          _next((e, res) => {
+            Object.defineProperty(res, 'error', {
+              get() {
+                return e;
+              },
+              set() {
+                throw new Error('Error cannot be set');
+              },
+            });
+
+            resolve(res);
+          });
+        });
+      });
+    }
+
+    $.ctx.listen({ protocol: 'test' }).then((_server) => {
       const _opts = {
         end: false,
         body: null,
@@ -52,7 +104,7 @@ export default (server) => {
         _req.headers['content-length'] += data.length;
       };
 
-      next(_req, (end) => {
+      args[0](_req, (end) => {
         _opts.end = end;
 
         /* istanbul ignore else */
@@ -137,59 +189,11 @@ export default (server) => {
         }
       });
     });
-  }
-
-  makeRequest.protocol = () => {
-    return {
-      createServer(_options, _client) {
-        if (typeof _options === 'function') {
-          _client = _options;
-          _options = null;
-        }
-
-        _fn = _client;
-
-        return { listen(port, host, callback) { callback(); } };
-      },
-    };
   };
+}
 
-  makeRequest.fetch = (method, path, opts) => {
-    return new Promise((resolve) => {
-      makeRequest((req, next) => {
-        let _method = typeof method === 'string' && typeof path === 'string' ? method : 'get';
-        let _path = typeof path === 'string' ? path : method || '/';
-        let _opts = typeof path === 'object' ? path : opts || {};
-
-        /* istanbul ignore else */
-        if (typeof method === 'object') {
-          _opts = method;
-          _method = 'get';
-          _path = '/';
-        }
-
-        req.url = _path;
-        req.method = _method.toUpperCase();
-
-        Object.keys(_opts).forEach((_key) => {
-          req[_key] = _opts[_key];
-        });
-
-        next((e, res) => {
-          Object.defineProperty(res, 'error', {
-            get() {
-              return e;
-            },
-            set() {
-              throw new Error('Error cannot be set');
-            },
-          });
-
-          resolve(res);
-        });
-      });
-    });
+export default () => {
+  return ($) => {
+    $.fetch = mock($);
   };
-
-  return makeRequest;
 };
