@@ -73,6 +73,8 @@
     "serve-index": "^1.8.0",
     "serve-static": "^1.11.1",
     "sqlite3": "^3.1.8",
-    "tarima-cli": "gextech/tarima-cli"
+    "std-mocks": "^1.0.1",
+    "tarima-cli": "gextech/tarima-cli",
+    "winston": "^2.3.0"
   }
 }
