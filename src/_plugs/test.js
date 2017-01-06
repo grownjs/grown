@@ -36,6 +36,8 @@ function mock($) {
 
           req.url = _path;
           req.method = _method.toUpperCase();
+          req.httpVersionMajor = 1;
+          req.httpVersionMinor = 0;
 
           Object.keys(_opts).forEach((_key) => {
             req[_key] = _opts[_key];
