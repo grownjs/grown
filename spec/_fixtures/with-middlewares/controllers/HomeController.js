@@ -3,18 +3,18 @@ module.exports = {
     err: 'undef',
     test: '_suffix',
   },
-  _suffix(conn) {
-    return conn.next(() => {
-      if (conn.resp_body) {
-        conn.resp_body = `${conn.resp_body}!`;
+  _suffix($) {
+    return $.next(() => {
+      if ($.resp_body) {
+        $.resp_body = `${$.resp_body}!`;
       }
     });
   },
-  index(conn) {
-    conn.resp_body = 'OSOM';
+  index($) {
+    $.resp_body = 'OSOM';
   },
-  test(conn) {
-    return this.index(conn);
+  test($) {
+    return this.index($);
   },
   err() {
   },

@@ -1,7 +1,7 @@
-module.exports = (conn) => {
-  return conn.next(() => {
-    if (conn.resp_body) {
-      conn.resp_body = `${conn.resp_body}!`;
+module.exports = ($) => {
+  return $.next(() => {
+    if ($.resp_body) {
+      $.resp_body = `${$.resp_body}!`;
     }
   });
 };
