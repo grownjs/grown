@@ -276,7 +276,7 @@ export default (container, server, req, res) => {
     },
     resp_body(value) {
       /* istanbul ignore else */
-      if (!((value instanceof Buffer) || typeof value === 'string')) {
+      if (!((value instanceof Buffer) || typeof value === 'object' || typeof value === 'string')) {
         throw new Error(`Invalid resp_body: ${value}`);
       }
 
