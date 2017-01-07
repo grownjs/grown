@@ -3,6 +3,8 @@
 import pipelineFactory from '../_pipeline';
 import buildFactory from '../_factory';
 
+import { reduce, methods } from '../_util';
+
 const STATUS_CODES = require('http').STATUS_CODES;
 
 const glob = require('glob');
@@ -36,9 +38,11 @@ export default (cwd) => {
   const _controllers = {};
   const _routes = [];
 
+  // resolve routing for controllers lookup
   router.routes.forEach((route) => {
     const _handler = route.handler.slice();
 
+    // normalize the action/controller
     const action = route._actionName || _handler.pop();
     const controller = route._resourceName || _handler.pop();
     const controllerFile = path.join(cwd, 'controllers', `${controller}Controller.js`);
@@ -48,6 +52,7 @@ export default (cwd) => {
       throw new Error(`Missing controller ${controllerFile}`);
     }
 
+    // memoize reference
     _controllers[controller] = {
       filepath: controllerFile,
       pipeline: {},
@@ -63,32 +68,40 @@ export default (cwd) => {
       route.middleware = [route.middleware];
     }
 
+    // route definition
     const _route = {
       controller,
       action,
       route,
     };
 
+    // plain old routes
     _routes.push(_route);
 
+    // group all routes per-verb
     match[route.verb].push(_route);
   });
 
+  // build mapping per-verb
   Object.keys(match).forEach((verb) => {
     match[verb] = router.map(match[verb]);
   });
 
+  // load global middleware definitions
   const _middlewaresFile = path.join(cwd, 'config', 'middlewares.js');
   const _middlewares = fs.existsSync(_middlewaresFile) ? require(_middlewaresFile) : {};
 
   const fixedMiddlewares = {};
 
+  // load all available middleware references, override later
   glob.sync('middlewares/**/*.js', { cwd, nodir: true }).forEach((middleware) => {
     const middlewareName = path.basename(middleware.replace(/\/index\.js$/, ''), '.js');
 
+    // the middleware is stored by name
     fixedMiddlewares[middlewareName] = path.join(cwd, middleware);
   });
 
+  // reduce middleware chain into a single pipeline
   function _require(map, options) {
     const list = [];
 
@@ -98,6 +111,7 @@ export default (cwd) => {
           ? _middlewares[name]
           : [_middlewares[name]];
 
+        // recursively flatten nested middleware
         _push.apply(list, _require(_fixedList, options));
       } else if (list.indexOf(name) === -1) {
         /* istanbul ignore else */
@@ -105,8 +119,10 @@ export default (cwd) => {
           throw new Error(`Undefined '${name}' middleware`);
         }
 
+        // normalize required middleware module
         const middleware = buildFactory(require(fixedMiddlewares[name]), options, name);
 
+        // push task to pipeline
         list.push({
           name: middleware.name || name,
           call: middleware.call,
@@ -118,6 +134,7 @@ export default (cwd) => {
     return list;
   }
 
+  // action-specific pipeline
   function _pipe(from, handler) {
     const tasks = [];
 
@@ -133,6 +150,7 @@ export default (cwd) => {
           throw new Error(`Undefined '${handler.controller}.${task}' handler`);
         }
 
+        // all calls are methods
         tasks.push({
           name: `${handler.controller}.${task}`,
           call: [_controllers[handler.controller].instance, task],
@@ -145,9 +163,13 @@ export default (cwd) => {
   }
 
   return ($) => {
+    // public API
     $.extensions.routes = router.mappings;
     $.extensions.routes.map = Array.prototype.map.bind(_routes);
     $.extensions.routes.forEach = Array.prototype.forEach.bind(_routes);
+
+    // caching
+    const _cache = {};
 
     function run(conn, _options) {
       const _method = conn.req.method.toLowerCase();
@@ -157,7 +179,11 @@ export default (cwd) => {
         return _error(405);
       }
 
-      const _handler = match[_method](conn.req.url, 1);
+      // resolve matched routes to a single one
+      const _base = conn.req.url.split('?')[0];
+
+      // speed up static routes
+      const _handler = _cache[_base] || (_cache[_base] = match[_method](conn.req.url, 1));
 
       if (_handler) {
         $.extensions.params = conn.req.params = {};
@@ -170,18 +196,22 @@ export default (cwd) => {
           });
         }
 
+        // read from memory first
         let Controller = _controllers[_handler.controller].original;
 
         /* istanbul ignore else */
         if (!Controller) {
+          // lazily load and set the original module
           Controller
             = _controllers[_handler.controller].original
             = require(_controllers[_handler.controller].filepath);
 
+          // using classes?
           const isClass =
             typeof Controller === 'function'
             && Controller.constructor && Controller.name;
 
+          // class-like constructors are always instantiated
           _controllers[_handler.controller].instance = isClass ? new Controller() : Controller;
         }
 
@@ -203,27 +233,42 @@ export default (cwd) => {
             _push.apply(_pipeline, _require(_handler.route.middleware, _options));
           }
 
+          // dependency injection support
+          _pipeline.push({
+            name: '',
+            call(_conn) {
+              /* istanbul ignore else */
+              if (Controller.inject) {
+                return reduce(Controller.inject, cb => cb(conn, _options))
+                  .then((deps) => {
+                    methods(_conn, deps);
+                  });
+              }
+            },
+            type: 'function',
+          });
+
+          // controller-specific pipeline
           _push.apply(_pipeline, _pipe(Controller.pipeline, _handler));
 
+          // our final action
           _pipeline.push({
             name: `${_handler.controller}.${_handler.action}`,
             call: [controllerInstance, _handler.action],
             type: 'method',
           });
 
+          // compile the pipeline
           _pipeline = pipelineFactory('router', _pipeline);
 
+          // memoize
           _controllers[_handler.controller].pipeline[_handler.action] = _pipeline;
         }
 
-        if (Controller.inject) {
-          Object.keys(Controller.inject).forEach((key) => {
-            conn[key] = Controller.inject[key](conn, _options);
-          });
-        }
-
+        // store instantiated handler reference
         _handler._controller = _controllers[_handler.controller];
 
+        // execute
         return _pipeline(conn, _options);
       }
 
@@ -231,11 +276,6 @@ export default (cwd) => {
     }
 
     $.ctx.mount((conn, _options) =>
-      conn.next(() => {
-        /* istanbul ignore else */
-        if (conn.resp_body === null) {
-          return run(conn, _options);
-        }
-      }));
+      conn.next(() => conn.resp_body === null && run(conn, _options)));
   };
 };

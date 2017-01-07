@@ -1,6 +1,6 @@
 /* eslint-disable global-require */
 
-import reduce from '../_util';
+import { reduce } from '../_util';
 
 const path = require('path');
 const fs = require('fs');
@@ -33,16 +33,8 @@ export default (cwd) => {
       _cachedPaths[_id] = _lookup(view.src);
     }
 
-    const locals = {};
-
-    Object.keys(view.data).forEach((key) => {
-      if (typeof view.data[key] !== 'undefined' && view.data[key] !== null) {
-        locals[key] = view.data[key];
-      }
-    });
-
-    return reduce(locals)
-      .then(() => require(_cachedPaths[_id])(locals));
+    return reduce(view.data)
+      .then((locals) => require(_cachedPaths[_id])(locals));
   }
 
   function _fix(obj, locals) {

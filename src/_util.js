@@ -1,9 +1,20 @@
 // resolve objects containing promises
-export function reduce(obj) {
-  return Promise.all(Object.keys(obj).map(key =>
-    Promise.resolve(obj[key]).then((value) => {
-      obj[key] = value;
-    })));
+export function reduce(obj, cb) {
+  const temp = {};
+
+  Object.keys(obj).forEach((key) => {
+    const value = cb ? cb(obj[key], key) : obj[key];
+
+    if (typeof value !== 'undefined' && value !== null) {
+      temp[key] = value;
+    }
+  });
+
+  return Promise.all(Object.keys(temp).map(key =>
+    Promise.resolve(temp[key]).then((value) => {
+      temp[key] = value;
+    })))
+  .then(() => temp);
 }
 
 // basic merge utility
