@@ -1,6 +1,6 @@
-import hostFactory from './host';
+const hostFactory = require('./host');
 
-export default ($, server, options, callback) => {
+module.exports = ($, server, options, callback) => {
   const protocolName = server.location.protocol.replace(':', '');
   const host = hostFactory($, $.protocols[protocolName]);
 

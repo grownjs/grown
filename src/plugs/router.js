@@ -1,9 +1,9 @@
 /* eslint-disable global-require */
 
-import pipelineFactory from '../_pipeline';
-import buildFactory from '../_factory';
+const pipelineFactory = require('../pipeline');
+const buildFactory = require('../factory');
 
-import { statusErr, reduce, methods } from '../_util';
+const { statusErr, reduce, methods } = require('../util');
 
 const glob = require('glob');
 const path = require('path');
@@ -11,7 +11,7 @@ const fs = require('fs');
 
 const _push = Array.prototype.push;
 
-export default (cwd) => {
+module.exports = (cwd) => {
   /* istanbul ignore else */
   if (typeof cwd !== 'string' || !fs.existsSync(cwd)) {
     throw new Error(`Expecting 'cwd' to be a valid directory, given '${cwd}'`);

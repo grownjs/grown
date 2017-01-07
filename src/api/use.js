@@ -1,4 +1,4 @@
-export default ($) => {
+module.exports = ($) => {
   $.ctx.use = (cb) => {
     const task = cb($);
 

@@ -18,14 +18,6 @@
   },
   "tarima": {
     "dest": "lib",
-    "bundle": [
-      "**/*.js"
-    ],
-    "filter": [
-      "!_*",
-      "!**/_*",
-      "!**/_*/**"
-    ],
     "rename": [
       "**/src/**:{filepath/1}/{filename}.{extname}"
     ],

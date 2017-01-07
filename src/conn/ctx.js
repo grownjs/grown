@@ -1,4 +1,4 @@
-import { extend, methods, props } from '../_util';
+const { extend, methods, props } = require('../util');
 
 const statusCodes = require('http').STATUS_CODES;
 const qs = require('querystring');
@@ -24,7 +24,7 @@ function _fixURL(location) {
   ].join('');
 }
 
-export default (container, server, req, res) => {
+module.exports = (container, server, req, res) => {
   const $ = extend({}, container.extensions);
 
   const _state = {

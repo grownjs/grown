@@ -1,4 +1,4 @@
-listenFactory = require('../lib/api').bind.listen
+listenFactory = require('../lib/api/listen')
 parseUrl = require('url').parse
 
 describe '#listen', ->

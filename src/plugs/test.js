@@ -217,7 +217,7 @@ function mock($) {
   };
 }
 
-export default () => {
+module.exports = () => {
   return ($) => {
     $.fetch = mock($);
   };

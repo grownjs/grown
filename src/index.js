@@ -1,8 +1,26 @@
-import { version } from '../package.json';
+const { version } = require('../package.json');
 
-const Homegrown = require('./api');
+const useHook = require('./api/use');
+const mountHook = require('./api/mount');
+const listenHook = require('./api/listen');
+const dispatchHook = require('./api/dispatch');
+const configureHook = require('./api/configure');
 
 const FARMS = [];
+
+/* eslint-disable global-require */
+function _getPlugins() {
+  const proxy = {};
+
+  ['logger', 'models', 'render', 'router', 'session', 'test', 'upload']
+    .forEach((name) => {
+      Object.defineProperty(proxy, name, {
+        get: () => require(`./plugs/${name}`),
+      });
+    });
+
+  return proxy;
+}
 
 function _closeAll() {
   FARMS.forEach((farm) => {
@@ -16,7 +34,7 @@ function _closeAll() {
 process.on('exit', _closeAll);
 process.on('SIGINT', () => process.exit());
 
-export default {
+module.exports = {
   version,
 
   new(defaults = {}) {
@@ -39,11 +57,11 @@ export default {
 
     FARMS.push($);
 
-    Homegrown.bind.use($);
-    Homegrown.bind.mount($);
-    Homegrown.bind.listen($);
-    Homegrown.bind.dispatch($);
-    Homegrown.bind.configure($);
+    useHook($);
+    mountHook($);
+    listenHook($);
+    dispatchHook($);
+    configureHook($);
 
     return $;
   },
@@ -57,5 +75,5 @@ export default {
   },
 
   // built-in plugins
-  plugs: Homegrown.plugs,
+  plugs: _getPlugins(),
 };

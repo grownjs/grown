@@ -1,8 +1,8 @@
 /* eslint-disable global-require */
 
-import { extend, methods } from '../_util';
+const { extend, methods } = require('../util');
 
-export default (defaults = {}) => {
+module.exports = (defaults = {}) => {
   const IncomingForm = require('formidable').IncomingForm;
 
   function processForm(conn, opts) {

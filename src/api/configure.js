@@ -1,5 +1,5 @@
 const _env = require('dotenv');
 
-export default ($) => {
+module.exports = ($) => {
   $.ctx.configure = _opts => _env.config(_opts || { silent: true });
 };

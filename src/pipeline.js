@@ -1,4 +1,4 @@
-import buildFactory from './_factory';
+const buildFactory = require('./factory');
 
 function _when(promise, callback) {
   /* istanbul ignore else */
@@ -63,7 +63,7 @@ function _run(task, state, options) {
   }
 }
 
-export default function _pipelineFactory(label, pipeline, _callback) {
+module.exports = function _pipelineFactory(label, pipeline, _callback) {
   /* istanbul ignore else */
   if (!label) {
     throw new Error(`Label for pipelines are required, given '${label}'`);

@@ -1,4 +1,4 @@
-import pipelineFactory from '../_pipeline';
+const pipelineFactory = require('../pipeline');
 
 // final handler
 function _dispatch(err, conn) {
@@ -13,6 +13,6 @@ function _dispatch(err, conn) {
   }
 }
 
-export default ($) => {
+module.exports = ($) => {
   $.ctx.dispatch = pipelineFactory('_dispatch', $.pipeline, _dispatch);
 };

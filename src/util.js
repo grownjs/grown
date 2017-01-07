@@ -1,7 +1,7 @@
 const STATUS_CODES = require('http').STATUS_CODES;
 
 // standard http error-codes
-export function statusErr(code) {
+function statusErr(code) {
   const message = STATUS_CODES[code];
   const errObj = new Error(message);
 
@@ -12,7 +12,7 @@ export function statusErr(code) {
 }
 
 // resolve objects containing promises
-export function reduce(obj, cb) {
+function reduce(obj, cb) {
   const temp = {};
 
   Object.keys(obj).forEach((key) => {
@@ -31,7 +31,7 @@ export function reduce(obj, cb) {
 }
 
 // basic merge utility
-export function extend(target, ...args) {
+function extend(target, ...args) {
   args.forEach((source) => {
     Object.keys(source).forEach((key) => {
       /* istanbul ignore else */
@@ -45,7 +45,7 @@ export function extend(target, ...args) {
 }
 
 // inject common methods or properties
-export function methods(target, obj) {
+function methods(target, obj) {
   Object.keys(obj).forEach((key) => {
     // static getter
     Object.defineProperty(target, key, {
@@ -66,7 +66,7 @@ export function methods(target, obj) {
 }
 
 // inject dynamic getter/setter properties
-export function props(target, _props, state = {}) {
+function props(target, _props, state = {}) {
   Object.keys(_props).forEach((prop) => {
     Object.defineProperty(target, prop, {
       configurable: false,
@@ -88,3 +88,11 @@ export function props(target, _props, state = {}) {
     });
   });
 }
+
+module.exports = {
+  statusErr,
+  reduce,
+  extend,
+  methods,
+  props,
+};

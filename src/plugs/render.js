@@ -1,11 +1,11 @@
 /* eslint-disable global-require */
 
-import { reduce } from '../_util';
+const { reduce } = require('../util');
 
 const path = require('path');
 const fs = require('fs');
 
-export default (cwd) => {
+module.exports = (cwd) => {
   /* istanbul ignore else */
   if (typeof cwd !== 'string' || !fs.existsSync(cwd)) {
     throw new Error(`Expecting 'cwd' to be a valid directory, given '${cwd}'`);

@@ -1,8 +1,8 @@
-import connFactory from './ctx';
+const connFactory = require('./ctx');
 
 const statusCodes = require('http').STATUS_CODES;
 
-export default ($, protocol) => {
+module.exports = ($, protocol) => {
   return (req, res, next) => {
     // normalize
     const host = req.headers.host ? req.headers.host : '';

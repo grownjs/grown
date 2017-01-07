@@ -27,7 +27,7 @@ function _expressMiddleware(callback) {
   };
 }
 
-export default (Factory, options, _name) => {
+module.exports = (Factory, options, _name) => {
   const _suffix = _name ? ` (${_name})` : '';
 
   /* istanbul ignore else */

@@ -1,8 +1,8 @@
-import serverFactory from '../_conn/server';
+const serverFactory = require('../conn/server');
 
 const url = require('url');
 
-export default ($) => {
+module.exports = ($) => {
   $.ctx.listen = (location, options, callback) => {
     const _server = {};
 
