@@ -28,62 +28,13 @@ export default (container, server, req, res) => {
   const $ = extend({}, container.extensions);
 
   const _state = {
-    type: 'text/html',
-    status: res.statusCode,
-    req_headers: req.headers || {},
-    resp_headers: res.headers || {},
+    resp_headers: {},
     resp_charset: 'utf8',
     resp_body: null,
+    type: 'text/html',
   };
 
   const _filters = [];
-
-  function _send() {
-    Promise.all(_filters.map(cb => cb($)))
-      .then(() => {
-        // set final status code
-        res.statusCode = _state.status;
-        res.statusMessage = statusCodes[res.statusCode];
-
-        // normalize response body
-        let _output = _state.resp_body;
-
-        /* istanbul ignore else */
-        if (_output !== null && typeof _output === 'object') {
-          _state.resp_headers['content-type'] = `application/json; charset=${_state.resp_charset}`;
-          _output = JSON.stringify(_output);
-        }
-
-        /* istanbul ignore else */
-        if (!_state.resp_headers['content-type']) {
-          _state.resp_headers['content-type'] = `${_state.type}; charset=${_state.resp_charset}`;
-        }
-
-        // normalize response haders
-        Object.keys(_state.resp_headers).forEach((key) => {
-          res.setHeader(key, _state.resp_headers[key]);
-        });
-
-        res.writeHead(res.statusCode);
-
-        if (typeof _output === 'string' || _output instanceof Buffer) {
-          res.end(_output);
-        } else {
-          res.end();
-        }
-      })
-      .catch((err) => {
-        res.setHeader(`content-type', 'text/plain; charset=${_state.resp_charset}`);
-        res.end(err.stack || err.message || err.toString());
-      });
-  }
-
-  function _end() {
-    /* istanbul ignore else */
-    if (res.finished) {
-      throw new Error('Response already sent');
-    }
-  }
 
   methods($, {
     // standard request and response objects
@@ -120,49 +71,51 @@ export default (container, server, req, res) => {
     },
 
     // request headers
-    req_headers: () => extend({}, _state.req_headers),
+    req_headers: () => extend({}, req.headers),
 
     get_req_header(name, defvalue) {
+      /* istanbul ignore else */
       if (!(name && typeof name === 'string')) {
         throw new Error(`Invalid req_header: '${name}'`);
       }
 
-      const _value = _state.req_headers[name.toLowerCase()];
-
       /* istanbul ignore else */
-      if (typeof _value === 'undefined') {
+      if (typeof req.headers[name] === 'undefined') {
         return defvalue;
       }
 
-      return _value;
+      return req.headers[name];
     },
 
     put_req_header(name, value) {
+      /* istanbul ignore else */
       if (!(name && value && typeof name === 'string' && typeof value === 'string')) {
         throw new Error(`Invalid req_header: '${name}' => '${value}'`);
       }
 
-      _state.req_headers[name.toLowerCase()] = value;
+      req.headers[name] = value;
 
       return $;
     },
 
     delete_req_header(name) {
+      /* istanbul ignore else */
       if (!(name && typeof name === 'string')) {
         throw new Error(`Invalid req_header: '${name}'`);
       }
 
-      delete _state.req_headers[name.toLowerCase()];
+      delete req.headers[name];
 
       return $;
     },
 
     // response headers
     get_resp_header(name) {
-      return _state.resp_headers[name.toLowerCase()];
+      return _state.resp_headers[name] || res.getHeader(name);
     },
 
     put_resp_header(name, value) {
+      /* istanbul ignore else */
       if (!(name && value && typeof name === 'string' && typeof value === 'string')) {
         throw new Error(`Invalid resp_header: '${name}' => '${value}'`);
       }
@@ -173,6 +126,7 @@ export default (container, server, req, res) => {
     },
 
     merge_resp_headers(headers) {
+      /* istanbul ignore else */
       if (!(headers && (typeof headers === 'object' && !Array.isArray(headers)))) {
         throw new Error(`Invalid resp_headers: '${headers}'`);
       }
@@ -185,21 +139,27 @@ export default (container, server, req, res) => {
     },
 
     delete_resp_header(name) {
+      /* istanbul ignore else */
       if (!(name && typeof name === 'string')) {
         throw new Error(`Invalid resp_header: '${name}'`);
       }
 
-      delete _state.resp_headers[name.toLowerCase()];
+      delete _state.resp_headers[name];
+
+      res.removeHeader(name);
 
       return $;
     },
 
     put_resp_content_type(mimeType) {
+      /* istanbul ignore else */
       if (!(mimeType && typeof mimeType === 'string')) {
         throw new Error(`Invalid type: '${mimeType}'`);
       }
 
-      _state.resp_headers['content-type'] = `${mimeType}; charset=${_state.resp_charset}`;
+      _state.resp_headers['content-type'] =
+        `${mimeType}; charset=${_state.resp_charset}`;
+
       _state.type = mimeType;
 
       return $;
@@ -211,51 +171,69 @@ export default (container, server, req, res) => {
         throw new Error(`Invalid put_status: ${code}`);
       }
 
-      _state.status = res.statusCode = code;
+      res.statusCode = code;
 
       return $;
     },
 
     redirect(location) {
+      /* istanbul ignore else */
       if (!(location && typeof location === 'string')) {
         throw new Error(`Invalid location: '${location}`);
       }
 
-      _end();
-
-      _state.status = 302;
-      _state.resp_headers.location = _fixURL(location);
-
-      _send();
-
-      return $;
+      return $.put_resp_header('location', _fixURL(location)).end(302);
     },
 
-    resp(code, message) {
-      _end();
+    end(code, message) {
+      /* istanbul ignore else */
+      if ($.halted || res.finished) {
+        throw new Error('Response already sent');
+      }
+
+      $.halted = true;
 
       let _code = code;
 
-      // shortcut for errors
+      /* istanbul ignore else */
       if (code instanceof Error) {
         message = code.message || code.toString();
         _code = code.statusCode || 500;
       }
 
+      /* istanbul ignore else */
       if (typeof code === 'string') {
         message = code;
         _code = 200;
       }
 
-      // normalize given status code
-      _state.status = typeof _code === 'number' ? _code : _state.status;
+      // normalize response
+      res.statusCode = typeof _code === 'number' ? _code : res.statusCode;
+      res.statusMessage = statusCodes[res.statusCode];
 
-      // normalize given output
-      _state.resp_body = typeof _code === 'string' ? _code : message || _state.resp_body;
+      return Promise.all(_filters.map(cb => cb($)))
+        .then(() => {
+          let _body = typeof _code === 'string' ? _code : message || _state.resp_body || '';
 
-      _send();
+          /* istanbul ignore else */
+          if (_body !== null && typeof _body === 'object') {
+            _state.resp_headers['content-type'] =
+              `application/json; charset=${_state.resp_charset}`;
 
-      return $;
+            _body = JSON.stringify(_body);
+          }
+
+          /* istanbul ignore else */
+          if (!_state.resp_headers['content-type']) {
+            _state.resp_headers['content-type'] =
+              `${_state.type}; charset=${_state.resp_charset}`;
+          }
+
+          // normalize response
+          res.writeHead(res.statusCode, _state.resp_headers);
+          res.write(_body);
+          res.end();
+        });
     },
   });
 
@@ -280,7 +258,7 @@ export default (container, server, req, res) => {
         throw new Error(`Invalid resp_body: ${value}`);
       }
 
-      _state.status = 200;
+      res.statusCode = 200;
     },
   }, _state);
 

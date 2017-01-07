@@ -3,17 +3,13 @@ import pipelineFactory from '../_pipeline';
 // final handler
 function _dispatch(err, conn) {
   /* istanbul ignore else */
-  if (!conn.res.finished) {
-    let statusCode = conn.status;
-    let message = conn.resp_body;
-
+  if (!conn.halted) {
     /* istanbul ignore else */
     if (err) {
-      message = err.statusMessage || err.message;
-      statusCode = err.statusCode || 501;
+      throw err;
     }
 
-    conn.resp(statusCode, message);
+    return conn.end();
   }
 }
 

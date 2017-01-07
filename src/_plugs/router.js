@@ -3,25 +3,13 @@
 import pipelineFactory from '../_pipeline';
 import buildFactory from '../_factory';
 
-import { reduce, methods } from '../_util';
-
-const STATUS_CODES = require('http').STATUS_CODES;
+import { statusErr, reduce, methods } from '../_util';
 
 const glob = require('glob');
 const path = require('path');
 const fs = require('fs');
 
 const _push = Array.prototype.push;
-
-function _error(code) {
-  const message = STATUS_CODES[code];
-  const errObj = new Error(message);
-
-  errObj.statusMessage = message;
-  errObj.statusCode = code;
-
-  throw errObj;
-}
 
 export default (cwd) => {
   /* istanbul ignore else */
@@ -176,7 +164,7 @@ export default (cwd) => {
 
       /* istanbul ignore else */
       if (!match[_method]) {
-        return _error(405);
+        throw statusErr(405);
       }
 
       // resolve matched routes to a single one
@@ -272,7 +260,7 @@ export default (cwd) => {
         return _pipeline(conn, _options);
       }
 
-      return _error(404);
+      throw statusErr(404);
     }
 
     $.ctx.mount((conn, _options) =>

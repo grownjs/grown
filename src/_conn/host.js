@@ -1,5 +1,7 @@
 import connFactory from './ctx';
 
+const statusCodes = require('http').STATUS_CODES;
+
 export default ($, protocol) => {
   return (req, res, next) => {
     // normalize
@@ -19,7 +21,7 @@ export default ($, protocol) => {
     }
 
     // error handler
-    function fail(e, conn) {
+    function fail(e) {
       e.pipeline = e.pipeline || ['host'];
 
       let _msg = e.message || e.toString();
@@ -28,11 +30,8 @@ export default ($, protocol) => {
 
       const _stack = (e.stack || '').replace(/.*Error:.+?\n/, '');
 
-      // TODO: send to logger for testing purposes...
-      // console.log('ERR', e, conn);
-
       /* istanbul ignore else */
-      if (conn.res.finished) {
+      if (res.finished) {
         _next(e);
         return;
       }
@@ -42,8 +41,16 @@ export default ($, protocol) => {
         _msg += `\n${_stack}`;
       }
 
-      conn.put_resp_header('content-type', 'text/plain');
-      conn.resp(e.statusCode || 500, _msg);
+      // normalize response
+      res.statusCode = e.statusCode || 500;
+      res.statusMessage = statusCodes[res.statusCode];
+
+      res.writeHead(e.statusCode || 500, {
+        'content-type': 'text/plain',
+      });
+
+      res.write(_msg);
+      res.end();
     }
 
     // lookup opened connection
@@ -57,7 +64,7 @@ export default ($, protocol) => {
 
       try {
         $.ctx.dispatch(conn, $.opts)
-          .catch(err => fail(err, conn))
+          .catch(err => fail(err))
           .then(() => _next());
       } catch (e) {
         fail(e, conn);

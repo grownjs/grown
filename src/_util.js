@@ -1,3 +1,16 @@
+const STATUS_CODES = require('http').STATUS_CODES;
+
+// standard http error-codes
+export function statusErr(code) {
+  const message = STATUS_CODES[code];
+  const errObj = new Error(message);
+
+  errObj.statusMessage = message;
+  errObj.statusCode = code;
+
+  return errObj;
+}
+
 // resolve objects containing promises
 export function reduce(obj, cb) {
   const temp = {};
