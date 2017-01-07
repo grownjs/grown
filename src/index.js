@@ -1,3 +1,5 @@
+require('source-map-support').install();
+
 const { version } = require('../package.json');
 
 const useHook = require('./api/use');
