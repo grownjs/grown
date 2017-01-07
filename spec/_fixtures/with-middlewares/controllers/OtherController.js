@@ -1,8 +1,12 @@
 module.exports = {
   inject: {
-    syncValue: () => 'OTHER',
+    syncValue: () => 'SYNC',
+    asyncValue: () => new Promise(cb => setTimeout(() => cb('ASYNC'), 1000)),
   },
   main($) {
-    $.resp_body = $.syncValue;
+    $.resp_body = [
+      $.syncValue,
+      $.asyncValue,
+    ];
   },
 };

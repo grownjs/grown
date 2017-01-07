@@ -53,36 +53,3 @@ describe 'known express-middleware', ->
           expect(e).toBeUndefined()
           expect(req.body).toEqual { baz: 'buzz' }
           done()
-
-# TODO: using redis the process isn't closing
-describe 'session support', ->
-  beforeEach $
-  beforeEach ->
-    session = require('express-session')
-
-    $.server.ctx.mount session({
-      resave: false
-      saveUninitialized: false
-      key: 'key'
-      secret: 's*cret'
-    })
-
-  it 'supports `express-session` for sessions', (done) ->
-    $.server.ctx.mount (conn) ->
-      conn.req.session.foo = 'bar'
-
-    $.server.ctx.mount (conn) ->
-      expect(conn.req.session.foo).toEqual 'bar'
-      done()
-
-    $.server.fetch()
-
-  it 'supports `csurf` for CSRF-protection', (done) ->
-    $.server.ctx.mount require('csurf')()
-
-    $.server.ctx.mount (conn) ->
-      expect(typeof conn.req.csrfToken).toBe 'function'
-      expect(conn.req.session.csrfSecret).not.toBeUndefined()
-      done()
-
-    $.server.fetch()

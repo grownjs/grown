@@ -29,13 +29,12 @@ describe '#router', ->
       expect(res.statusMessage).toEqual 'Not Implemented'
       done()
 
-  it 'should responds to undefined handlers with 501', (done) ->
+  it 'should responds to undefined handlers with 500', (done) ->
     useConfig 'valid-routes'
 
     $.server.fetch('/no').then (res) ->
-      expect(res.statusCode).toEqual 501
+      expect(res.statusCode).toEqual 500
       expect(res.body).toMatch /Undefined .+? handler/
-      expect(res.body).toContain res.error.message
       done()
 
   it 'should responds to defined handlers with 200', (done) ->
@@ -74,7 +73,7 @@ describe '#router', ->
 
     $.server.fetch('/broken/handler').then (res) ->
       expect(res.body).toContain 'Unexpected token'
-      expect(res.statusCode).toEqual 501
+      expect(res.statusCode).toEqual 500
       done()
 
   it 'should fail on invalid route-middlewares', (done) ->
@@ -82,7 +81,7 @@ describe '#router', ->
 
     $.server.fetch('/no').then (res) ->
       expect(res.body).toMatch /Middleware .+? should be callable/
-      expect(res.statusCode).toEqual 501
+      expect(res.statusCode).toEqual 500
       done()
 
   it 'should fail on unknown route-middlewares', (done) ->
@@ -90,7 +89,7 @@ describe '#router', ->
 
     $.server.fetch('/err').then (res) ->
       expect(res.body).toMatch /Undefined .+? middleware/
-      expect(res.statusCode).toEqual 501
+      expect(res.statusCode).toEqual 500
       done()
 
   it 'should run route-middlewares properly', (done) ->
@@ -105,7 +104,7 @@ describe '#router', ->
 
     $.server.fetch('/maybe').then (res) ->
       expect(res.body).toMatch /Undefined .+? handler/
-      expect(res.statusCode).toEqual 501
+      expect(res.statusCode).toEqual 500
       done()
 
   it 'should run pipeline-handlers properly', (done) ->
@@ -115,10 +114,9 @@ describe '#router', ->
       expect(res.body).toEqual 'OSOM!'
       done()
 
-  describe 'inject', ->
+  it 'should inject values and methods', (done) ->
     useConfig 'with-middlewares'
 
-    it 'should inject sync values', (done) ->
-      $.server.fetch('/other-example').then (res) ->
-        #expect(res.body).toEqual 'OTHER'
-        done()
+    $.server.fetch('/other-example').then (res) ->
+      expect(res.body).toEqual '["SYNC","ASYNC"]'
+      done()

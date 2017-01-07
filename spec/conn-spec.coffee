@@ -63,9 +63,9 @@ describe '#conn', ->
         expect(res.getHeader('content-type')).toEqual 'text/plain; charset=UTF-8'
         done()
 
-    it 'should finalize the response through `resp()`', (done) ->
+    it 'should finalize the response through `end()`', (done) ->
       $.server.ctx.mount (conn) ->
-        conn.resp 'OK'
+        conn.end 'OK'
 
       $.server.fetch().then (res) ->
         expect(res.statusCode).toEqual 200
