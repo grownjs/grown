@@ -1,5 +1,7 @@
 /* eslint-disable global-require */
 
+import reduce from '../_util';
+
 const path = require('path');
 const fs = require('fs');
 
@@ -39,16 +41,8 @@ export default (cwd) => {
       }
     });
 
-    const render = () => require(_cachedPaths[_id])(locals);
-
-    function reduce(obj) {
-      return Promise.all(Object.keys(obj).map((key) =>
-        Promise.resolve(obj[key]).then((value) => {
-          obj[key] = value;
-        })));
-    }
-
-    return reduce(locals).then(render);
+    return reduce(locals)
+      .then(() => require(_cachedPaths[_id])(locals));
   }
 
   function _fix(obj, locals) {

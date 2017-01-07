@@ -1,3 +1,11 @@
+// resolve objects containing promises
+export function reduce(obj) {
+  return Promise.all(Object.keys(obj).map(key =>
+    Promise.resolve(obj[key]).then((value) => {
+      obj[key] = value;
+    })));
+}
+
 // basic merge utility
 export function extend(target, ...args) {
   args.forEach((source) => {
