@@ -34,10 +34,20 @@ module.exports = (cwd) => {
     }
 
     return reduce(view.data)
-      .then((locals) => require(_cachedPaths[_id])(locals));
+      .then((locals) => {
+        const _view = require(_cachedPaths[_id]);
+
+        /* istanbul ignore else */
+        if (typeof _view !== 'function') {
+          throw new Error(`Invalid view function, given '${_view}'`);
+        }
+
+        return _view(locals);
+      });
   }
 
   function _fix(obj, locals) {
+    /* istanbul ignore else */
     if (locals) {
       Object.keys(locals).forEach((key) => {
         /* istanbul ignore else */
