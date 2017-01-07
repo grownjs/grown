@@ -149,7 +149,30 @@ function mock($) {
           _res.status = (s) => { _res.statusCode = s; };
           _res.sendStatus = (s) => { _res.status(s); _res.send(); };
 
-          _res.writeHead = () => {};
+          _res.writeHead = (s, m, h) => {
+            if (typeof s === 'number') {
+              _res.statusCode = s;
+            }
+
+            if (typeof m === 'object') {
+              h = m;
+              m = '';
+            }
+
+            if (m) {
+              _res.statusMessage = m;
+            }
+
+            if (h) {
+              Object.keys(h).forEach((key) => {
+                _opts.headers[key] = h[key];
+              });
+            }
+          };
+
+          _res.write = (v) => { _opts.body = (_opts.body || '') + v; };
+
+          _res.removeHeader = (k) => { delete _opts.headers[k]; };
           _res.get = _res.getHeader = (k) => _opts.headers[k];
           _res.set = _res.header = _res.setHeader = (k, v) => { _opts.headers[k] = v; };
 
