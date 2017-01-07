@@ -145,10 +145,9 @@ export default (cwd) => {
   }
 
   return ($) => {
-    const _map = $.extensions.routes = router.mappings;
-
-    _map.forEach = Array.prototype.forEach.bind(_routes);
-    _map.map = Array.prototype.map.bind(_routes);
+    $.extensions.routes = router.mappings;
+    $.extensions.routes.map = Array.prototype.map.bind(_routes);
+    $.extensions.routes.forEach = Array.prototype.forEach.bind(_routes);
 
     function run(conn, _options) {
       const _method = conn.req.method.toLowerCase();
