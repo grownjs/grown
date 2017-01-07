@@ -18,6 +18,9 @@
   },
   "tarima": {
     "dest": "lib",
+    "bundle": [
+      "**/*.js"
+    ],
     "rename": [
       "**/src/**:{filepath/1}/{filename}.{extname}"
     ],

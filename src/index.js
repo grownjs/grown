@@ -1,6 +1,6 @@
-require('source-map-support').install();
+import { version } from '../package.json';
 
-const { version } = require('../package.json');
+require('source-map-support').install();
 
 const useHook = require('./api/use');
 const mountHook = require('./api/mount');
