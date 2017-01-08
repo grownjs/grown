@@ -60,7 +60,7 @@ describe '#conn', ->
         conn.put_resp_content_type 'text/plain'
 
       $.server.fetch().then (res) ->
-        expect(res.getHeader('content-type')).toEqual 'text/plain; charset=UTF-8'
+        expect(res.getHeader('Content-Type')).toEqual 'text/plain; charset=UTF-8'
         done()
 
     it 'should finalize the response through `end()`', (done) ->
@@ -69,7 +69,7 @@ describe '#conn', ->
 
       $.server.fetch().then (res) ->
         expect(res.statusCode).toEqual 200
-        expect(res.getHeader('content-type')).toEqual 'text/html; charset=utf8'
+        expect(res.getHeader('Content-Type')).toEqual 'text/html; charset=utf8'
         done()
 
   it 'should responds to redirections through `redirect()`', (done) ->

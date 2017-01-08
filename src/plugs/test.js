@@ -140,7 +140,7 @@ function mock($) {
           _res.redirect = () => {};
           _res.render = () => {};
 
-          _res.type = (v) => { _opts.headers['content-type'] = v; };
+          _res.type = (v) => { _opts.headers['Content-Type'] = v; };
           _res.format = () => {};
 
           _res.send = () => {};

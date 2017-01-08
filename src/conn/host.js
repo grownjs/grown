@@ -42,7 +42,7 @@ module.exports = ($, protocol) => {
       res.statusMessage = statusCodes[res.statusCode];
 
       res.writeHead(res.statusCode, {
-        'content-type': 'text/plain',
+        'Content-Type': 'text/plain',
       });
 
       /* istanbul ignore else */

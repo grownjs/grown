@@ -4,6 +4,8 @@ const statusCodes = require('http').STATUS_CODES;
 const qs = require('querystring');
 const url = require('url');
 const path = require('path');
+const typeIs = require('type-is');
+const accepts = require('accepts');
 
 function _fixURL(location) {
   const _uri = url.parse(location);
@@ -51,7 +53,6 @@ module.exports = (container, server, req, res) => {
     remote_ip: '0.0.0.0',
     script_name: path.relative(process.cwd(), process.argv[1]),
 
-    type: () => (req.headers['content-type'] || '').split(';')[0] || null,
     method: () => req.method,
 
     params: () => extend({}, $.path_params, $.query_params, $.body_params),
@@ -63,6 +64,9 @@ module.exports = (container, server, req, res) => {
 
     query_string: () => req.url.split('?')[1] || '',
     query_params: () => qs.parse(req.url.split('?')[1] || ''),
+
+    is: () => typeIs.bind(null, req),
+    accept: () => accepts(req),
 
     before_send(cb) {
       _filters.push(cb);
@@ -157,7 +161,7 @@ module.exports = (container, server, req, res) => {
         throw new Error(`Invalid type: '${mimeType}'`);
       }
 
-      _state.resp_headers['content-type'] =
+      _state.resp_headers['Content-Type'] =
         `${mimeType}; charset=${_state.resp_charset}`;
 
       _state.type = mimeType;
@@ -207,31 +211,32 @@ module.exports = (container, server, req, res) => {
         _code = 200;
       }
 
+      // normalize output
+      _state.resp_body = typeof _code === 'string' ? _code : message || _state.resp_body || '';
+
       // normalize response
       res.statusCode = typeof _code === 'number' ? _code : res.statusCode;
       res.statusMessage = statusCodes[res.statusCode];
 
       return Promise.all(_filters.map(cb => cb($)))
         .then(() => {
-          let _body = typeof _code === 'string' ? _code : message || _state.resp_body || '';
-
           /* istanbul ignore else */
-          if (_body !== null && typeof _body === 'object') {
-            _state.resp_headers['content-type'] =
+          if (_state.resp_body !== null && typeof _state.resp_body === 'object') {
+            _state.resp_headers['Content-Type'] =
               `application/json; charset=${_state.resp_charset}`;
 
-            _body = JSON.stringify(_body);
+            _state.resp_body = JSON.stringify(_state.resp_body);
           }
 
           /* istanbul ignore else */
-          if (!_state.resp_headers['content-type']) {
-            _state.resp_headers['content-type'] =
+          if (!_state.resp_headers['Content-Type']) {
+            _state.resp_headers['Content-Type'] =
               `${_state.type}; charset=${_state.resp_charset}`;
           }
 
           // normalize response
           res.writeHead(res.statusCode, _state.resp_headers);
-          res.write(_body);
+          res.write(_state.resp_body);
           res.end();
         });
     },
@@ -250,7 +255,7 @@ module.exports = (container, server, req, res) => {
         throw new Error(`Invalid resp_charset: ${value}`);
       }
 
-      _state.resp_headers['content-type'] = `${_state.type}; charset=${value}`;
+      _state.resp_headers['Content-Type'] = `${_state.type}; charset=${value}`;
     },
     resp_body(value) {
       /* istanbul ignore else */
