@@ -1,6 +1,20 @@
 import { version } from '../package.json';
 
-require('source-map-support').install();
+/* eslint-disable global-require */
+const path = require('path');
+
+const CACHE = {};
+const LIBDIR = path.resolve(__dirname, '..');
+
+require('source-map-support').install({
+  retrieveSourceMap(source) {
+    if (CACHE[source]) {
+      return CACHE[source];
+    }
+
+    return null;
+  },
+});
 
 const useHook = require('./api/use');
 const mountHook = require('./api/mount');
@@ -10,7 +24,6 @@ const configureHook = require('./api/configure');
 
 const FARMS = [];
 
-/* eslint-disable global-require */
 function _getPlugins() {
   const proxy = {};
 
@@ -78,4 +91,30 @@ module.exports = {
 
   // built-in plugins
   plugs: _getPlugins(),
+
+  // source-maps support
+  sources(cwd, _cache) {
+    Object.keys(_cache).forEach((key) => {
+      /* istanbul ignore else */
+      if (_cache[key].map) {
+        _cache[key].map.sources =
+        _cache[key].map.sources.map((src) => {
+          /* istanbul ignore else */
+          if (src.charAt() === '/') {
+            return src;
+          }
+
+          return path.join(cwd, src);
+        });
+
+        CACHE[path.join(cwd, _cache[key].dest)] = {
+          map: _cache[key].map,
+          url: path.join(cwd, key),
+        };
+      }
+    });
+  },
 };
+
+/* eslint-disable import/no-unresolved */
+module.exports.sources(LIBDIR, require('./index.json'));

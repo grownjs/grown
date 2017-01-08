@@ -17,6 +17,7 @@
     "test": "yarn build && yarn cover"
   },
   "tarima": {
+    "cacheFile": "lib/index.json",
     "dest": "lib",
     "bundle": [
       "**/*.js"
