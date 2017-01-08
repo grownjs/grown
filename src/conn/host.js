@@ -98,7 +98,6 @@ module.exports = ($, protocol) => {
               case 'html':
               default:
                 _type = `text/${_accept || 'plain'}`;
-
                 _msg = _templateError({
                   type: _accept,
                   error: _err,

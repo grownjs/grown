@@ -3,7 +3,7 @@ function leftpad(str, length) {
 }
 
 export default ({ type, error, params, handler }) => {
-  const handlerInfo = handler && {
+  const handlerInfo = handler && handler.route && {
     handler: `${handler.controller}#${handler.action}`,
     route: `${handler.route.verb.toUpperCase()} ${handler.route.path}`,
     alias: handler.route.as,
@@ -14,7 +14,7 @@ export default ({ type, error, params, handler }) => {
     .sort((a, b) => b - a)[0];
 
   return type === 'html'
-    ? `${handler ? `<h3>${handlerInfo.handler}</h3>
+    ? `${handlerInfo ? `<h3>${handlerInfo.handler}</h3>
 
 <details>
   <summary><code>${handlerInfo.route}</code> as <b>${handlerInfo.alias}</b></summary>`
@@ -33,7 +33,7 @@ ${params && Object.keys(params).length ?
   <summary>${error.body.shift()}</summary>
   <pre>${(error.body.length ? `- ${error.body.join('\n- ')}\n` : '') + error.stack}</pre>
 </details>`
-    : `${handler ? `${handlerInfo.handler}
+    : `${handlerInfo ? `${handlerInfo.handler}
 - ${handlerInfo.route} as ${handlerInfo.alias}`
 : ''}
 ${params && Object.keys(params).length ?
