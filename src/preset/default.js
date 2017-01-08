@@ -4,7 +4,7 @@ export default ($, { opts, plugs }) => {
   const bodyParser = require('body-parser');
 
   // attach logger
-  $.ctx.use(plugs.logger({ transports: ['Console'] }));
+  $.ctx.use(plugs.logger(opts.logger || { transports: ['Console'] }));
 
   // common middleware
   $.ctx.mount('body-parser', bodyParser.urlencoded({ extended: false }));
@@ -46,19 +46,20 @@ export default ($, { opts, plugs }) => {
     });
   });
 
-  // render should run before everything!
-  // TODO: make render configurable (on/off)
-  $.ctx.use(plugs.render(opts.srcDir));
-
-  // TODO: make router configurable (on/off)
-  $.ctx.use(plugs.router(opts.appDir));
-
-  // TODO: make models configurable (on/off)
+  // models
   $.ctx.use(plugs.models(opts.appDir));
 
-  // TODO: make upload configurable (on/off)
-  $.ctx.use(plugs.upload(opts.uploads || { cwd: opts.uploadDir || '/tmp' }));
+  // views
+  $.ctx.use(plugs.render(opts.srcDir));
 
-  // TODO: make session configurable (on/off)
+  // controllers
+  $.ctx.use(plugs.router(opts.appDir));
+
+  /* istanbul ignore else */
+  if (opts.uploadDir || opts.uploads) {
+    $.ctx.use(plugs.upload(opts.uploads || { cwd: opts.uploadDir }));
+  }
+
+  // session is always loaded
   $.ctx.use(plugs.session(opts.session || { secret: String(Math.random() * 101 | 0) }));
 };
