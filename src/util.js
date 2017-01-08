@@ -11,6 +11,16 @@ function statusErr(code) {
   return errObj;
 }
 
+// application errors
+function debugErr(msg, e) {
+  const errObj = new Error(msg);
+
+  errObj.stack = e.stack;
+  errObj.parent = e;
+
+  return errObj;
+}
+
 // resolve objects containing promises
 function reduce(obj, cb) {
   const temp = {};
@@ -91,6 +101,7 @@ function props(target, _props, state = {}) {
 
 module.exports = {
   statusErr,
+  debugErr,
   reduce,
   extend,
   methods,

@@ -24,32 +24,42 @@ module.exports = ($, protocol) => {
     function fail(e) {
       e.pipeline = e.pipeline || ['host'];
 
-      let _msg = e.message || e.toString();
-
-      _msg = `${e.name || 'Error'}(${e.pipeline.join('.')}):\n> ${_msg}`;
-
-      const _stack = (e.stack || '').replace(/.*Error:.+?\n/, '');
-
       /* istanbul ignore else */
       if (res.finished) {
         _next(e);
         return;
       }
 
-      // istanbul ignore else
-      if (_stack) {
-        const _lines = _msg.split('\n');
+      let _msg = e.message || e.toString();
 
-        _msg += `\n${_stack.split(_lines[_lines.length - 1])[1] || _stack}`;
-      }
+      _msg = `${e.name || 'Error'}(${e.pipeline.join('.')}):\n- ${_msg}`;
+
+      const _stack = (e.stack || '').replace(/.*Error:.+?\n/, '');
+      const _lines = _msg.split('\n');
 
       // normalize response
       res.statusCode = e.statusCode || 500;
       res.statusMessage = statusCodes[res.statusCode];
 
-      res.writeHead(e.statusCode || 500, {
+      res.writeHead(res.statusCode, {
         'content-type': 'text/plain',
       });
+
+      /* istanbul ignore else */
+      if (e.parent) {
+        _msg += `\n- ${e.parent.message || e.parent.toString()}`;
+      }
+
+      /* istanbul ignore else */
+      if (_stack) {
+        _msg += `\n${_stack.split(_lines[_lines.length - 1])[1] || _stack}`;
+      }
+
+      const cwd = process.cwd();
+
+      while (_msg.indexOf(cwd) > -1) {
+        _msg = _msg.replace(cwd, '.');
+      }
 
       res.write(_msg);
       res.end();

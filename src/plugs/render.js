@@ -1,6 +1,6 @@
 /* eslint-disable global-require */
 
-const { reduce } = require('../util');
+const { debugErr, reduce } = require('../util');
 
 const path = require('path');
 const fs = require('fs');
@@ -112,8 +112,9 @@ module.exports = (cwd) => {
                 _locals[key] = _partials[_target].data[key](conn);
               } catch (e) {
                 const _src = conn.handler._controller.filepath;
+                const _msg = `Invalid '${_target}.${key}' inject at ${_src}`;
 
-                throw new Error(`Invalid '${_target}.${key}' inject at ${_src}, ${e.message}`);
+                throw debugErr(_msg, e);
               }
             });
 
