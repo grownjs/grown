@@ -94,7 +94,7 @@ module.exports = (cwd) => {
       conn.resp_body = require(_lookup(_layout))(blocks);
     }
 
-    $.ctx.mount((conn) => {
+    $.ctx.mount('render', (conn) => {
       return conn.next(() => {
         /* istanbul ignore else */
         if (conn.handler && conn.handler._controller && conn.handler._controller.instance) {

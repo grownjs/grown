@@ -1,6 +1,6 @@
 /* eslint-disable global-require */
 
-const { extend, methods } = require('../util');
+const { extend } = require('../util');
 
 module.exports = (defaults = {}) => {
   const winston = require('winston');
@@ -27,20 +27,16 @@ module.exports = (defaults = {}) => {
   winston.configure(extend(options, { transports }));
 
   return ($) => {
-    $.ctx.mount((conn) => {
-      methods(conn, {
-        log: () => winston.log,
+    $.extensions.log = winston.log;
 
-        // from higher to lower severity
-        emerg: () => winston.emerg,
-        alert: () => winston.alert,
-        crit: () => winston.crit,
-        error: () => winston.error,
-        warning: () => winston.warning,
-        notice: () => winston.notice,
-        info: () => winston.info,
-        debug: () => winston.debug,
-      });
-    });
+    // from higher to lower severity
+    $.extensions.emerg = winston.emerg;
+    $.extensions.alert = winston.alert;
+    $.extensions.crit = winston.crit;
+    $.extensions.error = winston.error;
+    $.extensions.warning = winston.warning;
+    $.extensions.notice = winston.notice;
+    $.extensions.info = winston.info;
+    $.extensions.debug = winston.debug;
   };
 };

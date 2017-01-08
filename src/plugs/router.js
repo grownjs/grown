@@ -264,7 +264,7 @@ module.exports = (cwd) => {
       throw statusErr(404);
     }
 
-    $.ctx.mount((conn, _options) =>
+    $.ctx.mount('router', (conn, _options) =>
       conn.next(() => conn.resp_body === null && run(conn, _options)));
   };
 };

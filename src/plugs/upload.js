@@ -23,7 +23,7 @@ module.exports = (defaults = {}) => {
   }
 
   return ($) => {
-    $.ctx.mount((conn) => {
+    $.ctx.mount('upload', (conn) => {
       methods(conn, {
         upload_files(opts = {}) {
           return (conn.type && conn.type.indexOf('multipart') === -1) || processForm(conn, opts);

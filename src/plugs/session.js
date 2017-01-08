@@ -7,10 +7,10 @@ module.exports = (defaults = {}) => {
   const cookieParser = require('cookie-parser');
 
   return ($) => {
-    $.ctx.mount(cookieParser(extend({}, defaults)));
-    $.ctx.mount(cookieSession(extend({}, defaults)));
+    $.ctx.mount('cookie-parser', cookieParser(extend({}, defaults)));
+    $.ctx.mount('cookie-session', cookieSession(extend({}, defaults)));
 
-    $.ctx.mount((conn) => {
+    $.ctx.mount('session', (conn) => {
       methods(conn, {
         session: () => extend({}, conn.req.session),
 
