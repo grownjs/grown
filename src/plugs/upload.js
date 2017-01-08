@@ -15,7 +15,10 @@ module.exports = (defaults = {}) => {
             // merge all params, multipart first
             conn.req.body = extend({}, data, conn.req.body);
 
-            resolve(files);
+            // expose uploaded files
+            conn.req.files = files;
+
+            resolve();
           }
         });
       });
@@ -23,8 +26,9 @@ module.exports = (defaults = {}) => {
 
     $.ctx.mount('upload', (conn) => {
       methods(conn, {
+        uploaded_files: () => conn.req.files || [],
         upload_files(opts = {}) {
-          return (conn.type && conn.type.indexOf('multipart') === -1) || processForm(conn, opts);
+          return conn.is('multipart') && processForm(conn, opts);
         },
       });
     });
