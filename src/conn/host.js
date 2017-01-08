@@ -1,4 +1,4 @@
-import template from './_tpl';
+import _templateError from './_err';
 
 const connFactory = require('./ctx');
 
@@ -99,7 +99,7 @@ module.exports = ($, protocol) => {
               default:
                 _type = `text/${_accept || 'plain'}`;
 
-                _msg = template({
+                _msg = _templateError({
                   type: _accept,
                   error: _err,
                   params: conn.params,
