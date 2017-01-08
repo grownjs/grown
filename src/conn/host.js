@@ -35,7 +35,7 @@ function _fixError(e) {
     body: lines,
     name: e.name || 'Error',
     code: e.statusCode || 500,
-    call: `∴ ${e.pipeline.join(' → ')}`,
+    call: `⇐ ${e.pipeline.join(' ⇐ ')}`,
   };
 }
 
