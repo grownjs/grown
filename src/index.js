@@ -35,7 +35,7 @@ function _closeAll() {
 process.on('exit', _closeAll);
 process.on('SIGINT', () => process.exit());
 
-module.exports = {
+const homegrown = module.exports = {
   version,
 
   new(defaults = {}) {
@@ -77,4 +77,26 @@ module.exports = {
 
   // built-in plugins
   plugs: _getPlugins(),
+
+  // built-in presets
+  preset(name, defaults = {}) {
+    if (typeof name === 'object') {
+      defaults = name;
+      name = 'default';
+    }
+
+    let $;
+
+    try {
+      $ = homegrown.new(defaults);
+
+      const presetHook = require(`./preset/${name}`);
+
+      presetHook($, { opts: defaults, plugs: _getPlugins() });
+    } catch (e) {
+      throw new Error(`Failure on '${name}' preset. ${e.message || e.toString()}`);
+    }
+
+    return $;
+  },
 };
