@@ -31,7 +31,7 @@ module.exports = (cwd) => {
     // normalize the action/controller
     const action = route._actionName || _handler.pop();
     const controller = route._resourceName || _handler.pop();
-    const controllerFile = path.join(cwd, 'controllers', `${controller}Controller.js`);
+    const controllerFile = path.join(cwd, 'controllers', `${controller}.js`);
 
     /* istanbul ignore else */
     if (!fs.existsSync(controllerFile)) {
