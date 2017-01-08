@@ -31,6 +31,7 @@ function _fixError(e) {
   });
 
   return {
+    errors: e.errors || [],
     stack: lines.pop(),
     body: lines,
     name: e.name || 'Error',
@@ -117,7 +118,7 @@ module.exports = ($, protocol) => {
 
             conn.resp_body = _msg;
             conn.put_status(_err.code);
-            conn.put_resp_header('Content-Type', _type);
+            conn.put_resp_header('Content-Type', `${_type}; charset=${conn.resp_charset}`);
 
             return conn.end();
           })

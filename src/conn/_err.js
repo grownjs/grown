@@ -15,23 +15,23 @@ export default ({ type, error, params, handler }) => {
 
   return type === 'html'
     ? `${handlerInfo ? `<h3>${handlerInfo.handler}</h3>
-
 <details>
   <summary><code>${handlerInfo.route}</code> as <b>${handlerInfo.alias}</b></summary>`
 : ''}
-
 ${params && Object.keys(params).length ?
   `<dl>${Object.keys(params).map(name =>
       `<dt>${name}</dt><dd>${params[name]}</dd>`
     ).join('\n')}</dl></details>`
-
 : '</details>'}
-
 <h4>${error.name} <code>${error.call.replace(/<=/g, '⇐')}</code></h4>
-
 <details>
   <summary>${error.body.shift()}</summary>
+  <h5>Stack:</h5>
   <pre>${(error.body.length ? `- ${error.body.join('\n- ')}\n` : '') + error.stack}</pre>
+  ${error.errors.length ?
+    `<h5>Errors:</h5>
+<pre>${JSON.stringify(error.errors, null, 2)}</pre>`
+    : ''}
 </details>`
     : `${handlerInfo ? `${handlerInfo.handler}
 - ${handlerInfo.route} as ${handlerInfo.alias}`
@@ -42,5 +42,7 @@ ${params && Object.keys(params).length ?
 : ''}
 ${error.name} ${error.call}
 - ${error.body.join('\n- ')}
-${error.stack}`;
+${error.stack}${error.errors.length ?
+  `\n\n${JSON.stringify(error.errors, null, 2)}`
+  : ''}`;
 };
