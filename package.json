@@ -73,7 +73,6 @@
     "sequelize": "^3.27.0",
     "serve-index": "^1.8.0",
     "serve-static": "^1.11.1",
-    "source-map-support": "^0.4.8",
     "sqlite3": "^3.1.8",
     "std-mocks": "^1.0.1",
     "tarima-cli": "gextech/tarima-cli",
