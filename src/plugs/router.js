@@ -3,8 +3,6 @@
 const pipelineFactory = require('../pipeline');
 const buildFactory = require('../factory');
 
-const { statusErr, reduce, methods } = require('../util');
-
 const glob = require('glob');
 const path = require('path');
 const fs = require('fs');
@@ -150,7 +148,7 @@ module.exports = (cwd) => {
     return tasks;
   }
 
-  return ($) => {
+  return ($, { statusErr, reduce, methods }) => {
     // public API
     $.extensions.routes = router.mappings;
     $.extensions.routes.map = Array.prototype.map.bind(_routes);

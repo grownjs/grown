@@ -1,7 +1,5 @@
 /* eslint-disable global-require */
 
-const { debugErr, reduce } = require('../util');
-
 const path = require('path');
 const fs = require('fs');
 
@@ -25,7 +23,7 @@ module.exports = (cwd) => {
     return file;
   }
 
-  function _render(view) {
+  function _render(view, resolve) {
     const _id = view.src;
 
     /* istanbul ignore else */
@@ -33,7 +31,7 @@ module.exports = (cwd) => {
       _cachedPaths[_id] = _lookup(_id);
     }
 
-    return reduce(view.data)
+    return resolve(view.data)
       .then((locals) => {
         const _view = require(_cachedPaths[_id]);
 
@@ -58,7 +56,7 @@ module.exports = (cwd) => {
     }
   }
 
-  return ($) => {
+  return ($, { debugErr, reduce }) => {
     const _views = [];
 
     $.extensions.render = (view, locals) => {
@@ -132,7 +130,7 @@ module.exports = (cwd) => {
           return;
         }
 
-        return Promise.all(_chunks.map(_render))
+        return Promise.all(_chunks.map(chunk => _render(chunk, reduce)))
           .then((results) => {
             const _blocks = {};
 

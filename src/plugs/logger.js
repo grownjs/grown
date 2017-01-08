@@ -1,33 +1,33 @@
 /* eslint-disable global-require */
 
-const { extend } = require('../util');
-
 module.exports = (defaults = {}) => {
   const winston = require('winston');
 
-  const transports = [];
-  const options = extend({}, defaults);
+  return ($, { extend }) => {
+    const transports = [];
+    const options = extend({}, defaults);
 
-  delete options.transports;
+    delete options.transports;
 
-  /* istanbul ignore else */
-  if (Array.isArray(defaults.transports)) {
-    defaults.transports.forEach((transport) => {
-      if (typeof transport === 'string') {
-        transports.push(new winston.transports[transport]());
-      }
+    /* istanbul ignore else */
+    if (Array.isArray(defaults.transports)) {
+      defaults.transports.forEach((transport) => {
+        /* istanbul ignore else */
+        if (typeof transport === 'string') {
+          transports.push(new winston.transports[transport]());
+        }
 
-      if (typeof transport === 'object') {
-        Object.keys(transport).forEach((key) => {
-          transports.push(new winston.transports[key](transport[key]));
-        });
-      }
-    });
-  }
+        /* istanbul ignore else */
+        if (typeof transport === 'object') {
+          Object.keys(transport).forEach((key) => {
+            transports.push(new winston.transports[key](transport[key]));
+          });
+        }
+      });
+    }
 
-  winston.configure(extend(options, { transports }));
+    winston.configure(extend(options, { transports }));
 
-  return ($) => {
     $.extensions.log = winston.log;
 
     // from higher to lower severity

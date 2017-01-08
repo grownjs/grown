@@ -1,18 +1,18 @@
 /* eslint-disable global-require */
 
-const { extend, methods } = require('../util');
-
 module.exports = (defaults = {}) => {
   const cookieSession = require('cookie-session');
   const cookieParser = require('cookie-parser');
 
-  return ($) => {
+  return ($, { extend, methods }) => {
     $.ctx.mount('cookie-parser', cookieParser(extend({}, defaults)));
     $.ctx.mount('cookie-session', cookieSession(extend({}, defaults)));
 
     $.ctx.mount('session', (conn) => {
       methods(conn, {
         session: () => extend({}, conn.req.session),
+
+        csrf_token: () => conn.req.csrfToken && conn.req.csrfToken(),
 
         put_session(name, value) {
           /* istanbul ignore else */

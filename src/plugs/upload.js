@@ -1,28 +1,26 @@
 /* eslint-disable global-require */
 
-const { extend, methods } = require('../util');
-
 module.exports = (defaults = {}) => {
   const IncomingForm = require('formidable').IncomingForm;
 
-  function processForm(conn, opts) {
-    return new Promise((resolve, reject) => {
-      const form = new IncomingForm(extend({}, opts, defaults));
+  return ($, { extend, methods }) => {
+    function processForm(conn, opts) {
+      return new Promise((resolve, reject) => {
+        const form = new IncomingForm(extend({}, opts, defaults));
 
-      form.parse(conn.req, (err, data, files) => {
-        if (err) {
-          reject(err);
-        } else {
-          // merge all params, multipart first
-          conn.req.body = extend({}, data, conn.req.body);
+        form.parse(conn.req, (err, data, files) => {
+          if (err) {
+            reject(err);
+          } else {
+            // merge all params, multipart first
+            conn.req.body = extend({}, data, conn.req.body);
 
-          resolve(files);
-        }
+            resolve(files);
+          }
+        });
       });
-    });
-  }
+    }
 
-  return ($) => {
     $.ctx.mount('upload', (conn) => {
       methods(conn, {
         upload_files(opts = {}) {
