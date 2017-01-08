@@ -16,15 +16,16 @@ export default ({ type, error, params, handler }) => {
   return type === 'html'
     ? `${handler ? `<h3>${handlerInfo.handler}</h3>
 
-<code>${handlerInfo.route}</code> as <b>${handlerInfo.alias}</b>`
+<details>
+  <summary><code>${handlerInfo.route}</code> as <b>${handlerInfo.alias}</b></summary>`
 : ''}
 
 ${params && Object.keys(params).length ?
-  `<h4>Params</h4>
-    <dl>${Object.keys(params).map(name =>
+  `<dl>${Object.keys(params).map(name =>
       `<dt>${name}</dt><dd>${params[name]}</dd>`
-    ).join('\n')}</dl>`
-: ''}
+    ).join('\n')}</dl></details>`
+
+: '</details>'}
 
 <h4>${error.name} <code>${error.call}</code></h4>
 

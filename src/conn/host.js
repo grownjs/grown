@@ -102,8 +102,8 @@ module.exports = ($, protocol) => {
                 _msg = template({
                   type: _accept,
                   error: _err,
-                  params: req.params,
-                  handler: req.handler,
+                  params: conn.params,
+                  handler: conn.handler,
                 });
                 break;
 
