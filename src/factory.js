@@ -72,7 +72,7 @@ module.exports = (Factory, options, _name) => {
   /* istanbul ignore else */
   if (Factory.prototype && typeof Factory.prototype.call === 'function') {
     return {
-      name: Factory.name || 'anonymous',
+      name: Factory.name || '?',
       call: [new Factory(options), 'call'],
       type: 'method',
     };
@@ -81,14 +81,14 @@ module.exports = (Factory, options, _name) => {
   /* istanbul ignore else */
   if (Factory.length > 2) {
     return {
-      name: Factory.name || 'anonymous',
+      name: Factory.name || '?',
       call: _expressMiddleware(Factory),
       type: 'function',
     };
   }
 
   return {
-    name: Factory.name || 'anonymous',
+    name: Factory.name || '?',
     call: Factory,
     type: 'function',
   };

@@ -224,7 +224,7 @@ module.exports = (cwd) => {
 
           // dependency injection support
           _pipeline.push({
-            name: '',
+            name: '$',
             call(_conn) {
               /* istanbul ignore else */
               if (Controller.inject) {

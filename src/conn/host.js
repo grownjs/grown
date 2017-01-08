@@ -32,7 +32,7 @@ module.exports = ($, protocol) => {
 
       let _msg = e.message || e.toString();
 
-      _msg = `${e.name || 'Error'}(${e.pipeline.join('.')}):\n- ${_msg}`;
+      _msg = `${e.name || 'Error'}<${e.pipeline.join(' ')}>:\n- ${_msg}`;
 
       const _stack = (e.stack || '').replace(/.*Error:.+?\n/, '');
       const _lines = _msg.split('\n');
