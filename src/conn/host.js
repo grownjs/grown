@@ -26,7 +26,7 @@ module.exports = ($, protocol) => {
 
       let _msg = e.message || e.toString();
 
-      _msg = `${e.name || 'Error'}(${e.pipeline.join('.')}): ${_msg}`;
+      _msg = `${e.name || 'Error'}(${e.pipeline.join('.')}):\n> ${_msg}`;
 
       const _stack = (e.stack || '').replace(/.*Error:.+?\n/, '');
 
@@ -38,7 +38,9 @@ module.exports = ($, protocol) => {
 
       // istanbul ignore else
       if (_stack) {
-        _msg += `\n${_stack}`;
+        const _lines = _msg.split('\n');
+
+        _msg += `\n${_stack.split(_lines[_lines.length - 1])[1] || _stack}`;
       }
 
       // normalize response

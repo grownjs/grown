@@ -30,7 +30,7 @@ module.exports = (cwd) => {
 
     /* istanbul ignore else */
     if (!_cachedPaths[_id]) {
-      _cachedPaths[_id] = _lookup(view.src);
+      _cachedPaths[_id] = _lookup(_id);
     }
 
     return reduce(view.data)
