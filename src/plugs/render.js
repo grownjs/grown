@@ -108,7 +108,13 @@ module.exports = (cwd) => {
             const _locals = {};
 
             Object.keys(_partials[_target].data).forEach((key) => {
-              _locals[key] = _partials[_target].data[key](conn);
+              try {
+                _locals[key] = _partials[_target].data[key](conn);
+              } catch (e) {
+                const _src = conn.handler._controller.filepath;
+
+                throw new Error(`Invalid '${_target}.${key}' inject at ${_src}, ${e.message}`);
+              }
             });
 
             _fix(_locals, $.extensions);
