@@ -3,7 +3,6 @@ module.exports = (locals) => `
 <html>
   <body>
     <p>${locals.index}</p>
-    <footer>Done in {elapsed}</footer>
   </body>
 </html>
 `;

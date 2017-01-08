@@ -22,7 +22,6 @@ describe '#render', ->
     $.server.fetch().then (res) ->
       expect(res.body).toContain '<!doctype html>'
       expect(res.body).toContain '<p>TEXT(bar)</p>'
-      expect(res.body).toMatch /Done in \d\.\d+ms/
       done()
 
   it 'should render multiple views as lists', (done) ->
