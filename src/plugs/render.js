@@ -137,6 +137,7 @@ module.exports = (cwd) => {
             const _blocks = {};
 
             _chunks.forEach((_chunk) => {
+              /* istanbul ignore else */
               if (_blocks[_chunk.block] && !Array.isArray(_blocks[_chunk.block])) {
                 _blocks[_chunk.block] = [_blocks[_chunk.block]];
               }

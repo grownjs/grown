@@ -10,6 +10,7 @@ module.exports = (defaults = {}) => {
 
   delete options.transports;
 
+  /* istanbul ignore else */
   if (Array.isArray(defaults.transports)) {
     defaults.transports.forEach((transport) => {
       if (typeof transport === 'string') {

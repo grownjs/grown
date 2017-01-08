@@ -18,6 +18,7 @@ function mock($) {
   };
 
   return function makeRequest(...args) {
+    /* istanbul ignore else */
     if (!args[0] || typeof args[0] === 'string' || typeof args[0] === 'object') {
       return new Promise((resolve) => {
         const [method, path, opts] = args;
