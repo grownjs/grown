@@ -27,7 +27,7 @@ ${params && Object.keys(params).length ?
 
 : '</details>'}
 
-<h4>${error.name} <code>${error.call}</code></h4>
+<h4>${error.name} <code>${error.call.replace(/<=/g, '⇐')}</code></h4>
 
 <details>
   <summary>${error.body.shift()}</summary>
@@ -38,9 +38,8 @@ ${params && Object.keys(params).length ?
 : ''}
 ${params && Object.keys(params).length ?
   `${Object.keys(params).map(name =>
-    `- ${leftpad(name, maxLength)}  ${params[name]}`).join('\n')}`
+    `- ${leftpad(name, maxLength)}  ${params[name]}`).join('\n')}\n`
 : ''}
-
 ${error.name} ${error.call}
 - ${error.body.join('\n- ')}
 ${error.stack}`;
