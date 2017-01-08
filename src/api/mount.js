@@ -2,7 +2,7 @@ const buildFactory = require('../factory');
 
 module.exports = ($) => {
   $.ctx.mount = (name, _cb) => {
-    if (typeof name === 'function') {
+    if (typeof name !== 'string') {
       _cb = name;
       name = null;
     }
