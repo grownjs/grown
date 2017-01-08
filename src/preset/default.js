@@ -7,7 +7,9 @@ export default ($, { opts, plugs }) => {
   $.ctx.use(plugs.logger(opts.logger || { transports: ['Console'] }));
 
   // common middleware
-  $.ctx.mount('body-parser', bodyParser.urlencoded({ extended: false }));
+  $.ctx.mount('body-parser', bodyParser.urlencoded(opts.bodyParser || { extended: false }));
+  $.ctx.mount('body-parser-json', bodyParser.json());
+
   $.ctx.mount('_method.no-cache.log', (conn) => {
     const _method = conn.query_params._method || conn.body_params._method
       || conn.req_headers['x-method-override']
