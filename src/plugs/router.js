@@ -171,7 +171,8 @@ module.exports = (cwd) => {
       const _base = conn.req.url.split('?')[0];
 
       // speed up static routes
-      const _handler = _cache[_base] || (_cache[_base] = match[_method](conn.req.url, 1));
+      const _handler = _cache[`${conn.req.method} ${_base}`]
+        || (_cache[`${conn.req.method} ${_base}`] = match[_method](conn.req.url, 1));
 
       if (_handler) {
         $.extensions.params = conn.req.params = {};
