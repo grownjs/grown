@@ -82,7 +82,7 @@ module.exports = (cwd) => {
       });
     };
 
-    function _view(conn, start, blocks) {
+    function _view(conn, blocks) {
       let _layout = 'layouts/default';
 
       /* istanbul ignore else */
@@ -91,13 +91,10 @@ module.exports = (cwd) => {
             || conn.handler._controller.original.layout || 'default'}`;
       }
 
-      conn.resp_body = require(_lookup(_layout))(blocks)
-        .replace(/{elapsed}/g, `${((new Date()) - start) / 1000}ms`);
+      conn.resp_body = require(_lookup(_layout))(blocks);
     }
 
     $.ctx.mount((conn) => {
-      const start = new Date();
-
       return conn.next(() => {
         /* istanbul ignore else */
         if (conn.handler && conn.handler._controller && conn.handler._controller.instance) {
@@ -151,7 +148,7 @@ module.exports = (cwd) => {
               }
             });
 
-            _view(conn, start, _blocks);
+            _view(conn, _blocks);
           });
       });
     });
