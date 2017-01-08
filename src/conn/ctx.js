@@ -254,16 +254,12 @@ module.exports = (container, server, req, res) => {
       if (!value) {
         throw new Error(`Invalid resp_charset: ${value}`);
       }
-
-      _state.resp_headers['Content-Type'] = `${_state.type}; charset=${value}`;
     },
     resp_body(value) {
       /* istanbul ignore else */
       if (!((value instanceof Buffer) || typeof value === 'object' || typeof value === 'string')) {
         throw new Error(`Invalid resp_body: ${value}`);
       }
-
-      res.statusCode = 200;
     },
   }, _state);
 

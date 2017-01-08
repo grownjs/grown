@@ -115,12 +115,11 @@ module.exports = ($, protocol) => {
                 break;
             }
 
-            res.writeHead(res.statusCode, {
-              'Content-Type': _type,
-            });
+            conn.resp_body = _msg;
+            conn.put_status(_err.code);
+            conn.put_resp_header('Content-Type', _type);
 
-            res.write(_msg);
-            res.end();
+            return conn.end();
           })
           .then(() => _next());
       } catch (e) {
