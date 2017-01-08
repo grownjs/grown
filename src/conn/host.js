@@ -1,15 +1,8 @@
+import template from './_tpl';
+
 const connFactory = require('./ctx');
 
 const statusCodes = require('http').STATUS_CODES;
-
-// html-safe values
-function _encode(str) {
-  return str
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
-}
 
 // normalize error object
 function _fixError(e) {
@@ -95,20 +88,23 @@ module.exports = ($, protocol) => {
       try {
         $.ctx.dispatch(conn, $.opts)
           .catch((err) => {
+            const _accept = conn.accept.type('html', 'json');
             const _err = fail(err);
 
             let _type;
             let _msg;
 
-            switch (conn.accept.type('html', 'json')) {
+            switch (_accept) {
               case 'html':
-                _type = 'text/html';
-                _msg = [
-                  `<h3>${_err.name}<code>${_err.call}</code></h3><details>`,
-                  `<summary>${_encode(_err.body.shift())}</summary><pre>`,
-                  _err.body.length ? `- ${_err.body.join('\n- ')}\n` : '',
-                  `${_encode(_err.stack)}</pre></details>`,
-                ].join('');
+              default:
+                _type = `text/${_accept || 'plain'}`;
+
+                _msg = template({
+                  type: _accept,
+                  error: _err,
+                  params: req.params,
+                  handler: req.handler,
+                });
                 break;
 
               case 'json':
@@ -117,11 +113,6 @@ module.exports = ($, protocol) => {
                   status: 'error',
                   message: _err,
                 });
-                break;
-
-              default:
-                _type = 'text/plain';
-                _msg = `${_err.name} ${_err.call}\n- ${_err.body.join('\n- ')}\n${_err.stack}`;
                 break;
             }
 

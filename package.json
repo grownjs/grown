@@ -22,6 +22,9 @@
     "bundle": [
       "**/*.js"
     ],
+    "filter": [
+      "!**/_*"
+    ],
     "rename": [
       "**/src/**:{filepath/1}/{filename}.{extname}"
     ],
