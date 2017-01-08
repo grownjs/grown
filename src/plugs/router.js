@@ -19,7 +19,7 @@ module.exports = (cwd) => {
 
   const RouteMappings = require('route-mappings');
 
-  const routeMappings = require(path.join(cwd, 'config', 'routeMappings.js'));
+  const routeMappings = require(path.join(cwd, 'config', 'routes.js'));
   const router = routeMappings(RouteMappings);
   const match = {};
 
