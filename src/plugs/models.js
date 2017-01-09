@@ -27,11 +27,11 @@ module.exports = (cwd) => {
     const opts = new Sequelize(_config);
     const refs = [];
 
-    return new JSONSchemaSequelizer(opts, refs, dir)
+    $.initializers.push(() => new JSONSchemaSequelizer(opts, refs, dir)
       .then((m) => {
         $.extensions.models = m;
 
         return m.sync();
-      });
+      }));
   };
 };

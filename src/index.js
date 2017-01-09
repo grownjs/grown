@@ -13,7 +13,7 @@ const FARMS = [];
 function _getPlugins() {
   const proxy = {};
 
-  ['logger', 'models', 'render', 'router', 'session', 'test', 'upload']
+  ['test', 'repl', 'logger', 'models', 'render', 'router', 'session', 'upload']
     .forEach((name) => {
       Object.defineProperty(proxy, name, {
         get: () => require(`./plugs/${name}`),
@@ -23,19 +23,35 @@ function _getPlugins() {
   return proxy;
 }
 
-function _closeAll() {
+function _closeAll(done) {
+  const _tasks = [];
+  const _ends = [];
+
   FARMS.forEach((farm) => {
+    Array.prototype.push.apply(_tasks, farm.finalizers);
+
     Object.keys(farm.hosts).forEach((host) => {
-      farm.hosts[host].close();
+      _ends.push(() => farm.hosts[host].close());
     });
   });
+
+  FARMS.splice(0, FARMS.length);
+
+  return Promise.all(_tasks.map(cb => cb()))
+    .then(() => Promise.all(_ends.map(cb => cb())))
+    .then(() => {
+      /* istanbul ignore else */
+      if (typeof done === 'function') {
+        done();
+      }
+    });
 }
 
 // gracefully dies
 process.on('exit', _closeAll);
 process.on('SIGINT', () => process.exit());
 
-const homegrown = module.exports = {
+module.exports = {
   version,
 
   new(defaults = {}) {
@@ -49,6 +65,8 @@ const homegrown = module.exports = {
 
       pipeline: [],
       extensions: {},
+
+      finalizers: [],
       initializers: [],
     };
 
@@ -67,8 +85,8 @@ const homegrown = module.exports = {
     return $;
   },
 
-  burn() {
-    _closeAll();
+  burn(cb) {
+    return _closeAll(cb);
   },
 
   farms(cb) {
@@ -80,6 +98,7 @@ const homegrown = module.exports = {
 
   // built-in presets
   preset(name, defaults = {}) {
+    /* istanbul ignore else */
     if (typeof name === 'object') {
       defaults = name;
       name = 'default';
@@ -88,7 +107,7 @@ const homegrown = module.exports = {
     let $;
 
     try {
-      $ = homegrown.new(defaults);
+      $ = module.exports.new(defaults);
 
       const presetHook = require(`./preset/${name}`);
 

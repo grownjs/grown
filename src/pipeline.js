@@ -175,4 +175,4 @@ module.exports = function _pipelineFactory(label, pipeline, _callback) {
       });
     });
   };
-}
+};

@@ -4,7 +4,7 @@ export default ($, { opts, plugs }) => {
   const bodyParser = require('body-parser');
 
   // attach logger
-  $.ctx.use(plugs.logger(opts.logger || { transports: ['Console'] }));
+  $.ctx.use(plugs.logger(opts.logger || { transports: [{ Console: { colorize: true } }] }));
 
   // common middleware
   $.ctx.mount('body-parser', bodyParser.urlencoded(opts.bodyParser || { extended: false }));

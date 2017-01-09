@@ -61,7 +61,7 @@ module.exports = ($) => {
           _close = this.close ? this.close.bind(this) : null;
         }
 
-        Promise.all($.initializers)
+        Promise.all($.initializers.map(cb => cb()))
           .then(() => typeof callback === 'function' && callback(_server, options))
           .then(() => resolve(_server))
           .catch(reject);
