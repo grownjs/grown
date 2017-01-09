@@ -89,12 +89,14 @@ module.exports = (cwd) => {
             || conn.handler._controller.original.layout || 'default'}`;
       }
 
+      // previous content (including errors)
+      blocks.yield = conn.resp_body;
+
       conn.resp_body = require(_lookup(_layout))(blocks);
     }
 
     $.ctx.mount('render', (conn) => {
-      return conn.next(() => {
-        /* istanbul ignore else */
+      conn.before_send(() => {
         if (conn.handler && conn.handler._controller && conn.handler._controller.instance) {
           const _partials = conn.handler._controller.instance.render
             || conn.handler._controller.original.render || {};
@@ -124,11 +126,6 @@ module.exports = (cwd) => {
         }
 
         const _chunks = _views.splice(0, _views.length);
-
-        /* istanbul ignore else */
-        if (!_chunks.length) {
-          return;
-        }
 
         return Promise.all(_chunks.map(chunk => _render(chunk, reduce)))
           .then((results) => {
