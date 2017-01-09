@@ -9,7 +9,7 @@ export default (opts) => {
       conn.put_resp_header('X-Response-Time', `${time}ms`);
 
       /* istanbul ignore else */
-      if (opts.logConn !== false) {
+      if (opts.logger !== false) {
         conn.info(`${conn.method} ${conn.request_path} - Sent ${conn.res.statusCode} in ${time}ms`);
       }
     });

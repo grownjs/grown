@@ -45,7 +45,7 @@ module.exports = (container, server, req, res) => {
     res,
 
     // current environment
-    env: process.env.NODE_ENV || 'dev',
+    env: container.opts.env || process.env.NODE_ENV || 'dev',
 
     // current connection
     host: server.location.host || server.host,
