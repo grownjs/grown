@@ -9,83 +9,17 @@ const fs = require('fs');
 
 const _push = Array.prototype.push;
 
-module.exports = (cwd) => {
-  /* istanbul ignore else */
-  if (typeof cwd !== 'string' || !fs.existsSync(cwd)) {
-    throw new Error(`Expecting 'cwd' to be a valid directory, given '${cwd}'`);
-  }
-
+module.exports = (...args) => {
   const RouteMappings = require('route-mappings');
 
-  const routeMappings = require(path.join(cwd, 'config', 'routes.js'));
-  const router = routeMappings(RouteMappings);
+  const router = new RouteMappings();
   const match = {};
+
+  const _fixedMiddlewares = {};
+  const _middlewares = {};
 
   const _controllers = {};
   const _routes = [];
-
-  // resolve routing for controllers lookup
-  router.routes.forEach((route) => {
-    const _handler = route.handler.slice();
-
-    // normalize the action/controller
-    const action = route._actionName || _handler.pop();
-    const controller = route._resourceName || _handler.pop();
-    const controllerFile = path.join(cwd, 'controllers', `${controller}.js`);
-
-    /* istanbul ignore else */
-    if (!fs.existsSync(controllerFile)) {
-      throw new Error(`Missing controller ${controllerFile}`);
-    }
-
-    // memoize reference
-    _controllers[controller] = {
-      filepath: controllerFile,
-      pipeline: {},
-    };
-
-    /* istanbul ignore else */
-    if (!match[route.verb]) {
-      match[route.verb] = [];
-    }
-
-    /* istanbul ignore else */
-    if (route.middleware && !Array.isArray(route.middleware)) {
-      route.middleware = [route.middleware];
-    }
-
-    // route definition
-    const _route = {
-      controller,
-      action,
-      route,
-    };
-
-    // plain old routes
-    _routes.push(_route);
-
-    // group all routes per-verb
-    match[route.verb].push(_route);
-  });
-
-  // build mapping per-verb
-  Object.keys(match).forEach((verb) => {
-    match[verb] = router.map(match[verb]);
-  });
-
-  // load global middleware definitions
-  const _middlewaresFile = path.join(cwd, 'config', 'middlewares.js');
-  const _middlewares = fs.existsSync(_middlewaresFile) ? require(_middlewaresFile) : {};
-
-  const fixedMiddlewares = {};
-
-  // load all available middleware references, override later
-  glob.sync('middlewares/**/*.js', { cwd, nodir: true }).forEach((middleware) => {
-    const middlewareName = path.basename(middleware.replace(/\/index\.js$/, ''), '.js');
-
-    // the middleware is stored by name
-    fixedMiddlewares[middlewareName] = path.join(cwd, middleware);
-  });
 
   // reduce middleware chain into a single pipeline
   function _require(map, options) {
@@ -101,12 +35,12 @@ module.exports = (cwd) => {
         _push.apply(list, _require(_fixedList, options));
       } else if (list.indexOf(name) === -1) {
         /* istanbul ignore else */
-        if (!fixedMiddlewares[name]) {
+        if (!_fixedMiddlewares[name]) {
           throw new Error(`Undefined '${name}' middleware`);
         }
 
         // normalize required middleware module
-        const middleware = buildFactory(require(fixedMiddlewares[name]), options, name);
+        const middleware = buildFactory(require(_fixedMiddlewares[name]), options, name);
 
         // push task to pipeline
         list.push({
@@ -147,6 +81,84 @@ module.exports = (cwd) => {
 
     return tasks;
   }
+
+  args.forEach((cwd) => {
+    /* istanbul ignore else */
+    if (typeof cwd !== 'string' || !fs.existsSync(cwd)) {
+      throw new Error(`Expecting 'cwd' to be a valid directory, given '${cwd}'`);
+    }
+
+    const routeMappings = require(path.join(cwd, 'config', 'routes.js'));
+    const _router = routeMappings(new RouteMappings({ cwd }));
+
+    router.namespace('/', _router);
+
+    // load global middleware definitions
+    const _middlewaresFile = path.join(cwd, 'config', 'middlewares.js');
+
+    const middlewares = fs.existsSync(_middlewaresFile) ? require(_middlewaresFile) : {};
+
+    Object.keys(middlewares).forEach((middleware) => {
+      _middlewares[middleware] = middlewares[middleware];
+    });
+
+    // load all available middleware references, override later
+    glob.sync('middlewares/**/*.js', { cwd, nodir: true }).forEach((middleware) => {
+      const middlewareName = path.basename(middleware.replace(/\/index\.js$/, ''), '.js');
+
+      // the middleware is stored by name
+      _fixedMiddlewares[middlewareName] = path.join(cwd, middleware);
+    });
+  });
+
+  // resolve routing for controllers lookup
+  router.routes.forEach((route) => {
+    const _handler = route.handler.slice();
+
+    // normalize the action/controller
+    const action = route._actionName || _handler.pop();
+    const controller = route._resourceName || _handler.pop();
+    const controllerFile = path.join(route.cwd, 'controllers', `${controller}.js`);
+
+    /* istanbul ignore else */
+    if (!fs.existsSync(controllerFile)) {
+      throw new Error(`Missing controller ${controllerFile}`);
+    }
+
+    // memoize reference
+    _controllers[controller] = {
+      filepath: controllerFile,
+      pipeline: {},
+    };
+
+    /* istanbul ignore else */
+    if (!match[route.verb]) {
+      match[route.verb] = [];
+    }
+
+    /* istanbul ignore else */
+    if (route.middleware && !Array.isArray(route.middleware)) {
+      route.middleware = [route.middleware];
+    }
+
+    // route definition
+    const _route = {
+      controller,
+      action,
+      route,
+    };
+
+    // plain old routes
+    _routes.push(_route);
+
+    // group all routes per-verb
+    match[route.verb].push(_route);
+  });
+
+  // build mapping per-verb
+  Object.keys(match).forEach((verb) => {
+    match[verb] = router.map(match[verb]);
+  });
 
   return ($, { statusErr, reduce, methods }) => {
     // public API
