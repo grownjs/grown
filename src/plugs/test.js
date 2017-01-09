@@ -1,6 +1,17 @@
 const Readable = require('stream').Readable;
 const Writable = require('stream').Writable;
 
+function _set(obj, k, v, desc) {
+  Object.defineProperty(obj, k, {
+    get() {
+      return v[k];
+    },
+    set() {
+      throw new Error(desc);
+    },
+  });
+}
+
 function mock($) {
   let _fn;
 
@@ -62,7 +73,6 @@ function mock($) {
 
     $.ctx.listen({ protocol: 'test' }).then((_server) => {
       const _opts = {
-        end: false,
         body: null,
         buffer: [],
         cookies: {},
@@ -107,27 +117,10 @@ function mock($) {
         _req.headers['content-length'] += data.length;
       };
 
-      args[0](_req, (end) => {
-        _opts.end = end;
-
+      args[0](_req, (done) => {
         /* istanbul ignore else */
         if (_fn) {
           const _res = new Writable();
-          const _end = _res.end;
-
-          // by-pass
-          _res.end = (chunk) => {
-            _res.finished = true;
-
-            /* istanbul ignore else */
-            if (chunk) {
-              _opts.body = chunk;
-            }
-
-            _end.call(_res);
-
-            return _res;
-          };
 
           // known interface
           _res.finished = false;
@@ -178,39 +171,13 @@ function mock($) {
           _res.set = _res.header = _res.setHeader = (k, v) => { _opts.headers[k] = v; };
 
           // test interface
-          Object.defineProperty(_res, 'body', {
-            get() {
-              return _opts.body;
-            },
-            set() {
-              throw new Error('Output body is already defined');
-            },
-          });
-
-          Object.defineProperty(_res, 'cookies', {
-            get() {
-              return _opts.cookies;
-            },
-            set() {
-              throw new Error('Response cookies are already defined');
-            },
-          });
-
-          Object.defineProperty(_res, 'headers', {
-            get() {
-              return _opts.headers;
-            },
-            set() {
-              throw new Error('Response headers are already defined');
-            },
-          });
+          _set(_res, 'body', _opts, 'Output body is already defined');
+          _set(_res, 'cookies', _opts, 'Response cookies are already defined');
+          _set(_res, 'headers', _opts, 'Response headers are already defined');
 
           _fn(_req, _res, (e) => {
-            /* istanbul ignore else */
-            if (_opts.end && !_opts.end._finished) {
-              _opts.end._finished = true;
-              _opts.end(e, _res);
-            }
+            // FIXME: why the delay?
+            setTimeout(() => done(e, _res));
           });
         }
       });
