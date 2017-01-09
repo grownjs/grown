@@ -14,6 +14,7 @@ function _run(task, state, options) {
     case 'method':
       return task.call[0][task.call[1]](state, options);
 
+    case 'x-function':
     case 'function':
       return task.call(state, options);
 

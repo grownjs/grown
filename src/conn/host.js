@@ -86,46 +86,48 @@ module.exports = ($, protocol) => {
     if (_server) {
       const conn = connFactory($, _server, req, res);
 
-      try {
-        $.ctx.dispatch(conn, $.opts)
-          .catch((err) => {
-            const _accept = conn.accept.type('html', 'json');
-            const _err = fail(err);
+      $.ctx.dispatch(conn, $.opts)
+        .catch((err) => {
+          const _accept = conn.accept.type('html', 'json');
+          const _err = fail(err);
 
-            let _type;
-            let _msg;
+          let _type;
+          let _msg;
 
-            switch (_accept) {
-              case 'html':
-              default:
-                _type = `text/${_accept || 'plain'}`;
-                _msg = _templateError({
-                  type: _accept,
-                  error: _err,
-                  params: conn.params,
-                  handler: conn.handler,
-                });
-                break;
+          switch (_accept) {
+            case 'html':
+            default:
+              _type = `text/${_accept || 'plain'}`;
+              _msg = _templateError({
+                type: _accept,
+                error: _err,
+                params: conn.params,
+                handler: conn.handler,
+              });
+              break;
 
-              case 'json':
-                _type = 'application/json';
-                _msg = JSON.stringify({
-                  status: 'error',
-                  message: _err,
-                });
-                break;
-            }
+            case 'json':
+              _type = 'application/json';
+              _msg = JSON.stringify({
+                status: 'error',
+                message: _err,
+              });
+              break;
+          }
 
-            conn.resp_body = _msg;
-            conn.put_status(_err.code);
-            conn.put_resp_header('Content-Type', `${_type}; charset=${conn.resp_charset}`);
+          conn.resp_body = _msg;
+          conn.put_status(_err.code);
+          conn.put_resp_header('Content-Type', `${_type}; charset=${conn.resp_charset}`);
 
-            return conn.end();
-          })
-          .then(() => _next());
-      } catch (e) {
-        fail(e, conn);
-      }
+          return conn.end()
+            .catch(() => {
+              // fallback response
+              res.writeHead(res.statusCode, conn.resp_headers);
+              res.write(conn.resp_body);
+              res.end();
+            });
+        })
+        .then(() => _next());
     }
   };
 };

@@ -1,5 +1,5 @@
 export default () => {
-  return (conn) => {
+  return methodOverride(conn) {
     const _method = conn.query_params._method || conn.body_params._method
       || conn.req_headers['x-method-override']
       || conn.req_headers['x-http-method']

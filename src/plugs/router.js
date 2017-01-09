@@ -54,7 +54,7 @@ module.exports = (...args) => {
         list.push({
           name: middleware.name || name,
           call: middleware.call,
-          type: 'function',
+          type: middleware.type || 'function',
         });
       }
     }, this);

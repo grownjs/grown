@@ -27,15 +27,6 @@ export default ($, { opts, plugs }) => {
     $.ctx.mount('x-log', require('./middlewares/xResponseTime')(opts));
   }
 
-  // models
-  $.ctx.use(plugs.models(opts.appDir, __dirname));
-
-  // views
-  $.ctx.use(plugs.render(opts.srcDir, __dirname));
-
-  // controllers
-  $.ctx.use(plugs.router(opts.appDir, __dirname));
-
   /* istanbul ignore else */
   if (opts.uploadDir || opts.uploads) {
     $.ctx.use(plugs.upload(opts.uploads || { cwd: opts.uploadDir }));
@@ -45,4 +36,18 @@ export default ($, { opts, plugs }) => {
   if (opts.session !== false) {
     $.ctx.use(plugs.session(opts.session || { secret: String(Math.random() * 101 | 0) }));
   }
+
+  /* istanbul ignore else */
+  // if (opts.csrf !== false) {
+  //   $.ctx.mount('no-cache', require('./middlewares/CSRF')());
+  // }
+
+  // models
+  $.ctx.use(plugs.models(opts.appDir, __dirname));
+
+  // views
+  $.ctx.use(plugs.render(opts.srcDir, __dirname));
+
+  // controllers
+  $.ctx.use(plugs.router(opts.appDir, __dirname));
 };

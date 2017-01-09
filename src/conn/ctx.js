@@ -30,6 +30,7 @@ module.exports = (container, server, req, res) => {
   const $ = extend({}, container.extensions);
 
   const _state = {
+    resp_locals: {},
     resp_headers: {},
     resp_charset: 'utf8',
     resp_body: null,
@@ -218,7 +219,9 @@ module.exports = (container, server, req, res) => {
       res.statusCode = typeof _code === 'number' ? _code : res.statusCode;
       res.statusMessage = statusCodes[res.statusCode];
 
-      return Promise.all(_filters.map(cb => cb($)))
+      return Promise.resolve()
+        .then(() =>
+          _filters.reduce((prev, cb) => prev.then(() => cb($)), Promise.resolve()))
         .then(() => {
           /* istanbul ignore else */
           if (_state.resp_body !== null && typeof _state.resp_body === 'object') {
@@ -244,6 +247,11 @@ module.exports = (container, server, req, res) => {
 
   // dynamic props
   props($, {
+    resp_locals(value) {
+      if (!(value && (typeof value === 'object' && !Array.isArray(value)))) {
+        throw new Error(`Invalid resp_locals: '${value}'`);
+      }
+    },
     resp_headers(value) {
       if (!(value && (typeof value === 'object' && !Array.isArray(value)))) {
         throw new Error(`Invalid resp_headers: '${value}'`);

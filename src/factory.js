@@ -83,7 +83,7 @@ module.exports = (Factory, options, _name) => {
     return {
       name: Factory.name || '?',
       call: _expressMiddleware(Factory),
-      type: 'function',
+      type: 'x-function',
     };
   }
 

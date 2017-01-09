@@ -1,5 +1,5 @@
 export default (opts) => {
-  return (conn) => {
+  return function XResponseTime(conn) {
     const start = process.hrtime();
 
     conn.before_send(() => {

@@ -56,7 +56,7 @@ module.exports = (cwd) => {
     }
   }
 
-  return ($, { debugErr, reduce }) => {
+  return ($, { debugErr, extend, reduce }) => {
     const _views = [];
 
     $.extensions.render = (view, locals) => {
@@ -89,14 +89,25 @@ module.exports = (cwd) => {
             || conn.handler._controller.original.layout || 'default'}`;
       }
 
-      // previous content (including errors)
-      blocks.yield = conn.resp_body;
+      // merge with response locals
+      extend(blocks, conn.resp_locals);
+
+      // merge with connection values
+      Object.keys(conn).forEach((key) => {
+        /* istanbul ignore else */
+        if (typeof blocks[key] === 'undefined' &&
+          ((typeof conn[key] !== 'object' && typeof conn[key] !== 'function')
+            || Array.isArray(conn[key]))) {
+          blocks[key] = conn[key];
+        }
+      });
 
       conn.resp_body = require(_lookup(_layout))(blocks);
     }
 
     $.ctx.mount('render', (conn) => {
       conn.before_send(() => {
+        /* istanbul ignore else */
         if (conn.handler && conn.handler._controller && conn.handler._controller.instance) {
           const _partials = conn.handler._controller.instance.render
             || conn.handler._controller.original.render || {};
@@ -109,7 +120,7 @@ module.exports = (cwd) => {
                 _locals[key] = _partials[_target].data[key](conn);
               } catch (e) {
                 const _src = conn.handler._controller.filepath;
-                const _msg = `Invalid '${_target}.${key}' inject at ${_src}`;
+                const _msg = `Error in '${_target}.${key}' method at ${_src}`;
 
                 throw debugErr(_msg, e);
               }
