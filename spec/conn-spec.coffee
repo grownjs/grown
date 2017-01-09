@@ -69,7 +69,7 @@ describe '#conn', ->
 
       $.server.fetch().then (res) ->
         expect(res.statusCode).toEqual 200
-        expect(res.getHeader('Content-Type')).toEqual 'text/plain; charset=utf8'
+        expect(res.getHeader('Content-Type')).toEqual 'text/html; charset=utf8'
         done()
 
   it 'should responds to redirections through `redirect()`', (done) ->

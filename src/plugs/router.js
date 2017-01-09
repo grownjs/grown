@@ -26,6 +26,7 @@ module.exports = (...args) => {
     const list = [];
 
     map.forEach((name) => {
+      /* istanbul ignore else */
       if (_middlewares[name]) {
         const _fixedList = Array.isArray(_middlewares[name])
           ? _middlewares[name]
@@ -40,7 +41,14 @@ module.exports = (...args) => {
         }
 
         // normalize required middleware module
-        const middleware = buildFactory(require(_fixedMiddlewares[name]), options, name);
+        let _middleware = require(_fixedMiddlewares[name]);
+
+        /* istanbul ignore else */
+        if (typeof _middleware === 'function') {
+          _middleware = _middleware(options);
+        }
+
+        const middleware = buildFactory(_middleware, options, name);
 
         // push task to pipeline
         list.push({
@@ -88,10 +96,14 @@ module.exports = (...args) => {
       throw new Error(`Expecting 'cwd' to be a valid directory, given '${cwd}'`);
     }
 
-    const routeMappings = require(path.join(cwd, 'config', 'routes.js'));
-    const _router = routeMappings(new RouteMappings({ cwd }));
+    const _routeMappings = path.join(cwd, 'config', 'routes.js');
 
-    router.namespace('/', _router);
+    if (fs.existsSync(_routeMappings)) {
+      const routeMappings = require(_routeMappings);
+      const _router = routeMappings(new RouteMappings({ cwd }));
+
+      router.namespace('/', _router);
+    }
 
     // load global middleware definitions
     const _middlewaresFile = path.join(cwd, 'config', 'middlewares.js');

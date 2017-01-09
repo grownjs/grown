@@ -33,7 +33,7 @@ module.exports = (container, server, req, res) => {
     resp_headers: {},
     resp_charset: 'utf8',
     resp_body: null,
-    type: 'text/plain',
+    type: 'text/html',
   };
 
   const _filters = [];
