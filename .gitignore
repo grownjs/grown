@@ -1,5 +1,4 @@
 *.log
-/lib
 /build
 /external
 /coverage

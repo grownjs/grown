@@ -6,42 +6,13 @@
   "license": "MIT",
   "main": "lib/index.js",
   "scripts": {
-    "dev": "tarima -w",
-    "dev:spec": "jasmine-node spec --coffee --verbose --autoTest --captureExceptions --watchFolders lib",
-    "build": "tarima -fq",
+    "dev": "jasmine-node spec --coffee --verbose --autoTest --captureExceptions --watchFolders lib",
     "lint": "eslint lib spec",
     "spec": "jasmine-node spec --coffee --noStackTrace --captureExceptions",
     "cover": "istanbul cover --root lib --x '**/spec/**' -- jasmine-node --coffee spec",
     "cover:up": "codecov --file=coverage/lcov.info --disable=gcov -e TRAVIS_NODE_VERSION",
     "example": "node examples/_runner.js",
-    "test": "yarn lint && yarn build && yarn cover"
-  },
-  "tarima": {
-    "cacheFile": "lib/index.json",
-    "dest": "lib",
-    "bundle": [
-      "**/*.js"
-    ],
-    "filter": [
-      "!**/_*"
-    ],
-    "rename": [
-      "**/src/**:{filepath/1}/{filename}.{extname}"
-    ],
-    "ignoreFiles": [
-      ".gitignore"
-    ],
-    "bundleOptions": {
-      "extensions": {
-        "js": "es6"
-      },
-      "rollup": {
-        "format": "cjs",
-        "plugins": [
-          "rollup-plugin-json"
-        ]
-      }
-    }
+    "test": "yarn lint && yarn cover"
   },
   "dependencies": {
     "accepts": "^1.3.3",
@@ -51,8 +22,6 @@
   },
   "devDependencies": {
     "body-parser": "^1.15.2",
-    "buble": "^0.15.1",
-    "chokidar": "^1.6.1",
     "cli-color": "^1.1.0",
     "codecov": "^1.0.1",
     "cookie-parser": "^1.4.3",
@@ -68,15 +37,11 @@
     "json-schema-sequelizer": "https://github.com/pateketrueke/json-schema-sequelizer.git#master",
     "method-override": "^2.3.6",
     "morgan": "^1.7.0",
-    "rollup": "^0.39.2",
-    "rollup-plugin-json": "^2.1.0",
     "route-mappings": "^0.3.1",
     "sequelize": "^3.27.0",
     "serve-index": "^1.8.0",
     "serve-static": "^1.11.1",
-    "sqlite3": "^3.1.8",
     "std-mocks": "^1.0.1",
-    "tarima-cli": "gextech/tarima-cli",
     "winston": "^2.3.0"
   }
 }
