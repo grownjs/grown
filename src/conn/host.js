@@ -60,7 +60,7 @@ module.exports = ($, protocol) => {
 
     // error handler
     function fail(e) {
-      e.pipeline = e.pipeline || ['host'];
+      e.pipeline = (e.pipeline || []).concat('host');
 
       /* istanbul ignore else */
       if (res.finished) {

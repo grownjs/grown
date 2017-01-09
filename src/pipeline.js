@@ -155,7 +155,7 @@ module.exports = function _pipelineFactory(label, pipeline, _callback) {
         /* istanbul ignore else */
         if (err) {
           err.pipeline = err.pipeline || [];
-          Array.prototype.push.apply(err.pipeline, _stack);
+          Array.prototype.push.apply(err.pipeline, _stack.reverse());
         }
 
         /* istanbul ignore else */
