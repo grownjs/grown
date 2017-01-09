@@ -147,6 +147,10 @@ module.exports = (cwd) => {
             _view(conn, _blocks);
           });
       });
+
+      return conn
+        // finish response
+        .next(() => conn.resp_body === null && conn.end());
     });
   };
 };
