@@ -14,7 +14,7 @@
     "cover": "istanbul cover --root lib --x '**/spec/**' -- jasmine-node --coffee spec",
     "cover:up": "codecov --file=coverage/lcov.info --disable=gcov -e TRAVIS_NODE_VERSION",
     "example": "node examples/_runner.js",
-    "test": "yarn build && yarn cover"
+    "test": "yarn lint && yarn build && yarn cover"
   },
   "tarima": {
     "cacheFile": "lib/index.json",
