@@ -6,7 +6,12 @@ $ = Homegrown.plugs.models(resolve(__dirname, '_fixtures/app'))
 
 describe '#models', ->
   beforeEach (done) ->
-    $(@ctx = extensions: {}).then -> done()
+    $(@ctx = {
+      extensions: {}
+      initializers: []
+    })
+
+    Promise.all(@ctx.initializers).then -> done()
 
   it 'should load all models hierarchically', ->
     expect(@ctx.extensions.models.Single).not.toBeUndefined()
