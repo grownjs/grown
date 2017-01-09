@@ -170,6 +170,30 @@ module.exports = (container, server, req, res) => {
       return $;
     },
 
+    put_local(name, value) {
+      /* istanbul ignore else */
+      if (!(name && value && typeof name === 'string' && typeof value === 'string')) {
+        throw new Error(`Invalid put_local: '${name}' => '${value}'`);
+      }
+
+      _state.resp_locals[name] = value;
+
+      return $;
+    },
+
+    merge_locals(values) {
+      /* istanbul ignore else */
+      if (!(values && (typeof values === 'object' && !Array.isArray(values)))) {
+        throw new Error(`Invalid merge_locals: '${values}'`);
+      }
+
+      Object.keys(values).forEach((key) => {
+        $.put_local(key, values[key]);
+      });
+
+      return $;
+    },
+
     put_status(code) {
       /* istanbul ignore else */
       if (!(code && statusCodes[code])) {
@@ -248,14 +272,10 @@ module.exports = (container, server, req, res) => {
   // dynamic props
   props($, {
     resp_locals(value) {
-      if (!(value && (typeof value === 'object' && !Array.isArray(value)))) {
-        throw new Error(`Invalid resp_locals: '${value}'`);
-      }
+      $.merge_locals(value);
     },
     resp_headers(value) {
-      if (!(value && (typeof value === 'object' && !Array.isArray(value)))) {
-        throw new Error(`Invalid resp_headers: '${value}'`);
-      }
+      $.merge_resp_headers(value);
     },
     resp_charset(value) {
       /* istanbul ignore else */
