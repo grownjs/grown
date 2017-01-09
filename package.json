@@ -53,6 +53,7 @@
     "body-parser": "^1.15.2",
     "buble": "^0.15.1",
     "chokidar": "^1.6.1",
+    "cli-color": "^1.1.0",
     "codecov": "^1.0.1",
     "cookie-parser": "^1.4.3",
     "cookie-session": "^2.0.0-alpha.2",
