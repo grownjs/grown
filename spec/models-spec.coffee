@@ -11,7 +11,7 @@ describe '#models', ->
       initializers: []
     })
 
-    Promise.all(@ctx.initializers).then -> done()
+    @ctx.initializers[0]().then -> done()
 
   it 'should load all models hierarchically', ->
     expect(@ctx.extensions.models.Single).not.toBeUndefined()

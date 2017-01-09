@@ -37,7 +37,7 @@ describe '#router', ->
       expect(res.body).toMatch /Undefined .+? handler/
       done()
 
-  xit 'should responds to defined handlers with 200', (done) ->
+  it 'should responds to defined handlers with 200', (done) ->
     useConfig 'valid-routes'
 
     $.server.fetch('/yes').then (res) ->
