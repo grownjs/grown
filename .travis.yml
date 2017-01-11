@@ -6,10 +6,12 @@ addons:
   postgresql: '9.5'
 language: node_js
 node_js:
+  - 4
   - 6
   - 7
 before_script:
   - psql -c 'create database travis_ci_test;' -U postgres
+  - yarn add pg sqlite3
 script:
   - 'yarn test'
 after_success:
