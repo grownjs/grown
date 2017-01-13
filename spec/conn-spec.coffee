@@ -44,7 +44,7 @@ describe '#conn', ->
         conn.delete_resp_header 'foo'
         expect(conn.resp_headers).toEqual { baz: 'buzz' }
 
-        conn.resp_headers = {}
+        conn.resp_headers = null
         conn.put_resp_header 'x', 'y'
         expect(conn.get_resp_header 'x').toEqual 'y'
 
