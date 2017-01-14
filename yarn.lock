@@ -1575,9 +1575,9 @@ object-assign@4.1.0, object-assign@^4.0.1, object-assign@^4.1.0:
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/object-assign/-/object-assign-4.1.0.tgz#7a3b3d0e98063d43f4c03f2e8ae6cd51a86883a0"
 
-object-new@pateketrueke/object-new:
+"object-new@https://github.com/pateketrueke/object-new.git#master":
   version "0.0.1"
-  resolved "https://codeload.github.com/pateketrueke/object-new/tar.gz/257fea6b73ebc051e72a8033edb5000276e4cabe"
+  resolved "https://github.com/pateketrueke/object-new.git#a2c134661d3f08a11f8d7cb6c8d904a334d275db"
 
 on-finished@~2.3.0:
   version "2.3.0"
@@ -1927,9 +1927,9 @@ rndm@1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/rndm/-/rndm-1.2.0.tgz#f33fe9cfb52bbfd520aa18323bc65db110a1b76c"
 
-route-mappings@^0.3.1:
-  version "0.3.1"
-  resolved "https://registry.yarnpkg.com/route-mappings/-/route-mappings-0.3.1.tgz#13ec3b4f5af315ea13770634e011a5846bb1ed34"
+route-mappings@0.3.2:
+  version "0.3.2"
+  resolved "https://registry.yarnpkg.com/route-mappings/-/route-mappings-0.3.2.tgz#832e615dc29e2d22d9e34e8eef0898b3ae92a82c"
   dependencies:
     pluralize "^2.0.0"
 

@@ -1,0 +1,81 @@
+#!/usr/bin/env node
+
+'use strict';
+
+/* eslint-disable prefer-rest-params */
+
+process.env.IS_REPL = process.argv.indexOf('--repl') > -1;
+
+// common helpers
+const die = statusCode => process.exit(statusCode);
+
+// standard output
+function echo() {
+  process.stdout.write(`${Array.prototype.slice.call(arguments).join('')}`);
+}
+
+// runtime hooks
+const Module = require('module');
+
+function _clearModules() {
+  Object.keys(Module._cache)
+    .forEach((key) => {
+      if (key.indexOf('node_modules') === -1) {
+        delete Module._cache[key];
+      }
+    });
+}
+
+// initialization
+let $;
+
+// framework modules
+const Homegrown = require('..');
+
+function _startApplication(done) {
+  try {
+    $ = Homegrown.preset({
+      env: process.env.NODE_ENV || 'dev',
+      cwd: process.cwd(),
+      appDir: 'app',
+      srcDir: 'build',
+    });
+
+    // start server
+    $.listen(process.env.PORT || 8080, (app) => {
+      echo('Listening on ', app.location.href, '\n');
+
+      /* istanbul ignore else */
+      if (typeof done === 'function') {
+        done($, app);
+      }
+    });
+
+    /* istanbul ignore else */
+    if (process.env.IS_REPL === 'true') {
+      $.use(Homegrown.plugs.repl());
+    }
+  } catch (e) {
+    echo(`${e.message || e.toString()}\n`);
+    die(1);
+  }
+}
+
+_startApplication();
+
+function _reload(cb) {
+  return $.burn(() => {
+    _clearModules();
+    _startApplication(cb);
+  });
+}
+
+if (process.env.IS_REPL === 'true') {
+  process.on('repl:reload', () => _reload());
+} else {
+  // gracefully dies
+  process.on('exit', () => $.burn());
+  process.on('SIGINT', () => process.exit());
+}
+
+module.exports = cb => _reload(cb);
