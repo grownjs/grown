@@ -1,29 +1,27 @@
 $ = require('./_protocol')
 
 describe '#test', ->
-  beforeEach ->
-    $()
-    $.server.ctx.mount (conn) ->
-      $.method = conn.req.method
-      $.path = conn.req.url
-      $.a = conn.req.a
+  beforeEach $
 
   it 'can take method/path/opts as arguments', (done) ->
-    $.server.fetch('put', '/x', a: 'b').then ->
-      expect($.method).toEqual 'PUT'
-      expect($.path).toEqual '/x'
-      expect($.a).toEqual 'b'
+    $.server.mount (@conn) =>
+    $.server.fetch('put', '/x', a: 'b').then =>
+      expect(@conn.req.method).toEqual 'PUT'
+      expect(@conn.req.url).toEqual '/x'
+      expect(@conn.req.a).toEqual 'b'
       done()
 
   it 'can take path/opts arguments', (done) ->
-    $.server.fetch('/x', a: 'b').then ->
-      expect($.method).toEqual 'GET'
-      expect($.path).toEqual '/x'
-      expect($.a).toEqual 'b'
+    $.server.mount (@conn) =>
+    $.server.fetch('/x', a: 'b').then =>
+      expect(@conn.req.method).toEqual 'GET'
+      expect(@conn.req.url).toEqual '/x'
+      expect(@conn.req.a).toEqual 'b'
       done()
 
   it 'can take an object as arguments', (done) ->
-    $.server.fetch(url: '/x', method: 'POST').then ->
-      expect($.method).toEqual 'POST'
-      expect($.path).toEqual '/x'
+    $.server.mount (@conn) =>
+    $.server.fetch(url: '/x', method: 'POST').then =>
+      expect(@conn.req.method).toEqual 'POST'
+      expect(@conn.req.url).toEqual '/x'
       done()
