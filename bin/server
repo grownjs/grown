@@ -38,7 +38,7 @@ function _startApplication(done) {
       env: process.env.NODE_ENV || 'dev',
       cwd: process.cwd(),
       appDir: 'app',
-      srcDir: 'build',
+      srcDir: '_build',
     });
 
     // start server
