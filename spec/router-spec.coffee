@@ -120,11 +120,3 @@ describe '#router', ->
     $.server.fetch('/other-example').then (res) ->
       expect(res.body).toEqual '["SYNC","ASYNC"]'
       done()
-
-  it '...', (done) ->
-    useConfig 'with-middlewares'
-
-    $.server.fetch('/other-example').then (res) ->
-      console.log $.server.extensions.routes
-      console.log $.server.extensions.controllers
-      done()
