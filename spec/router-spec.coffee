@@ -5,7 +5,7 @@ $ = require('./_protocol')
 Homegrown = require('../lib')
 
 useConfig = (name) ->
-  $.server.ctx.use Homegrown.plugs.router(resolve(__dirname, '_fixtures', name))
+  $.server.use Homegrown.plugs.router(resolve(__dirname, '_fixtures', name))
 
 describe '#router', ->
   beforeEach $
@@ -55,7 +55,7 @@ describe '#router', ->
       done()
 
   it 'should append `conn.params` and `conn.handler` when a route matches', (done) ->
-    $.server.ctx.mount (conn) ->
+    $.server.mount (conn) ->
       conn.next ->
         $.params = conn.params
         $.handler = conn.handler
@@ -119,4 +119,12 @@ describe '#router', ->
 
     $.server.fetch('/other-example').then (res) ->
       expect(res.body).toEqual '["SYNC","ASYNC"]'
+      done()
+
+  it '...', (done) ->
+    useConfig 'with-middlewares'
+
+    $.server.fetch('/other-example').then (res) ->
+      console.log $.server.extensions.routes
+      console.log $.server.extensions.controllers
       done()

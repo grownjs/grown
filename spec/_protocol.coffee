@@ -1,8 +1,7 @@
 Homegrown = require('..')
 
 $ = module.exports = ->
-  Object.keys($).forEach (k) ->
-    delete $[k]
+  delete $[k] for k in $
 
   $.server = Homegrown.new()
   $.server.use Homegrown.plugs.test()

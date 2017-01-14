@@ -5,7 +5,7 @@ $ = require('./_protocol')
 Homegrown = require('..')
 
 useConfig = (name) ->
-  $.server.ctx.use Homegrown.plugs.render(resolve(__dirname, '_fixtures', name))
+  $.server.use Homegrown.plugs.render(resolve(__dirname, '_fixtures', name))
 
 describe '#render', ->
   beforeEach $
@@ -16,7 +16,7 @@ describe '#render', ->
   it 'should render single views as blocks', (done) ->
     useConfig 'app'
 
-    $.server.ctx.mount (conn) ->
+    $.server.mount (conn) ->
       conn.render 'example', foo: 'bar'
 
     $.server.fetch().then (res) ->
@@ -27,7 +27,7 @@ describe '#render', ->
   it 'should render multiple views as lists', (done) ->
     useConfig 'app'
 
-    $.server.ctx.mount (conn) ->
+    $.server.mount (conn) ->
       conn.render 'example', foo: 'FOO'
       conn.render 'example', foo: 'FUU'
       conn.render 'example', foo: 'FUA'

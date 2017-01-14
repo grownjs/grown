@@ -7,26 +7,19 @@ describe '#conn', ->
 
   describe 'request', ->
     it 'should handle params', (done) ->
-      $.server.ctx.mount (conn) ->
-        conn.req.url = '/?x=y'
-        conn.req.body = { a: 'b' }
-        conn.req.params = { m: 'n' }
-
-        expect(conn.params).toEqual { x: 'y', a: 'b', m: 'n' }
-        done()
-
-      $.server.fetch()
+      $.server.mount (conn) ->
+        expect(conn.params).toEqual { x: 'y', a: 'b' }
+      $.server.fetch('/?x=y', { body: { a: 'b' } }).then done
 
     it 'should handle headers', (done) ->
-      $.server.ctx.mount (conn) ->
+      $.server.mount (conn) ->
         conn.put_req_header 'x', 'y'
-        expect(conn.get_req_header 'x').toEqual 'y'
-
         conn.delete_req_header 'content-length'
-        expect(conn.req_headers).toEqual { host: ':80', x: 'y' }
-        done()
 
-      $.server.fetch()
+        expect(conn.get_req_header 'x').toEqual 'y'
+        expect(conn.req_headers).toEqual { host: ':80', x: 'y' }
+
+      $.server.fetch().then done
 
   describe 'response', ->
     it 'should responds to unsupported requests with 501', (done) ->
@@ -38,7 +31,7 @@ describe '#conn', ->
           done()
 
     it 'should handle headers', (done) ->
-      $.server.ctx.mount (conn) ->
+      $.server.mount (conn) ->
         conn.resp_headers = { foo: 'bar', baz: 'buzz' }
 
         conn.delete_resp_header 'foo'
@@ -50,12 +43,11 @@ describe '#conn', ->
 
         conn.merge_resp_headers { a: 'b' }
         expect(conn.resp_headers).toEqual { x: 'y', a: 'b' }
-        done()
 
-      $.server.fetch()
+      $.server.fetch done
 
     it 'should handle content-type and charset', (done) ->
-      $.server.ctx.mount (conn) ->
+      $.server.mount (conn) ->
         conn.resp_charset = 'UTF-8'
         conn.put_resp_content_type 'text/plain'
 
@@ -64,16 +56,17 @@ describe '#conn', ->
         done()
 
     it 'should finalize the response through `end()`', (done) ->
-      $.server.ctx.mount (conn) ->
+      $.server.mount (conn) ->
         conn.end 'OK'
 
       $.server.fetch().then (res) ->
+        expect(res.body).toEqual 'OK'
         expect(res.statusCode).toEqual 200
         expect(res.getHeader('Content-Type')).toEqual 'text/html; charset=utf8'
         done()
 
   it 'should responds to redirections through `redirect()`', (done) ->
-    $.server.ctx.mount (conn) ->
+    $.server.mount (conn) ->
       conn.redirect('/y?a=b')
 
     $.server.fetch (req, next) ->
@@ -85,7 +78,7 @@ describe '#conn', ->
         done()
 
   it 'should responds to any statusCode through `put_status()`', (done) ->
-    $.server.ctx.mount (conn) ->
+    $.server.mount (conn) ->
       expect(-> conn.put_status()).toThrow()
       conn.put_status(404)
 
@@ -98,11 +91,11 @@ describe '#conn', ->
 
   describe 'conn-like middleware support', ->
     it 'supports plain functions', (done) ->
-      $.server.ctx.mount -> done()
+      $.server.mount -> done()
       $.server.fetch()
 
     it 'supports promise values', (done) ->
-      $.server.ctx.mount (conn) ->
+      $.server.mount (conn) ->
         new Promise (resolve) ->
           setTimeout ->
             resolve()
@@ -115,30 +108,30 @@ describe '#conn', ->
       class Dummy
         call: -> done()
 
-      $.server.ctx.mount Dummy
+      $.server.mount Dummy
       $.server.fetch()
 
     it 'supports plain-old callbacks', (done) ->
       dummy =
         call: -> done()
 
-      $.server.ctx.mount dummy
+      $.server.mount dummy
       $.server.fetch()
 
     it 'supports iterator-like callbacks', (done) ->
       dummy =
         next: -> { done: true, value: done() }
 
-      $.server.ctx.mount dummy
+      $.server.mount dummy
       $.server.fetch()
 
     it 'supports generator-like callbacks', (done) ->
-      $.server.ctx.mount `(function*(){yield done})`
+      $.server.mount `(function*(){yield done})`
       $.server.fetch()
 
   describe 'error reporting', ->
     it 'should output readable markup', (done) ->
-      $.server.ctx.mount (conn) ->
+      $.server.mount (conn) ->
         conn.req.body = { x: 'y', m: ['n', 'o'] }
 
         err = new Error 'HTML'
@@ -164,7 +157,7 @@ describe '#conn', ->
         done()
 
     it 'should output readable text', (done) ->
-      $.server.ctx.mount (conn) ->
+      $.server.mount (conn) ->
         conn.req.headers.accept = 'text/plain'
         conn.req.body = { x: 'y', m: ['n', 'o'] }
 
@@ -188,7 +181,7 @@ describe '#conn', ->
         done()
 
     it 'should output useful json', (done) ->
-      $.server.ctx.mount (conn) ->
+      $.server.mount (conn) ->
         conn.req.headers.accept = 'application/json'
         conn.req.body = { x: 'y', m: ['n', 'o'] }
 

@@ -4,18 +4,18 @@ describe 'known express-middleware', ->
   beforeEach $
 
   it 'supports error-handling middleware', (done) ->
-    $.server.ctx.mount (e, req, res, next) ->
+    $.server.mount (e, req, res, next) ->
       expect(e.message).toEqual 'D:'
       done()
 
-    $.server.ctx.mount ->
+    $.server.mount ->
       throw new Error 'D:'
 
     $.server.fetch()
 
   describe 'input support', ->
     it 'supports `method-override` for hacking `req.method`', (done) ->
-      $.server.ctx.mount require('method-override')()
+      $.server.mount require('method-override')()
 
       $.server.fetch (req, next) ->
         req.method = 'POST'
@@ -28,8 +28,8 @@ describe 'known express-middleware', ->
           done()
 
     it 'supports `body-parser` for JSON payloads', (done) ->
-      $.server.ctx.mount require('body-parser').json()
-      $.server.ctx.mount (conn) ->
+      $.server.mount require('body-parser').json()
+      $.server.mount (conn) ->
         $.params = conn.params
 
       $.server.fetch (req, next) ->
@@ -43,7 +43,7 @@ describe 'known express-middleware', ->
           done()
 
     it 'supports `body-parser` for urlencoded payloads', (done) ->
-      $.server.ctx.mount require('body-parser').urlencoded(extended: true)
+      $.server.mount require('body-parser').urlencoded(extended: true)
 
       $.server.fetch (req, next) ->
         req._pushData('baz=buzz')

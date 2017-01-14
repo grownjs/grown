@@ -6,12 +6,12 @@ describe '#session', ->
   beforeEach $
 
   it 'should support cookie/session', (done) ->
-    $.server.ctx.use Homegrown.plugs.session({ secret: 'test' })
+    $.server.use Homegrown.plugs.session({ secret: 'test' })
 
-    $.server.ctx.mount (conn) ->
+    $.server.mount (conn) ->
       conn.put_session 'x', 'y'
 
-    $.server.ctx.mount (conn) ->
+    $.server.mount (conn) ->
       conn.put_resp_cookie 'x', 'y', { a: 'b' }
       conn.resp_body = conn.session.x
 

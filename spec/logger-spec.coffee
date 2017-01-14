@@ -6,14 +6,14 @@ Homegrown = require('../lib')
 describe '#logger', ->
   beforeEach ->
     $()
-    $.server.ctx.use Homegrown.plugs.logger transports: ['Console']
-    $.server.ctx.mount (conn) ->
+    $.server.use Homegrown.plugs.logger transports: ['Console']
+    $.server.mount (conn) ->
       stdMocks.use()
       conn.log 'info', 'OK'
       conn.error ':('
       stdMocks.restore()
 
-  it '...', (done) ->
+  it 'should wrap log methods', (done) ->
     $.server.fetch().then (res) ->
       result = stdMocks.flush()
       expect(res.error).toBeUndefined()

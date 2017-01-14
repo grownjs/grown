@@ -1,31 +1,21 @@
 { resolve } = require('path')
 
-$new = require('object-new')
 Homegrown = require('../lib')
 
 $ = Homegrown.plugs.models(resolve(__dirname, '_fixtures/app'))
 
 describe '#models', ->
   beforeEach (done) ->
-    $(@test = {
-      ctx:
-        extensions: $new()
-      initializers: []
-    })
-
-    @test.initializers[0]()
-      .then -> done()
-      .catch (e) ->
-        console.log e.stack
-        done()
+    $(@ctx = Homegrown.new())
+    @ctx._initializers[0]().then done
 
   it 'should load all models hierarchically', ->
-    expect(@test.ctx.extensions.models.Single).not.toBeUndefined()
-    expect(@test.ctx.extensions.models.Parent).not.toBeUndefined()
-    expect(@test.ctx.extensions.models.ParentChild).not.toBeUndefined()
+    expect(@ctx.extensions.models.Single).not.toBeUndefined()
+    expect(@ctx.extensions.models.Parent).not.toBeUndefined()
+    expect(@ctx.extensions.models.ParentChild).not.toBeUndefined()
 
   it 'should sync all models without issues', (done) ->
-    { sync, Single } = @test.ctx.extensions.models
+    { sync, Single } = @ctx.extensions.models
 
     sync().then =>
       Single.create(value: 'OSOM')
