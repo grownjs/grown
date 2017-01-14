@@ -29,16 +29,17 @@ function _clearModules() {
 // initialization
 let $;
 
-// framework modules
+const path = require('path');
+
 const Homegrown = require('..');
 
 function _startApplication(done) {
   try {
     $ = Homegrown.preset({
-      env: process.env.NODE_ENV || 'dev',
       cwd: process.cwd(),
-      appDir: 'app',
-      srcDir: '_build',
+      env: process.env.NODE_ENV || 'dev',
+      appDir: path.join(process.cwd(), 'app'),
+      srcDir: path.join(process.cwd(), '_build'),
     });
 
     // start server
