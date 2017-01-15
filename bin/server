@@ -13,6 +13,11 @@ if (process.argv.indexOf('--debug') > -1) {
   require('debug').enable('homegrown,homegrown:*');
 }
 
+/* istanbul ignore else */
+if (process.env.NODE_ENV === 'dev') {
+  require('source-map-support').install();
+}
+
 // common helpers
 const die = statusCode => process.exit(statusCode);
 
