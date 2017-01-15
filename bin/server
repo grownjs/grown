@@ -49,10 +49,9 @@ const Homegrown = require('..');
 function _startApplication(done) {
   try {
     $ = Homegrown.preset({
-      cwd: process.cwd(),
       env: process.env.NODE_ENV || 'dev',
-      appDir: path.join(process.cwd(), 'app'),
-      srcDir: path.join(process.cwd(), '_build'),
+      appDir: path.join(process.cwd(), '_build/app'),
+      publicDir: path.join(process.cwd(), '_build/public'),
     });
 
     // start server
