@@ -10,9 +10,6 @@ useConfig = (name) ->
 describe '#router', ->
   beforeEach $
 
-  it 'should fail on undefined `cwd` option', ->
-    expect(-> $.server.use Homegrown.plugs.router()).toThrow()
-
   it 'should responds to unsupported requests with 405', (done) ->
     useConfig 'no-routes'
 
@@ -55,17 +52,13 @@ describe '#router', ->
       done()
 
   it 'should append `conn.params` and `conn.handler` when a route matches', (done) ->
-    $.server.mount (conn) ->
-      conn.next ->
-        $.params = conn.params
-        $.handler = conn.handler
-
     useConfig 'valid-routes'
 
-    $.server.fetch('/x').then ->
-      expect($.params).toEqual { value: 'x' }
-      expect($.handler.controller).toEqual 'Example'
-      expect($.handler.action).toEqual 'test_params'
+    $.server.mount (@conn) =>
+    $.server.fetch('/x').then =>
+      expect(@conn.params).toEqual { value: 'x' }
+      expect(@conn.handler.controller).toEqual 'Example'
+      expect(@conn.handler.action).toEqual 'test_params'
       done()
 
   it 'should fail when requiring any broken source', (done) ->

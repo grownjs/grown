@@ -10,9 +10,6 @@ useConfig = (name) ->
 describe '#render', ->
   beforeEach $
 
-  it 'should fail on undefined `cwd` option', ->
-    expect(-> $.server.use Homegrown.plugs.render()).toThrow()
-
   it 'should render single views as blocks', (done) ->
     useConfig 'app'
 
