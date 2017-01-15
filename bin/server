@@ -2,9 +2,16 @@
 
 'use strict';
 
+/* eslint-disable global-require */
 /* eslint-disable prefer-rest-params */
 
 process.env.IS_REPL = process.argv.indexOf('--repl') > -1;
+process.env.NODE_ENV = process.env.NODE_ENV || 'dev';
+
+/* istanbul ignore else */
+if (process.argv.indexOf('--debug')) {
+  require('debug').enable('homegrown:*');
+}
 
 // common helpers
 const die = statusCode => process.exit(statusCode);
@@ -20,6 +27,7 @@ const Module = require('module');
 function _clearModules() {
   Object.keys(Module._cache)
     .forEach((key) => {
+      /* istanbul ignore else */
       if (key.indexOf('node_modules') === -1) {
         delete Module._cache[key];
       }
