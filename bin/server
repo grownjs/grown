@@ -42,17 +42,32 @@ function _clearModules() {
 // initialization
 let $;
 
+const cwd = process.cwd();
 const path = require('path');
 
 const Homegrown = require('..');
 
+// setup environment
+Homegrown.configure(cwd);
+
 function _startApplication(done) {
   try {
-    $ = Homegrown.preset({
+    $ = Homegrown.new({
       env: process.env.NODE_ENV || 'dev',
-      appDir: path.join(process.cwd(), '_build/app'),
-      publicDir: path.join(process.cwd(), '_build/public'),
+      appDir: process.env.APP_DIR || path.join(cwd, '_build/app'),
+      publicDir: process.env.PUBLIC_DIR || path.join(cwd, '_build/public'),
     });
+
+    // try static handler first
+    $.mount(require('serve-static')($.get('publicDir')));
+
+    // inject logging helpers
+    $.use(Homegrown.plugs.logger({ transports: [{ Console: { colorize: true } }] }));
+
+    // standard mvc kit
+    $.use(Homegrown.plugs.models($.get('appDir'), path.join(__dirname, '../lib/preset')));
+    $.use(Homegrown.plugs.render($.get('appDir'), path.join(__dirname, '../lib/preset')));
+    $.use(Homegrown.plugs.router($.get('appDir'), path.join(__dirname, '../lib/preset')));
 
     // start server
     $.listen(process.env.PORT || 8080, (app) => {
@@ -86,7 +101,6 @@ function _reload(cb) {
 if (process.env.IS_REPL === 'true') {
   process.on('repl:reload', () => _reload());
 } else {
-  // gracefully dies
   process.on('exit', () => $.burn());
   process.on('SIGINT', () => process.exit());
 }
