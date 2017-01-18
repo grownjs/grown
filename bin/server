@@ -56,6 +56,9 @@ function _startApplication(done) {
       env: process.env.NODE_ENV || 'dev',
       appDir: process.env.APP_DIR || path.join(cwd, '_build/app'),
       publicDir: process.env.PUBLIC_DIR || path.join(cwd, '_build/public'),
+      session: {
+        secret: process.env.SESSION_SECRET || 'secret*value',
+      },
     });
 
     // try static handler first
@@ -68,6 +71,10 @@ function _startApplication(done) {
     $.use(Homegrown.plugs.models($.get('appDir'), path.join(__dirname, '../lib/preset')));
     $.use(Homegrown.plugs.render($.get('appDir'), path.join(__dirname, '../lib/preset')));
     $.use(Homegrown.plugs.router($.get('appDir'), path.join(__dirname, '../lib/preset')));
+
+    // other goodies
+    $.use(Homegrown.plugs.upload());
+    $.use(Homegrown.plugs.session({ secret: $.get('session.secret') }));
 
     // start server
     $.listen(process.env.PORT || 8080, (app) => {
