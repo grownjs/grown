@@ -45,10 +45,10 @@ let $;
 const cwd = process.cwd();
 const path = require('path');
 
-const Homegrown = require('..')();
+const homegrown = require('..');
 
 // setup environment
-Homegrown.configure(cwd);
+homegrown().configure(cwd);
 
 function parseBool(value) {
   if (value === 'true') {
@@ -64,7 +64,9 @@ function parseBool(value) {
 
 function _startApplication(done) {
   try {
-    $ = Homegrown.new({
+    const H = homegrown();
+
+    $ = H.new({
       env: process.env.NODE_ENV || 'dev',
       appDir: process.env.APP_DIR || path.join(cwd, '_build/app'),
       publicDir: process.env.PUBLIC_DIR || path.join(cwd, '_build/public'),
@@ -83,16 +85,20 @@ function _startApplication(done) {
     $.mount(require('serve-static')($.get('publicDir')));
 
     // inject logging helpers
-    $.use(Homegrown.plugs.logger({ transports: [{ Console: { colorize: true } }] }));
+    $.use(H.plugs.logger({ transports: [{ Console: { colorize: true } }] }));
 
     // standard mvc kit
-    $.use(Homegrown.plugs.models($.get('appDir'), path.join(__dirname, '../lib/preset')));
-    $.use(Homegrown.plugs.render($.get('appDir'), path.join(__dirname, '../lib/preset')));
-    $.use(Homegrown.plugs.router($.get('appDir'), path.join(__dirname, '../lib/preset')));
+    $.use(H.plugs.models($.get('appDir'), path.join(__dirname, '../lib/preset')));
+    $.use(H.plugs.render($.get('appDir'), path.join(__dirname, '../lib/preset')));
+    $.use(H.plugs.router($.get('appDir'), path.join(__dirname, '../lib/preset')));
 
     // other goodies
-    $.use(Homegrown.plugs.upload($.get('upload')));
-    $.use(Homegrown.plugs.session($.get('session')));
+    $.use(H.plugs.upload($.get('upload')));
+    $.use(H.plugs.session($.get('session')));
+
+    $.mount(require('../lib/preset/middlewares/body-parser-urlencoded')($.get('bodyParser') || {}));
+    $.mount(require('../lib/preset/middlewares/body-parser-json')());
+    $.mount(require('../lib/preset/middlewares/method-override')());
 
     // start server
     $.listen(process.env.PORT || 8080, (app) => {
@@ -106,7 +112,7 @@ function _startApplication(done) {
 
     /* istanbul ignore else */
     if (process.env.IS_REPL === 'true') {
-      $.use(Homegrown.plugs.repl());
+      $.use(H.plugs.repl());
     }
   } catch (e) {
     echo(`${e.message || e.toString()}\n`);
