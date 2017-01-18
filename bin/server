@@ -79,6 +79,9 @@ function _startApplication(done) {
       },
     });
 
+    // import native support
+    $.extensions('Homegrown.support.http', () => require('http'));
+
     // try static handler first
     $.mount(require('serve-static')($.get('publicDir')));
 
