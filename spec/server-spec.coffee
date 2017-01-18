@@ -1,6 +1,6 @@
 describe '#server', ->
   it 'should fail on unsupported protocols', (done) ->
-    $ = require('..').new()
+    $ = require('..')().new()
 
     $._protocols.http =
     $._protocols.https =

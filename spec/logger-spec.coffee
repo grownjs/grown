@@ -1,12 +1,13 @@
 $ = require('./_protocol')
 
 stdMocks = require('std-mocks')
-Homegrown = require('../lib')
+
+logger = require('../lib/plugs/logger')
 
 describe '#logger', ->
   beforeEach ->
     $()
-    $.server.use Homegrown.plugs.logger transports: ['Console']
+    $.server.use logger transports: ['Console']
     $.server.mount (conn) ->
       stdMocks.use()
       conn.log 'info', 'OK'

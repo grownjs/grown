@@ -1,12 +1,12 @@
 $ = require('./_protocol')
 
-Homegrown = require('..')
+session = require('../lib/plugs/session')
 
 describe '#session', ->
   beforeEach $
 
   it 'should support cookie/session', (done) ->
-    $.server.use Homegrown.plugs.session({ secret: 'test' })
+    $.server.use session({ secret: 'test' })
 
     $.server.mount (conn) ->
       conn.put_session 'x', 'y'

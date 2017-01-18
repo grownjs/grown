@@ -2,10 +2,10 @@
 
 $ = require('./_protocol')
 
-Homegrown = require('..')
+render = require('../lib/plugs/render')
 
 useConfig = (name) ->
-  $.server.use Homegrown.plugs.render(resolve(__dirname, '_fixtures', name))
+  $.server.use render(resolve(__dirname, '_fixtures', name))
 
 describe '#render', ->
   beforeEach $

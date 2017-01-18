@@ -1,13 +1,14 @@
 { resolve } = require('path')
 
-Homegrown = require('../lib')
+H = require('..')()
 util = require('../lib/util')
+models = require('../lib/plugs/models')
 
-$ = Homegrown.plugs.models(resolve(__dirname, '_fixtures/app'))
+$ = models(resolve(__dirname, '_fixtures/app'))
 
 describe '#models', ->
   beforeEach (done) ->
-    $(@ctx = Homegrown.new(), util)
+    $(@ctx = H.new(), util)
     @ctx._initializers[0]().then done
 
   it 'should load all models hierarchically', ->

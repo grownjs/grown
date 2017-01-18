@@ -2,10 +2,10 @@
 
 $ = require('./_protocol')
 
-Homegrown = require('../lib')
+router = require('../lib/plugs/router')
 
 useConfig = (name) ->
-  $.server.use Homegrown.plugs.router(resolve(__dirname, '_fixtures', name))
+  $.server.use router(resolve(__dirname, '_fixtures', name))
 
 describe '#router', ->
   beforeEach $

@@ -45,7 +45,7 @@ let $;
 const cwd = process.cwd();
 const path = require('path');
 
-const Homegrown = require('..');
+const Homegrown = require('..')();
 
 // setup environment
 Homegrown.configure(cwd);
