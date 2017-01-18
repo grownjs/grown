@@ -66,8 +66,8 @@ function _startApplication(done) {
   try {
     $ = Homegrown.new({
       env: process.env.NODE_ENV || 'dev',
-      appDir: process.env.APP_DIR || path.join(cwd, '_build/app'),
-      publicDir: process.env.PUBLIC_DIR || path.join(cwd, '_build/public'),
+      appDir: path.resolve(cwd, process.env.APP_DIR || '_build/app'),
+      publicDir: path.resolve(cwd, process.env.PUBLIC_DIR || '_build/public'),
       session: {
         secret: process.env.SESSION_SECRET || 'secret*value',
         keys: (process.env.SESSION_KEYS || 'secret*value').split(/\s+/),
