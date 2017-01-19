@@ -80,29 +80,61 @@ function _startApplication(done) {
         multiple: parseBool(process.env.UPLOAD_MULTIPLE) || true,
         maxFiles: parseInt(process.env.UPLOAD_MAXFILES, 0) || 10,
       },
+      logger: {
+        format: process.env.LOGGER_FORMAT || 'dev',
+        colorize: parseBool(process.env.LOGGER_COLORIZE) || true,
+      },
     });
 
     // import native support
     $.extensions('Homegrown.support.http', () => require('http'));
 
+    // log as soon as possible
+    $.mount(require('morgan')($.get('logger.format')));
+
     // try static handler first
     $.mount(require('serve-static')($.get('publicDir')));
 
     // inject logging helpers
-    $.use(homegrown.plugs.logger({ transports: [{ Console: { colorize: true } }] }));
+    $.use(homegrown.plugs.logger({
+      transports: [{
+        Console: {
+          colorize: $.get('logger.colorize'),
+        },
+      }],
+    }));
 
     // standard mvc kit
     $.use(homegrown.plugs.models($.get('appDir'), path.join(__dirname, '../lib/preset')));
     $.use(homegrown.plugs.render($.get('appDir'), path.join(__dirname, '../lib/preset')));
     $.use(homegrown.plugs.router($.get('appDir'), path.join(__dirname, '../lib/preset')));
 
-    // other goodies
+    $.mount(require('body-parser').json());
+    $.mount(require('body-parser').urlencoded({ extended: false }));
+
+    // built-in method-override
+    $.mount('_method', (conn) => {
+      const _method = conn.query_params._method || conn.body_params._method
+        || conn.req_headers['x-method-override']
+        || conn.req_headers['x-http-method']
+        || conn.req_headers['x-http-method-override'];
+
+      /* istanbul ignore else */
+      if (_method) {
+        conn.req.originalMethod = conn.req.method;
+        conn.req.method = _method.toUpperCase();
+
+        // remove _method from query
+        conn.req.url = conn.req.url
+          .replace(/([&?])_method=\w+&?/g, '$1');
+
+        // remove _method from body
+        delete conn.req.body._method;
+      }
+    });
+
     $.use(homegrown.plugs.upload($.get('upload')));
     $.use(homegrown.plugs.session($.get('session')));
-
-    $.mount(require('../lib/preset/middlewares/body-parser-urlencoded')($.get('bodyParser') || {}));
-    $.mount(require('../lib/preset/middlewares/body-parser-json')());
-    $.mount(require('../lib/preset/middlewares/method-override')());
 
     /* istanbul ignore else */
     if (process.env.IS_REPL === 'true') {
@@ -119,7 +151,7 @@ function _startApplication(done) {
       }
     });
   } catch (e) {
-    echo(`${e.message || e.toString()}\n`);
+    echo(`${e.stack || e.message || e.toString()}\n`);
     die(1);
   }
 }
