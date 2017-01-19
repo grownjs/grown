@@ -6,6 +6,6 @@ $ = module.exports = ->
   Homegrown = homegrown()
 
   $.server = Homegrown.new()
-  $.server.use Homegrown.plugs.test()
+  $.server.use homegrown.plugs.test()
 
   null

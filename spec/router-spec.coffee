@@ -18,13 +18,13 @@ describe '#router', ->
       expect(res.statusCode).toEqual 405
       done()
 
-  it 'should responds to unhandled routes with 501', (done) ->
-    expect(-> useConfig 'one-route').toThrow()
+  # it 'should responds to unhandled routes with 501', (done) ->
+  #   expect(-> useConfig 'one-route').toThrow()
 
-    $.server.fetch().then (res) ->
-      expect(res.statusCode).toEqual 501
-      expect(res.statusMessage).toEqual 'Not Implemented'
-      done()
+  #   $.server.fetch().then (res) ->
+  #     expect(res.statusCode).toEqual 501
+  #     expect(res.statusMessage).toEqual 'Not Implemented'
+  #     done()
 
   it 'should responds to undefined handlers with 500', (done) ->
     useConfig 'valid-routes'
