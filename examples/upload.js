@@ -1,12 +1,18 @@
-const $ = require('..').new();
+/* eslint-disable global-require */
 
-$.ctx.use(require('..').plugs.upload());
+const Homegrown = require('..')();
 
-$.ctx.listen(5000, (app) => {
+const $ = Homegrown.new();
+
+$.extensions('Homegrown.support.http', () => require('http'));
+
+$.use(require('..').plugs.upload());
+
+$.listen(5000, (app) => {
   console.log('Listening on', app.location.href);
 });
 
-$.ctx.mount((conn) => {
+$.mount((conn) => {
   if (conn.request_path === '/upload') {
     return conn.upload_files().then((result) => {
       conn.resp_body = result;

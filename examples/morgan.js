@@ -1,7 +1,15 @@
-const $ = require('..').new();
+/* eslint-disable global-require */
 
-$.ctx.mount(require('morgan')('dev'));
+const Homegrown = require('..')();
 
-$.ctx.listen(5000, (app) => {
+const $ = Homegrown.new();
+
+$.extensions('Homegrown.support.http', () => require('http'));
+
+$.mount(require('morgan')('dev'));
+
+$.listen(5000, (app) => {
   console.log('Listening on', app.location.href);
+}).catch((err) => {
+  console.log(err.message);
 });
