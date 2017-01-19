@@ -1,4 +1,6 @@
-#!/usr/bin/env node
+#!/bin/sh
+':' //; exec "$(command -v nodejs || command -v node)" "$0" "$@"
+;
 
 'use strict';
 
@@ -87,7 +89,7 @@ function _startApplication(done) {
     });
 
     // import native support
-    $.extensions('Homegrown.support.http', () => require('http'));
+    $.extensions('Homegrown.conn.http', () => require('http'));
 
     // log as soon as possible
     $.mount(require('morgan')($.get('logger.format')));
