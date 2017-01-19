@@ -48,7 +48,7 @@ const path = require('path');
 const homegrown = require('..');
 
 // setup environment
-homegrown().configure(cwd);
+homegrown.env(cwd);
 
 function parseBool(value) {
   if (value === 'true') {
@@ -64,12 +64,13 @@ function parseBool(value) {
 
 function _startApplication(done) {
   try {
-    const H = homegrown();
+    // reset context
+    const Homegrown = homegrown();
 
-    $ = H.new({
+    $ = Homegrown.new({
       env: process.env.NODE_ENV || 'dev',
-      appDir: process.env.APP_DIR || path.join(cwd, '_build/app'),
-      publicDir: process.env.PUBLIC_DIR || path.join(cwd, '_build/public'),
+      appDir: path.resolve(cwd, process.env.APP_DIR || 'app'),
+      publicDir: path.resolve(cwd, process.env.PUBLIC_DIR || 'public'),
       session: {
         secret: process.env.SESSION_SECRET || 'secret*value',
         keys: (process.env.SESSION_KEYS || 'secret*value').split(/\s+/),
@@ -81,24 +82,32 @@ function _startApplication(done) {
       },
     });
 
+    // import native support
+    $.extensions('Homegrown.support.http', () => require('http'));
+
     // try static handler first
     $.mount(require('serve-static')($.get('publicDir')));
 
     // inject logging helpers
-    $.use(H.plugs.logger({ transports: [{ Console: { colorize: true } }] }));
+    $.use(homegrown.plugs.logger({ transports: [{ Console: { colorize: true } }] }));
 
     // standard mvc kit
-    $.use(H.plugs.models($.get('appDir'), path.join(__dirname, '../lib/preset')));
-    $.use(H.plugs.render($.get('appDir'), path.join(__dirname, '../lib/preset')));
-    $.use(H.plugs.router($.get('appDir'), path.join(__dirname, '../lib/preset')));
+    $.use(homegrown.plugs.models($.get('appDir'), path.join(__dirname, '../lib/preset')));
+    $.use(homegrown.plugs.render($.get('appDir'), path.join(__dirname, '../lib/preset')));
+    $.use(homegrown.plugs.router($.get('appDir'), path.join(__dirname, '../lib/preset')));
 
     // other goodies
-    $.use(H.plugs.upload($.get('upload')));
-    $.use(H.plugs.session($.get('session')));
+    $.use(homegrown.plugs.upload($.get('upload')));
+    $.use(homegrown.plugs.session($.get('session')));
 
     $.mount(require('../lib/preset/middlewares/body-parser-urlencoded')($.get('bodyParser') || {}));
     $.mount(require('../lib/preset/middlewares/body-parser-json')());
     $.mount(require('../lib/preset/middlewares/method-override')());
+
+    /* istanbul ignore else */
+    if (process.env.IS_REPL === 'true') {
+      $.use(homegrown.plugs.repl());
+    }
 
     // start server
     $.listen(process.env.PORT || 8080, (app) => {
@@ -109,11 +118,6 @@ function _startApplication(done) {
         done($, app);
       }
     });
-
-    /* istanbul ignore else */
-    if (process.env.IS_REPL === 'true') {
-      $.use(H.plugs.repl());
-    }
   } catch (e) {
     echo(`${e.message || e.toString()}\n`);
     die(1);
@@ -123,7 +127,7 @@ function _startApplication(done) {
 _startApplication();
 
 function _reload(cb) {
-  return $.burn(() => {
+  return homegrown.burn(() => {
     _clearModules();
     _startApplication(cb);
   });
@@ -132,7 +136,7 @@ function _reload(cb) {
 if (process.env.IS_REPL === 'true') {
   process.on('repl:reload', () => _reload());
 } else {
-  process.on('exit', () => $.burn());
+  process.on('exit', () => homegrown.burn());
   process.on('SIGINT', () => process.exit());
 }
 

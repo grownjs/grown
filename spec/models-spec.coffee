@@ -9,7 +9,7 @@ $ = models(resolve(__dirname, '_fixtures/app'))
 describe '#models', ->
   beforeEach (done) ->
     $(@ctx = H.new(), util)
-    @ctx._initializers[0]().then done
+    Promise.all(@ctx.emit('start')).then done
 
   it 'should load all models hierarchically', ->
     expect(@ctx.extensions.models.Single).not.toBeUndefined()
