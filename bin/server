@@ -45,10 +45,10 @@ let $;
 const cwd = process.cwd();
 const path = require('path');
 
-const Homegrown = require('..')();
+const homegrown = require('..');
 
 // setup environment
-Homegrown.configure(cwd);
+homegrown.env(cwd);
 
 function parseBool(value) {
   if (value === 'true') {
@@ -64,6 +64,9 @@ function parseBool(value) {
 
 function _startApplication(done) {
   try {
+    // reset context
+    const Homegrown = homegrown();
+
     $ = Homegrown.new({
       env: process.env.NODE_ENV || 'dev',
       appDir: path.resolve(cwd, process.env.APP_DIR || 'app'),
@@ -97,6 +100,11 @@ function _startApplication(done) {
     $.use(Homegrown.plugs.upload($.get('upload')));
     $.use(Homegrown.plugs.session($.get('session')));
 
+    /* istanbul ignore else */
+    if (process.env.IS_REPL === 'true') {
+      $.use(Homegrown.plugs.repl());
+    }
+
     // start server
     $.listen(process.env.PORT || 8080, (app) => {
       echo('Listening on ', app.location.href, '\n');
@@ -106,11 +114,6 @@ function _startApplication(done) {
         done($, app);
       }
     });
-
-    /* istanbul ignore else */
-    if (process.env.IS_REPL === 'true') {
-      $.use(Homegrown.plugs.repl());
-    }
   } catch (e) {
     echo(`${e.message || e.toString()}\n`);
     die(1);
@@ -120,7 +123,7 @@ function _startApplication(done) {
 _startApplication();
 
 function _reload(cb) {
-  return $.burn(() => {
+  return homegrown.burn(() => {
     _clearModules();
     _startApplication(cb);
   });
@@ -129,7 +132,7 @@ function _reload(cb) {
 if (process.env.IS_REPL === 'true') {
   process.on('repl:reload', () => _reload());
 } else {
-  process.on('exit', () => $.burn());
+  process.on('exit', () => homegrown.burn());
   process.on('SIGINT', () => process.exit());
 }
 
