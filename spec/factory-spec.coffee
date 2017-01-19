@@ -26,6 +26,7 @@ describe '#factory', ->
     # v6 reports fn
 
     _fn = if process.version.indexOf('v6') is -1 then '*' else 'fn'
+    _fn = if process.version.indexOf('v7') is -1 then '*' else 'fn'
 
     expect(factory(fn).name).toEqual _fn
     expect(factory(fn).call).toEqual fn
