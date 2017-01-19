@@ -1,6 +1,6 @@
 { resolve } = require('path')
 
-H = require('..')()
+homegrown = require('..')
 util = require('../lib/util')
 models = require('../lib/plugs/models')
 
@@ -8,8 +8,11 @@ $ = models(resolve(__dirname, '_fixtures/app'))
 
 describe '#models', ->
   beforeEach (done) ->
-    $(@ctx = H.new(), util)
-    Promise.all(@ctx.emit('start')).then done
+    Homegrown = homegrown()
+    @ctx = Homegrown.new()
+    $(@ctx, util)
+
+    @ctx.emit('start').then done
 
   it 'should load all models hierarchically', ->
     expect(@ctx.extensions.models.Single).not.toBeUndefined()
