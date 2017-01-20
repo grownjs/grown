@@ -24,6 +24,7 @@
   },
   "devDependencies": {
     "body-parser": "^1.15.2",
+    "clean-stack": "^1.1.1",
     "cli-color": "^1.1.0",
     "codecov": "^1.0.1",
     "cookie-parser": "^1.4.3",
@@ -39,13 +40,16 @@
     "json-schema-sequelizer": "https://github.com/pateketrueke/json-schema-sequelizer.git#master",
     "method-override": "^2.3.6",
     "morgan": "^1.7.0",
+    "node-plop": "^0.5.4",
     "pg": "^6.1.2",
+    "plop": "^1.7.3",
     "route-mappings": "0.3.2",
     "sequelize": "^3.27.0",
     "serve-index": "^1.8.0",
     "serve-static": "^1.11.1",
     "source-map-support": "^0.4.9",
     "sqlite3": "^3.1.8",
+    "stack-utils": "^0.4.0",
     "std-mocks": "^1.0.1",
     "winston": "^2.3.0"
   }

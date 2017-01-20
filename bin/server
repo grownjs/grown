@@ -64,6 +64,18 @@ function parseBool(value) {
   return undefined;
 }
 
+function _startServer(done) {
+  // start server
+  $.listen(process.env.PORT || 8080, (app) => {
+    echo('Listening on ', app.location.href, '\n');
+
+    /* istanbul ignore else */
+    if (typeof done === 'function') {
+      done($, app);
+    }
+  });
+}
+
 function _startApplication(done) {
   try {
     // reset context
@@ -140,18 +152,19 @@ function _startApplication(done) {
 
     /* istanbul ignore else */
     if (process.env.IS_REPL === 'true') {
-      $.use(homegrown.plugs.repl());
+      $.use(homegrown.plugs.repl({
+        server: {
+          help: 'Start the web server',
+          action() {
+            homegrown.burn(() => _startServer());
+          },
+        },
+      }));
+
+      $.emit('start').then(done);
+    } else {
+      _startServer(done);
     }
-
-    // start server
-    $.listen(process.env.PORT || 8080, (app) => {
-      echo('Listening on ', app.location.href, '\n');
-
-      /* istanbul ignore else */
-      if (typeof done === 'function') {
-        done($, app);
-      }
-    });
   } catch (e) {
     echo(`${e.stack || e.message || e.toString()}\n`);
     die(1);
