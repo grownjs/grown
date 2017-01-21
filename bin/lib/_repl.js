@@ -72,12 +72,10 @@ module.exports = ($) => {
       help: 'Request the current application',
       action(value) {
         $.fetch(value || '/').then((res) => {
-          console.log('DONE');
           _.echo(res.statusCode, '\n');
           _.echo(res.error, '\n');
           _.echo(res.body, '\n');
         }).catch((error) => {
-          console.log('ERR');
           _.echo(color.red(error.message), '\n');
         });
       },

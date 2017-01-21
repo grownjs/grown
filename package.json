@@ -5,7 +5,9 @@
   "author": "Alvaro Cabrera",
   "license": "MIT",
   "main": "lib/index.js",
-  "bin": "bin/server",
+  "bin": {
+    "h": "bin/cli"
+  },
   "scripts": {
     "dev": "jasmine-node spec --coffee --verbose --autoTest --captureExceptions --watchFolders lib",
     "lint": "eslint bin lib spec",
