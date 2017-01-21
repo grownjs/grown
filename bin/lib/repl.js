@@ -8,6 +8,7 @@ const color = require('cli-color');
 const _ = require('./_util');
 const _repl = require('./_repl');
 
+// after if debug
 const homegrown = require('../..');
 const test = require('../../lib/test');
 

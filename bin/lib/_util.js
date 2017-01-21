@@ -9,8 +9,8 @@ const reWithSpaces = /\b([[\]\w.]+)=(?:(['"])([^\2]+)\2)/;
 const reWithoutSpacesG = /\b([[\]\w.]+)=(?!['"])(\S+)/g;
 const reWithoutSpaces = /\b([[\]\w.]+)=(?!['"])(\S+)/;
 
-const reSingleBoolG = /--(\w+)[\s=]((?!--).*)?/g;
-const reSingleBool = /--(\w+)[\s=]((?!--).*)?/;
+const reSingleBoolG = /--(\w+)[\s=]?((?!--).*)?/g;
+const reSingleBool = /--(\w+)[\s=]?((?!--).*)?/;
 
 function _getRequestParams(value) {
   const body = {};

@@ -15,7 +15,6 @@ const cwd = process.cwd();
 const path = require('path');
 const color = require('cli-color');
 const cleanStack = require('clean-stack');
-
 const thisPkg = require('../../package.json');
 
 const _name = color.green(`${thisPkg.name} v${thisPkg.version}`);
@@ -24,6 +23,7 @@ const _desc = color.blackBright('- starting application server...');
 
 _.echo(`${_name} ${_node} ${_desc}\n`);
 
+// after if debug
 const _repl = require('./_repl');
 const homegrown = require('../..');
 
@@ -145,4 +145,5 @@ if (IS_REPL) {
   process.on('SIGINT', () => process.exit());
 }
 
+// teardown
 module.exports = cb => _reload(cb);

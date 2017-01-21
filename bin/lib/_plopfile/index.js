@@ -1,5 +1,3 @@
-const path = require('path');
-
 module.exports = (plop) => {
   plop.setGenerator('test', {
     description: 'this is a test',
@@ -14,8 +12,8 @@ module.exports = (plop) => {
     }],
     actions: [{
       type: 'add',
-      path: path.join(process.cwd(), 'folder/{{dashCase name}}.txt'),
-      templateFile: path.join(__dirname, 'templates/temp.txt'),
+      path: 'folder/{{dashCase name}}.txt',
+      templateFile: 'templates/temp.txt',
     }],
   });
 };
