@@ -1,4 +1,5 @@
 homegrown = require('..')
+test = require('../lib/test')
 
 $ = module.exports = ->
   delete $[k] for k in $
@@ -6,6 +7,6 @@ $ = module.exports = ->
   Homegrown = homegrown()
 
   $.server = Homegrown.new()
-  $.server.use homegrown.plugs.test()
+  $.server.fetch = test($.server)
 
   null
