@@ -1,6 +1,6 @@
 module.exports = {
   dev: [
-    'csurf',
-    'no-cache',
+    // 'csurf',
+    // 'no-cache',
   ],
 };

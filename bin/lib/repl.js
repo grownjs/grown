@@ -47,6 +47,7 @@ _startApplication();
 
 function _reload(cb) {
   return homegrown.burn(() => {
+    _.clearModules();
     _startApplication(cb);
   });
 }

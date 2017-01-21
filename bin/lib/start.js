@@ -8,25 +8,21 @@ const IS_REPL = process.argv.indexOf('--repl') > -1;
 // common helpers
 const _ = require('./_util');
 
-// runtime hooks
-const Module = require('module');
-
-function _clearModules() {
-  Object.keys(Module._cache)
-    .forEach((key) => {
-      /* istanbul ignore else */
-      if (key.indexOf('node_modules') === -1) {
-        delete Module._cache[key];
-      }
-    });
-}
-
 // initialization
 let $;
 
 const cwd = process.cwd();
 const path = require('path');
 const color = require('cli-color');
+const cleanStack = require('clean-stack');
+
+const thisPkg = require('../../package.json');
+
+const _name = color.green(`${thisPkg.name} v${thisPkg.version}`);
+const _node = color.blackBright(`node ${process.version}`);
+const _desc = color.blackBright('- starting application server...');
+
+_.echo(`${_name} ${_node} ${_desc}\n`);
 
 const _repl = require('./_repl');
 const homegrown = require('../..');
@@ -128,7 +124,7 @@ function _startApplication(done) {
 
     _startServer(done);
   } catch (e) {
-    _.echo(color.red((IS_DEBUG && e.stack) || e.message), '\n');
+    _.echo(color.red((IS_DEBUG && cleanStack(e.stack)) || e.message), '\n');
     _.die(1);
   }
 }
@@ -137,7 +133,7 @@ _startApplication();
 
 function _reload(cb) {
   return homegrown.burn(() => {
-    _clearModules();
+    _.clearModules();
     _startApplication(cb);
   });
 }

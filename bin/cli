@@ -22,6 +22,7 @@ if (IS_DEV) {
 }
 
 const thisPkg = require('../package.json');
+const cleanStack = require('clean-stack');
 
 const bin = Object.keys(thisPkg.bin)[0];
 const args = process.argv.slice(2);
@@ -43,7 +44,7 @@ switch (cmd) {
     try {
       require(`./lib/${cmd}`);
     } catch (e) {
-      _.echo(color.red((IS_DEBUG && e.stack) || e.message));
+      _.echo(color.red((IS_DEBUG && cleanStack(e.stack)) || e.message), '\n');
       _.die(200);
     }
     break;

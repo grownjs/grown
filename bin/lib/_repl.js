@@ -1,24 +1,23 @@
 'use strict';
 
 /* eslint-disable global-require */
-/* eslint-disable prefer-rest-params */
+
+const reInterpolate = /`([^`]+)`/g;
 
 const pkg = require('../../package.json');
 const _ = require('./_util');
-
-function isRecoverableError(error) {
-  /* istanbul ignore else */
-  if (error.name === 'SyntaxError') {
-    return /^(Unexpected end of input|Unexpected token)/.test(error.message);
-  }
-
-  return false;
-}
 
 module.exports = ($) => {
   const vm = require('vm');
   const REPL = require('repl');
   const color = require('cli-color');
+  const cleanStack = require('clean-stack');
+
+  const _name = color.green(`${pkg.name} v${pkg.version}`);
+  const _node = color.blackBright(`node ${process.version}`);
+  const _desc = color.blackBright('- type .help to list available commands');
+
+  _.echo(`${_name} ${_node} ${_desc}\n`);
 
   let kill = true;
 
@@ -32,12 +31,7 @@ module.exports = ($) => {
       try {
         value = vm.runInNewContext(cmd, context);
       } catch (e) {
-        /* istanbul ignore else */
-        if (isRecoverableError(e)) {
-          return callback(new REPL.Recoverable(e));
-        }
-
-        return callback(color.red(e.stack));
+        return callback(color.red(cleanStack(e.stack)));
       }
 
       /* istanbul ignore else */
@@ -52,7 +46,7 @@ module.exports = ($) => {
             callback(null, result);
           })
           .catch((error) => {
-            callback(error);
+            callback(cleanStack(error.stack));
           });
       }
 
@@ -71,10 +65,40 @@ module.exports = ($) => {
     repl.defineCommand('fetch', {
       help: 'Request the current application',
       action(value) {
-        $.fetch(value || '/').then((res) => {
-          _.echo(res.statusCode, '\n');
-          _.echo(res.error, '\n');
-          _.echo(res.body, '\n');
+        const parts = value.split(' ');
+
+        let _method = parts.shift() || 'get';
+        let _path = parts.shift() || '/';
+
+        if (_method.charAt() === '/') {
+          _path = _method;
+          _method = 'get';
+        }
+
+        if (_path.charAt() !== '/') {
+          parts.unshift(_path);
+          _path = '/';
+        }
+
+        let _value = parts.join(' ');
+
+        try {
+          _value = _value.replace(reInterpolate, ($0, $1) => vm.runInNewContext($1, repl.context));
+        } catch (e) {
+          throw new Error(`Invalid expression within '${_value}'. ${e.message}`);
+        }
+
+        const _opts = _.requestParams(_value);
+
+        $.fetch(_method, _path, _opts).then((res) => {
+          let _status = res.statusCode === 200 ? 'green' : 'cyan';
+
+          if (res.statusCode >= 500) {
+            _status = 'red';
+          }
+
+          _.echo(color[_status](res.statusCode), ' ', color.yellow(res.statusMessage), ' ');
+          _.echo(color.blackBright(res.body), '\n');
         }).catch((error) => {
           _.echo(color.red(error.message), '\n');
         });
@@ -94,12 +118,6 @@ module.exports = ($) => {
     enumerable: false,
     value: $,
   });
-
-  const _name = color.green(`${pkg.name} v${pkg.version}`);
-  const _node = color.blackBright(`node ${process.version}`);
-  const _desc = color.blackBright('- type .help to list available commands');
-
-  _.echo(`${_name} ${_node} ${_desc}\n`);
 
   return () => {
     kill = false;
