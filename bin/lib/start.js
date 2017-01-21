@@ -1,32 +1,12 @@
-#!/bin/sh
-':' // ; exec "$(command -v nodejs || command -v node)" "$0" "$@"
-;
-
 'use strict';
 
 /* eslint-disable global-require */
-/* eslint-disable prefer-rest-params */
 
-process.env.IS_REPL = process.argv.indexOf('--repl') > -1;
-process.env.NODE_ENV = process.env.NODE_ENV || 'dev';
-
-/* istanbul ignore else */
-if (process.argv.indexOf('--debug') > -1) {
-  require('debug').enable('homegrown,homegrown:*');
-}
-
-/* istanbul ignore else */
-if (process.env.NODE_ENV === 'dev') {
-  require('source-map-support').install();
-}
+const IS_DEBUG = process.argv.indexOf('--debug') > -1;
+const IS_REPL = process.argv.indexOf('--repl') > -1;
 
 // common helpers
-const die = statusCode => process.exit(statusCode);
-
-// standard output
-function echo() {
-  process.stdout.write(`${Array.prototype.slice.call(arguments).join('')}`);
-}
+const _ = require('./_util');
 
 // runtime hooks
 const Module = require('module');
@@ -46,28 +26,18 @@ let $;
 
 const cwd = process.cwd();
 const path = require('path');
+const color = require('cli-color');
 
-const homegrown = require('..');
+const _repl = require('./_repl');
+const homegrown = require('../..');
 
 // setup environment
 homegrown.env(cwd);
 
-function parseBool(value) {
-  if (value === 'true') {
-    return true;
-  }
-
-  if (value === 'false') {
-    return false;
-  }
-
-  return undefined;
-}
-
 function _startServer(done) {
   // start server
   $.listen(process.env.PORT || 8080, (app) => {
-    echo('Listening on ', app.location.href, '\n');
+    _.echo(color.blackBright('Listening at '), color.yellow(app.location.href), '\n');
 
     /* istanbul ignore else */
     if (typeof done === 'function') {
@@ -91,12 +61,12 @@ function _startApplication(done) {
         maxAge: parseInt(process.env.SESSION_MAXAGE || 0, 10) || 86400000,
       },
       upload: {
-        multiple: parseBool(process.env.UPLOAD_MULTIPLE) || true,
+        multiple: _.toBool(process.env.UPLOAD_MULTIPLE) || true,
         maxFiles: parseInt(process.env.UPLOAD_MAXFILES, 0) || 10,
       },
       logger: {
         format: process.env.LOGGER_FORMAT || 'dev',
-        colorize: parseBool(process.env.LOGGER_COLORIZE) || true,
+        colorize: _.toBool(process.env.LOGGER_COLORIZE) || true,
       },
     });
 
@@ -119,9 +89,9 @@ function _startApplication(done) {
     }));
 
     // standard mvc kit
-    $.use(homegrown.plugs.models($.get('appDir'), path.join(__dirname, '../lib/preset')));
-    $.use(homegrown.plugs.render($.get('appDir'), path.join(__dirname, '../lib/preset')));
-    $.use(homegrown.plugs.router($.get('appDir'), path.join(__dirname, '../lib/preset')));
+    $.use(homegrown.plugs.models($.get('appDir'), path.join(__dirname, '_preset')));
+    $.use(homegrown.plugs.render($.get('appDir'), path.join(__dirname, '_preset')));
+    $.use(homegrown.plugs.router($.get('appDir'), path.join(__dirname, '_preset')));
 
     $.mount(require('body-parser').json());
     $.mount(require('body-parser').urlencoded({ extended: false }));
@@ -150,24 +120,16 @@ function _startApplication(done) {
     $.use(homegrown.plugs.upload($.get('upload')));
     $.use(homegrown.plugs.session($.get('session')));
 
-    /* istanbul ignore else */
-    if (process.env.IS_REPL === 'true') {
-      $.use(homegrown.plugs.repl({
-        server: {
-          help: 'Start the web server',
-          action() {
-            homegrown.burn(() => _startServer());
-          },
-        },
-      }));
+    if (IS_REPL) {
+      const _close = _repl($);
 
-      $.emit('start').then(done);
-    } else {
-      _startServer(done);
+      $.on('close', () => _close());
     }
+
+    _startServer(done);
   } catch (e) {
-    echo(`${e.stack || e.message || e.toString()}\n`);
-    die(1);
+    _.echo(color.red((IS_DEBUG && e.stack) || e.message), '\n');
+    _.die(1);
   }
 }
 
@@ -180,7 +142,7 @@ function _reload(cb) {
   });
 }
 
-if (process.env.IS_REPL === 'true') {
+if (IS_REPL) {
   process.on('repl:reload', () => _reload());
 } else {
   process.on('exit', () => homegrown.burn());
