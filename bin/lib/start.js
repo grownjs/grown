@@ -19,9 +19,8 @@ const thisPkg = require('../../package.json');
 
 const _name = color.green(`${thisPkg.name} v${thisPkg.version}`);
 const _node = color.blackBright(`node ${process.version}`);
-const _desc = color.blackBright('- starting application server...');
 
-_.echo(`${_name} ${_node} ${_desc}\n`);
+_.echo(`${_name} ${_node}\n`);
 
 // after if debug
 const _repl = require('./_repl');
@@ -33,7 +32,7 @@ homegrown.env(cwd);
 function _startServer(done) {
   // start server
   $.listen(process.env.PORT || 8080, (app) => {
-    _.echo(color.blackBright('Listening at '), color.yellow(app.location.href), '\n');
+    _.echo(color.blackBright('› Listening at '), color.yellow(app.location.href), '\n');
 
     /* istanbul ignore else */
     if (typeof done === 'function') {

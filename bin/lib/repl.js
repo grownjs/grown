@@ -3,7 +3,7 @@
 /* eslint-disable global-require */
 
 const path = require('path');
-const color = require('cli-color');
+const chalk = require('chalk');
 
 const _ = require('./_util');
 const _repl = require('./_repl');
@@ -40,7 +40,7 @@ function _startApplication() {
   $.on('close', () => _close());
 
   $.listen('test://', (app) => {
-    _.echo(color.blackBright('Listening at '), color.yellow(app.location.href), '\n');
+    _.echo(chalk.gray('› Listening at '), chalk.yellow(app.location.href), '\n');
   });
 }
 

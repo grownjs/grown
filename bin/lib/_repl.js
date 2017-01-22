@@ -10,14 +10,13 @@ const _ = require('./_util');
 module.exports = ($) => {
   const vm = require('vm');
   const REPL = require('repl');
-  const color = require('cli-color');
+  const chalk = require('chalk');
   const cleanStack = require('clean-stack');
 
-  const _name = color.green(`${pkg.name} v${pkg.version}`);
-  const _node = color.blackBright(`node ${process.version}`);
-  const _desc = color.blackBright('- type .help to list available commands');
+  const _name = chalk.green(`${pkg.name} v${pkg.version}`);
+  const _node = chalk.gray(`node ${process.version}`);
 
-  _.echo(`${_name} ${_node} ${_desc}\n`);
+  _.echo(`${_name} ${_node}\n`);
 
   let kill = true;
 
@@ -31,7 +30,7 @@ module.exports = ($) => {
       try {
         value = vm.runInNewContext(cmd, context);
       } catch (e) {
-        return callback(color.red(cleanStack(e.stack)));
+        return callback(chalk.red(cleanStack(e.stack)));
       }
 
       /* istanbul ignore else */
@@ -97,10 +96,10 @@ module.exports = ($) => {
             _status = 'red';
           }
 
-          _.echo(color[_status](res.statusCode), ' ', color.yellow(res.statusMessage), ' ');
-          _.echo(color.blackBright(res.body), '\n');
+          _.echo(chalk[_status](res.statusCode), ' ', chalk.yellow(res.statusMessage), ' ');
+          _.echo(chalk.gray(res.body), '\n');
         }).catch((error) => {
-          _.echo(color.red(error.message), '\n');
+          _.echo(chalk.red(error.message), '\n');
         });
       },
     });

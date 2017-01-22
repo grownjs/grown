@@ -5,89 +5,67 @@
 const cwd = process.cwd();
 
 const _ = require('./_util');
+
+const Haki = require('haki');
 const path = require('path');
-const color = require('cli-color');
+const chalk = require('chalk');
+
 const thisPkg = require('../../package.json');
 
-const _name = color.green(`${thisPkg.name} v${thisPkg.version}`);
-const _node = color.blackBright(`node ${process.version}`);
-const _desc = color.blackBright('- loading available generators...');
+const _name = chalk.green(`${thisPkg.name} v${thisPkg.version}`);
+const _node = chalk.gray(`node ${process.version}`);
 
-_.echo(`${_name} ${_node} ${_desc}\n`);
+_.echo(`${_name} ${_node}\n`);
+
+const haki = new Haki(cwd);
+
+haki.load(require.resolve('./_tasks'));
+
+function _getOptions() {
+  // translate quoted values
+  const reQuotes = /^(.+?)=(.+?)$/g;
+
+  return _.requestParams(process.argv.slice(4)
+    .map((x) => {
+      return x.indexOf(' ') === -1 ? x : x.replace(reQuotes, '$1="$2"');
+    }).join('\n'));
+}
+
+function _showDetails(result) {
+  result.changes.forEach((f) => {
+    _.echo(chalk.green(f.type), ' ', chalk.yellow(path.relative(cwd, f.destFile)), '\n');
+  });
+
+  result.failures.forEach((f) => {
+    _.echo(chalk.red(f.type), ' ', chalk.yellow(path.relative(cwd, f.destFile)), '\n');
+    _.echo(chalk.red(`— ${f.error}`), '\n');
+  });
+
+  if (!(result.error || result.failures.length)) {
+    _.echo(chalk.green('✔ Done.\n'));
+  } else {
+    _.echo(chalk.red(`${result.error
+      ? result.error.message
+      : 'Try again with --force to apply the changes'}\n`));
+    _.die(100);
+  }
+}
+
+function _executeTask(cmd) {
+  const _opts = _getOptions();
+
+  haki.runGenerator(cmd, _opts.body, _opts.force).then(_showDetails);
+}
+
+function _showTasks() {
+  haki.chooseGeneratorList().then(_showDetails);
+}
 
 const args = process.argv.slice(3);
 
-const nodePlop = require('node-plop');
-
-const plop = nodePlop(require.resolve('./_plopfile'), {
-  destBasePath: cwd,
-});
-
-const reQuotes = /^(.+?)=(.+?)$/g;
-
-// translate quoted values
-// FIXME?
-const data = _.requestParams(process.argv.slice(4)
-  .map((x) => {
-    return x.indexOf(' ') === -1 ? x : x.replace(reQuotes, '$1="$2"');
-  }).join('\n'));
-
-function _runGen(cmd) {
-  const gen = plop.getGenerator(cmd);
-
-  const provided = Object.keys(data.body);
-  const required = gen.prompts.map(p => p.name);
-
-  if (provided.length) {
-    required.forEach((prop) => {
-      if (provided.indexOf(prop) === -1) {
-        throw new Error(`Missing required '${prop}' value`);
-      }
-    });
-  }
-
-  const promise = provided.length
-    ? gen.runActions(data.body)
-    : gen.runPrompts().then(gen.runActions);
-
-  promise.then((result) => {
-    result.changes.forEach((e) => {
-      const file = path.relative(cwd, e.path);
-
-      _.echo(color.green(e.type), ' ', color.yellow(file), '\n');
-    });
-
-    result.failures.forEach((e) => {
-      const file = path.relative(cwd, e.path);
-
-      _.echo(color.red(e.type), ' ', color.yellow(file), ' ', color.red(e.error), '\n');
-    });
-  });
-}
-
-function _showGens() {
-  const _plop = nodePlop();
-
-  const generator = _plop.setGenerator('choose', {
-    prompts: [{
-      type: 'list',
-      name: 'generator',
-      message: 'Please choose a generator:',
-      choices: plop.getGeneratorList().map((p) => {
-        return {
-          name: `${p.name} ${color.blackBright(p.description ? p.description : '')}`,
-          value: p.name,
-        };
-      }),
-    }],
-  });
-
-  return generator.runPrompts()
-    .then(results => _runGen(results.generator));
-}
-
-if (!args.length) {
-  _showGens();
+if (args.length) {
+  _executeTask(args.shift());
 } else {
-  _runGen(args.shift());
+  _showTasks();
 }
+

@@ -28,12 +28,12 @@ const bin = Object.keys(thisPkg.bin)[0];
 const args = process.argv.slice(2);
 const cmd = args.shift();
 
-const color = require('cli-color');
+const chalk = require('chalk');
 
 const _ = require('./lib/_util');
 
 if (!cmd) {
-  _.echo(color.yellow(`Usage: ${bin} gen|repl|start\n`));
+  _.echo(chalk.yellow(`Usage: ${bin} gen|repl|start\n`));
   _.die(1);
 }
 
@@ -44,12 +44,12 @@ switch (cmd) {
     try {
       require(`./lib/${cmd}`);
     } catch (e) {
-      _.echo(color.red((IS_DEBUG && cleanStack(e.stack)) || e.message), '\n');
+      _.echo(chalk.red((IS_DEBUG && cleanStack(e.stack)) || e.message), '\n');
       _.die(200);
     }
     break;
 
   default:
-    _.echo(color.red(`Unknown task '${cmd}'\n`));
+    _.echo(chalk.red(`Unknown task '${cmd}'\n`));
     _.die(100);
 }
