@@ -2,8 +2,21 @@
 
 /* eslint-disable global-require */
 
+process.env.NODE_ENV = process.env.NODE_ENV || 'dev';
+
 const IS_DEBUG = process.argv.indexOf('--debug') > -1;
 const IS_REPL = process.argv.indexOf('--repl') > -1;
+const IS_DEV = process.env.NODE_ENV === 'dev';
+
+/* istanbul ignore else */
+if (IS_DEBUG) {
+  require('debug').enable('homegrown,homegrown:*');
+}
+
+/* istanbul ignore else */
+if (IS_DEV) {
+  require('source-map-support').install();
+}
 
 // common helpers
 const _ = require('./_util');
@@ -13,12 +26,12 @@ let $;
 
 const cwd = process.cwd();
 const path = require('path');
-const color = require('cli-color');
+const chalk = require('chalk');
 const cleanStack = require('clean-stack');
 const thisPkg = require('../../package.json');
 
-const _name = color.green(`${thisPkg.name} v${thisPkg.version}`);
-const _node = color.blackBright(`node ${process.version}`);
+const _name = chalk.green(`${thisPkg.name} v${thisPkg.version}`);
+const _node = chalk.gray(`node ${process.version}`);
 
 _.echo(`${_name} ${_node}\n`);
 
@@ -32,7 +45,7 @@ homegrown.env(cwd);
 function _startServer(done) {
   // start server
   $.listen(process.env.PORT || 8080, (app) => {
-    _.echo(color.blackBright('› Listening at '), color.yellow(app.location.href), '\n');
+    _.echo(chalk.gray('› Listening at '), chalk.yellow(app.location.href), '\n');
 
     /* istanbul ignore else */
     if (typeof done === 'function') {
@@ -61,7 +74,7 @@ function _startApplication(done) {
       },
       logger: {
         format: process.env.LOGGER_FORMAT || 'dev',
-        colorize: _.toBool(process.env.LOGGER_COLORIZE) || true,
+        chalkize: _.toBool(process.env.LOGGER_COLORIZE) || true,
       },
     });
 
@@ -78,7 +91,7 @@ function _startApplication(done) {
     $.use(homegrown.plugs.logger({
       transports: [{
         Console: {
-          colorize: $.get('logger.colorize'),
+          chalkize: $.get('logger.chalkize'),
         },
       }],
     }));
@@ -123,7 +136,7 @@ function _startApplication(done) {
 
     _startServer(done);
   } catch (e) {
-    _.echo(color.red((IS_DEBUG && cleanStack(e.stack)) || e.message), '\n');
+    _.echo(chalk.red((IS_DEBUG && cleanStack(e.stack)) || e.message), '\n');
     _.die(1);
   }
 }

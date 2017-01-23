@@ -2,6 +2,15 @@
 
 /* eslint-disable global-require */
 
+process.env.NODE_ENV = process.env.NODE_ENV || 'dev';
+
+const IS_DEBUG = process.argv.indexOf('--debug') > -1;
+
+/* istanbul ignore else */
+if (IS_DEBUG) {
+  require('debug').enable('haki,haki:*');
+}
+
 const cwd = process.cwd();
 
 const _ = require('./_util');
@@ -59,9 +68,18 @@ function _showDetails(err, result) {
 }
 
 function _executeTask(cmd) {
-  const _opts = _getOptions();
+  const _env = {
+    env: process.env.NODE_ENV,
+    isDev: process.env.NODE_ENV === 'dev',
+    isTest: process.env.NODE_ENV === 'test',
+    isProd: process.env.NODE_ENV === 'prod',
+    isStage: process.env.NODE_ENV === 'stage',
+  };
 
-  haki.runGenerator(cmd, _opts.body, _opts.force)
+  const _opts = _getOptions();
+  const _locals = _.merge({}, _env, _opts.body);
+
+  haki.runGenerator(cmd, _locals, _opts.force)
     .then(result => _showDetails(undefined, result))
     .catch(_showDetails);
 }

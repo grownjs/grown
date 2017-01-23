@@ -2,6 +2,21 @@
 
 /* eslint-disable global-require */
 
+process.env.NODE_ENV = process.env.NODE_ENV || 'dev';
+
+const IS_DEBUG = process.argv.indexOf('--debug') > -1;
+const IS_DEV = process.env.NODE_ENV === 'dev';
+
+/* istanbul ignore else */
+if (IS_DEBUG) {
+  require('debug').enable('homegrown,homegrown:*');
+}
+
+/* istanbul ignore else */
+if (IS_DEV) {
+  require('source-map-support').install();
+}
+
 const path = require('path');
 const chalk = require('chalk');
 

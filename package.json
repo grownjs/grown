@@ -39,6 +39,7 @@
     "istanbul": "^0.4.3",
     "jasmine-node": "2.0.0-beta4",
     "json-schema-sequelizer": "https://github.com/pateketrueke/json-schema-sequelizer.git#master",
+    "method-override": "^2.3.7",
     "morgan": "^1.7.0",
     "pg": "^6.1.2",
     "route-mappings": "0.3.2",
