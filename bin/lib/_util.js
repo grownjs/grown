@@ -87,7 +87,7 @@ function echo() {
 }
 
 function merge(target) {
-  _slice(arguments, 1).forEach((source) => {
+  _slice.call(arguments, 1).forEach((source) => {
     Object.keys(source).forEach((key) => {
       /* istanbul ignore else */
       if (typeof target[key] === 'undefined') {

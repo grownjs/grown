@@ -6,6 +6,8 @@
 
 /* eslint-disable global-require */
 
+const IS_DEBUG = process.argv.indexOf('--debug') > -1;
+
 const thisPkg = require('../package.json');
 const cleanStack = require('clean-stack');
 
