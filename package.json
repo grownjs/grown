@@ -23,6 +23,7 @@
     "clean-stack": "^1.1.1",
     "dotenv": "^4",
     "glob": "^7.0.6",
+    "haki": "https://github.com/pateketrueke/haki.git#master",
     "object-new": "https://github.com/pateketrueke/object-new.git#master",
     "type-is": "^1.6.14"
   },
