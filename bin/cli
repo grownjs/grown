@@ -32,11 +32,11 @@ switch (cmd) {
       require(`./lib/${cmd}`);
     } catch (e) {
       _.echo(chalk.red((IS_DEBUG && cleanStack(e.stack)) || e.message), '\n');
-      _.die(200);
+      _.die(1);
     }
     break;
 
   default:
     _.echo(chalk.red(`Unknown task '${cmd}'\n`));
-    _.die(100);
+    _.die(1);
 }
