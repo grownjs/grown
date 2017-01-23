@@ -31,7 +31,14 @@ function _getOptions() {
     }).join('\n'));
 }
 
-function _showDetails(result) {
+function _showDetails(err, result) {
+  if (err) {
+    console.log(err.toString(), '?');
+    _.echo(chalk.red(err), '?\n');
+    _.die(1);
+    return;
+  }
+
   result.changes.forEach((f) => {
     _.echo(chalk.green(f.type), ' ', chalk.yellow(path.relative(cwd, f.destFile)), '\n');
   });
@@ -47,18 +54,20 @@ function _showDetails(result) {
     _.echo(chalk.red(`${result.error
       ? result.error.message
       : 'Try again with --force to apply the changes'}\n`));
-    _.die(100);
+    _.die(1);
   }
 }
 
 function _executeTask(cmd) {
   const _opts = _getOptions();
 
-  haki.runGenerator(cmd, _opts.body, _opts.force).then(_showDetails);
+  haki.runGenerator(cmd, _opts.body, _opts.force)
+    .then(result => _showDetails(undefined, result))
+    .catch(_showDetails);
 }
 
 function _showTasks() {
-  haki.chooseGeneratorList().then(_showDetails);
+  haki.chooseGeneratorList(_showDetails);
 }
 
 const args = process.argv.slice(3);
@@ -68,4 +77,3 @@ if (args.length) {
 } else {
   _showTasks();
 }
-
