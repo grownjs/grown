@@ -2,10 +2,17 @@
 
 /* eslint-disable prefer-rest-params */
 /* eslint-disable no-eval */
+
 const reValueWithSpaces = / ((?!-)[\w.]+)=(["'][^"']+["']) /g;
 const reFlagWithSpaces = / -+([\w.]+)[=\s](["'][^"']+["']) /g;
-const reTrimLeadingDashes = /^-+/g;
+const reTrimTrailingDashes = /^-+/g;
 const reMatchKeyValue = /^[\w.-]+=/;
+
+const reEscapeChars = [/\\"/g, /\\'/g, /\\ /g];
+const reQuotedChars = ['__QUOTE__', '__APOS__', '__SPA__'];
+
+const reUnescapeChars = [/__QUOTE__/g, /__APOS__/g, /__SPA__/g];
+const reSpecialChars = ['"', "'", ' '];
 
 function _inputProps(value, opts, cb) {
   const data = {};
@@ -26,8 +33,8 @@ function _inputProps(value, opts, cb) {
 
   function e(val) {
     // "unescape" quotes
-    val = val.replace(/__QUOTE__/g, '"');
-    val = val.replace(/__APOS__/g, "'");
+    val = reUnescapeChars
+      .reduce((prev, cur, i) => prev.replace(cur, reSpecialChars[i]), val);
 
     if (typeof cb === 'function') {
       return cb(val);
@@ -51,9 +58,9 @@ function _inputProps(value, opts, cb) {
     return `${x.substr(0, offset)}="${x.substr(offset + 1)}"`;
   }).join(' - ') : value || ''} `;
 
-  // "escape" quotes
-  value = value.replace(/\\"/g, '__QUOTE__');
-  value = value.replace(/\\'/g, '__APOS__');
+  // "escape" special chars
+  value = reEscapeChars
+    .reduce((prev, cur, i) => prev.replace(cur, reQuotedChars[i]), value);
 
   // value="with spaces"
   value = value.replace(reValueWithSpaces, (_, $1, $2) => {
@@ -68,7 +75,7 @@ function _inputProps(value, opts, cb) {
   });
 
   value.split(/\s+/).reduce((prev, cur) => {
-    const key = prev.replace(reTrimLeadingDashes, '');
+    const key = prev.replace(reTrimTrailingDashes, '');
 
     if (prev === true || !key) {
       return cur;
@@ -83,7 +90,7 @@ function _inputProps(value, opts, cb) {
       const v = cur.substr(offset + 1);
 
       if (k.charAt() === '-') {
-        flags[k.replace(reTrimLeadingDashes, '')] = e(v);
+        flags[k.replace(reTrimTrailingDashes, '')] = e(v);
       } else {
         data[k] = e(v);
       }
