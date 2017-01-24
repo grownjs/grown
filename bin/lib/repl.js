@@ -2,60 +2,44 @@
 
 /* eslint-disable global-require */
 
-process.env.NODE_ENV = process.env.NODE_ENV || 'dev';
+process.env.NODE_ENV = process.env.NODE_ENV || 'test';
 
-const IS_DEBUG = process.argv.indexOf('--debug') > -1;
-const IS_DEV = process.env.NODE_ENV === 'dev';
+const $ = require('./_argv');
 
 /* istanbul ignore else */
-if (IS_DEBUG) {
+if ($.flags.debug) {
   require('debug').enable('homegrown,homegrown:*');
 }
 
-/* istanbul ignore else */
-if (IS_DEV) {
-  require('source-map-support').install();
-}
-
-const path = require('path');
-const chalk = require('chalk');
+require('source-map-support').install();
 
 const _ = require('./_util');
+const _dev = require('./_dev');
 const _repl = require('./_repl');
 
-// after if debug
+const chalk = require('chalk');
 const homegrown = require('../..');
 const test = require('../../lib/test');
 
 const cwd = process.cwd();
-const Homegrown = homegrown();
 
 // setup environment
 homegrown.env(cwd);
 
-let $;
+let farm;
 
 // small bootstrap
 function _startApplication() {
-  $ = Homegrown.new({
-    env: process.env.NODE_ENV || 'dev',
-    appDir: path.resolve(cwd, process.env.APP_DIR || 'app'),
-    publicDir: path.resolve(cwd, process.env.PUBLIC_DIR || 'public'),
-  });
+  farm = _dev();
 
-  // standard mvc kit
-  $.use(homegrown.plugs.models($.get('appDir'), path.join(__dirname, '_preset')));
-  $.use(homegrown.plugs.render($.get('appDir'), path.join(__dirname, '_preset')));
-  $.use(homegrown.plugs.router($.get('appDir'), path.join(__dirname, '_preset')));
+  farm.fetch = test(farm);
 
-  $.fetch = test($);
+  const _close = _repl(farm);
 
-  const _close = _repl($);
+  farm.on('close', () => _close());
 
-  $.on('close', () => _close());
-
-  $.listen('test://', (app) => {
-    _.echo(chalk.gray('› Listening at '), chalk.yellow(app.location.href), '\n');
+  farm.listen('test://', (app) => {
+    _.echo(chalk.gray('— Listening at '), chalk.yellow(app.location.href), '\n');
   });
 }
 

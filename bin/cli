@@ -6,37 +6,26 @@
 
 /* eslint-disable global-require */
 
-const IS_DEBUG = process.argv.indexOf('--debug') > -1;
-
 const thisPkg = require('../package.json');
 const cleanStack = require('clean-stack');
-
-const bin = Object.keys(thisPkg.bin)[0];
-const args = process.argv.slice(2);
-const cmd = args.shift();
-
 const chalk = require('chalk');
 
 const _ = require('./lib/_util');
+const $ = require('./lib/_argv');
 
-if (!cmd) {
-  _.echo(chalk.yellow(`Usage: ${bin} gen|repl|start\n`));
+if (!$.cmd && !Object.keys($.flags).length) {
+  _.echo(chalk.yellow(`Usage: ${Object.keys(thisPkg.bin)[0]} ...|repl|start\n`));
   _.die(1);
 }
 
-switch (cmd) {
-  case 'start':
-  case 'repl':
-  case 'gen':
-    try {
-      require(`./lib/${cmd}`);
-    } catch (e) {
-      _.echo(chalk.red((IS_DEBUG && cleanStack(e.stack)) || e.message), '\n');
-      _.die(1);
-    }
-    break;
+const _name = chalk.green(`${thisPkg.name} v${thisPkg.version}`);
+const _node = chalk.gray(`node ${process.version}`);
 
-  default:
-    _.echo(chalk.red(`Unknown task '${cmd}'\n`));
-    _.die(1);
+_.echo(`${_name} ${_node}\n`);
+
+try {
+  require(`./lib/${$.cmd === 'repl' || $.cmd === 'start' ? $.cmd : 'gen'}`);
+} catch (e) {
+  _.echo(chalk.red(($.flags.debug && cleanStack(e.stack)) || e.message), '\n');
+  _.die(1);
 }

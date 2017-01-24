@@ -4,7 +4,6 @@
 
 const reInterpolate = /`([^`]+)`/g;
 
-const pkg = require('../../package.json');
 const _ = require('./_util');
 
 module.exports = ($) => {
@@ -12,11 +11,6 @@ module.exports = ($) => {
   const REPL = require('repl');
   const chalk = require('chalk');
   const cleanStack = require('clean-stack');
-
-  const _name = chalk.green(`${pkg.name} v${pkg.version}`);
-  const _node = chalk.gray(`node ${process.version}`);
-
-  _.echo(`${_name} ${_node}\n`);
 
   let kill = true;
 
@@ -87,9 +81,7 @@ module.exports = ($) => {
           throw new Error(`Invalid expression within '${_value}'. ${e.message}`);
         }
 
-        const _opts = _.requestParams(_value);
-
-        $.fetch(_method, _path, _opts).then((res) => {
+        $.fetch(_method, _path, _.inputParams(_value)).then((res) => {
           let _status = res.statusCode === 200 ? 'green' : 'cyan';
 
           if (res.statusCode >= 500) {

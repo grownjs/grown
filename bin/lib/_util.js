@@ -3,67 +3,91 @@
 /* eslint-disable prefer-rest-params */
 /* eslint-disable no-eval */
 
-const reWithSpacesG = /\b([[\]\w.]+)=(?:(['"])[^\2]+\2)/g;
-const reWithSpaces = /\b([[\]\w.]+)=(?:(['"])([^\2]+)\2)/;
+const reValueWithSpaces = / ((?!-)[\w.]+)=(["'][^"']+["']) /g;
+const reFlagWithSpaces = / -+([\w.]+)[=\s](["'][^"']+["']) /g;
+const reValueWithoutSpaces = / ((?!-)[\w.-]+)=((?!-)\S+) /g;
+const reTrimTrailingDashes = /^-+/g;
 
-const reWithoutSpacesG = /\b([[\]\w.]+)=(?!['"])(\S+)/g;
-const reWithoutSpaces = /\b([[\]\w.]+)=(?!['"])(\S+)/;
+function _inputParams(value) {
+  const data = {};
+  const flags = {};
 
-const reSingleBoolG = /--(\w+)[\s=]?((?!--).*)?/g;
-const reSingleBool = /--(\w+)[\s=]?((?!--).*)?/;
-
-function _getRequestParams(value) {
-  const body = {};
-  const opts = {};
-
-  const withSpaces = value.match(reWithSpacesG);
-
-  if (withSpaces) {
-    withSpaces.forEach((str) => {
-      str = str.match(reWithSpaces);
-      if (str[1]) {
-        body[str[1]] = str[3];
-      }
-    });
-
-    value = value.replace(reWithSpacesG, '');
-  }
-
-  const withoutSpaces = value.match(reWithoutSpacesG);
-
-  if (withoutSpaces) {
-    withoutSpaces.forEach((str) => {
-      str = str.match(reWithoutSpaces);
-      if (str[1]) {
-        body[str[1]] = str[2];
-      }
-    });
-
-    value = value.replace(reWithoutSpacesG, '');
-  }
-
-  const singleBool = value.match(reSingleBoolG);
-
-  if (singleBool) {
-    singleBool.forEach((str) => {
-      str = str.match(reSingleBool);
-      if (str[1]) {
-        opts[str[1]] = typeof str[2] === 'undefined' ? true : str[2];
-      }
-    });
-
-    value = value.replace(reSingleBoolG, '');
-  }
-
-  value.trim().split(/\s+/).forEach((key) => {
-    if (key) {
-      body[key] = '1';
+  // "normalize" input
+  value = ` ${Array.isArray(value) ? value.map((x) => {
+    if (x.indexOf(' ') === -1) {
+      return x;
     }
+
+    const offset = x.indexOf('=');
+
+    if (offset === -1) {
+      return `"${x}"`;
+    }
+
+    return `${x.substr(0, offset)}="${x.substr(offset + 1)}"`;
+  }).join(' ') : value} `;
+
+  // value="with spaces"
+  value = value.replace(reValueWithSpaces, (_, $1, $2) => {
+    data[$1] = $2.substr(1, $2.length - 2);
+    return ' ';
   });
 
-  opts.body = body;
+  // --flag "with spaces"
+  value = value.replace(reFlagWithSpaces, (_, $1, $2) => {
+    flags[$1] = $2.substr(1, $2.length - 2);
+    return ' ';
+  });
 
-  return opts;
+  // value=without-spaces
+  value = value.replace(reValueWithoutSpaces, (_, $1, $2) => {
+    data[$1] = $2;
+    return ' ';
+  });
+
+  value.split(/\s+/).reduce((prev, cur) => {
+    if (prev === true) {
+      return cur;
+    }
+
+    const offset = cur.indexOf('=');
+
+    if (offset > -1) {
+      const k = cur.substr(0, offset);
+      const v = cur.substr(offset + 1);
+
+      if (k.charAt() === '-') {
+        flags[k.replace(reTrimTrailingDashes, '')] = v;
+      } else {
+        data[k] = v;
+      }
+
+      if (prev.charAt() === '-') {
+        flags[prev.replace(reTrimTrailingDashes, '')] = true;
+        return true;
+      }
+
+      return prev;
+    }
+
+    if (prev.charAt() === '-') {
+      if (cur.charAt() !== '-') {
+        flags[prev.replace(reTrimTrailingDashes, '')] = cur;
+        return true;
+      }
+
+      flags[prev.replace(reTrimTrailingDashes, '')] = true;
+      return cur;
+    }
+
+    if (prev) {
+      data[prev] = '1';
+    }
+
+    return cur;
+  }, '');
+
+  return { data, flags };
 }
 
 // runtime hooks
@@ -117,6 +141,6 @@ module.exports = {
   merge,
   slice: _slice,
   toBool: parseBool,
+  inputParams: _inputParams,
   clearModules: _clearModules,
-  requestParams: _getRequestParams,
 };

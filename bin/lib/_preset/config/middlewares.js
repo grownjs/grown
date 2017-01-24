@@ -1,6 +1,15 @@
 module.exports = {
   dev: [
-    // 'csurf',
-    // 'no-cache',
+    'stage',
+    'test',
+  ],
+  test: [
+    'no-cache',
+  ],
+  prod: [
+    'stage',
+  ],
+  stage: [
+    'csurf',
   ],
 };
