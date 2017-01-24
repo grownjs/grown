@@ -4,15 +4,31 @@
 /* eslint-disable no-eval */
 const reValueWithSpaces = / ((?!-)[\w.]+)=(["'][^"']+["']) /g;
 const reFlagWithSpaces = / -+([\w.]+)[=\s](["'][^"']+["']) /g;
-const reTrimTrailingDashes = /^-+/g;
+const reTrimLeadingDashes = /^-+/g;
 const reMatchKeyValue = /^[\w.-]+=/;
 
-function _inputProps(value, cb) {
+function _inputProps(value, opts, cb) {
   const data = {};
   const flags = {};
   const params = {};
 
+  if (typeof opts === 'function') {
+    cb = opts;
+    opts = {};
+  }
+
+  // defaults
+  opts = opts || {};
+  opts.default = typeof opts.default !== 'undefined'
+    ? opts.default : true;
+
+  cb = typeof opts.format === 'function' ? opts.format : cb;
+
   function e(val) {
+    // "unescape" quotes
+    val = val.replace(/__QUOTE__/g, '"');
+    val = val.replace(/__APOS__/g, "'");
+
     if (typeof cb === 'function') {
       return cb(val);
     }
@@ -33,22 +49,28 @@ function _inputProps(value, cb) {
     }
 
     return `${x.substr(0, offset)}="${x.substr(offset + 1)}"`;
-  }).join(' ') : value} `;
+  }).join(' - ') : value || ''} `;
+
+  // "escape" quotes
+  value = value.replace(/\\"/g, '__QUOTE__');
+  value = value.replace(/\\'/g, '__APOS__');
 
   // value="with spaces"
   value = value.replace(reValueWithSpaces, (_, $1, $2) => {
     data[$1] = e($2.substr(1, $2.length - 2));
-    return ' ';
+    return ' - ';
   });
 
   // --flag "with spaces"
   value = value.replace(reFlagWithSpaces, (_, $1, $2) => {
-    flags[$1] = $2.substr(1, $2.length - 2);
-    return ' ';
+    flags[$1] = e($2.substr(1, $2.length - 2));
+    return ' - ';
   });
 
   value.split(/\s+/).reduce((prev, cur) => {
-    if (prev === true) {
+    const key = prev.replace(reTrimLeadingDashes, '');
+
+    if (prev === true || !key) {
       return cur;
     }
 
@@ -61,13 +83,13 @@ function _inputProps(value, cb) {
       const v = cur.substr(offset + 1);
 
       if (k.charAt() === '-') {
-        flags[k.replace(reTrimTrailingDashes, '')] = v;
+        flags[k.replace(reTrimLeadingDashes, '')] = e(v);
       } else {
         data[k] = e(v);
       }
 
       if (prev.charAt() === '-') {
-        flags[prev.replace(reTrimTrailingDashes, '')] = true;
+        flags[key] = true;
         return true;
       }
 
@@ -76,20 +98,20 @@ function _inputProps(value, cb) {
 
     if (prev.charAt() === '-') {
       if (cur.charAt() !== '-') {
-        flags[prev.replace(reTrimTrailingDashes, '')] = cur || true;
+        flags[key] = e(cur) || true;
         return true;
       }
 
-      flags[prev.replace(reTrimTrailingDashes, '')] = true;
+      flags[key] = true;
       return cur;
     }
 
     if (prev) {
       if (prev.indexOf(':') === -1) {
-        data[prev] = '1';
+        data[prev] = opts.default;
       } else {
         offset = prev.indexOf(':');
-        params[prev.substr(0, offset)] = prev.substr(offset + 1);
+        params[prev.substr(0, offset)] = e(prev.substr(offset + 1));
       }
     }
 
