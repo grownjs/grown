@@ -63,6 +63,11 @@ module.exports = ($) => {
         let _method = parts.shift() || 'get';
         let _path = parts.shift() || '/';
 
+        if (_method.charAt() === '-' || _method.indexOf(':') > -1) {
+          parts.unshift(_method);
+          _method = 'get';
+        }
+
         if (_method.charAt() === '/') {
           _path = _method;
           _method = 'get';
@@ -73,26 +78,47 @@ module.exports = ($) => {
           _path = '/';
         }
 
-        let _value = parts.join(' ');
-
         try {
-          _value = _value.replace(reInterpolate, ($0, $1) => vm.runInNewContext($1, repl.context));
-        } catch (e) {
-          throw new Error(`Invalid expression within '${_value}'. ${e.message}`);
-        }
+          const _value = parts.join(' ');
 
-        $.fetch(_method, _path, _.inputParams(_value)).then((res) => {
-          let _status = res.statusCode === 200 ? 'green' : 'cyan';
+          // allow dynamic value interpolation
+          const _props = _.inputProps(_value, (v) => {
+            try {
+              return v.replace(reInterpolate, ($0, $1) => vm.runInNewContext($1, repl.context));
+            } catch (e) {
+              throw new Error(`Invalid expression within '${v}'. ${e.message}`);
+            }
+          });
 
-          if (res.statusCode >= 500) {
-            _status = 'red';
+          if (_props.flags.json) {
+            _props.params.accept = 'application/json';
           }
 
-          _.echo(chalk[_status](res.statusCode), ' ', chalk.yellow(res.statusMessage), ' ');
-          _.echo(chalk.gray(res.body), '\n');
-        }).catch((error) => {
-          _.echo(chalk.red(error.message), '\n');
-        });
+          if (_props.flags.text) {
+            _props.params.accept = 'text/plain';
+          }
+
+          // normalize input
+          const _opts = {
+            body: _props.data,
+            headers: _props.params,
+          };
+
+          $.fetch(_method, _path, _opts).then((res) => {
+            let _status = res.statusCode === 200 ? 'green' : 'cyan';
+
+            if (res.statusCode >= 500) {
+              _status = 'red';
+            }
+
+            _.echo(chalk[_status](res.statusCode), ' ', chalk.yellow(res.statusMessage), ' ');
+            _.echo(chalk.gray(res.body), '\n');
+          }).catch((error) => {
+            _.echo(chalk.red(error.message), '\n');
+          });
+        } catch (_e) {
+          _.echo(chalk.red(_e.message), '\n');
+        }
       },
     });
   }

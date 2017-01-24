@@ -3,7 +3,7 @@ const cmd = args[0] && args[0].charAt() === '-' ? '' : args.shift();
 
 const _ = require('./_util');
 
-const $ = _.inputParams(args);
+const $ = _.inputProps(args);
 
 $.cmd = cmd;
 
