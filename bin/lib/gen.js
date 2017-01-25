@@ -4,7 +4,19 @@
 
 process.env.NODE_ENV = process.env.NODE_ENV || 'dev';
 
-const $ = require('./_argv');
+const args = process.argv.slice(2);
+
+let _cmd = args.shift();
+
+// skip flags or params
+if (_cmd && !/^\w[\w:.-]+$/.test(_cmd)) {
+  args.unshift(_cmd);
+
+  // default action
+  _cmd = '';
+}
+
+const $ = require('wargs')(args);
 
 /* istanbul ignore else */
 if ($.flags.debug) {
@@ -20,6 +32,16 @@ const path = require('path');
 const chalk = require('chalk');
 
 const haki = new Haki(cwd);
+
+const _base = {
+  env: process.env.NODE_ENV,
+  is: {
+    dev: process.env.NODE_ENV === 'dev',
+    test: process.env.NODE_ENV === 'test',
+    prod: process.env.NODE_ENV === 'prod',
+    stage: process.env.NODE_ENV === 'stage',
+  },
+};
 
 haki.load(require.resolve('./_tasks'));
 
@@ -51,26 +73,16 @@ function _showDetails(err, result) {
 }
 
 function _executeTask() {
-  const _env = {
-    env: process.env.NODE_ENV,
-    isDev: process.env.NODE_ENV === 'dev',
-    isTest: process.env.NODE_ENV === 'test',
-    isProd: process.env.NODE_ENV === 'prod',
-    isStage: process.env.NODE_ENV === 'stage',
-  };
-
-  const _locals = _.merge({}, _env, $.data);
-
-  haki.runGenerator($.cmd, _locals, $.flags.force)
+  haki.runGenerator(_cmd, _.merge({}, _base, $), $.flags.force)
     .then(result => _showDetails(undefined, result))
     .catch(_showDetails);
 }
 
 function _showTasks() {
-  haki.chooseGeneratorList(_showDetails);
+  haki.chooseGeneratorList(_.merge({}, _base, $), _showDetails);
 }
 
-if (!$.flags.list && $.cmd) {
+if (!$.flags.list && _cmd) {
   _executeTask();
 } else {
   _showTasks();

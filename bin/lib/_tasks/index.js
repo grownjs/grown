@@ -11,10 +11,21 @@ module.exports = (haki) => {
       message: 'Migration name:',
     }],
     actions: [
-      (name) => {
-        console.log('MAKE', name);
+      ($) => {
+        console.log('MAKE', $.name || $.data.name);
       },
     ],
+  });
+
+  haki.setGenerator('debug', {
+    actions($) {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          console.log('DEBUG', $);
+          resolve();
+        });
+      });
+    },
   });
 
   haki.setGenerator('test', {

@@ -1322,9 +1322,9 @@ grunt-exec@~0.4.5:
   version "0.4.7"
   resolved "https://registry.yarnpkg.com/grunt-exec/-/grunt-exec-0.4.7.tgz#40051ffa4eb0c9657e053b95e88d44352a1c2c25"
 
-haki@pateketrueke/haki:
+"haki@https://github.com/pateketrueke/haki.git#master":
   version "0.0.0"
-  resolved "https://codeload.github.com/pateketrueke/haki/tar.gz/79409499c99ca24b0f3b7946d799cdd16f152e55"
+  resolved "https://github.com/pateketrueke/haki.git#89b0effc260a3bef569c32fe5ad682151cbed399"
   dependencies:
     chalk "^1.1.3"
     change-case "^3.0.1"
@@ -3163,6 +3163,10 @@ verror@1.3.6:
 walkdir@~0.0.7:
   version "0.0.11"
   resolved "https://registry.yarnpkg.com/walkdir/-/walkdir-0.0.11.tgz#a16d025eb931bd03b52f308caed0f40fcebe9532"
+
+wargs@^0.0.0:
+  version "0.0.0"
+  resolved "https://registry.yarnpkg.com/wargs/-/wargs-0.0.0.tgz#26b21126538996ebac2a96207f39ad1834626ba6"
 
 warning-symbol@^0.1.0:
   version "0.1.0"

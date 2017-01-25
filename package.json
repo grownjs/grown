@@ -25,7 +25,8 @@
     "glob": "^7.0.6",
     "haki": "https://github.com/pateketrueke/haki.git#master",
     "object-new": "https://github.com/pateketrueke/object-new.git#master",
-    "type-is": "^1.6.14"
+    "type-is": "^1.6.14",
+    "wargs": "^0.0.0"
   },
   "devDependencies": {
     "body-parser": "^1.15.2",

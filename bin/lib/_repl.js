@@ -10,6 +10,7 @@ module.exports = ($) => {
   const vm = require('vm');
   const REPL = require('repl');
   const chalk = require('chalk');
+  const wargs = require('wargs');
   const cleanStack = require('clean-stack');
 
   let kill = true;
@@ -58,66 +59,70 @@ module.exports = ($) => {
     repl.defineCommand('fetch', {
       help: 'Request the current application',
       action(value) {
-        const parts = value.split(' ');
+        console.log(value);
 
-        let _method = parts.shift() || 'get';
-        let _path = parts.shift() || '/';
 
-        if (_method.charAt() === '-' || _method.indexOf(':') > -1) {
-          parts.unshift(_method);
-          _method = 'get';
-        }
+        // const parts = value.split(' ');
 
-        if (_method.charAt() === '/') {
-          _path = _method;
-          _method = 'get';
-        }
+        // let _method = parts.shift() || 'get';
+        // let _path = parts.shift() || '/';
 
-        if (_path.charAt() !== '/') {
-          parts.unshift(_path);
-          _path = '/';
-        }
+        // if (_method.charAt() === '-' || _method.indexOf(':') > -1) {
+        //   parts.unshift(_method);
+        //   _method = 'get';
+        // }
+
+        // if (_method.charAt() === '/') {
+        //   _path = _method;
+        //   _method = 'get';
+        // }
+
+        // if (_path.charAt() !== '/') {
+        //   parts.unshift(_path);
+        //   _path = '/';
+        // }
 
         try {
-          const _value = parts.join(' ');
+          // console.log(parts);
+          // const _value = parts.join(' ');
 
-          // allow dynamic value interpolation
-          const _props = _.inputProps(_value, (v) => {
-            try {
-              return v.replace(reInterpolate, ($0, $1) => vm.runInNewContext($1, repl.context));
-            } catch (e) {
-              throw new Error(`Invalid expression within '${v}'. ${e.message}`);
-            }
-          });
+          // // allow dynamic value interpolation
+          // const _props = wargs(_value, (v) => {
+          //   try {
+          //     return v.replace(reInterpolate, ($0, $1) => vm.runInNewContext($1, repl.context));
+          //   } catch (e) {
+          //     throw new Error(`Invalid expression within '${v}'. ${e.message}`);
+          //   }
+          // });
 
-          if (_props.flags.json) {
-            _props.params.accept = 'application/json';
-          }
+          // if (_props.flags.json) {
+          //   _props.params.accept = 'application/json';
+          // }
 
-          if (_props.flags.text) {
-            _props.params.accept = 'text/plain';
-          }
+          // if (_props.flags.text) {
+          //   _props.params.accept = 'text/plain';
+          // }
 
-          // normalize input
-          const _opts = {
-            body: _props.data,
-            headers: _props.params,
-          };
+          // // normalize input
+          // const _opts = {
+          //   body: _props.data,
+          //   headers: _props.params,
+          // };
 
-          $.fetch(_method, _path, _opts).then((res) => {
-            let _status = res.statusCode === 200 ? 'green' : 'cyan';
+          // $.fetch(_method, _path, _opts).then((res) => {
+          //   let _status = res.statusCode === 200 ? 'green' : 'cyan';
 
-            if (res.statusCode >= 500) {
-              _status = 'red';
-            }
+          //   if (res.statusCode >= 500) {
+          //     _status = 'red';
+          //   }
 
-            _.echo(chalk[_status](res.statusCode), ' ', chalk.yellow(res.statusMessage), ' ');
-            _.echo(chalk.gray(res.body), '\n');
-          }).catch((error) => {
-            _.echo(chalk.red(error.message), '\n');
-          });
+          //   _.echo(chalk[_status](res.statusCode), ' ', chalk.yellow(res.statusMessage), ' ');
+          //   _.echo(chalk.gray(res.body), '\n');
+          // }).catch((error) => {
+          //   _.echo(chalk.red(error.message), '\n');
+          // });
         } catch (_e) {
-          _.echo(chalk.red(_e.message), '\n');
+          // _.echo(chalk.red(_e.message), '\n');
         }
       },
     });

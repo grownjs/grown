@@ -6,7 +6,7 @@ process.env.NODE_ENV = process.env.NODE_ENV || 'dev';
 
 const IS_DEV = process.env.NODE_ENV === 'dev';
 
-const $ = require('./_argv');
+const $ = require('wargs')(process.argv.slice(2));
 
 /* istanbul ignore else */
 if ($.flags.debug) {
