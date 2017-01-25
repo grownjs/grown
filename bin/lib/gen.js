@@ -36,8 +36,8 @@ const haki = new Haki(cwd);
 const _base = {
   env: process.env.NODE_ENV,
   is: {
+    ci: process.env.NODE_ENV === 'ci',
     dev: process.env.NODE_ENV === 'dev',
-    test: process.env.NODE_ENV === 'test',
     prod: process.env.NODE_ENV === 'prod',
     stage: process.env.NODE_ENV === 'stage',
   },

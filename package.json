@@ -6,7 +6,7 @@
   "license": "MIT",
   "main": "lib/index.js",
   "bin": {
-    "h": "bin/cli"
+    "grown": "bin/cli"
   },
   "scripts": {
     "dev": "jasmine-node spec --coffee --verbose --autoTest --captureExceptions --watchFolders lib",
@@ -26,7 +26,7 @@
     "haki": "https://github.com/pateketrueke/haki.git#master",
     "object-new": "https://github.com/pateketrueke/object-new.git#master",
     "type-is": "^1.6.14",
-    "wargs": "^0.0.0"
+    "wargs": "0.1.0"
   },
   "devDependencies": {
     "body-parser": "^1.15.2",

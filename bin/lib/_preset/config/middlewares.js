@@ -1,10 +1,10 @@
 module.exports = {
+  ci: [
+    'no-cache',
+  ],
   dev: [
     'stage',
-    'test',
-  ],
-  test: [
-    'no-cache',
+    'ci',
   ],
   prod: [
     'stage',

@@ -2,7 +2,7 @@
 
 /* eslint-disable global-require */
 
-process.env.NODE_ENV = process.env.NODE_ENV || 'test';
+process.env.NODE_ENV = process.env.NODE_ENV || 'dev';
 
 const $ = require('wargs')(process.argv.slice(2));
 
