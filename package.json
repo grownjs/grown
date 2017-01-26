@@ -5,9 +5,6 @@
   "author": "Alvaro Cabrera",
   "license": "MIT",
   "main": "lib/index.js",
-  "bin": {
-    "grown": "bin/cli"
-  },
   "scripts": {
     "dev": "jasmine-node spec --coffee --verbose --autoTest --captureExceptions --watchFolders lib",
     "lint": "eslint bin lib spec",
@@ -19,14 +16,11 @@
   },
   "dependencies": {
     "accepts": "^1.3.3",
-    "chalk": "^1.1.3",
     "clean-stack": "^1.1.1",
     "dotenv": "^4",
     "glob": "^7.0.6",
-    "haki": "https://github.com/pateketrueke/haki.git#master",
     "object-new": "https://github.com/pateketrueke/object-new.git#master",
-    "type-is": "^1.6.14",
-    "wargs": "0.1.0"
+    "type-is": "^1.6.14"
   },
   "devDependencies": {
     "body-parser": "^1.15.2",
