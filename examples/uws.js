@@ -4,17 +4,19 @@
 // git clone https://github.com/uWebSockets/uWebSockets.git
 // cd uWebSockets
 // make
-// cd ..
+// cd ../..
 // yarn
 // yarn example uws
 
 const uws = require('../external/uWebSockets/nodejs/dist/uws');
 
+require('debug').enable('homegrown,homegrown:*');
+
 const Homegrown = require('..')();
 
 const $ = Homegrown.new();
 
-$.extensions('Homegrown.support.uws', {
+$.extensions('Homegrown.conn.uws', {
   props: {
     globalAgent: {
       defaultPort: process.env.PORT,
@@ -29,6 +31,15 @@ $.extensions('Homegrown.support.uws', {
 
       return uws.http.createServer((req, res) => {
         try {
+          // TODO: wrap this
+          console.log(res.on);
+          res.send = () => {};
+          res.getHeader = () => {};
+          res.setHeader = () => {};
+          res.finished = false;
+          res.statusCode = 502;
+          res.statusMessage = 'Not Implemented';
+
           _client({
             url: req.url,
             body: null,
@@ -36,19 +47,11 @@ $.extensions('Homegrown.support.uws', {
             headers: {
               host: 'localhost:5000',
             },
-            getHeader(arg1) { req.getHeader(arg1); },
-            setHeader(arg1, arg2) {},
-          }, {
-            end(arg1) { res.end(arg1); },
-            send(arg1) { res.send(arg1); },
             getHeader(arg1) {},
             setHeader(arg1, arg2) {},
-            finished: false,
-            statusCode: 502,
-            statusMessage: 'Not Implemented',
-          }, () => console.log('DONE'));
+          }, res, () => console.log('DONE'));
         } catch (e) {
-          console.log('ERR', e);
+          console.log('ERR', e.stack);
         }
       });
     },
