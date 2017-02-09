@@ -2,7 +2,7 @@
 // cd homegrown
 // mkdir external && cd external
 // git clone https://github.com/uWebSockets/uWebSockets.git
-// cd uWebSockets
+// cd uWebSockets/nodejs
 // make
 // cd ../..
 // yarn
@@ -31,25 +31,19 @@ $.extensions('Homegrown.conn.uws', {
 
       return uws.http.createServer((req, res) => {
         try {
-          // TODO: wrap this
-          console.log(res.on);
-          res.send = () => {};
-          res.getHeader = () => {};
-          res.setHeader = () => {};
           res.finished = false;
           res.statusCode = 502;
           res.statusMessage = 'Not Implemented';
 
-          _client({
-            url: req.url,
-            body: null,
-            method: req.verb === uws.HTTP_GET ? 'GET' : 'POST',
-            headers: {
-              host: 'localhost:5000',
-            },
-            getHeader(arg1) {},
-            setHeader(arg1, arg2) {},
-          }, res, () => console.log('DONE'));
+          const _writeHead = res.writeHead.bind(res);
+
+          // noop
+          res.writeHead = (status, headers) => {
+            // FIXME
+            // _writeHead(status || 200, headers || {});
+          };
+
+          _client(req, res, () => console.log('DONE'));
         } catch (e) {
           console.log('ERR', e.stack);
         }
