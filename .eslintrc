@@ -9,6 +9,7 @@
     "sourceType": "module"
   },
   "rules" : {
+    "max-len": 120,
     "strict": 0,
     "no-console": 0,
     "arrow-body-style": 0,
