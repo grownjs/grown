@@ -4,12 +4,14 @@ const Homegrown = require('..')();
 
 const $ = Homegrown.new();
 
-$.extensions('Homegrown.support.http', () => require('http'));
+$.extensions('Homegrown.conn.http', process.env.UWS > 0
+  ? require('./_uws')
+  : () => require('http'));
 
 $.mount(require('morgan')('dev'));
 
-$.listen(5000, (app) => {
+$.listen(5000)
+.then((app) => {
   console.log('Listening on', app.location.href);
-}).catch((err) => {
-  console.log(err.message);
-});
+})
+.catch(error => console.log(error.stack));

@@ -22,6 +22,8 @@ $.mount((conn) => {
   });
 });
 
-$.listen('uws://localhost:5000', (app) => {
+$.listen('uws://localhost:5000')
+.then((app) => {
   console.log('Listening on', app.location.href);
-});
+})
+.catch(error => console.log(error.stack));
