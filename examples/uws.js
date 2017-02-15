@@ -32,18 +32,23 @@ $.extensions('Homegrown.conn.uws', {
       return uws.http.createServer((req, res) => {
         try {
           res.finished = false;
-          res.statusCode = 502;
+          res.statusCode = 501;
           res.statusMessage = 'Not Implemented';
 
-          const _writeHead = res.writeHead.bind(res);
-
-          // noop
           res.writeHead = (status, headers) => {
-            // FIXME
-            // _writeHead(status || 200, headers || {});
+            // FIXME: this eventually will be implemented on uws
+            res.write(`HTTP/1.1 ${(status || res.statusCode || 200)} ${res.statusMessage}\n`);
+
+            if (headers) {
+              Object.keys(headers).forEach((key) => {
+                res.write(`${key}: ${headers[key]}\n`);
+              });
+            }
+
+            res.write('\n');
           };
 
-          _client(req, res, () => console.log('DONE'));
+          _client(req, res);
         } catch (e) {
           console.log('ERR', e.stack);
         }
