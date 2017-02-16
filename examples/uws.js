@@ -9,16 +9,15 @@
 // yarn example uws
 
 const Homegrown = require('..')();
-
 const $ = Homegrown.new();
-
-$.extensions('Homegrown.conn.uws', require('./_uws'));
 
 $.mount((conn) => {
   const start = new Date();
 
   return conn.next(() => {
-    conn.resp_body = `OK in ${(new Date() - start) / 1000}ms`;
+    if (conn.request_path === '/') {
+      conn.resp_body = `OK in ${(new Date() - start) / 1000}ms`;
+    }
   });
 });
 
