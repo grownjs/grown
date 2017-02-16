@@ -10,4 +10,4 @@ sleep 1
 
 pkill -9 $pid
 
-(echo "$test" | grep "OK in 0ms") || (echo "Failed: $test" && exit 1)
+(echo "$test" | grep "OK in 0") || (echo "Failed: $test" && exit 1)
