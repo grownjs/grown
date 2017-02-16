@@ -4,8 +4,10 @@ yarn example uws & pid=$!
 
 sleep 1
 
-echo "OK: $pid"
+test="$(curl -sS localhost:5000)"
 
-curl localhost:5000
+sleep 1
 
 pkill -9 $pid
+
+(echo "$test" | grep "OK in 0ms") || (echo "Failed: $test" && exit 1)
