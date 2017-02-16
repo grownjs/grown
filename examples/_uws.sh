@@ -8,14 +8,16 @@ cd external
 
 if [ ! -d uWebSockets ]; then
   git clone https://github.com/uWebSockets/uWebSockets.git
-else
-  cd uWebSockets
-  git reset HEAD
-  git checkout -- .
-  git pull
-  cd ..
 fi
 
-cd uWebSockets/nodejs
+cd uWebSockets
+rm -rf *
+git checkout -- .
+git pull
+
+# stable patch
+git checkout 62685a2
+
+cd nodejs
 make
 cd ../..

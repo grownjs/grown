@@ -9,6 +9,7 @@
 // yarn example uws
 
 const Homegrown = require('..')();
+
 const $ = Homegrown.new();
 
 $.mount((conn) => {
@@ -21,7 +22,7 @@ $.mount((conn) => {
   });
 });
 
-$.listen('uws://localhost:5000')
+$.listen('uws://0.0.0.0:5000')
 .then((app) => {
   console.log('Listening on', app.location.href);
 })

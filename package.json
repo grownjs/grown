@@ -13,6 +13,7 @@
     "cover:up": "codecov --file=coverage/lcov.info --disable=gcov -e TRAVIS_NODE_VERSION",
     "example": "node examples/_runner.js",
     "test": "yarn lint && yarn cover",
+    "test:uws": "./examples/_test.sh",
     "build": "./examples/_uws.sh"
   },
   "dependencies": {

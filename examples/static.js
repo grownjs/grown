@@ -1,6 +1,7 @@
 /* eslint-disable global-require */
 
 const Homegrown = require('..')();
+
 const $ = Homegrown.new();
 
 $.mount(require('serve-static')(__dirname));

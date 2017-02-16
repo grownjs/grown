@@ -13,6 +13,7 @@ before_script:
   - psql -c 'create database travis_ci_test;' -U postgres
   - yarn add pg sqlite3
 script:
+  - 'yarn test:uws'
   - 'yarn test'
 after_success:
   - 'yarn cover:up'
