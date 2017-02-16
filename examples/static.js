@@ -8,8 +8,8 @@ $.extensions('Homegrown.conn.http', process.env.UWS > 0
   ? require('./_uws')
   : () => require('http'));
 
-$.mount(require('serve-index')(__dirname));
 $.mount(require('serve-static')(__dirname));
+$.mount(require('serve-index')(__dirname));
 
 $.listen(5000)
 .then((app) => {
