@@ -22,13 +22,13 @@ describe '#conn', ->
       $.server.fetch().then done
 
   describe 'response', ->
-    # it 'should responds to unsupported requests with 501', (done) ->
-    #   $.server.fetch (req, next) ->
-    #     next (e, res) ->
-    #       expect(e).toBeUndefined()
-    #       expect(res.statusMessage).toEqual STATUS_CODES[501]
-    #       expect(res.statusCode).toEqual 501
-    #       done()
+    it 'should responds to unsupported requests with 501', (done) ->
+      $.server.fetch (req, next) ->
+        next (e, res) ->
+          expect(e).toBeUndefined()
+          expect(res.statusMessage).toEqual STATUS_CODES[501]
+          expect(res.statusCode).toEqual 501
+          done()
 
     it 'should handle headers', (done) ->
       $.server.mount (conn) ->
