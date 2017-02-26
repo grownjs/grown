@@ -17,11 +17,8 @@ describe '#session', ->
 
       $.cookies = conn.cookies
 
-    $.server.fetch (req, next) ->
-      req.headers.cookie = 'foo=bar'
-
-      next (e, res) ->
-        expect(res.cookies).toEqual { x: { value: 'y', opts: { a: 'b' } } }
-        expect($.cookies).toEqual { foo: 'bar' }
-        expect(res.body).toEqual 'y'
-        done()
+    $.server.fetch({ headers: { cookie: 'foo=bar' } }).then (res) ->
+      expect(res.cookies).toEqual { x: { value: 'y', opts: { a: 'b' } } }
+      expect($.cookies).toEqual { foo: 'bar' }
+      expect(res.body).toEqual 'y'
+      done()

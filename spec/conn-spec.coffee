@@ -23,12 +23,10 @@ describe '#conn', ->
 
   describe 'response', ->
     it 'should responds to unsupported requests with 501', (done) ->
-      $.server.fetch (req, next) ->
-        next (e, res) ->
-          expect(e).toBeUndefined()
-          expect(res.statusMessage).toEqual STATUS_CODES[501]
-          expect(res.statusCode).toEqual 501
-          done()
+      $.server.fetch().then (res) ->
+        expect(res.statusMessage).toEqual STATUS_CODES[501]
+        expect(res.statusCode).toEqual 501
+        done()
 
     it 'should handle headers', (done) ->
       $.server.mount (conn) ->
@@ -44,7 +42,7 @@ describe '#conn', ->
         conn.merge_resp_headers { a: 'b' }
         expect(conn.resp_headers).toEqual { x: 'y', a: 'b' }
 
-      $.server.fetch done
+      $.server.fetch().then done
 
     it 'should handle content-type and charset', (done) ->
       $.server.mount (conn) ->
@@ -69,25 +67,21 @@ describe '#conn', ->
     $.server.mount (conn) ->
       conn.redirect('/y?a=b')
 
-    $.server.fetch (req, next) ->
-      next (e, res) ->
-        expect(e).toBeUndefined()
-        expect(res.statusCode).toEqual 302
-        expect(res.statusMessage).toEqual STATUS_CODES[302]
-        expect(res.getHeader('location')).toEqual '/y?a=b'
-        done()
+    $.server.fetch().then (res) ->
+      expect(res.statusCode).toEqual 302
+      expect(res.statusMessage).toEqual STATUS_CODES[302]
+      expect(res.getHeader('location')).toEqual '/y?a=b'
+      done()
 
   it 'should responds to any statusCode through `put_status()`', (done) ->
     $.server.mount (conn) ->
       expect(-> conn.put_status()).toThrow()
       conn.put_status(404)
 
-    $.server.fetch (req, next) ->
-      next (e, res) ->
-        expect(e).toBeUndefined()
-        expect(res.statusMessage).toEqual STATUS_CODES[404]
-        expect(res.statusCode).toEqual 404
-        done()
+    $.server.fetch().then (res) ->
+      expect(res.statusMessage).toEqual STATUS_CODES[404]
+      expect(res.statusCode).toEqual 404
+      done()
 
   describe 'conn-like middleware support', ->
     it 'supports plain functions', (done) ->
