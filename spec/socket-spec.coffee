@@ -7,25 +7,23 @@ socket = require('../lib/plugs/socket')
 describe '#socket', ->
   beforeEach $
 
-  it '...', (done) ->
-    options =
-      transports: ['websocket']
-      'force new connection': true
-
+  it 'should handle connections', (done) ->
     url = null
-    ok = null
 
     $.server.use socket(8081)
 
     $.server.mount (conn) ->
       url = 'http:' + conn.socket_host + '/x'
-      conn.socket('/x').then ->
-        ok = true
+      conn.socket('/x').then (socket) ->
+        socket.emit 'y', 'z'
       true
 
     $.server.fetch().then ->
-      client = io.connect(url, options)
-      client.on 'connect', ->
-        expect(ok).toBe true
+      client = io.connect url,
+        transports: ['websocket']
+        'force new connection': true
+
+      client.on 'y', (data) ->
+        expect(data).toBe 'z'
         $.close()
         done()
