@@ -5,7 +5,7 @@ describe '#test', ->
 
   it 'can take method/path/opts as arguments', (done) ->
     $.server.mount (@conn) =>
-    $.server.fetch('put', '/x', a: 'b').then =>
+    $.server.fetch('/x', 'put', a: 'b').then =>
       expect(@conn.req.method).toEqual 'PUT'
       expect(@conn.req.url).toEqual '/x'
       expect(@conn.req.a).toEqual 'b'
