@@ -9,4 +9,10 @@ $ = module.exports = ->
   $.server = Homegrown.new()
   $.server.fetch = test($.server)
 
+  $.close = ->
+    homegrown.burn()
+
   null
+
+$.close = ->
+  homegrown.burn()
