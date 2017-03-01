@@ -1,7 +1,7 @@
 {
   "name": "grown",
   "version": "0.1.0",
-  "description": "Grown",
+  "description": " Home grown nodejs web framework",
   "author": "Alvaro Cabrera",
   "license": "MIT",
   "main": "lib/index.js",
