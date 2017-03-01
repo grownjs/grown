@@ -2,7 +2,7 @@
 
 /* eslint-disable global-require */
 
-module.exports = ($) => {
+module.exports = $ => {
   const IS_DEBUG = $.flags.debug === true;
 
   /* istanbul ignore else */

@@ -26,7 +26,7 @@ module.exports = (_cmd, $) => {
     },
   };
 
-  haki.load(require.resolve('../skel'));
+  haki.load(require.resolve($.flags.template || '../skel/app'));
 
   function _showDetails(err, result) {
     if (err) {

@@ -2,7 +2,7 @@
 
 /* eslint-disable global-require */
 
-module.exports = ($) => {
+module.exports = $ => {
   const IS_DEBUG = $.flags.debug === true;
   const IS_REPL = $.flags.repl === true;
   const IS_DEV = process.env.NODE_ENV === 'dev';

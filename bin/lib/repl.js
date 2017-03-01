@@ -4,9 +4,9 @@
 
 const reInterpolate = /`([^`]+)`/g;
 
-const _ = require('./_util');
+const _ = require('./util');
 
-module.exports = ($) => {
+module.exports = $ => {
   const vm = require('vm');
   const REPL = require('repl');
   const chalk = require('chalk');
