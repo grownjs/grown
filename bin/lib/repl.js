@@ -2,7 +2,7 @@
 
 /* eslint-disable global-require */
 
-const reInterpolate = /`([^`]+)`/g;
+// const reInterpolate = /`([^`]+)`/g;
 
 const _ = require('./util');
 
