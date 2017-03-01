@@ -38,7 +38,6 @@ function showHelp() {
                        # default: sqlite3
   Runtime options:
     -f, --force        # Overwrite files that already exist
-    -s, --skip         # Skip files that already exist
     -q, --quiet        # Suppress status output
 
   Other actions:
