@@ -1,18 +1,16 @@
-homegrown = require('..')
+Grown = require('..')
 test = require('../lib/test')
 
 $ = module.exports = ->
   delete $[k] for k in $
 
-  Homegrown = homegrown()
-
-  $.server = Homegrown.new()
+  $.server = new Grown()
   $.server.fetch = test($.server)
 
   $.close = ->
-    homegrown.burn()
+    Grown.burn()
 
   null
 
 $.close = ->
-  homegrown.burn()
+  Grown.burn()

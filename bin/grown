@@ -1,0 +1,88 @@
+#!/bin/sh
+':' // ; exec "$(command -v nodejs || command -v node)" "$0" "$@"
+;
+
+'use strict';
+
+/* eslint-disable global-require */
+
+const $ = require('wargs')(process.argv.slice(2));
+
+/* istanbul ignore else */
+if (process.env.CI) {
+  process.env.NODE_ENV = 'ci';
+}
+
+/* istanbul ignore else */
+if ($.params.port > 0) {
+  process.env.PORT = $.params.port;
+}
+
+const thisPkg = require('../package.json');
+const cleanStack = require('clean-stack');
+const chalk = require('chalk');
+const path = require('path');
+
+const _ = require('./lib/util');
+
+const _task = $._.shift();
+const _bin = path.basename(thisPkg.bin);
+
+function showHelp() {
+  _.echo(`  Usage:
+    ${_bin} new APP_PATH [...]
+
+  Options:
+    -t, --template     # Path to some application template (can be a filesystem path or URL)
+    -d, --database     # Preconfigure for selected database (options: mysql/pgsql/sqlite3)
+                       # default: sqlite3
+  Runtime options:
+    -f, --force        # Overwrite files that already exist
+    -s, --skip         # Skip files that already exist
+    -q, --quiet        # Suppress status output
+
+  Other actions:
+    ${_bin} generate [...]
+    ${_bin} start [...]
+    ${_bin} run [...]
+    ${_bin} repl
+
+  Grown options:
+    -h, --help         # Show this help message and quit
+    -v, --version      # Show Grown version number and quit\n`);
+}
+
+if ($.flags.version) {
+  _.echo(chalk.green(`${thisPkg.name} v${thisPkg.version}`), '\n');
+  _.die();
+}
+
+if (!_task || $.flags.help) {
+  showHelp();
+  _.die();
+}
+
+try {
+  switch (_task) {
+    case 'generate':
+    case 'start':
+    case 'repl':
+    case 'new':
+      require(`./tasks/${_task}`)($);
+      break;
+
+    case 'run':
+    default:
+      require('./tasks/run')(_task, $);
+      break;
+  }
+} catch (e) {
+  _.echo(chalk.red(($.flags.debug && cleanStack(e.stack)) || e.message), '\n');
+  _.die(1);
+}
+
+process.on('exit', () => {
+  process.stdout.write('\r\n');
+});
+
+process.on('SIGINT', () => process.exit());

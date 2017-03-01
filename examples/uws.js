@@ -1,5 +1,5 @@
-// git clone https://github.com/pateketrueke/homegrown.git
-// cd homegrown
+// git clone https://github.com/pateketrueke/grown.git
+// cd grown
 // mkdir external && cd external
 // git clone https://github.com/uWebSockets/uWebSockets.git
 // cd uWebSockets/nodejs
@@ -8,21 +8,22 @@
 // yarn
 // yarn example uws
 
-const Homegrown = require('..')();
+const Grown = require('..');
 
-const $ = Homegrown.new();
+Grown.new({
+  mount: [
+    (conn) => {
+      const start = new Date();
 
-$.mount((conn) => {
-  const start = new Date();
-
-  return conn.next(() => {
-    if (conn.request_path === '/') {
-      conn.resp_body = `OK in ${(new Date() - start) / 1000}ms`;
-    }
-  });
-});
-
-$.listen('uws://0.0.0.0:5000')
+      return conn.next(() => {
+        if (conn.request_path === '/') {
+          conn.resp_body = `OK in ${(new Date() - start) / 1000}ms`;
+        }
+      });
+    },
+  ],
+})
+.listen('uws://0.0.0.0:5000')
 .then((app) => {
   console.log('Listening on', app.location.href);
 })

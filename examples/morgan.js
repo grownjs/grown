@@ -1,12 +1,13 @@
 /* eslint-disable global-require */
 
-const Homegrown = require('..')();
+const Grown = require('..');
 
-const $ = Homegrown.new();
-
-$.mount(require('morgan')('dev'));
-
-$.listen(`${process.env.UWS > 0 ? 'uws' : 'http'}://0.0.0.0:5000`)
+Grown.new({
+  mount: [
+    require('morgan')('dev'),
+  ],
+})
+.listen(`${process.env.UWS > 0 ? 'uws' : 'http'}://0.0.0.0:5000`)
 .then((app) => {
   console.log('Listening on', app.location.href);
 })

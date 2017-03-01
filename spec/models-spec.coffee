@@ -1,6 +1,6 @@
 { resolve } = require('path')
 
-homegrown = require('..')
+Grown = require('..')
 util = require('../lib/util')
 models = require('../lib/plugs/models')
 
@@ -8,8 +8,7 @@ $ = models(resolve(__dirname, '_fixtures/app'))
 
 describe '#models', ->
   beforeEach (done) ->
-    Homegrown = homegrown()
-    @ctx = Homegrown.new()
+    @ctx = new Grown()
     $(@ctx, util)
 
     @ctx.emit('start').then done
