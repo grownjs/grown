@@ -1,7 +1,7 @@
 {
   "name": "grown",
   "version": "0.1.0",
-  "description": " Home grown nodejs web framework",
+  "description": "Experimental DSL for web applications",
   "author": "Alvaro Cabrera",
   "license": "MIT",
   "main": "lib/index.js",

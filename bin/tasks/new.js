@@ -16,7 +16,6 @@ module.exports = $ => {
 
   haki.runGenerator({
     basePath: path.resolve(__dirname, '../skel'),
-    abortOnFail: true,
     prompts: [{
       name: 'appName',
       message: 'Application name',
