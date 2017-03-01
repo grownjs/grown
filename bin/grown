@@ -81,8 +81,4 @@ try {
   _.die(1);
 }
 
-process.on('exit', () => {
-  process.stdout.write('\r\n');
-});
-
 process.on('SIGINT', () => process.exit());
