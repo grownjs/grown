@@ -11,7 +11,7 @@ Grown.env(cwd);
 
 // fresh context
 module.exports = () => {
-  const farm = new Grown({
+  const $ = new Grown({
     env: process.env.NODE_ENV || 'dev',
     appDir: path.resolve(cwd, process.env.APP_DIR || 'app'),
     publicDir: path.resolve(cwd, process.env.PUBLIC_DIR || 'public'),
@@ -31,30 +31,30 @@ module.exports = () => {
   });
 
   // log as soon as possible
-  farm.mount(require('morgan')(farm.get('logger.format')));
+  $.mount(require('morgan')($.get('logger.format')));
 
   // try static handler first
-  farm.mount(require('serve-static')(farm.get('publicDir')));
+  $.mount(require('serve-static')($.get('publicDir')));
 
   // inject logging helpers
-  farm.use(Grown.plugs.logger({
+  $.use(Grown.plugs.logger({
     transports: [{
       Console: {
-        chalkize: farm.get('logger.chalkize'),
+        chalkize: $.get('logger.chalkize'),
       },
     }],
   }));
 
   // standard mvc kit
-  farm.use(Grown.plugs.models(farm.get('appDir')));
-  farm.use(Grown.plugs.render(farm.get('appDir')));
-  farm.use(Grown.plugs.router(farm.get('appDir')));
+  $.use(Grown.plugs.models($.get('appDir')));
+  $.use(Grown.plugs.render($.get('appDir')));
+  $.use(Grown.plugs.router($.get('appDir')));
 
-  farm.mount(require('body-parser').json());
-  farm.mount(require('body-parser').urlencoded({ extended: false }));
+  $.mount(require('body-parser').json());
+  $.mount(require('body-parser').urlencoded({ extended: false }));
 
   // built-in method-override
-  farm.mount('_method', (conn) => {
+  $.mount('_method', (conn) => {
     const _method = conn.query_params._method || conn.body_params._method
       || conn.req_headers['x-method-override']
       || conn.req_headers['x-http-method']
@@ -74,10 +74,10 @@ module.exports = () => {
     }
   });
 
-  farm.use(Grown.plugs.upload(farm.get('upload')));
-  farm.use(Grown.plugs.session(farm.get('session')));
+  $.use(Grown.plugs.upload($.get('upload')));
+  $.use(Grown.plugs.session($.get('session')));
 
-  return farm;
+  return $;
 };
 
 // export framework version and teardown

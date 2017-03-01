@@ -1,0 +1,15 @@
+{
+  "name": "{{paramCase appName}}",
+  "version": "0.0.0",
+  "main": "app/index.js",
+  "description": "{{description}}",
+  "author": "{{fullName}} <{{email}}>",
+  "license": "{{license}}",
+  "dependencies": {
+    "body-parser": "*",
+    "csurf": "*",
+    "grown": "*",
+    "morgan": "*",
+    "serve-static": "*"
+  }
+}
