@@ -23,9 +23,10 @@ const cleanStack = require('clean-stack');
 const chalk = require('chalk');
 const path = require('path');
 
+let _task = $._.shift();
+
 const _ = require('./lib/util');
 
-const _task = $._.shift();
 const _bin = path.basename(thisPkg.bin);
 
 function showHelp() {
@@ -41,9 +42,8 @@ function showHelp() {
     -q, --quiet        # Suppress status output
 
   Other actions:
-    ${_bin} generate [...]
-    ${_bin} start [...]
-    ${_bin} run [...]
+    ${_bin} g|add|generate [...]
+    ${_bin} s|up|start [...]
     ${_bin} repl
 
   Grown options:
@@ -61,6 +61,17 @@ if (!_task || $.flags.help) {
   _.die();
 }
 
+const aliases = {
+  generate: ['g', 'add'],
+  start: ['s', 'up'],
+};
+
+Object.keys(aliases).forEach((key) => {
+  if (aliases[key].indexOf(_task) > -1) {
+    _task = key;
+  }
+});
+
 try {
   switch (_task) {
     case 'generate':
@@ -70,9 +81,8 @@ try {
       require(`./tasks/${_task}`)($);
       break;
 
-    case 'run':
     default:
-      require('./tasks/run')(_task, $);
+      throw new Error(`Not implemented: ${_task}`);
       break;
   }
 } catch (e) {

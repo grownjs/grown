@@ -34,12 +34,7 @@ module.exports = $ => {
 
   function _startServer(done) {
     // start server
-    farm.listen({
-      protocol: $.flags.uws ? 'uws' : 'http',
-      port: process.env.PORT || 8080,
-      host: '0.0.0.0',
-      href: `http://0.0.0.0:${process.env.PORT || 8080}`,
-    }, (app) => {
+    farm.listen(`http://0.0.0.0:${process.env.PORT || 8080}`, (app) => {
       _.echo(chalk.gray('— Listening at '), chalk.yellow(app.location.href), '\n');
 
       if (IS_REPL) {
