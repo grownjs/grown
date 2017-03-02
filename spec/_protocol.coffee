@@ -1,11 +1,10 @@
 Grown = require('..')
-test = require('../lib/test')
 
 $ = module.exports = ->
   delete $[k] for k in $
 
   $.server = new Grown()
-  $.server.fetch = test($.server)
+  $.server.fetch = Grown.plugs.testing($.server)
 
   $.close = ->
     Grown.burn()

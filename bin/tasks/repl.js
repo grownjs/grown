@@ -20,7 +20,7 @@ module.exports = $ => {
 
   const cwd = process.cwd();
 
-  const _test = require('../../lib/test.js');
+  const _test = require('../../lib/plugs/testing.js');
 
   const _farm = require(path.join(cwd, 'app'));
 
