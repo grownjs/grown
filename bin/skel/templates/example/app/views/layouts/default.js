@@ -1,9 +1,10 @@
-module.exports = `<!doctype html>
+module.exports = locals => `<!doctype html>
 <html>
   <head>
-    <title>Untitled</title>
+    <title>${locals.title || 'Untitled'}</title>
   </head>
   <body>
     <h1>It works!</h1>
+    ${locals.yield || ''}
   </body>
 </html>`;

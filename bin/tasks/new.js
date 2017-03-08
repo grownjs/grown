@@ -7,6 +7,10 @@ const _ = require('../lib/util');
 const path = require('path');
 const chalk = require('chalk');
 
+function isName(value) {
+  return /^[A-Za-z\d]+\w*$/.test(value);
+}
+
 module.exports = $ => {
   const IS_DEBUG = $.flags.debug === true;
 
@@ -19,30 +23,7 @@ module.exports = $ => {
     prompts: [{
       name: 'appName',
       message: 'Application name',
-      validate: value => value.length > 0 || 'Missing name?',
-    }, {
-      name: 'description',
-      message: 'Description',
-    }, {
-      name: 'fullName',
-      message: 'Your fullname',
-    }, {
-      name: 'email',
-      message: 'Your email address',
-    }, {
-      type: 'list',
-      name: 'license',
-      message: 'Project license',
-      choices: [
-        'MIT',
-        'GPL-3.0',
-        'LGPL-3.0',
-        'EPL-1.0',
-        'MPL-2.0',
-        'CCDL-1.0',
-        'BSD-3-Clause',
-        'Apache License 2.0',
-      ],
+      validate: value => isName(value) || 'Invalid nam',
     }],
     actions: [{
       type: 'copy',
@@ -50,7 +31,7 @@ module.exports = $ => {
       destPath: '{{snakeCase appName}}',
     }],
   }, {
-    appName: $._.shift(),
+    appName: isName($._[0]) ? $._[0] : null,
   })
   .catch(err => {
     _.echo(chalk.red((IS_DEBUG && err.stack) || err.message), '\n');

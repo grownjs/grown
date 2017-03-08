@@ -2,14 +2,20 @@
   "name": "{{paramCase appName}}",
   "version": "0.0.0",
   "main": "app/index.js",
-  "description": "{{description}}",
-  "author": "{{fullName}} <{{email}}>",
-  "license": "{{license}}",
+  "scripts": {
+    "eslint": "eslint app config middlewares",
+    "start": "grown up"
+  },
   "dependencies": {
     "body-parser": "*",
     "csurf": "*",
     "grown": "*",
     "morgan": "*",
     "serve-static": "*"
+  },
+  "optionalDependencies": {
+    "eslint": "*",
+    "eslint-config-airbnb-base": "*",
+    "eslint-plugin-import": "*"
   }
 }
