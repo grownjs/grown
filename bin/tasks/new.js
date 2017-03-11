@@ -27,6 +27,13 @@ module.exports = $ => {
     cwd = true;
   }
 
+  const db = $.flags.database || $.flags.d || 'sqlite';
+
+  if (['sqlite', 'mssql', 'mysql', 'postgres'].indexOf(db) === -1) {
+    _.echo(chalk.red(`Unsupported '${db}' database\n`));
+    _.die(1);
+  }
+
   haki.runGenerator({
     abortOnFail: true,
     basePath: path.resolve(__dirname, '../skel'),
@@ -46,6 +53,12 @@ module.exports = $ => {
     }],
   }, {
     appName: name,
+    db: {
+      mssql: db === 'mssql',
+      mysql: db === 'mysql',
+      sqlite: db === 'sqlite',
+      postgres: db === 'postgres',
+    },
   })
   .catch(err => {
     _.echo(chalk.red((IS_DEBUG && err.stack) || err.message), '\n');
