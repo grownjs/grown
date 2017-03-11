@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "main": "app/index.js",
   "scripts": {
-    "eslint": "eslint app config middlewares",
+    "eslint": "eslint app boot config",
     "start": "grown up"
   },
   "dependencies": {

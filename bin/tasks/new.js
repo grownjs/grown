@@ -18,6 +18,15 @@ module.exports = $ => {
 
   const haki = new Haki($.flags);
 
+  let name = $._.shift();
+  let cwd = false;
+
+  /* istanbul ignore else */
+  if (name === '.') {
+    name = path.basename(process.cwd());
+    cwd = true;
+  }
+
   haki.runGenerator({
     basePath: path.resolve(__dirname, '../skel'),
     prompts: [{
@@ -28,10 +37,10 @@ module.exports = $ => {
     actions: [{
       type: 'copy',
       srcPath: 'templates/example',
-      destPath: '{{snakeCase appName}}',
+      destPath: cwd ? '' : '{{snakeCase appName}}',
     }],
   }, {
-    appName: isName($._[0]) ? $._[0] : null,
+    appName: name,
   })
   .catch(err => {
     _.echo(chalk.red((IS_DEBUG && err.stack) || err.message), '\n');
