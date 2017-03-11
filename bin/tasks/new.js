@@ -28,6 +28,7 @@ module.exports = $ => {
   }
 
   haki.runGenerator({
+    abortOnFail: true,
     basePath: path.resolve(__dirname, '../skel'),
     prompts: [{
       name: 'appName',
@@ -38,6 +39,10 @@ module.exports = $ => {
       type: 'copy',
       srcPath: 'templates/example',
       destPath: cwd ? '' : '{{snakeCase appName}}',
+    }, {
+      type: 'install',
+      dependencies: ['body-parser', 'csurf', 'grown', 'morgan', 'serve-static'],
+      optionalDependencies: ['eslint', 'eslint-config-airbnb-base', 'eslint-plugin-import'],
     }],
   }, {
     appName: name,

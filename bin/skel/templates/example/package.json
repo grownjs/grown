@@ -5,17 +5,5 @@
   "scripts": {
     "eslint": "eslint app boot config",
     "start": "grown up"
-  },
-  "dependencies": {
-    "body-parser": "*",
-    "csurf": "*",
-    "grown": "*",
-    "morgan": "*",
-    "serve-static": "*"
-  },
-  "optionalDependencies": {
-    "eslint": "*",
-    "eslint-config-airbnb-base": "*",
-    "eslint-plugin-import": "*"
   }
 }
