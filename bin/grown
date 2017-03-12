@@ -60,6 +60,7 @@ if (!_task || $.flags.help) {
   _.die();
 }
 
+// FIXME; this should be built-in grown
 const aliases = {
   generate: ['g', 'add'],
   start: ['s', 'up'],
