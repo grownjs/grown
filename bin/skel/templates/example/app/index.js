@@ -82,4 +82,4 @@ module.exports = () => {
 
 // export framework version and teardown
 module.exports.version = Grown.version;
-module.exports.teardown = () => Grown.burn();
+module.exports.teardown = (cb) => Grown.burn(cb);

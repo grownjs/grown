@@ -19,7 +19,7 @@ const PACKAGE_JSON = `{
 `;
 
 function isName(value) {
-  return /^[A-Za-z\d]+\w*$/.test(value);
+  return /^[A-Za-z\d-]+\w*$/.test(value);
 }
 
 module.exports = $ => {
@@ -46,61 +46,34 @@ module.exports = $ => {
     _.die(1);
   }
 
-  const src = $._.shift() || $.flags.template;
-
   function done(err) {
     _.echo(chalk.red((IS_DEBUG && err.stack) || err.message), '\n');
     _.die(1);
   }
 
-  let task;
-
-  /* istanbul ignore else */
-  if (src) {
-    const dest = `.github/${src}`;
-
-    task = {
-      abortOnFail: true,
-      actions: [{
-        type: 'clone',
-        gitUrl: src,
-        destPath: dest,
-      }, {
-        type: 'copy',
-        srcPath: dest,
-        destPath: cwd ? '.' : '{{snakeCase appName}}',
-      }, {
-        type: 'clean',
-        destPath: '.github',
-      }],
-    };
-  } else {
-    task = {
-      abortOnFail: true,
-      basePath: path.resolve(__dirname, '../skel'),
-      prompts: [{
-        name: 'appName',
-        message: 'Application name',
-        validate: value => isName(value) || 'Invalid name',
-      }],
-      actions: [{
-        type: 'add',
-        template: PACKAGE_JSON,
-        destPath: cwd ? 'package.json' : '{{snakeCase appName}}/package.json',
-      }, {
-        type: 'copy',
-        srcPath: 'templates/example',
-        destPath: cwd ? '.' : '{{snakeCase appName}}',
-      }, {
-        type: 'install',
-        destPath: cwd ? '.' : '{{snakeCase appName}}',
-        dependencies: ['grown', 'csurf', 'morgan', 'body-parser', 'serve-static'],
-        optionalDependencies: ['eslint', 'eslint-plugin-import', 'eslint-config-airbnb-base'],
-      }],
-    };
-  }
-
-  haki.runGenerator(task, {
+  haki.runGenerator({
+    basePath: path.resolve(__dirname, '../skel'),
+    abortOnFail: true,
+    prompts: [{
+      name: 'appName',
+      message: 'Application name',
+      validate: value => isName(value) || 'Invalid name',
+    }],
+    actions: [{
+      type: 'add',
+      template: PACKAGE_JSON,
+      destPath: cwd ? 'package.json' : '{{snakeCase appName}}/package.json',
+    }, {
+      type: 'copy',
+      srcPath: 'templates/example',
+      destPath: cwd ? '.' : '{{snakeCase appName}}',
+    }, {
+      type: 'install',
+      destPath: cwd ? '.' : '{{snakeCase appName}}',
+      dependencies: ['grown', 'csurf', 'morgan', 'body-parser', 'serve-static'],
+      optionalDependencies: ['eslint', 'eslint-plugin-import', 'eslint-config-airbnb-base'],
+    }],
+  }, {
     appName: name,
     db: {
       mssql: db === 'mssql',

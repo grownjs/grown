@@ -2,6 +2,8 @@
 
 /* eslint-disable global-require */
 
+const CLR = '\x1b[K';
+
 module.exports = $ => {
   const IS_DEBUG = $.flags.debug === true;
 
@@ -36,18 +38,22 @@ module.exports = $ => {
 
     farm.on('close', () => _close());
 
+    _.echo(chalk.gray('↺ 2/2 Starting REPL...'), CLR, '\r');
+
     farm.listen('test://', (app) => {
       _.echo(chalk.gray('— Listening at '), chalk.yellow(app.location.href), '\n');
       _.echo(chalk.gray('— Type .help to show all available commands'), '\n');
     });
   }
 
+  _.echo(chalk.gray('↺ 1/2 Initializing REPL...'), CLR, '\r');
+
   _startApplication();
 
-  function _reload(cb) {
+  function _reload() {
     return _farm.teardown(() => {
       _.clearModules();
-      _startApplication(cb);
+      _startApplication();
     });
   }
 

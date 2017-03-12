@@ -2,6 +2,8 @@
 
 /* eslint-disable global-require */
 
+const CLR = '\x1b[K';
+
 module.exports = $ => {
   const IS_DEBUG = $.flags.debug === true;
   const IS_REPL = $.flags.repl === true;
@@ -27,12 +29,16 @@ module.exports = $ => {
   const chalk = require('chalk');
   const cleanStack = require('clean-stack');
 
+  const _test = require('../../lib/plugs/testing.js');
+
   const _farm = require(path.join(cwd, 'app'));
 
   // initialization
   let farm;
 
   function _startServer(done) {
+    _.echo(chalk.gray('↺ 2/2 Starting server...'), CLR, '\r');
+
     // start server
     farm.listen(`http://0.0.0.0:${process.env.PORT || 8080}`, (app) => {
       _.echo(chalk.gray('— Listening at '), chalk.yellow(app.location.href), '\n');
@@ -53,6 +59,8 @@ module.exports = $ => {
       farm = _farm();
 
       if (IS_REPL) {
+        farm.fetch = _test(farm);
+
         const _close = _repl(farm);
 
         farm.on('close', () => _close());
@@ -65,12 +73,14 @@ module.exports = $ => {
     }
   }
 
+  _.echo(chalk.gray('↺ 1/2 Initializing server...'), CLR, '\r');
+
   _startApplication();
 
-  function _reload(cb) {
+  function _reload() {
     return _farm.teardown(() => {
       _.clearModules();
-      _startApplication(cb);
+      _startApplication();
     });
   }
 

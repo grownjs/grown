@@ -34,7 +34,6 @@ function showHelp() {
     ${_bin} new APP_PATH [...]
 
   Options:
-    -t, --template     # Path to some application template (can be a filesystem path or URL)
     -d, --database     # Preconfigure for selected database (options: mysql/pgsql/sqlite3)
                        # default: sqlite3
   Runtime options:
