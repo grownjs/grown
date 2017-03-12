@@ -3,7 +3,9 @@ Grown = require('..')
 $ = module.exports = ->
   delete $[k] for k in $
 
-  $.server = new Grown()
+  $.server = new Grown
+    cwd: process.cwd()
+
   $.server.fetch = Grown.plugs.testing($.server)
 
   $.close = ->
