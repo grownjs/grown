@@ -129,7 +129,7 @@ module.exports = $ => {
   }
 
   repl.defineCommand('reload', {
-    help: 'Reload the current session',
+    help: 'Restart the current session',
     action() {
       process.emit('repl:reload');
     },
