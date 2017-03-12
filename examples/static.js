@@ -9,7 +9,7 @@ Grown.new({
   ],
 })
 .listen(`${process.env.UWS > 0 ? 'uws' : 'http'}://0.0.0.0:5000`)
-.then((app) => {
+.then(app => {
   console.log('Listening on', app.location.href);
 })
 .catch(error => console.log(error.stack));

@@ -29,6 +29,8 @@ module.exports = $ => {
   const chalk = require('chalk');
   const cleanStack = require('clean-stack');
 
+  const _protocol = $.flags.uws === true ? 'uws' : `http${$.flags.https === true ? 's' : ''}`;
+
   const _test = require('../../lib/plugs/testing.js');
 
   const _farm = require(path.join(cwd, 'app'));
@@ -40,7 +42,7 @@ module.exports = $ => {
     _.echo(chalk.gray('↺ 2/2 Starting server...'), CLR, '\r');
 
     // start server
-    farm.listen(`http://0.0.0.0:${process.env.PORT || 8080}`, (app) => {
+    farm.listen(`${_protocol}://0.0.0.0:${process.env.PORT || 8080}`, (app) => {
       _.echo(chalk.gray('— Listening at '), chalk.yellow(app.location.href), '\n');
 
       if (IS_REPL) {

@@ -7,9 +7,9 @@ Grown.new({
     require('..').plugs.upload(),
   ],
   mount: [
-    (conn) => {
+    conn => {
       if (conn.request_path === '/upload') {
-        return conn.upload_files().then((result) => {
+        return conn.upload_files().then(result => {
           conn.resp_body = result;
         });
       }
@@ -23,7 +23,7 @@ Grown.new({
   ],
 })
 .listen(`${process.env.UWS > 0 ? 'uws' : 'http'}://0.0.0.0:5000`)
-.then((app) => {
+.then(app => {
   console.log('Listening on', app.location.href);
 })
 .catch(error => console.log(error.stack));

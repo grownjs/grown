@@ -12,7 +12,7 @@ const Grown = require('..');
 
 Grown.new({
   mount: [
-    (conn) => {
+    conn => {
       const start = new Date();
 
       return conn.next(() => {
@@ -24,7 +24,7 @@ Grown.new({
   ],
 })
 .listen('uws://0.0.0.0:5000')
-.then((app) => {
+.then(app => {
   console.log('Listening on', app.location.href);
 })
 .catch(error => console.log(error.stack));
