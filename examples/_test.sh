@@ -2,7 +2,7 @@
 
 yarn example uws & pid=$!
 
-sleep 1
+sleep 2
 
 test="$(curl -sS localhost:5000)"
 
