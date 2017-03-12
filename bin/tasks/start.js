@@ -38,26 +38,10 @@ module.exports = $ => {
   // initialization
   let farm;
 
-  function _startServer(done) {
-    _.echo(chalk.gray('↺ 2/2 Starting server...'), CLR, '\r');
-
-    // start server
-    farm.listen(`${_protocol}://0.0.0.0:${process.env.PORT || 8080}`, (app) => {
-      _.echo(chalk.gray('— Listening at '), chalk.yellow(app.location.href), '\n');
-
-      if (IS_REPL) {
-        _.echo(chalk.gray('— Type .help to show all available commands'), '\n');
-      }
-
-      /* istanbul ignore else */
-      if (typeof done === 'function') {
-        done(farm, app);
-      }
-    });
-  }
-
   function _startApplication(done) {
     try {
+      _.echo(chalk.gray('↺ Initializing server ...'), '\r');
+
       farm = _farm();
 
       if (IS_REPL) {
@@ -68,14 +52,27 @@ module.exports = $ => {
         farm.on('close', () => _close());
       }
 
-      _startServer(done);
+      _.echo(chalk.green('✔ Server is ready'), CLR, '\n');
+
+      // start server
+      farm.listen(`${_protocol}://0.0.0.0:${process.env.PORT || 8080}`, (app) => {
+        _.echo(chalk.gray('› Listening at '), chalk.yellow(app.location.href), '\n');
+
+        if (IS_REPL) {
+          _.echo(chalk.gray('› Type .fetch to start making requests'), '\n');
+          _.echo(chalk.gray('› Type .reload to restart the current session'), '\n');
+        }
+
+        /* istanbul ignore else */
+        if (typeof done === 'function') {
+          done(farm, app);
+        }
+      });
     } catch (e) {
       _.echo(chalk.red((IS_DEBUG && cleanStack(e.stack)) || e.message), '\n');
       _.die(1);
     }
   }
-
-  _.echo(chalk.gray('↺ 1/2 Initializing server...'), CLR, '\r');
 
   _startApplication();
 

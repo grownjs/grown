@@ -30,6 +30,8 @@ module.exports = $ => {
 
   // small bootstrap
   function _startApplication() {
+    _.echo(chalk.gray('↺ Initializing REPL ...'), '\r');
+
     farm = _farm();
 
     farm.fetch = _test(farm);
@@ -38,15 +40,14 @@ module.exports = $ => {
 
     farm.on('close', () => _close());
 
-    _.echo(chalk.gray('↺ 2/2 Starting REPL...'), CLR, '\r');
+    _.echo(chalk.green('✔ REPL is ready'), CLR, '\n');
 
     farm.listen('test://', (app) => {
-      _.echo(chalk.gray('— Listening at '), chalk.yellow(app.location.href), '\n');
-      _.echo(chalk.gray('— Type .help to show all available commands'), '\n');
+      _.echo(chalk.gray('› Listening at '), chalk.yellow(app.location.href), '\n');
+      _.echo(chalk.gray('› Type .fetch to start making requests'), '\n');
+      _.echo(chalk.gray('› Type .reload to restart the current session'), '\n');
     });
   }
-
-  _.echo(chalk.gray('↺ 1/2 Initializing REPL...'), CLR, '\r');
 
   _startApplication();
 
