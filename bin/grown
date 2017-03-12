@@ -83,7 +83,6 @@ try {
 
     default:
       throw new Error(`Not implemented: ${_task}`);
-      break;
   }
 } catch (e) {
   _.echo(chalk.red(($.flags.debug && cleanStack(e.stack)) || e.message), '\n');
