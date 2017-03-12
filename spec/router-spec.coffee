@@ -18,13 +18,13 @@ describe '#router', ->
       expect(res.statusCode).toEqual 405
       done()
 
-  # it 'should responds to unhandled routes with 501', (done) ->
-  #   expect(-> useConfig 'one-route').toThrow()
+  it 'should responds to unhandled routes with 501', (done) ->
+    expect(-> useConfig 'one-route').toThrow()
 
-  #   $.server.fetch().then (res) ->
-  #     expect(res.statusCode).toEqual 501
-  #     expect(res.statusMessage).toEqual 'Not Implemented'
-  #     done()
+    $.server.fetch().then (res) ->
+      expect(res.statusCode).toEqual 501
+      expect(res.statusMessage).toEqual 'Not Implemented'
+      done()
 
   it 'should responds to undefined handlers with 500', (done) ->
     useConfig 'valid-routes'
@@ -104,12 +104,12 @@ describe '#router', ->
     useConfig 'with-middlewares'
 
     $.server.fetch('/surely').then (res) ->
-      expect(res.body).toEqual 'OSOM!'
+      expect(res.body).toEqual 'OSOM!!'
       done()
 
   it 'should inject values and methods', (done) ->
     useConfig 'with-middlewares'
 
     $.server.fetch('/other-example').then (res) ->
-      expect(res.body).toEqual '["SYNC","ASYNC"]'
+      expect(res.body).toEqual 'SYNC,ASYNC!'
       done()
