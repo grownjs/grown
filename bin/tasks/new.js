@@ -8,7 +8,7 @@ const path = require('path');
 const chalk = require('chalk');
 
 const PACKAGE_JSON = `{
-  "name": "{{paramCase appName}}",
+  "name": "{{paramCase APP_NAME}}",
   "version": "0.0.0",
   "main": "app/index.js",
   "scripts": {
@@ -17,6 +17,34 @@ const PACKAGE_JSON = `{
   }
 }
 `;
+
+const DATABASE_JSON = `module.exports = {
+  {{#DB_SQLITE}}dev: {
+    dialect: 'sqlite',
+    storage: './DB_DEV.sqlite',
+  },{{/DB_SQLITE}}{{#DB_POSTGRES}}dev: {
+    host: 'localhost',
+    dialect: 'postgres',
+    username: 'postgres',
+    password: '',
+    database: '{{snakeCase APP_NAME}}_dev',
+  },{{/DB_POSTGRES}}{{#DB_MYSQL}}dev: {
+    host: 'localhost',
+    dialect: 'mysql',
+    username: 'root',
+    password: '',
+    database: '{{snakeCase APP_NAME}}_dev',
+  },{{/DB_MYSQL}}{{#DB_MSSQL}}dev: {
+    host: 'localhost',
+    dialect: 'mssql',
+    username: 'root',
+    password: '',
+    database: '{{snakeCase APP_NAME}}_dev',
+  },{{/DB_MSSQL}}
+};
+`;
+
+const DATABASE_FILE = 'app/config/database.js';
 
 function isName(value) {
   return /^[A-Za-z\d-]+\w*$/.test(value);
@@ -55,32 +83,34 @@ module.exports = $ => {
     basePath: path.resolve(__dirname, '../skel'),
     abortOnFail: true,
     prompts: [{
-      name: 'appName',
+      name: 'APP_NAME',
       message: 'Application name',
       validate: value => isName(value) || 'Invalid name',
     }],
     actions: [{
       type: 'add',
       template: PACKAGE_JSON,
-      destPath: cwd ? 'package.json' : '{{snakeCase appName}}/package.json',
+      destPath: cwd ? 'package.json' : '{{snakeCase APP_NAME}}/package.json',
+    }, {
+      type: 'add',
+      template: DATABASE_JSON,
+      destPath: cwd ? DATABASE_FILE : `{{snakeCase APP_NAME}}/${DATABASE_FILE}`,
     }, {
       type: 'copy',
       srcPath: 'templates/example',
-      destPath: cwd ? '.' : '{{snakeCase appName}}',
-    }, {
+      destPath: cwd ? '.' : '{{snakeCase APP_NAME}}',
+    }, $.flags.install === false ? null : {
       type: 'install',
-      destPath: cwd ? '.' : '{{snakeCase appName}}',
+      destPath: cwd ? '.' : '{{snakeCase APP_NAME}}',
       dependencies: ['grown', 'csurf', 'morgan', 'body-parser', 'serve-static'],
       optionalDependencies: ['eslint', 'eslint-plugin-import', 'eslint-config-airbnb-base'],
     }],
   }, {
-    appName: name,
-    db: {
-      mssql: db === 'mssql',
-      mysql: db === 'mysql',
-      sqlite: db === 'sqlite',
-      postgres: db === 'postgres',
-    },
+    APP_NAME: name,
+    DB_MSSQL: db === 'mssql',
+    DB_MYSQL: db === 'mysql',
+    DB_SQLITE: db === 'sqlite',
+    DB_POSTGRES: db === 'postgres',
   })
   .catch(done);
 };

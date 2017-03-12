@@ -84,6 +84,8 @@ Object.keys(aliases).forEach((key) => {
 });
 
 try {
+  _.echo(chalk.gray(`Grown v${thisPkg.version} (${_task})`), '\n');
+
   switch (_task) {
     case 'generate':
     case 'start':
