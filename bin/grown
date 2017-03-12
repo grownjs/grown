@@ -6,7 +6,18 @@
 
 /* eslint-disable global-require */
 
-const $ = require('wargs')(process.argv.slice(2));
+const $ = require('wargs')(process.argv.slice(2), {
+  aliases: {
+    D: 'database',
+    v: 'version',
+    d: 'debug',
+    f: 'force',
+    q: 'quiet',
+    h: 'help',
+    l: 'list',
+    p: 'cwd',
+  },
+});
 
 /* istanbul ignore else */
 if (process.env.CI) {
@@ -34,7 +45,7 @@ function showHelp() {
     ${_bin} new APP_PATH [...]
 
   Options:
-    -d, --database     # Preconfigure for selected database (options: mysql/pgsql/sqlite3)
+    -D, --database     # Preconfigure for selected database (options: mysql/mssql/pgsql/sqlite3)
                        # default: sqlite3
   Runtime options:
     -f, --force        # Overwrite files that already exist
