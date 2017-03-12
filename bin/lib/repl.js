@@ -107,6 +107,8 @@ module.exports = $ => {
             headers: args.params,
           };
 
+          const _start = new Date();
+
           $.fetch(_path, _method, _opts).then((res) => {
             let _status = res.statusCode === 200 ? 'green' : 'cyan';
 
@@ -115,7 +117,8 @@ module.exports = $ => {
             }
 
             setTimeout(() => {
-              _.echo(chalk[_status](res.statusCode), ' ', chalk.yellow(res.statusMessage), ' ');
+              _.echo(chalk[_status](res.statusCode), ' ', chalk.yellow(res.statusMessage), ' ',
+                `~${(new Date() - _start) / 1000}ms ${res.body.length} `);
               _.echo(chalk.gray(res.body), '\n');
             });
           }).catch((error) => {

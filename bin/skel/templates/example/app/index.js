@@ -25,16 +25,9 @@ module.exports = () => {
       maxFiles: parseInt(process.env.UPLOAD_MAXFILES, 0) || 10,
     },
     logger: {
-      format: process.env.LOGGER_FORMAT || 'dev',
       chalkize: process.env.LOGGER_COLORIZE === 'true' || true,
     },
   });
-
-  // log as soon as possible
-  $.mount(require('morgan')($.get('logger.format')));
-
-  // try static handler first
-  $.mount(require('serve-static')($.get('publicDir')));
 
   // inject logging helpers
   $.use(Grown.plugs.logger({
