@@ -30,11 +30,11 @@ module.exports = $ => {
 
       /* istanbul ignore else */
       if (typeof value === 'undefined') {
-        return callback();
+        return callback(null, undefined);
       }
 
       /* istanbul ignore else */
-      if (typeof value.then === 'function') {
+      if (value && typeof value.then === 'function') {
         return value
           .then((result) => {
             callback(null, result);
@@ -138,7 +138,7 @@ module.exports = $ => {
   Object.defineProperty(repl.context, '$', {
     configurable: false,
     enumerable: false,
-    value: $,
+    value: $.extensions,
   });
 
   return () => {
