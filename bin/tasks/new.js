@@ -57,7 +57,7 @@ module.exports = $ => {
 
   /* istanbul ignore else */
   if (src) {
-    const dest = `.tmp-github-repository/${src}`;
+    const dest = `.github/${src}`;
 
     task = {
       abortOnFail: true,
@@ -68,10 +68,10 @@ module.exports = $ => {
       }, {
         type: 'copy',
         srcPath: dest,
-        destPath: cwd ? '' : '{{snakeCase appName}}',
+        destPath: cwd ? '.' : '{{snakeCase appName}}',
       }, {
         type: 'clean',
-        destPath: '.tmp-github-repository',
+        destPath: '.github',
       }],
     };
   } else {
@@ -90,12 +90,12 @@ module.exports = $ => {
       }, {
         type: 'copy',
         srcPath: 'templates/example',
-        destPath: cwd ? '' : '{{snakeCase appName}}',
+        destPath: cwd ? '.' : '{{snakeCase appName}}',
       }, {
         type: 'install',
-        destPath: cwd ? '' : '{{snakeCase appName}}',
-        dependencies: ['body-parser', 'csurf', 'grown', 'morgan', 'serve-static'],
-        optionalDependencies: ['eslint', 'eslint-config-airbnb-base', 'eslint-plugin-import'],
+        destPath: cwd ? '.' : '{{snakeCase appName}}',
+        dependencies: ['grown', 'csurf', 'morgan', 'body-parser', 'serve-static'],
+        optionalDependencies: ['eslint', 'eslint-plugin-import', 'eslint-config-airbnb-base'],
       }],
     };
   }
