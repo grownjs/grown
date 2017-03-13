@@ -118,7 +118,7 @@ module.exports = $ => {
 
             setTimeout(() => {
               _.echo(chalk[_status](res.statusCode), ' ', chalk.yellow(res.statusMessage), ' ',
-                `~${(new Date() - _start) / 1000}ms ${res.body.length} `);
+                `${(new Date() - _start) / 1000}ms ${res.body.length} `);
               _.echo(chalk.gray(res.body), '\n');
             });
           }).catch((error) => {

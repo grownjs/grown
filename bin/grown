@@ -6,6 +6,18 @@
 
 /* eslint-disable global-require */
 
+const GROWN_TXT = `
+  \u001b[32m▄████  ██▀███   ▒█████   █     █░███▄    █\u001b[39m
+ \u001b[32m██▒ ▀█▒▓██ ▒ ██▒▒██▒  ██▒▓█░ █ ░█░██ ▀█   █\u001b[39m
+\u001b[32m▒██░▄▄▄░▓██ ░▄█ ▒▒██░  ██▒▒█░ █ ░█▓██  ▀█ ██▒\u001b[39m
+\u001b[32m░▓█  ██▓▒██▀▀█▄  ▒██   ██░░█░ █ ░█▓██▒  ▐▌██▒\u001b[39m
+\u001b[32m░▒▓███▀▒░██▓ ▒██▒░ ████▓▒░░░██▒██▓▒██░   ▓██░\u001b[39m
+ \u001b[32m░▒   ▒ ░ ▒▓ ░▒▓░░ ▒░▒░▒░ ░ ▓░▒ ▒ ░ ▒░   ▒ ▒\u001b[39m
+  \u001b[32m░   ░   ░▒ ░ ▒░  ░ ▒ ▒░   ▒ ░ ░ ░ ░░   ░ ▒░\u001b[39m
+  \u001b[32m░   ░   ░░   ░ ░ ░ ░ ▒    ░   ░    ░   ░ ░\u001b[39m
+      \u001b[32m░    ░         ░ ░      ░            ░\u001b[39m
+`;
+
 const $ = require('wargs')(process.argv.slice(2), {
   aliases: {
     D: 'database',
@@ -41,15 +53,17 @@ const _ = require('./lib/util');
 const _bin = path.basename(thisPkg.bin);
 
 function showHelp() {
-  _.echo(`  Usage:
+  _.echo(`${GROWN_TXT}
+  Usage:
     ${_bin} new APP_PATH [...]
 
-  Options:
-    -D, --database     # Preconfigure for selected database (options: mysql/mssql/pgsql/sqlite3)
-                       # default: sqlite3
+  Initialization options:
+    -T, [--template]     # Path to some application template (can be a filesystem path or URL)
+    -D, [--database]     # Preconfigure for selected database (options: mysql/mssql/pgsql/sqlite3)
+
   Runtime options:
-    -f, --force        # Overwrite files that already exist
-    -q, --quiet        # Suppress status output
+    -f, [--force]        # Overwrite files that already exist
+    -q, [--quiet]        # Suppress status output
 
   Other actions:
     ${_bin} g|add|generate [...]
@@ -57,8 +71,8 @@ function showHelp() {
     ${_bin} repl
 
   Grown options:
-    -h, --help         # Show this help message and quit
-    -v, --version      # Show Grown version number and quit\n`);
+    -h, [--help]         # Show this help message and quit
+    -v, [--version]      # Show Grown version number and quit\n`);
 }
 
 if ($.flags.version) {
@@ -71,7 +85,6 @@ if (!_task || $.flags.help) {
   _.die();
 }
 
-// FIXME; this should be built-in grown
 const aliases = {
   generate: ['g', 'add'],
   start: ['s', 'up'],
