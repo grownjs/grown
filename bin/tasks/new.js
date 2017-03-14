@@ -7,6 +7,8 @@ const _ = require('../lib/util');
 const path = require('path');
 const chalk = require('chalk');
 
+const CLR = '\x1b[K';
+
 const PACKAGE_JSON = `{
   "name": "{{paramCase APP_NAME}}",
   "version": "0.0.0",
@@ -44,26 +46,22 @@ const DATABASE_JSON = `module.exports = {
 };
 `;
 
-const DATABASE_FILE = 'app/config/database.js';
-
-function isName(value) {
-  return /^[A-Za-z\d-]+\w*$/.test(value);
-}
-
 module.exports = $ => {
   const IS_DEBUG = $.flags.debug === true;
 
-  const Haki = require('haki');
-
-  const haki = new Haki($.flags);
-
   let name = $._.shift();
-  let cwd = false;
+  let cwd = process.cwd();
 
   /* istanbul ignore else */
+  if (!name) {
+    throw new Error("Missing APP_PATH, it's required!");
+  }
+
   if (name === '.') {
-    name = path.basename(process.cwd());
-    cwd = true;
+    name = path.basename(cwd);
+  } else {
+    name = (name || '').replace(/\W+/g, '-');
+    cwd = path.join(cwd, name);
   }
 
   const db = $.flags.database || 'sqlite';
@@ -79,38 +77,54 @@ module.exports = $ => {
     _.die(1);
   }
 
-  haki.runGenerator({
-    basePath: path.resolve(__dirname, '../skel'),
-    abortOnFail: true,
-    prompts: [{
-      name: 'APP_NAME',
-      message: 'Application name',
-      validate: value => isName(value) || 'Invalid name',
-    }],
-    actions: [{
-      type: 'add',
-      template: PACKAGE_JSON,
-      destPath: cwd ? 'package.json' : '{{snakeCase APP_NAME}}/package.json',
-    }, {
-      type: 'add',
-      template: DATABASE_JSON,
-      destPath: cwd ? DATABASE_FILE : `{{snakeCase APP_NAME}}/${DATABASE_FILE}`,
-    }, {
-      type: 'copy',
-      srcPath: 'templates/example',
-      destPath: cwd ? '.' : '{{snakeCase APP_NAME}}',
-    }, $.flags.install === false ? null : {
-      type: 'install',
-      destPath: cwd ? '.' : '{{snakeCase APP_NAME}}',
-      dependencies: ['grown', 'csurf', 'morgan', 'body-parser', 'serve-static'],
-      optionalDependencies: ['eslint', 'eslint-plugin-import', 'eslint-config-airbnb-base'],
-    }],
-  }, {
+  let task;
+
+  const Haki = require('haki');
+
+  const haki = new Haki(cwd, $.flags);
+
+  const base = $.flags.template || path.join(__dirname, '../skel/template');
+
+  if (base.indexOf('/') === base.lastIndexOf('/')) {
+    task = {
+      abortOnFail: true,
+      actions: [{
+        clone: base,
+        dest: '.',
+      }, {
+        type: 'install',
+      }],
+    };
+  } else {
+    task = {
+      abortOnFail: true,
+      basePath: base,
+      actions: [{
+        copy: '.',
+        src: '.',
+      }, {
+        add: 'package.json',
+        template: PACKAGE_JSON,
+      }, {
+        add: 'app/config/database.js',
+        template: DATABASE_JSON,
+      }, {
+        type: 'install',
+        dependencies: ['grown', 'csurf', 'morgan', 'body-parser', 'serve-static'],
+        optionalDependencies: ['eslint', 'eslint-plugin-import', 'eslint-config-airbnb-base'],
+      }],
+    };
+  }
+
+  haki.runGenerator(task, {
     APP_NAME: name,
     DB_MSSQL: db === 'mssql',
     DB_MYSQL: db === 'mysql',
     DB_SQLITE: db === 'sqlite',
     DB_POSTGRES: db === 'postgres',
   })
-  .catch(done);
+  .catch(done)
+  .then(() => {
+    _.echo(chalk.green('Done.'), CLR, '\n');
+  });
 };

@@ -21,6 +21,7 @@ const GROWN_TXT = `
 const $ = require('wargs')(process.argv.slice(2), {
   aliases: {
     D: 'database',
+    T: 'template',
     v: 'version',
     d: 'debug',
     f: 'force',
