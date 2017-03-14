@@ -77,46 +77,28 @@ module.exports = $ => {
     _.die(1);
   }
 
-  let task;
-
   const Haki = require('haki');
 
   const haki = new Haki(cwd, $.flags);
 
-  const base = $.flags.template || path.join(__dirname, '../skel/template');
-
-  if (base.indexOf('/') === base.lastIndexOf('/')) {
-    task = {
-      abortOnFail: true,
-      actions: [{
-        clone: base,
-        dest: '.',
-      }, {
-        type: 'install',
-      }],
-    };
-  } else {
-    task = {
-      abortOnFail: true,
-      basePath: base,
-      actions: [{
-        copy: '.',
-        src: '.',
-      }, {
-        add: 'package.json',
-        template: PACKAGE_JSON,
-      }, {
-        add: 'app/config/database.js',
-        template: DATABASE_JSON,
-      }, {
-        type: 'install',
-        dependencies: ['grown', 'csurf', 'morgan', 'body-parser', 'serve-static'],
-        optionalDependencies: ['eslint', 'eslint-plugin-import', 'eslint-config-airbnb-base'],
-      }],
-    };
-  }
-
-  haki.runGenerator(task, {
+  haki.runGenerator({
+    abortOnFail: true,
+    basePath: path.join(__dirname, '../skel/template'),
+    actions: [{
+      copy: '.',
+      src: '.',
+    }, {
+      add: 'package.json',
+      template: PACKAGE_JSON,
+    }, {
+      add: 'app/config/database.js',
+      template: DATABASE_JSON,
+    }, {
+      type: 'install',
+      dependencies: ['grown', 'csurf', 'morgan', 'body-parser', 'serve-static'],
+      optionalDependencies: ['eslint', 'eslint-plugin-import', 'eslint-config-airbnb-base'],
+    }],
+  }, {
     APP_NAME: name,
     DB_MSSQL: db === 'mssql',
     DB_MYSQL: db === 'mysql',

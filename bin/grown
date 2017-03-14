@@ -21,7 +21,6 @@ const GROWN_TXT = `
 const $ = require('wargs')(process.argv.slice(2), {
   aliases: {
     D: 'database',
-    T: 'template',
     v: 'version',
     d: 'debug',
     f: 'force',
@@ -59,7 +58,6 @@ function showHelp() {
     ${_bin} new APP_PATH [...]
 
   Initialization options:
-    -T, [--template]     # Path to some application template (can be a filesystem path or URL)
     -D, [--database]     # Preconfigure for selected database (options: mysql/mssql/pgsql/sqlite3)
 
   Runtime options:
