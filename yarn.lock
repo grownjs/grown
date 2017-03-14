@@ -3702,8 +3702,8 @@ walkdir@~0.0.7:
   resolved "https://registry.yarnpkg.com/walkdir/-/walkdir-0.0.11.tgz#a16d025eb931bd03b52f308caed0f40fcebe9532"
 
 wargs@^0.2.1:
-  version "0.2.2"
-  resolved "https://registry.yarnpkg.com/wargs/-/wargs-0.2.2.tgz#85fe2b9fe1bc09180d61f359c6c9a6592dd0c770"
+  version "0.2.3"
+  resolved "https://registry.yarnpkg.com/wargs/-/wargs-0.2.3.tgz#038490ebfbe1e7bb8dd2f560442e79e8c4ba1d93"
 
 warning-symbol@^0.1.0:
   version "0.1.0"

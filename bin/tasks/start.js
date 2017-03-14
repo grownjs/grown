@@ -33,7 +33,7 @@ module.exports = $ => {
 
   const _test = require('../../lib/plugs/testing.js');
 
-  const _farm = require(path.join(cwd, 'app'));
+  const _farm = require(path.join(cwd, $._[0] || 'app/server'));
 
   // initialization
   let farm;

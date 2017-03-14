@@ -44,11 +44,11 @@ module.exports = $ => {
       src: '.',
     }, {
       render: ['package.json', 'app/config/database.js'],
-    }, {
+    }, $.flags.install !== false ? {
       type: 'install',
       dependencies: ['grown', 'csurf', 'morgan', 'body-parser', 'serve-static'],
       optionalDependencies: ['eslint', 'eslint-plugin-import', 'eslint-config-airbnb-base'],
-    }],
+    } : null],
   }, {
     APP_NAME: name,
   })
