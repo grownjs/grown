@@ -16,7 +16,7 @@ git checkout -- .
 git pull
 
 # stable patch
-git checkout 62685a2
+git checkout 2d7faa6
 
 cd nodejs
 make
