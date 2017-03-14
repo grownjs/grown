@@ -14,7 +14,7 @@ describe '#socket', ->
 
     $.server.mount (conn) ->
       url = 'http:' + conn.socket_host + '/x'
-      conn.socket('/x').then (socket) ->
+      conn.channel('/x').then (socket) ->
         socket.emit 'y', 'z'
       true
 
