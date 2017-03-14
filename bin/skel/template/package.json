@@ -1,0 +1,8 @@
+{
+  "name": "{{paramCase APP_NAME}}",
+  "version": "0.0.0",
+  "scripts": {
+    "eslint": "eslint app boot config",
+    "start": "grown up"
+  }
+}

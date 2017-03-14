@@ -9,43 +9,6 @@ const chalk = require('chalk');
 
 const CLR = '\x1b[K';
 
-const PACKAGE_JSON = `{
-  "name": "{{paramCase APP_NAME}}",
-  "version": "0.0.0",
-  "main": "app/index.js",
-  "scripts": {
-    "eslint": "eslint app boot config",
-    "start": "grown up"
-  }
-}
-`;
-
-const DATABASE_JSON = `module.exports = {
-  {{#DB_SQLITE}}dev: {
-    dialect: 'sqlite',
-    storage: './DB_DEV.sqlite',
-  },{{/DB_SQLITE}}{{#DB_POSTGRES}}dev: {
-    host: 'localhost',
-    dialect: 'postgres',
-    username: 'postgres',
-    password: '',
-    database: '{{snakeCase APP_NAME}}_dev',
-  },{{/DB_POSTGRES}}{{#DB_MYSQL}}dev: {
-    host: 'localhost',
-    dialect: 'mysql',
-    username: 'root',
-    password: '',
-    database: '{{snakeCase APP_NAME}}_dev',
-  },{{/DB_MYSQL}}{{#DB_MSSQL}}dev: {
-    host: 'localhost',
-    dialect: 'mssql',
-    username: 'root',
-    password: '',
-    database: '{{snakeCase APP_NAME}}_dev',
-  },{{/DB_MSSQL}}
-};
-`;
-
 module.exports = $ => {
   const IS_DEBUG = $.flags.debug === true;
 
@@ -64,14 +27,6 @@ module.exports = $ => {
     cwd = path.join(cwd, name);
   }
 
-  const db = $.flags.database || 'sqlite';
-
-  /* istanbul ignore else */
-  if (['sqlite', 'mssql', 'mysql', 'postgres'].indexOf(db) === -1) {
-    _.echo(chalk.red(`Unsupported '${db}' database\n`));
-    _.die(1);
-  }
-
   function done(err) {
     _.echo(chalk.red((IS_DEBUG && err.stack) || err.message), '\n');
     _.die(1);
@@ -88,11 +43,7 @@ module.exports = $ => {
       copy: '.',
       src: '.',
     }, {
-      add: 'package.json',
-      template: PACKAGE_JSON,
-    }, {
-      add: 'app/config/database.js',
-      template: DATABASE_JSON,
+      render: ['package.json', 'app/config/database.js'],
     }, {
       type: 'install',
       dependencies: ['grown', 'csurf', 'morgan', 'body-parser', 'serve-static'],
@@ -100,10 +51,6 @@ module.exports = $ => {
     }],
   }, {
     APP_NAME: name,
-    DB_MSSQL: db === 'mssql',
-    DB_MYSQL: db === 'mysql',
-    DB_SQLITE: db === 'sqlite',
-    DB_POSTGRES: db === 'postgres',
   })
   .catch(done)
   .then(() => {

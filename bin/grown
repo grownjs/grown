@@ -20,7 +20,6 @@ const GROWN_TXT = `
 
 const $ = require('wargs')(process.argv.slice(2), {
   aliases: {
-    D: 'database',
     v: 'version',
     d: 'debug',
     f: 'force',
@@ -56,9 +55,6 @@ function showHelp() {
   _.echo(`${GROWN_TXT}
   Usage:
     ${_bin} new APP_PATH [...]
-
-  Initialization options:
-    -D, [--database]     # Preconfigure for selected database (options: mysql/mssql/pgsql/sqlite3)
 
   Runtime options:
     -f, [--force]        # Overwrite files that already exist
