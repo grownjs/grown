@@ -69,19 +69,19 @@ describe '#router', ->
       expect(res.statusCode).toEqual 500
       done()
 
-  it 'should fail on invalid route-middlewares', (done) ->
-    useConfig 'with-middlewares'
-
-    $.server.fetch('/no').then (res) ->
-      expect(res.body).toMatch /Middleware .+? should be callable/
-      expect(res.statusCode).toEqual 500
-      done()
-
   it 'should fail on unknown route-middlewares', (done) ->
     useConfig 'with-middlewares'
 
     $.server.fetch('/err').then (res) ->
       expect(res.body).toMatch /Undefined .+? middleware/
+      expect(res.statusCode).toEqual 500
+      done()
+
+  it 'should fail on invalid route-middlewares', (done) ->
+    useConfig 'with-middlewares'
+
+    $.server.fetch('/no').then (res) ->
+      expect(res.body).toMatch /Middleware .+? should be callable/
       expect(res.statusCode).toEqual 500
       done()
 
