@@ -23,7 +23,7 @@
     "clean-stack": "^1.1.1",
     "dotenv": "^4",
     "glob": "^7.0.6",
-    "haki": "0.1.0",
+    "haki": "^0.2.0",
     "object-new": "https://github.com/pateketrueke/object-new.git#master",
     "socket.io": "^1.7.3",
     "source-map-support": "^0.4.11",
