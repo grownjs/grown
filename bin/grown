@@ -26,6 +26,7 @@ const $ = require('wargs')(process.argv.slice(2), {
     f: 'force',
     q: 'quiet',
     P: 'port',
+    H: 'host',
     h: 'help',
     l: 'list',
     p: 'cwd',
@@ -35,11 +36,6 @@ const $ = require('wargs')(process.argv.slice(2), {
 /* istanbul ignore else */
 if (process.env.CI) {
   process.env.NODE_ENV = 'ci';
-}
-
-/* istanbul ignore else */
-if ($.params.port > 0) {
-  process.env.PORT = $.params.port;
 }
 
 const thisPkg = require('../package.json');

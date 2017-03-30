@@ -8,7 +8,9 @@ module.exports = $ => {
   const IS_DEBUG = $.flags.debug === true;
   const IS_REPL = $.flags.repl === true;
   const IS_DEV = process.env.NODE_ENV === 'dev';
+
   const PORT = $.flags.port || process.env.PORT || 8080;
+  const HOST = $.flags.host || process.env.HOST || '0.0.0.0';
 
   /* istanbul ignore else */
   if (IS_DEBUG) {
@@ -56,7 +58,7 @@ module.exports = $ => {
       _.echo(chalk.green('✔ Server is ready'), CLR, '\n');
 
       // start server
-      farm.listen(`${_protocol}://0.0.0.0:${PORT}`, (app) => {
+      farm.listen(`${_protocol}://${HOST}:${PORT}`, (app) => {
         _.echo(chalk.gray('› Listening at '), chalk.yellow(app.location.href), '\n');
 
         if (IS_REPL) {
