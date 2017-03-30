@@ -25,6 +25,7 @@ const $ = require('wargs')(process.argv.slice(2), {
     d: 'debug',
     f: 'force',
     q: 'quiet',
+    P: 'port',
     h: 'help',
     l: 'list',
     p: 'cwd',
