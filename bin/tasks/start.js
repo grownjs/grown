@@ -79,17 +79,14 @@ module.exports = $ => {
 
   _startApplication();
 
-  function _reload() {
-    return _farm.teardown(() => {
-      _.clearModules();
-      _startApplication();
-    });
+  if (IS_REPL) {
+    process.on('repl:reload', () =>
+      _farm.teardown(() => {
+        _.clearModules();
+        _startApplication();
+      }));
   }
 
-  if (IS_REPL) {
-    process.on('repl:reload', () => _reload());
-  } else {
-    process.on('exit', () => _farm.teardown());
-    process.on('SIGINT', () => process.exit());
-  }
+  process.on('exit', () => _farm.teardown());
+  process.on('SIGINT', () => process.exit());
 };
