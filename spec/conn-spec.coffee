@@ -163,7 +163,7 @@ describe '#conn', ->
       $.server.fetch().then (res) ->
         expect(res.body).toEqual '''
           Error <= ? <= host
-          - TEXT
+          TEXT
           - x  "y"
           - m  ["n","o"]
           [
@@ -190,7 +190,6 @@ describe '#conn', ->
         expect(err.status).toEqual 'error'
         expect(err.message.errors).toEqual [{ a: 'b' }]
         expect(err.message.stack).toContain './spec/conn-spec.coffee'
-        expect(err.message.body).toEqual ['JSON']
         expect(err.message.name).toEqual 'Error'
         expect(err.message.code).toEqual 500
         expect(err.message.call).toEqual '<= ? <= host'
