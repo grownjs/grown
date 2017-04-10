@@ -1,9 +1,9 @@
 module.exports = {
-  dev: {
+  development: {
     dialect: 'sqlite',
     storage: 'db_{{snakeCase APP_NAME}}.sqlite',
   },
-  // dev: {
+  // development: {
   //   host: 'localhost',
   //   dialect: 'postgres|mysql|mssql',
   //   username: '',

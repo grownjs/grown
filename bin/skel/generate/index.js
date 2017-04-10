@@ -6,11 +6,11 @@ module.exports = {
 };
 `;
 
-const TARIMA_SCRIPTS_TEMPLATE = `"dev": "tarima -ws",
-    "dist": "tarima -fq",
-    "dist:ci": "tarima -fqe ci",
-    "dist:prod": "tarima -fqe prod",
-    "dist:stage": "tarima -fqe stage",`;
+const TARIMA_SCRIPTS_TEMPLATE = `"dev": "tarima -w --server",
+    "build": "tarima -fq",
+    "build:ci": "tarima -fqe ci",
+    "build:prod": "tarima -fqe production",
+    "build:stage": "tarima -fqe staging",`;
 
 const TARIMA_CONFIG_TEMPLATE = `"tarima": {
     "src": "src/**/*",

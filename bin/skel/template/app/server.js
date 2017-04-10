@@ -12,7 +12,7 @@ Grown.env(cwd);
 // fresh context
 module.exports = () => {
   const $ = new Grown({
-    env: process.env.NODE_ENV || 'dev',
+    env: process.env.NODE_ENV || 'development',
     appDir: path.resolve(cwd, process.env.APP_DIR || 'app'),
     publicDir: path.resolve(cwd, process.env.PUBLIC_DIR || 'public'),
     session: {

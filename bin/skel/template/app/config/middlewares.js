@@ -2,14 +2,14 @@ module.exports = {
   ci: [
     'no-cache',
   ],
-  dev: [
-    'stage',
+  development: [
+    'staging',
     'ci',
   ],
-  prod: [
-    'stage',
+  production: [
+    'staging',
   ],
-  stage: [
+  staging: [
     'csurf',
   ],
 };
