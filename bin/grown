@@ -30,13 +30,21 @@ const $ = require('wargs')(process.argv.slice(2), {
     h: 'help',
     l: 'list',
     p: 'cwd',
+    e: 'env',
   },
 });
+
+/* istanbul ignore else */
+if (typeof $.flags.env === 'string') {
+  process.env.NODE_ENV = $.flags.env;
+}
 
 /* istanbul ignore else */
 if (process.env.CI) {
   process.env.NODE_ENV = 'ci';
 }
+
+process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
 const thisPkg = require('../package.json');
 const cleanStack = require('clean-stack');
@@ -60,6 +68,7 @@ function showHelp() {
   Runtime options:
     -f, [--force]        # Overwrite files that already exist
     -q, [--quiet]        # Suppress status output
+    -e, [--env]          # Set NODE_ENV value
 
   Other actions:
     ${_bin} g|add|generate [...]
@@ -71,12 +80,14 @@ function showHelp() {
     -v, [--version]      # Show Grown version number and quit\n`);
 }
 
+/* istanbul ignore else */
 if ($.flags.version) {
   _.echo(chalk.green(`${thisPkg.name} v${thisPkg.version}`), '\n');
   _.die();
 }
 
-if (!_task || $.flags.help) {
+/* istanbul ignore else */if (!_task || $.flags.help) {
+
   showHelp();
   _.die();
 }
@@ -87,13 +98,14 @@ const aliases = {
 };
 
 Object.keys(aliases).forEach((key) => {
+  /* istanbul ignore else */
   if (aliases[key].indexOf(_task) > -1) {
     _task = key;
   }
 });
 
 try {
-  _.echo(chalk.gray(`Grown v${thisPkg.version} (${_task})`), '\n');
+  _.echo(chalk.gray(`Grown v${thisPkg.version} (${_task}:${process.env.NODE_ENV})`), '\n');
 
   switch (_task) {
     case 'generate':

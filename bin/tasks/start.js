@@ -2,8 +2,6 @@
 
 /* eslint-disable global-require */
 
-const CLR = '\x1b[K';
-
 module.exports = $ => {
   const IS_DEBUG = $.flags.debug === true;
   const IS_REPL = $.flags.repl === true;
@@ -55,7 +53,7 @@ module.exports = $ => {
         farm.on('close', () => _close());
       }
 
-      _.echo(chalk.green('✔ Server is ready'), CLR, '\n');
+      _.echo(chalk.green('✔ Server is ready'), '\r\n');
 
       // start server
       farm.listen(`${_protocol}://${HOST}:${PORT}`, (app) => {

@@ -18,8 +18,12 @@ function _clearModules() {
 const die = process.exit.bind(process);
 const _slice = Array.prototype.slice;
 
+const CLR = '\x1b[K';
+
 function echo() {
-  process.stdout.write(_slice.call(arguments).join(''));
+  process.stdout.write(Array.prototype.slice.call(arguments).join('')
+    .replace(/\r\r/g, `${CLR}\r`)
+    .replace(/\r\n/g, `${CLR}\n`));
 }
 
 function merge(target) {

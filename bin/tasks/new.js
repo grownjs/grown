@@ -7,8 +7,6 @@ const _ = require('../lib/util');
 const path = require('path');
 const chalk = require('chalk');
 
-const CLR = '\x1b[K';
-
 module.exports = $ => {
   const IS_DEBUG = $.flags.debug === true;
 
@@ -54,6 +52,6 @@ module.exports = $ => {
   })
   .catch(done)
   .then(() => {
-    _.echo(chalk.green('Done.'), CLR, '\n');
+    _.echo(chalk.green('Done.'), '\r\n');
   });
 };

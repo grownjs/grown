@@ -2,8 +2,6 @@
 
 /* eslint-disable global-require */
 
-const CLR = '\x1b[K';
-
 module.exports = $ => {
   const IS_DEBUG = $.flags.debug === true;
 
@@ -24,7 +22,7 @@ module.exports = $ => {
 
   const _test = require('../../lib/plugs/testing.js');
 
-  const _farm = require(path.join(cwd, 'app'));
+  const _farm = require(path.join(cwd, $._[0] || 'app/server'));
 
   let farm;
 
@@ -40,9 +38,9 @@ module.exports = $ => {
 
     farm.on('close', () => _close());
 
-    _.echo(chalk.green('✔ REPL is ready'), CLR, '\n');
+    _.echo(chalk.green('✔ REPL is ready'), '\r\n');
 
-    farm.listen('test://', (app) => {
+    farm.listen('test://', app => {
       _.echo(chalk.gray('› Listening at '), chalk.yellow(app.location.href), '\n');
       _.echo(chalk.gray('› Type .fetch to start making requests'), '\n');
       _.echo(chalk.gray('› Type .reload to restart the current session'), '\n');
