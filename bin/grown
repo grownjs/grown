@@ -105,7 +105,7 @@ Object.keys(aliases).forEach((key) => {
 });
 
 try {
-  _.echo(chalk.gray(`Grown v${thisPkg.version} (${_task}:${process.env.NODE_ENV})`), '\n');
+  _.echo(chalk.gray(`Grown v${thisPkg.version} (NODE_ENV=${process.env.NODE_ENV})`), '\n');
 
   switch (_task) {
     case 'generate':

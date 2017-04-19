@@ -42,11 +42,29 @@ module.exports = $ => {
       src: '.',
     }, {
       render: ['package.json', 'app/config/database.js'],
-    }, $.flags.install !== false ? {
+    }, {
       type: 'install',
-      dependencies: ['pateketrueke/grown', 'csurf', 'morgan', 'body-parser', 'serve-static'],
-      optionalDependencies: ['eslint', 'eslint-plugin-import', 'eslint-config-airbnb-base'],
-    } : null],
+      dependencies: [
+        'pateketrueke/grown',
+        'csurf',
+        'morgan',
+        'formidable',
+        'body-parser',
+        'serve-static',
+        'cookie-parser',
+        'cookie-session',
+        'route-mappings',
+        'json-schema-sequelizer',
+      ],
+      devDependencies: [
+        'sqlite3',
+      ],
+      optionalDependencies: [
+        'eslint',
+        'eslint-plugin-import',
+        'eslint-config-airbnb-base',
+      ],
+    }],
   }, {
     APP_NAME: name,
   })
