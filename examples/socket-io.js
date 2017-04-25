@@ -1,7 +1,5 @@
 'use strict';
 
-/* eslint-disable global-require */
-
 const Grown = require('..');
 
 Grown.new({
