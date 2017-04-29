@@ -1,4 +1,5 @@
 #!/bin/sh
+
 ':' // ; exec "$(command -v nodejs || command -v node)" "$0" "$@"
 ;
 
@@ -86,8 +87,8 @@ if ($.flags.version) {
   _.die();
 }
 
-/* istanbul ignore else */if (!_task || $.flags.help) {
-
+/* istanbul ignore else */
+if (!_task || $.flags.help) {
   showHelp();
   _.die();
 }
@@ -97,7 +98,7 @@ const aliases = {
   start: ['s', 'up'],
 };
 
-Object.keys(aliases).forEach((key) => {
+Object.keys(aliases).forEach(key => {
   /* istanbul ignore else */
   if (aliases[key].indexOf(_task) > -1) {
     _task = key;
@@ -107,12 +108,19 @@ Object.keys(aliases).forEach((key) => {
 try {
   _.echo(chalk.gray(`Grown v${thisPkg.version} (NODE_ENV=${process.env.NODE_ENV})`), '\n');
 
+  const _tasks = {
+    generate: require('./tasks/generate'),
+    start: require('./tasks/start'),
+    repl: require('./tasks/repl'),
+    new: require('./tasks/new'),
+  };
+
   switch (_task) {
     case 'generate':
     case 'start':
     case 'repl':
     case 'new':
-      require(`./tasks/${_task}`)($);
+      _tasks[_task]($);
       break;
 
     default:
