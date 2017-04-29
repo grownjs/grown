@@ -12,6 +12,8 @@
     "max-len": ["error", {
       "code": 150
     }],
+    "arrow-parens": ["error", "as-needed"],
+    "no-multi-assign": 0,
     "strict": 0,
     "no-console": 0,
     "global-require": 0,
