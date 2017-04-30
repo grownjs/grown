@@ -1,4 +1,4 @@
-module.exports = (locals) => `
+module.exports = locals => `
 <!doctype html>
 <html>
   <body>

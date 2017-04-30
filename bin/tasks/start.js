@@ -56,7 +56,7 @@ module.exports = $ => {
       _.echo(chalk.green('✔ Server is ready'), '\r\n');
 
       // start server
-      farm.listen(`${_protocol}://${HOST}:${PORT}`, (app) => {
+      farm.listen(`${_protocol}://${HOST}:${PORT}`, app => {
         _.echo(chalk.gray('› Listening at '), chalk.yellow(app.location.href), '\n');
 
         if (IS_REPL) {
@@ -81,13 +81,8 @@ module.exports = $ => {
   _startApplication();
 
   if (IS_REPL) {
-    process.on('repl:reload', () =>
-      _farm.teardown(() => {
-        _.clearModules();
-        _startApplication();
-      }));
+    process.on('repl:reload', () => _farm.teardown(_startApplication));
   }
 
-  process.on('exit', () => _farm.teardown());
-  process.on('SIGINT', () => process.exit());
+  process.on('SIGINT', () => _farm.teardown(() => process.exit()));
 };

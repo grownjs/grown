@@ -1,4 +1,4 @@
-module.exports = (routes) => {
+module.exports = routes => {
   return routes()
     .get('/no', { to: 'Home.index', middleware: 'invalid' })
     .get('/yes', { to: 'Home.index', middleware: 'test' })

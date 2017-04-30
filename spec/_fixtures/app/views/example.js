@@ -1,1 +1,1 @@
-module.exports = (locals) => `TEXT(${locals.foo})`;
+module.exports = locals => `TEXT(${locals.foo})`;

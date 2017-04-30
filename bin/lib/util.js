@@ -7,7 +7,7 @@ const Module = require('module');
 
 function _clearModules() {
   Object.keys(Module._cache)
-    .forEach((key) => {
+    .forEach(key => {
       /* istanbul ignore else */
       if (key.indexOf('node_modules') === -1) {
         delete Module._cache[key];
@@ -27,8 +27,8 @@ function echo() {
 }
 
 function merge(target) {
-  _slice.call(arguments, 1).forEach((source) => {
-    Object.keys(source).forEach((key) => {
+  _slice.call(arguments, 1).forEach(source => {
+    Object.keys(source).forEach(key => {
       /* istanbul ignore else */
       if (typeof target[key] === 'undefined') {
         target[key] = source[key];

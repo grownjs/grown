@@ -36,10 +36,10 @@ module.exports = $ => {
       /* istanbul ignore else */
       if (value && typeof value.then === 'function') {
         return value
-          .then((result) => {
+          .then(result => {
             callback(null, result);
           })
-          .catch((error) => {
+          .catch(error => {
             callback(cleanStack(error.stack));
           });
       }
@@ -59,7 +59,7 @@ module.exports = $ => {
     repl.defineCommand('fetch', {
       help: 'Request the current application',
       action(value) {
-        const args = wargs(value, (v) => {
+        const args = wargs(value, v => {
           // allow dynamic value interpolation
           try {
             return v.replace(reInterpolate, ($0, $1) => vm.runInNewContext($1, repl.context));
@@ -82,7 +82,7 @@ module.exports = $ => {
         // <verb> /<path>        => VERB /path
         // /<path> --<verb>      => VERB /path
         // --<verb> /<path>      => VERB /path
-        ['put', 'post', 'delete'].forEach((key) => {
+        ['put', 'post', 'delete'].forEach(key => {
           _method = args.flags[key] === true ? key : _method;
 
           /* istanbul ignore else */
@@ -109,7 +109,7 @@ module.exports = $ => {
 
           const _start = new Date();
 
-          $.fetch(_path, _method, _opts).then((res) => {
+          $.fetch(_path, _method, _opts).then(res => {
             let _status = res.statusCode === 200 ? 'green' : 'cyan';
 
             if (res.statusCode >= 500) {
@@ -121,7 +121,7 @@ module.exports = $ => {
                 `${(new Date() - _start) / 1000}ms ${res.body.length} `);
               _.echo(chalk.gray(res.body), '\n');
             });
-          }).catch((error) => {
+          }).catch(error => {
             _.echo(chalk.red(error.message), '\n');
           });
         } catch (_e) {

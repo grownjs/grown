@@ -130,5 +130,3 @@ try {
   _.echo(chalk.red(($.flags.debug && cleanStack(e.stack)) || e.message), '\n');
   _.die(1);
 }
-
-process.on('SIGINT', () => process.exit());
