@@ -25,6 +25,7 @@ module.exports = $ => {
   }
 
   function _run() {
+    /* istanbul ignore else */
     if (!$.flags.list && _cmd) {
       return haki.runGenerator(_cmd, _.merge({}, $.data, $.params));
     }

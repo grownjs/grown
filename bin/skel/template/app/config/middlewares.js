@@ -1,15 +1,15 @@
 module.exports = {
-  ci: [
-    'no-cache',
+  browser: [
+    'csurf',
   ],
   development: [
-    'staging',
-    'ci',
+    'browser',
+    'no-cache',
   ],
   production: [
-    'staging',
+    'browser',
   ],
   staging: [
-    'csurf',
+    'browser',
   ],
 };

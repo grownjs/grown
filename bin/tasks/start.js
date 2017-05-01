@@ -43,8 +43,11 @@ module.exports = $ => {
     try {
       _.echo(chalk.gray('↺ Initializing server ...'), '\r');
 
+      const _host = `${_protocol}://${HOST}:${PORT}`;
+
       farm = _farm();
 
+      /* istanbul ignore else */
       if (IS_REPL) {
         farm.fetch = _test(farm);
 
@@ -56,9 +59,10 @@ module.exports = $ => {
       _.echo(chalk.green('✔ Server is ready'), '\r\n');
 
       // start server
-      farm.listen(`${_protocol}://${HOST}:${PORT}`, app => {
+      farm.listen(_host, app => {
         _.echo(chalk.gray('› Listening at '), chalk.yellow(app.location.href), '\n');
 
+        /* istanbul ignore else */
         if (IS_REPL) {
           _.echo(chalk.gray('› Type .fetch to start making requests'), '\n');
           _.echo(chalk.gray('› Type .reload to restart the current session'), '\n');
@@ -80,6 +84,7 @@ module.exports = $ => {
 
   _startApplication();
 
+  /* istanbul ignore else */
   if (IS_REPL) {
     process.on('repl:reload', () => _farm.teardown(_startApplication));
   }
