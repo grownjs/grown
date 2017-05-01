@@ -51,6 +51,7 @@ const thisPkg = require('../package.json');
 const cleanStack = require('clean-stack');
 const chalk = require('chalk');
 const path = require('path');
+const fs = require('fs');
 
 let _task = $._.shift();
 
@@ -123,8 +124,20 @@ try {
       _tasks[_task]($);
       break;
 
-    default:
-      throw new Error(`Not implemented: ${_task}`);
+    default: {
+      const cwd = process.cwd();
+
+      const _script = path.join(cwd, `app/scripts/${_task}.js`);
+
+      /* istanbul ignore else */
+      if (!fs.existsSync(_script)) {
+        throw new Error(`Not implemented: ${_task}`);
+      }
+
+      const _farm = require(path.join(cwd, $._[0] || 'app/server'));
+
+      _farm.teardown(() => _farm().emit('start').then(ctx => require(_script)(ctx, $)));
+    }
   }
 } catch (e) {
   _.echo(chalk.red(($.flags.debug && cleanStack(e.stack)) || e.message), '\n');

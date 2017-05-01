@@ -1533,8 +1533,8 @@ haki@^0.2.0:
     wargs "^0.2.1"
 
 handlebars@^4.0.1:
-  version "4.0.6"
-  resolved "https://registry.yarnpkg.com/handlebars/-/handlebars-4.0.6.tgz#2ce4484850537f9c97a8026d5399b935c4ed4ed7"
+  version "4.0.7"
+  resolved "https://registry.yarnpkg.com/handlebars/-/handlebars-4.0.7.tgz#e97325aeb8ea0b9e12b9c4dd73c4c312ad0ede59"
   dependencies:
     async "^1.4.0"
     optimist "^0.6.1"
@@ -3524,6 +3524,10 @@ walkdir@~0.0.7:
 wargs@^0.2.1:
   version "0.2.4"
   resolved "https://registry.yarnpkg.com/wargs/-/wargs-0.2.4.tgz#6476dd5cedc71831926b58995e2869be46ff5493"
+
+wargs@^0.5.0:
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/wargs/-/wargs-0.5.0.tgz#ce2d1f52e86e084ddfdde5f5a2ad575d9b206825"
 
 warning-symbol@^0.1.0:
   version "0.1.0"
