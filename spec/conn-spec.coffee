@@ -136,7 +136,6 @@ describe '#conn', ->
       $.server.fetch().then (res) ->
         expect(res.body).toContain '<h4>Error <code>⇐ ? ⇐ host</code></h4>'
         expect(res.body).toContain '<summary>HTML</summary>'
-        expect(res.body).toContain '<h5>Stack:</h5>'
         expect(res.body).toContain './spec/conn-spec.coffee'
         expect(res.body).toContain '<dt>x</dt><dd>"y"</dd>'
         expect(res.body).toContain '<dt>m</dt><dd>["n","o"]</dd>'
