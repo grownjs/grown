@@ -49,5 +49,6 @@ module.exports = $ => {
 
   _startApplication();
 
+  process.on('repl:reload', () => _farm.teardown(_startApplication));
   process.on('SIGINT', () => _farm.teardown(() => process.exit()));
 };
