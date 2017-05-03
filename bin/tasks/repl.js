@@ -42,8 +42,7 @@ module.exports = $ => {
 
     farm.listen('test://', app => {
       _.echo(chalk.gray('› Listening at '), chalk.yellow(app.location.href), '\n');
-      _.echo(chalk.gray('› Type .fetch to start making requests'), '\n');
-      _.echo(chalk.gray('› Type .reload to restart the current session'), '\n');
+      _.echo(chalk.gray('› Type .help to list all available commands'), '\n');
     });
   }
 

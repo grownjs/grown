@@ -64,8 +64,7 @@ module.exports = $ => {
 
         /* istanbul ignore else */
         if (IS_REPL) {
-          _.echo(chalk.gray('› Type .fetch to start making requests'), '\n');
-          _.echo(chalk.gray('› Type .reload to restart the current session'), '\n');
+          _.echo(chalk.gray('› Type .help to list all available commands'), '\n');
         }
 
         /* istanbul ignore else */
