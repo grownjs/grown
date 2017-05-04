@@ -54,94 +54,101 @@ module.exports = $ => {
     }
   });
 
-  /* istanbul ignore else */
-  if ($.fetch) {
-    repl.defineCommand('fetch', {
-      help: 'Request the current application',
-      action(value) {
-        const args = wargs(value, v => {
-          // allow dynamic value interpolation
-          try {
-            return v.replace(reInterpolate, ($0, $1) => vm.runInNewContext($1, repl.context));
-          } catch (e) {
-            throw new Error(`Invalid expression within '${v}'. ${e.message}`);
-          }
-        });
+  // FIXME: improve repl support, logging, utils (vm, argv), etc.
 
-        let _method = 'get';
-        let _path = args._.shift();
+  repl.defineCommand('fetch', {
+    help: 'Request the current application',
+    action(value) {
+      const args = wargs(value, v => {
+        // allow dynamic value interpolation
+        try {
+          return v.replace(reInterpolate, ($0, $1) => vm.runInNewContext($1, repl.context));
+        } catch (e) {
+          throw new Error(`Invalid expression within '${v}'. ${e.message}`);
+        }
+      });
+
+      let _method = 'get';
+      let _path = args._.shift();
+
+      /* istanbul ignore else */
+      if (_path && _path.charAt() !== '/') {
+        _method = _path;
+        _path = args._.shift();
+
+        const _aliased = $.extensions.routes(_method);
 
         /* istanbul ignore else */
-        if (_path && _path.charAt() !== '/') {
-          _method = _path;
-          _path = args._.shift();
+        if (_aliased) {
+          _method = _aliased.verb;
+          _path = _aliased.path;
+        }
+      }
+
+      // variations:
+      // alias                 => ...
+      // /path                 => GET /path
+      // <verb> /<path>        => VERB /path
+      // /<path> --<verb>      => VERB /path
+      // --<verb> /<path>      => VERB /path
+      ['put', 'post', 'delete'].forEach(key => {
+        _method = args.flags[key] === true ? key : _method;
+
+        /* istanbul ignore else */
+        if (typeof args.flags[key] === 'string') {
+          _method = key;
+          _path = args.flags[key];
+        }
+      });
+
+      if (['get', 'put', 'post', 'delete'].indexOf(_method) === -1 || _path.charAt() !== '/') {
+        _.echo(chalk.red(`Invalid request, given '${_method} ${_path || '?'}'`), '\n');
+        return;
+      }
+
+      try {
+        if (args.flags.json) {
+          args.params.accept = 'application/json';
         }
 
-        // variations:
-        // /path                 => GET /path
-        // <verb> /<path>        => VERB /path
-        // /<path> --<verb>      => VERB /path
-        // --<verb> /<path>      => VERB /path
-        ['put', 'post', 'delete'].forEach(key => {
-          _method = args.flags[key] === true ? key : _method;
+        if (args.flags.text) {
+          args.params.accept = 'text/plain';
+        }
 
-          /* istanbul ignore else */
-          if (typeof args.flags[key] === 'string') {
-            _method = key;
-            _path = args.flags[key];
-          }
-        });
+        // normalize input
+        const _opts = {
+          body: args.data,
+          headers: args.params,
+        };
 
-        try {
-          if (args.flags.json) {
-            args.params.accept = 'application/json';
-          }
+        const _start = new Date();
 
-          if (args.flags.text) {
-            args.params.accept = 'text/plain';
+        $.fetch(_path, _method, _opts).then(res => {
+          let _status = res.statusCode === 200 ? 'green' : 'cyan';
+
+          if (res.statusCode >= 500) {
+            _status = 'red';
           }
 
-          // normalize input
-          const _opts = {
-            body: args.data,
-            headers: args.params,
-          };
-
-          const _start = new Date();
-
-          $.fetch(_path, _method, _opts).then(res => {
-            let _status = res.statusCode === 200 ? 'green' : 'cyan';
-
-            if (res.statusCode >= 500) {
-              _status = 'red';
-            }
-
-            setTimeout(() => {
-              _.echo(chalk[_status](res.statusCode), ' ', chalk.yellow(res.statusMessage), ' ',
-                `${(new Date() - _start) / 1000}ms ${res.body.length} `);
-              _.echo(chalk.gray(res.body), '\n');
-            });
-          }).catch(error => {
-            _.echo(chalk.red(error.message), '\n');
+          setTimeout(() => {
+            _.echo(chalk[_status](res.statusCode), ' ', chalk.yellow(res.statusMessage), ' ',
+              `${(new Date() - _start) / 1000}ms ${res.body.length} `);
+            _.echo(chalk.gray(res.body), '\n');
           });
-        } catch (_e) {
-          _.echo(chalk.red(_e.message), '\n');
-        }
-      },
-    });
-  }
+        }).catch(error => {
+          _.echo(chalk.red(error.message), '\n');
+        });
+      } catch (_e) {
+        _.echo(chalk.red(_e.message), '\n');
+      }
+    },
+  });
 
   repl.defineCommand('reload', {
     help: 'Restart the current session',
     action() {
       process.emit('repl:reload');
     },
-  });
-
-  Object.defineProperty(repl.context, '$', {
-    configurable: false,
-    enumerable: false,
-    value: $.extensions,
   });
 
   $.emit('start:repl', repl, _.logger);

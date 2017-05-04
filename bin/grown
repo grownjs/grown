@@ -75,7 +75,7 @@ function showHelp() {
   Other actions:
     ${_bin} g|add|generate [...]
     ${_bin} s|up|start [...]
-    ${_bin} repl
+    ${_bin} c|repl
 
   Grown options:
     -h, [--help]         # Show this help message and quit
@@ -97,6 +97,7 @@ if (!_task || $.flags.help) {
 const aliases = {
   generate: ['g', 'add'],
   start: ['s', 'up'],
+  repl: ['c'],
 };
 
 Object.keys(aliases).forEach(key => {

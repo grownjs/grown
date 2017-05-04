@@ -48,8 +48,14 @@ module.exports = {
     ok(message) {
       echo(chalk.green(`› ${message}`), '\n');
     },
+    log(message) {
+      echo(chalk.gray(message), '\n');
+    },
     fail(message) {
       echo(chalk.red(`› ${message}`), '\n');
+    },
+    write() {
+      echo.apply(null, arguments);
     },
   },
   slice: _slice,
