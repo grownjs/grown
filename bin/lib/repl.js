@@ -144,8 +144,7 @@ module.exports = $ => {
     value: $.extensions,
   });
 
-  // FIXME: how pass extra utilities?
-  $.emit('start:repl', repl, _.echo, chalk);
+  $.emit('start:repl', repl, _.logger);
 
   return () => {
     kill = false;

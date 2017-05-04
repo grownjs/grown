@@ -4,6 +4,7 @@
 
 // runtime hooks
 const Module = require('module');
+const chalk = require('chalk');
 
 function _clearModules() {
   Object.keys(Module._cache)
@@ -43,6 +44,14 @@ module.exports = {
   die,
   echo,
   merge,
+  logger: {
+    ok(message) {
+      echo(chalk.green(`› ${message}`), '\n');
+    },
+    fail(message) {
+      echo(chalk.red(`› ${message}`), '\n');
+    },
+  },
   slice: _slice,
   clearModules: _clearModules,
 };

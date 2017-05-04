@@ -136,7 +136,8 @@ try {
 
       const _farm = require(path.join(cwd, $._[0] || 'app/server'));
 
-      _farm.teardown(() => _farm().emit('start').then(ctx => require(_script)(ctx, $)));
+      _farm.teardown(() => _farm().emit('start')
+        .then(ctx => require(_script)(ctx, $, _.logger)));
     }
   }
 } catch (e) {
