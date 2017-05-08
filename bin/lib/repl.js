@@ -101,8 +101,11 @@ module.exports = $ => {
         }
       });
 
+      // normalize initial path
+      _path = _path || '/';
+
       if (['get', 'put', 'post', 'delete'].indexOf(_method) === -1 || _path.charAt() !== '/') {
-        _.echo(chalk.red(`Invalid request, given '${_method} ${_path || '?'}'`), '\n');
+        _.echo(chalk.red(`Invalid request, given '${_method} ${_path}'`), '\n');
         return;
       }
 
