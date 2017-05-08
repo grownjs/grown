@@ -133,7 +133,7 @@ module.exports = $ => {
             _status = 'red';
           }
 
-          setTimeout(() => {
+          process.nextTick(() => {
             _.echo(chalk[_status](res.statusCode), ' ', chalk.yellow(res.statusMessage), ' ',
               `${(new Date() - _start) / 1000}ms ${res.body.length} `);
             _.echo(chalk.gray(res.body), '\n');
@@ -154,7 +154,9 @@ module.exports = $ => {
     },
   });
 
-  $.emit('start:repl', repl, _.logger);
+  $.on('done', () => {
+    $.emit('repl', repl, _.logger);
+  });
 
   return () => {
     kill = false;
@@ -164,7 +166,7 @@ module.exports = $ => {
       repl.close();
     }
 
-    setTimeout(() => {
+    process.nextTick(() => {
       kill = true;
     });
   };
