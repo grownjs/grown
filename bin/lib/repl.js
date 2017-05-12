@@ -56,6 +56,13 @@ module.exports = $ => {
 
   // FIXME: improve repl support, logging, utils (vm, argv), etc.
 
+  Object.defineProperty(repl.context, 'Grown', {
+    configurable: false,
+    enumerable: true,
+    writable: false,
+    value: $.extensions,
+  });
+
   repl.defineCommand('fetch', {
     help: 'Request the current application',
     action(value) {
