@@ -56,11 +56,10 @@ module.exports = $ => {
         farm.on('close', () => _close());
       }
 
-      _.echo(chalk.green('✔ Server is ready'), '\r\n');
-
       // start server
       farm.emit('start').then(() => {
         farm.listen(_host, app => {
+          _.echo(chalk.green('✔ Server is ready'), '\r\n');
           _.echo(chalk.gray('› Listening at '), chalk.yellow(app.location.href), '\n');
 
           /* istanbul ignore else */
