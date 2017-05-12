@@ -40,9 +40,11 @@ module.exports = $ => {
 
     _.echo(chalk.green('✔ REPL is ready'), '\r\n');
 
-    farm.listen('test://', app => {
-      _.echo(chalk.gray('› Listening at '), chalk.yellow(app.location.href), '\n');
-      _.echo(chalk.gray('› Type .help to list all available commands'), '\n');
+    farm.emit('start').then(() => {
+      farm.listen('test://', app => {
+        _.echo(chalk.gray('› Listening at '), chalk.yellow(app.location.href), '\n');
+        _.echo(chalk.gray('› Type .help to list all available commands'), '\n');
+      });
     });
   }
 

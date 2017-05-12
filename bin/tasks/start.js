@@ -59,21 +59,23 @@ module.exports = $ => {
       _.echo(chalk.green('✔ Server is ready'), '\r\n');
 
       // start server
-      farm.listen(_host, app => {
-        _.echo(chalk.gray('› Listening at '), chalk.yellow(app.location.href), '\n');
+      farm.emit('start').then(() => {
+        farm.listen(_host, app => {
+          _.echo(chalk.gray('› Listening at '), chalk.yellow(app.location.href), '\n');
 
-        /* istanbul ignore else */
-        if (IS_REPL) {
-          _.echo(chalk.gray('› Type .help to list all available commands'), '\n');
-        }
+          /* istanbul ignore else */
+          if (IS_REPL) {
+            _.echo(chalk.gray('› Type .help to list all available commands'), '\n');
+          }
 
-        /* istanbul ignore else */
-        if (typeof done === 'function') {
-          done(farm, app);
-        }
-      }).catch(e => {
-        _.echo(chalk.red((IS_DEBUG && cleanStack(e.stack)) || e.message), '\n');
-        _.die(1);
+          /* istanbul ignore else */
+          if (typeof done === 'function') {
+            done(farm, app);
+          }
+        }).catch(e => {
+          _.echo(chalk.red((IS_DEBUG && cleanStack(e.stack)) || e.message), '\n');
+          _.die(1);
+        });
       });
     } catch (e) {
       _.echo(chalk.red((IS_DEBUG && cleanStack(e.stack)) || e.message), '\n');
