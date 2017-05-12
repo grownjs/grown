@@ -152,14 +152,12 @@ function run() {
 
 if ($.flags.exec) {
   const child = exec($.flags.exec);
-  const buffer = [];
 
   child.stdout.pipe(process.stdout);
-  child.stderr.on('data', data => buffer.push(data));
+  child.stderr.pipe(process.stderr);
 
   child.on(process.version.split('.')[1] === '6' ? 'exit' : 'close', exitCode => {
     if (exitCode !== 0) {
-      _.echo(buffer.join('\n').replace(/\s*$/, ''), '\n');
       _.die(1);
     } else {
       run();
