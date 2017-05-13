@@ -47,7 +47,7 @@ module.exports = ($, cwd) => {
         'pateketrueke/grown',
         'pateketrueke/json-schema-sequelizer',
         'csurf',
-        'morgan',
+        'winston',
         'formidable',
         'body-parser',
         'pg',
