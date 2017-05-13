@@ -36,6 +36,9 @@ const $ = require('wargs')(process.argv.slice(2), {
   },
 });
 
+// defaults
+process.name = 'grown';
+
 /* istanbul ignore else */
 if (typeof $.flags.env === 'string') {
   process.env.NODE_ENV = $.flags.env;
@@ -71,8 +74,12 @@ function showHelp() {
 
   Runtime options:
     -f, [--force]        # Overwrite files that already exist
+    -d, [--debug]        # Enable all debug messages
     -q, [--quiet]        # Suppress status output
-    -e, [--env]          # Set NODE_ENV value
+    -c, [--cwd]          # Set the process.cwd()
+    -P, [--port]         # Set PORT value (default 80)
+    -H, [--host]         # Set HOST value (default 0.0.0.0)
+    -e, [--env]          # Set NODE_ENV value (default development)
 
   Other actions:
     ${_bin} g|add|generate [...]
@@ -80,7 +87,9 @@ function showHelp() {
     ${_bin} c|repl
 
   Grown options:
+    -l, [--list]         # List available generators
     -h, [--help]         # Show this help message and quit
+    -x, [--exec]         # Execute a command before running
     -v, [--version]      # Show Grown version number and quit\n`);
 }
 
@@ -91,7 +100,12 @@ if ($.flags.version) {
 }
 
 /* istanbul ignore else */
-if (!_task || $.flags.help) {
+if (!_task && $.flags.list) {
+  _task = 'generate';
+}
+
+/* istanbul ignore else */
+if ((!_task || $.flags.help) && !$.flags.exec) {
   showHelp();
   _.die();
 }
@@ -108,6 +122,25 @@ Object.keys(aliases).forEach(key => {
     _task = key;
   }
 });
+
+function start(cb) {
+  if ($.flags.exec) {
+    const child = exec($.flags.exec);
+
+    child.stdout.pipe(process.stdout);
+    child.stderr.pipe(process.stderr);
+
+    child.on(process.version.split('.')[1] === '6' ? 'exit' : 'close', exitCode => {
+      if (exitCode !== 0) {
+        _.die(1);
+      } else {
+        cb();
+      }
+    });
+  } else {
+    cb();
+  }
+}
 
 function run() {
   try {
@@ -150,19 +183,4 @@ function run() {
   }
 }
 
-if ($.flags.exec) {
-  const child = exec($.flags.exec);
-
-  child.stdout.pipe(process.stdout);
-  child.stderr.pipe(process.stderr);
-
-  child.on(process.version.split('.')[1] === '6' ? 'exit' : 'close', exitCode => {
-    if (exitCode !== 0) {
-      _.die(1);
-    } else {
-      run();
-    }
-  });
-} else {
-  run();
-}
+start(_task ? run : _.die);
