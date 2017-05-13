@@ -95,7 +95,7 @@ function showHelp() {
 
 /* istanbul ignore else */
 if ($.flags.version) {
-  _.echo(chalk.green(`${thisPkg.name} v${thisPkg.version}`), '\n');
+  _.echo(chalk.green(`${thisPkg.name} v${thisPkg.version}`), '\r\n');
   _.die();
 }
 
@@ -146,7 +146,7 @@ function start(cb) {
 
 function run() {
   try {
-    _.echo(chalk.gray(`Grown v${thisPkg.version} (NODE_ENV=${process.env.NODE_ENV})`), '\n');
+    _.echo(chalk.gray(`Grown v${thisPkg.version} (NODE_ENV=${process.env.NODE_ENV})`), '\r\n');
 
     const _tasks = {
       generate: require('./tasks/generate'),
@@ -178,7 +178,7 @@ function run() {
       }
     }
   } catch (e) {
-    _.echo(chalk.red(($.flags.debug && cleanStack(e.stack)) || e.message), '\n');
+    _.echo(chalk.red(($.flags.debug && cleanStack(e.stack)) || e.message), '\r\n');
     _.die(1);
   }
 }

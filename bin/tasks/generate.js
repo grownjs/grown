@@ -17,7 +17,7 @@ module.exports = ($, cwd) => {
   haki.load(require.resolve('../skel/generate'));
 
   function _onError(err) {
-    _.echo(chalk.red((IS_DEBUG && err.stack) || err.message), '\n');
+    _.echo(chalk.red((IS_DEBUG && err.stack) || err.message), '\r\n');
     _.die(1);
   }
 

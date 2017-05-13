@@ -70,12 +70,12 @@ module.exports = ($, cwd) => {
             done(farm, app);
           }
         }).catch(e => {
-          _.echo(chalk.red((IS_DEBUG && cleanStack(e.stack)) || e.message), '\n');
+          _.echo(chalk.red((IS_DEBUG && cleanStack(e.stack)) || e.message), '\r\n');
           _.die(1);
         });
       });
     } catch (e) {
-      _.echo(chalk.red((IS_DEBUG && cleanStack(e.stack)) || e.message), '\n');
+      _.echo(chalk.red((IS_DEBUG && cleanStack(e.stack)) || e.message), '\r\n');
       _.die(1);
     }
   }
