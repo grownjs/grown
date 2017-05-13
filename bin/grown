@@ -31,7 +31,7 @@ const $ = require('wargs')(process.argv.slice(2), {
     H: 'host',
     h: 'help',
     l: 'list',
-    p: 'cwd',
+    c: 'cwd',
     e: 'env',
   },
 });
@@ -110,6 +110,8 @@ if ((!_task || $.flags.help) && !$.flags.exec) {
   _.die();
 }
 
+const cwd = $.flags.cwd || process.cwd();
+
 const aliases = {
   generate: ['g', 'add'],
   start: ['s', 'up'],
@@ -158,12 +160,10 @@ function run() {
       case 'start':
       case 'repl':
       case 'new':
-        _tasks[_task]($);
+        _tasks[_task]($, cwd);
         break;
 
       default: {
-        const cwd = process.cwd();
-
         const _script = path.join(cwd, `app/scripts/${_task}.js`);
 
         /* istanbul ignore else */

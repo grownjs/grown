@@ -7,11 +7,10 @@ const _ = require('../lib/util');
 const path = require('path');
 const chalk = require('chalk');
 
-module.exports = $ => {
+module.exports = ($, cwd) => {
   const IS_DEBUG = $.flags.debug === true;
 
   let name = $._.shift();
-  let cwd = process.cwd();
 
   /* istanbul ignore else */
   if (!name) {
@@ -46,15 +45,17 @@ module.exports = $ => {
       type: 'install',
       dependencies: [
         'pateketrueke/grown',
+        'pateketrueke/json-schema-sequelizer',
         'csurf',
         'morgan',
         'formidable',
         'body-parser',
+        'pg',
+        'pg-native',
         'serve-static',
         'cookie-parser',
         'cookie-session',
         'route-mappings',
-        'json-schema-sequelizer',
       ],
       devDependencies: [
         'sqlite3',

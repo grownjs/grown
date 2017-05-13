@@ -2,11 +2,8 @@
 
 /* eslint-disable global-require */
 
-module.exports = $ => {
+module.exports = ($, cwd) => {
   const IS_DEBUG = $.flags.debug === true;
-
-  // let the user define the cwd outside
-  $.flags.cwd = $.flags.cwd || process.cwd();
 
   const _ = require('../lib/util');
 
@@ -15,7 +12,7 @@ module.exports = $ => {
   const Haki = require('haki');
   const chalk = require('chalk');
 
-  const haki = new Haki(_.merge({}, $.flags, { data: $._ }));
+  const haki = new Haki(cwd, _.merge({}, $.flags, { data: $._ }));
 
   haki.load(require.resolve('../skel/generate'));
 

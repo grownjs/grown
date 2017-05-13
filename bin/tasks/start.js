@@ -2,7 +2,7 @@
 
 /* eslint-disable global-require */
 
-module.exports = $ => {
+module.exports = ($, cwd) => {
   const IS_DEBUG = $.flags.debug === true;
   const IS_REPL = $.flags.repl === true;
   const IS_DEV = process.env.NODE_ENV === 'development';
@@ -24,8 +24,6 @@ module.exports = $ => {
   const _ = require('../lib/util');
   const _repl = require('../lib/repl');
 
-  const cwd = process.cwd();
-
   const path = require('path');
   const chalk = require('chalk');
   const cleanStack = require('clean-stack');
@@ -45,7 +43,7 @@ module.exports = $ => {
 
       const _host = `${_protocol}://${HOST}:${PORT}`;
 
-      farm = _farm();
+      farm = _farm(cwd);
 
       /* istanbul ignore else */
       if (IS_REPL) {

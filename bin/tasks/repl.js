@@ -2,7 +2,7 @@
 
 /* eslint-disable global-require */
 
-module.exports = $ => {
+module.exports = ($, cwd) => {
   const IS_DEBUG = $.flags.debug === true;
 
   /* istanbul ignore else */
@@ -18,8 +18,6 @@ module.exports = $ => {
   const path = require('path');
   const chalk = require('chalk');
 
-  const cwd = process.cwd();
-
   const _test = require('../../lib/plugs/testing.js');
 
   const _farm = require(path.join(cwd, $._[0] || 'app/server'));
@@ -30,7 +28,7 @@ module.exports = $ => {
   function _startApplication() {
     _.echo(chalk.gray('↺ Initializing REPL ...'), '\r');
 
-    farm = _farm();
+    farm = _farm(cwd);
 
     farm.fetch = _test(farm);
 

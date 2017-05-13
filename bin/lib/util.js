@@ -6,13 +6,12 @@
 const Module = require('module');
 const chalk = require('chalk');
 
-function _clearModules() {
-  const cwd = process.cwd();
-
+function _clearModules(cwd) {
   Object.keys(Module._cache)
     .forEach(key => {
       /* istanbul ignore else */
-      if (key.indexOf('node_modules') === -1 && key.indexOf(cwd) === 0) {
+      if (key.indexOf('node_modules') === -1
+        && (cwd && key.indexOf(cwd) === 0)) {
         delete Module._cache[key];
       }
     });

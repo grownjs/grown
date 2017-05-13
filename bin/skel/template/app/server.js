@@ -4,13 +4,11 @@
 const Grown = require('grown');
 const path = require('path');
 
-const cwd = process.cwd();
-
-// setup environment
-Grown.env(cwd);
-
 // fresh context
-module.exports = () => {
+module.exports = cwd => {
+  // setup environment
+  Grown.env(cwd);
+
   const $ = new Grown({
     env: process.env.NODE_ENV || 'development',
     appDir: path.resolve(cwd, process.env.APP_DIR || 'app'),
