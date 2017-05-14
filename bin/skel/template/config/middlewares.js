@@ -1,6 +1,8 @@
 module.exports = {
   browser: [
-    'csurf',
+    'csrf-protection',
+    'method-override',
+    'body-parsers',
   ],
   development: [
     'browser',

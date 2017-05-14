@@ -10,9 +10,13 @@ module.exports = cwd => {
   Grown.env(cwd);
 
   const $ = new Grown({
+    // basedir
+    cwd,
+
+    // environment
     env: process.env.NODE_ENV || 'development',
-    appDir: path.resolve(cwd, process.env.APP_DIR || 'app'),
-    publicDir: path.resolve(cwd, process.env.PUBLIC_DIR || 'public'),
+
+    // other settings
     session: {
       secret: process.env.SESSION_SECRET || 'secret*value',
       keys: (process.env.SESSION_KEYS || 'secret*value').split(/\s+/),
@@ -27,6 +31,22 @@ module.exports = cwd => {
     },
   });
 
+  // enable file server
+  $.mount(require('serve-static')(path.join(cwd, 'public')));
+
+  // {{#DATABASE}}initialize models before
+  $.use(Grown.plugs.models(cwd));
+
+  // {{/DATABASE}}load routes and views
+  $.use(Grown.plugs.router(cwd));
+  $.use(Grown.plugs.render(cwd));
+
+  // required for CSRF
+  $.use(Grown.plugs.session($.get('session')));
+
+  // enable file uploads
+  $.use(Grown.plugs.upload($.get('upload')));
+
   // inject logging helpers
   $.use(Grown.plugs.logger({
     transports: [{
@@ -35,38 +55,6 @@ module.exports = cwd => {
       },
     }],
   }));
-
-  // standard mvc kit
-  $.use(Grown.plugs.models($.get('appDir')));
-  $.use(Grown.plugs.render($.get('appDir')));
-  $.use(Grown.plugs.router($.get('appDir')));
-
-  $.mount(require('body-parser').json());
-  $.mount(require('body-parser').urlencoded({ extended: false }));
-
-  // built-in method-override
-  $.mount('_method', conn => {
-    const _method = conn.query_params._method || conn.body_params._method
-      || conn.req_headers['x-method-override']
-      || conn.req_headers['x-http-method']
-      || conn.req_headers['x-http-method-override'];
-
-    /* istanbul ignore else */
-    if (_method) {
-      conn.req.originalMethod = conn.req.method;
-      conn.req.method = _method.toUpperCase();
-
-      // remove _method from query
-      conn.req.url = conn.req.url
-        .replace(/([&?])_method=\w+&?/g, '$1');
-
-      // remove _method from body
-      delete conn.req.body._method;
-    }
-  });
-
-  $.use(Grown.plugs.upload($.get('upload')));
-  $.use(Grown.plugs.session($.get('session')));
 
   return $;
 };

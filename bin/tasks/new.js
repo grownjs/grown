@@ -7,6 +7,25 @@ const _ = require('../lib/util');
 const path = require('path');
 const chalk = require('chalk');
 
+const DATABASE_TEMPLATE = `module.exports = {
+  development: {
+    dialect: 'sqlite',
+    storage: 'db_{{snakeCase APP_NAME}}_dev.sqlite',
+  },{{#IS_SQLITE3}}
+  production: {
+    dialect: 'sqlite',
+    storage: 'db_{{snakeCase APP_NAME}}_prod.sqlite',
+  },{{/IS_SQLITE3}}{{^IS_SQLITE3}}
+  production: {
+    host: 'localhost',
+    dialect: '{{DATABASE}}',
+    username: process.env.DB_USERNAME,
+    password: process.env.DB_PASSWORD,
+    database: '{{snakeCase APP_NAME}}_prod',
+  },{{/IS_SQLITE3}}
+};
+`;
+
 module.exports = ($, cwd) => {
   const IS_DEBUG = $.flags.debug === true;
 
@@ -24,14 +43,15 @@ module.exports = ($, cwd) => {
     cwd = path.join(cwd, name);
   }
 
-  function done(err) {
-    _.echo(chalk.red((IS_DEBUG && err.stack) || err.message), '\r\n');
-    _.die(1);
+  /* istanbul ignore else */
+  if ($.data.DATABASE
+    && ['postgres', 'mysql', 'mssql', 'sqlite'].indexOf($.data.DATABASE) === -1) {
+    throw new Error(`Unsupported DATABASE=${$.data.DATABASE}`);
   }
 
   const Haki = require('haki');
 
-  const haki = new Haki(cwd, $.flags);
+  const haki = new Haki(cwd, _.merge({}, $.flags));
 
   haki.runGenerator({
     abortOnFail: true,
@@ -40,25 +60,40 @@ module.exports = ($, cwd) => {
       copy: '.',
       src: '.',
     }, {
-      render: ['package.json', 'app/config/database.js'],
-    }, {
+      render: [
+        'package.json',
+        'app/server.js',
+      ],
+    }, $.data.DATABASE ? {
+      type: 'add',
+      dest: 'config/database.js',
+      template: DATABASE_TEMPLATE,
+    } : null, {
       type: 'install',
       dependencies: [
         'pateketrueke/grown',
-        'pateketrueke/json-schema-sequelizer',
+        'route-mappings',
+
+        // required
         'csurf',
-        'winston',
-        'formidable',
         'body-parser',
-        'pg',
-        'pg-native',
-        'serve-static',
         'cookie-parser',
         'cookie-session',
-        'route-mappings',
+
+        // common
+        'winston',
+        'formidable',
+        'serve-static',
+
+        // database
+        $.data.DATABASE === 'mysql' ? 'mysql' : null,
+        $.data.DATABASE === 'mssql' ? 'mssql' : null,
+        $.data.DATABASE === 'sqlite' ? 'sqlite3' : null,
+        $.data.DATABASE === 'postgres' ? ['pg', 'pg-native'] : null,
+        $.data.DATABASE ? ['sequelize', 'pateketrueke/json-schema-sequelizer'] : null,
       ],
       devDependencies: [
-        'sqlite3',
+        $.data.DATABASE && $.data.DATABASE !== 'sqlite' ? 'sqlite3' : null,
       ],
       optionalDependencies: [
         'eslint',
@@ -66,10 +101,14 @@ module.exports = ($, cwd) => {
         'eslint-config-airbnb-base',
       ],
     }],
-  }, {
+  }, _.merge({
     APP_NAME: name,
+    IS_SQLITE3: $.data.DATABASE === 'sqlite',
+  }, $.data))
+  .catch(err => {
+    _.echo(chalk.red((IS_DEBUG && err.stack) || err.message), '\r\n');
+    _.die(1);
   })
-  .catch(done)
   .then(() => {
     _.echo(chalk.green('Done.'), '\r\n');
   });

@@ -20,6 +20,7 @@ const GROWN_TXT = `
 `;
 
 const $ = require('wargs')(process.argv.slice(2), {
+  booleans: ['force', 'debug', 'install', 'version', 'quiet', 'help', 'list'],
   aliases: {
     I: 'no-install',
     v: 'version',
@@ -68,6 +69,9 @@ function showHelp() {
   _.echo(`${GROWN_TXT}
   Usage:
     ${_bin} new APP_PATH [...]
+
+  Settings:
+    DATABASE=postgres|mysql|mssql|sqlite
 
   Initialization options:
     -I, [--no-install]   # Skip installation of any dependencies
