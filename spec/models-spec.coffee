@@ -4,7 +4,7 @@ Grown = require('..')
 util = require('../lib/util')
 models = require('../lib/plugs/models')
 
-$ = models(resolve(__dirname, '_fixtures/app'))
+$ = models(resolve(__dirname, '_fixtures'))
 
 describe '#models', ->
   beforeEach (done) ->

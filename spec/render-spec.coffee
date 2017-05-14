@@ -4,15 +4,13 @@ $ = require('./_protocol')
 
 render = require('../lib/plugs/render')
 
-useConfig = (name) ->
-  $.server.use render(resolve(__dirname, '_fixtures', name))
-
 describe '#render', ->
   beforeEach $
 
-  it 'should append single views as blocks', (done) ->
-    useConfig 'app'
+  beforeEach ->
+    $.server.use render(resolve(__dirname, '_fixtures'))
 
+  it 'should append single views as blocks', (done) ->
     $.server.mount (conn) ->
       conn.view 'example', foo: 'bar'
 
@@ -22,8 +20,6 @@ describe '#render', ->
       done()
 
   it 'should append multiple views as lists', (done) ->
-    useConfig 'app'
-
     $.server.mount (conn) ->
       conn.view 'example', foo: 'FOO'
       conn.view 'example', foo: 'FUU'
