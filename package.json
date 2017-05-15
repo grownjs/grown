@@ -31,7 +31,7 @@
     "socket.io": "^1.7.3",
     "source-map-support": "^0.4.11",
     "type-is": "^1.6.14",
-    "wargs": "1.0.0"
+    "wargs": "^1.0.0"
   },
   "devDependencies": {
     "body-parser": "^1.16.1",
