@@ -6,7 +6,7 @@ const reInterpolate = /`([^`]+)`/g;
 
 const _ = require('./util');
 
-module.exports = $ => {
+module.exports = ($, isDebug) => {
   const vm = require('vm');
   const REPL = require('repl');
   const chalk = require('chalk');
@@ -25,7 +25,7 @@ module.exports = $ => {
       try {
         value = vm.runInNewContext(cmd, context);
       } catch (e) {
-        return callback(chalk.red(cleanStack(e.stack)));
+        return callback(chalk.red((isDebug && cleanStack(e.stack)) || e.message || e.toString()));
       }
 
       /* istanbul ignore else */

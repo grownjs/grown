@@ -32,7 +32,7 @@ module.exports = ($, cwd) => {
 
     farm.fetch = _test(farm);
 
-    const _close = _repl(farm);
+    const _close = _repl(farm, IS_DEBUG);
 
     farm.on('close', () => _close());
 

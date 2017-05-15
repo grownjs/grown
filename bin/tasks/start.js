@@ -49,7 +49,7 @@ module.exports = ($, cwd) => {
       if (IS_REPL) {
         farm.fetch = _test(farm);
 
-        const _close = _repl(farm);
+        const _close = _repl(farm, IS_DEBUG);
 
         farm.on('close', () => _close());
       }
