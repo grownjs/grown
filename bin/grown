@@ -20,9 +20,18 @@ const GROWN_TXT = `
 `;
 
 const $ = require('wargs')(process.argv.slice(2), {
-  booleans: ['force', 'debug', 'install', 'version', 'quiet', 'help', 'list'],
+  booleans: 'IGRCAvdfqhl',
+  defaults: {
+    cwd: process.cwd(),
+    port: process.env.PORT || 8080,
+    host: process.env.HOST || '0.0.0.0',
+  },
   aliases: {
     I: 'no-install',
+    G: 'no-clone',
+    R: 'no-exec',
+    C: 'no-copy',
+    A: 'no-add',
     v: 'version',
     d: 'debug',
     f: 'force',
@@ -40,17 +49,12 @@ const $ = require('wargs')(process.argv.slice(2), {
 // defaults
 process.name = 'grown';
 
-/* istanbul ignore else */
-if (typeof $.flags.env === 'string') {
-  process.env.NODE_ENV = $.flags.env;
-}
+process.env.NODE_ENV = $.flags.env;
 
 /* istanbul ignore else */
 if (process.env.CI) {
-  process.env.NODE_ENV = 'ci';
+  process.env.NODE_ENV = $.flags.env = 'ci';
 }
-
-process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
 const thisPkg = require('../package.json');
 const exec = require('child_process').exec;
@@ -81,9 +85,9 @@ function showHelp() {
     -d, [--debug]        # Enable all debug messages
     -q, [--quiet]        # Suppress status output
     -c, [--cwd]          # Set the process.cwd()
-    -P, [--port]         # Set PORT value (default 80)
-    -H, [--host]         # Set HOST value (default 0.0.0.0)
-    -e, [--env]          # Set NODE_ENV value (default development)
+    -P, [--port]         # Set PORT value (default: 80)
+    -H, [--host]         # Set HOST value (default: 0.0.0.0)
+    -e, [--env]          # Set NODE_ENV value (default: development)
 
   Other actions:
     ${_bin} g|add|generate [...]
@@ -113,8 +117,6 @@ if ((!_task || $.flags.help) && !$.flags.exec) {
   showHelp();
   _.die();
 }
-
-const cwd = $.flags.cwd || process.cwd();
 
 const aliases = {
   generate: ['g', 'add'],
@@ -158,6 +160,10 @@ function run() {
       repl: require('./tasks/repl'),
       new: require('./tasks/new'),
     };
+
+    const cwd = $.flags.cwd;
+
+    delete $.flags.cwd;
 
     switch (_task) {
       case 'generate':

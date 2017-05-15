@@ -66,7 +66,17 @@ module.exports = $ => {
   repl.defineCommand('fetch', {
     help: 'Request the current application',
     action(value) {
-      const args = wargs(value, v => {
+      const args = wargs(value, {
+        booleans: 'CRUDJT',
+        aliases: {
+          C: 'post',
+          R: 'get',
+          U: 'put',
+          D: 'delete',
+          J: 'json',
+          T: 'text',
+        },
+      }, v => {
         // allow dynamic value interpolation
         try {
           return v.replace(reInterpolate, ($0, $1) => vm.runInNewContext($1, repl.context));
