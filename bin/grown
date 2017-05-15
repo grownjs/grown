@@ -49,7 +49,7 @@ const $ = require('wargs')(process.argv.slice(2), {
 // defaults
 process.name = 'grown';
 
-process.env.NODE_ENV = $.flags.env;
+process.env.NODE_ENV = $.flags.env || 'development';
 
 /* istanbul ignore else */
 if (process.env.CI) {
@@ -161,7 +161,7 @@ function run() {
       new: require('./tasks/new'),
     };
 
-    const cwd = $.flags.cwd;
+    const cwd = $.flags.cwd || process.cwd();
 
     delete $.flags.cwd;
 
