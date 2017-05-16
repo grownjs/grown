@@ -4,8 +4,15 @@ $ = require('./_protocol')
 
 router = require('../lib/plugs/router')
 
-useConfig = (name) ->
-  $.server.use router(resolve(__dirname, '_fixtures', name))
+useConfig = (name, middlewares) ->
+  $.server.use router({
+    middlewares: if middlewares then {
+      settings: resolve(__dirname, '_fixtures', name, 'config/middlewares.js')
+      folders: resolve(__dirname, '_fixtures', name, 'boot/middlewares')
+    } else null
+    settings: resolve(__dirname, '_fixtures', name, 'config/routes.js')
+    folders: resolve(__dirname, '_fixtures', name, 'app/controllers')
+  })
 
 describe '#router', ->
   beforeEach $
@@ -35,7 +42,7 @@ describe '#router', ->
       done()
 
   it 'should responds to defined handlers with 200', (done) ->
-    useConfig 'valid-routes'
+    useConfig 'valid-routes', true
 
     $.server.fetch('/yes').then (res) ->
       expect(res.body).toEqual 'OSOM'
@@ -70,7 +77,7 @@ describe '#router', ->
       done()
 
   it 'should fail on unknown route-middlewares', (done) ->
-    useConfig 'with-middlewares'
+    useConfig 'with-middlewares', true
 
     $.server.fetch('/err').then (res) ->
       expect(res.body).toMatch /Undefined .+? middleware/
@@ -78,7 +85,7 @@ describe '#router', ->
       done()
 
   it 'should fail on invalid route-middlewares', (done) ->
-    useConfig 'with-middlewares'
+    useConfig 'with-middlewares', true
 
     $.server.fetch('/no').then (res) ->
       expect(res.body).toMatch /Middleware .+? should be callable/
@@ -86,14 +93,14 @@ describe '#router', ->
       done()
 
   it 'should run route-middlewares properly', (done) ->
-    useConfig 'with-middlewares'
+    useConfig 'with-middlewares', true
 
     $.server.fetch('/yes').then (res) ->
       expect(res.body).toEqual 'OSOM!'
       done()
 
   it 'should fail on invalid pipeline-handlers', (done) ->
-    useConfig 'with-middlewares'
+    useConfig 'with-middlewares', true
 
     $.server.fetch('/maybe').then (res) ->
       expect(res.body).toMatch /Undefined .+? handler/
@@ -101,14 +108,14 @@ describe '#router', ->
       done()
 
   it 'should run pipeline-handlers properly', (done) ->
-    useConfig 'with-middlewares'
+    useConfig 'with-middlewares', true
 
     $.server.fetch('/surely').then (res) ->
       expect(res.body).toEqual 'OSOM!!'
       done()
 
   it 'should inject values and methods', (done) ->
-    useConfig 'with-middlewares'
+    useConfig 'with-middlewares', true
 
     $.server.fetch('/other-example').then (res) ->
       expect(res.body).toEqual 'SYNC,ASYNC!'

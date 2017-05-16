@@ -8,7 +8,9 @@ describe '#render', ->
   beforeEach $
 
   beforeEach ->
-    $.server.use render(resolve(__dirname, '_fixtures'))
+    $.server.use render({
+      folders: resolve(__dirname, '_fixtures/app/views')
+    })
 
   it 'should append single views as blocks', (done) ->
     $.server.mount (conn) ->

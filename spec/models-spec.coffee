@@ -4,7 +4,10 @@ Grown = require('..')
 util = require('../lib/util')
 models = require('../lib/plugs/models')
 
-$ = models(resolve(__dirname, '_fixtures'))
+$ = models({
+  settings: resolve(__dirname, '_fixtures/app/config/database.js')
+  folders: resolve(__dirname, '_fixtures/app/models')
+})
 
 describe '#models', ->
   beforeEach (done) ->
