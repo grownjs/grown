@@ -92,9 +92,9 @@ function showHelp() {
     -e, [--env]          # Set NODE_ENV value (default: development)
 
   Server options:
-    -R, [--repl]         # Enable the REPL, e.g. `grown up -R`
-    -U, [--uws]          # Force UWS as default transport
-    -S, [--https]        # Force HTTP as default transport
+    -R, [--repl]         # Enable the REPL
+    -U, [--uws]          # Force UWS
+    -S, [--https]        # Force HTTP
 
   Other actions:
     ${_bin} g|add|generate [...]
