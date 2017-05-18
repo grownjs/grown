@@ -194,12 +194,12 @@ module.exports = ($, cwd, farm) => {
                 `${(new Date() - _start) / 1000}ms ${res.body ? res.body.length : -1} `);
               print(chalk.gray(res.body), '\n');
             });
-          }).catch(error => {
-            print(chalk.red(error.message), '\n');
+          }).catch(e => {
+            print(chalk.red(($.flags.debug && cleanStack(e.stack)) || e.message || e.toString()), '\n');
           });
         });
       } catch (_e) {
-        print(chalk.red(_e.message), '\n');
+        print(chalk.red(($.flags.debug && cleanStack(_e.stack)) || _e.message || _e.toString()), '\n');
       }
     },
   });
