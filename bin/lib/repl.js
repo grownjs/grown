@@ -6,7 +6,10 @@ const reInterpolate = /`([^`]+)`/g;
 
 const _ = require('./util');
 
-module.exports = ($, isDebug) => {
+const path = require('path');
+const fs = require('fs');
+
+module.exports = ($, cwd, farm) => {
   const vm = require('vm');
   const REPL = require('repl');
   const chalk = require('chalk');
@@ -14,6 +17,17 @@ module.exports = ($, isDebug) => {
   const cleanStack = require('clean-stack');
 
   let kill = true;
+
+  const logName = ($.flags.repl === true ? 'default' : $.flags.repl) || 'default';
+  const logFile = process.env.NODE_REPL_HISTORY || path.join(cwd, `log/REPL.${logName}.log`);
+
+  const fd = fs.openSync(logFile, 'a');
+
+  const wstream = fs.createWriteStream(logFile, { fd });
+
+  wstream.on('error', err => {
+    throw err;
+  });
 
   const repl = REPL.start({
     stdout: process.stdout,
@@ -25,7 +39,7 @@ module.exports = ($, isDebug) => {
       try {
         value = vm.runInNewContext(cmd, context);
       } catch (e) {
-        return callback(chalk.red((isDebug && cleanStack(e.stack)) || e.message || e.toString()));
+        return callback(chalk.red(($.flags.debug && cleanStack(e.stack)) || e.message || e.toString()));
       }
 
       /* istanbul ignore else */
@@ -39,8 +53,8 @@ module.exports = ($, isDebug) => {
           .then(result => {
             callback(null, result);
           })
-          .catch(error => {
-            callback(cleanStack(error.stack));
+          .catch(e => {
+            callback(chalk.red(($.flags.debug && cleanStack(e.stack)) || e.message || e.toString()));
           });
       }
 
@@ -50,17 +64,39 @@ module.exports = ($, isDebug) => {
   .on('exit', () => {
     /* istanbul ignore else */
     if (kill) {
+      fs.closeSync(fd);
       _.die();
     }
   });
 
-  // FIXME: improve repl support, logging, utils (vm, argv), etc.
+  repl.pause();
+
+  try {
+    repl.rli.history = fs.readFileSync(logFile, 'utf-8').split('\n').reverse();
+    repl.rli.history.shift();
+    repl.rli.historyIndex = -1;
+  } catch (e) {
+    // do nothing
+  }
+
+  repl.rli.addListener('line', code => {
+    if (code && code !== '.history') {
+      wstream.write(`${code}\n`);
+    } else {
+      repl.rli.historyIndex += 1;
+      repl.rli.history.pop();
+    }
+  });
+
+  function print() {
+    repl.outputStream.write(Array.prototype.slice.call(arguments).join(''));
+  }
 
   Object.defineProperty(repl.context, 'Grown', {
     configurable: false,
     enumerable: true,
     writable: false,
-    value: $.extensions,
+    value: farm.extensions,
   });
 
   repl.defineCommand('fetch', {
@@ -93,7 +129,7 @@ module.exports = ($, isDebug) => {
         _method = _path;
         _path = args._.shift();
 
-        const _aliased = $.extensions.routes(_method);
+        const _aliased = farm.extensions.routes(_method);
 
         /* istanbul ignore else */
         if (_aliased) {
@@ -122,7 +158,7 @@ module.exports = ($, isDebug) => {
       _path = _path || '/';
 
       if (['get', 'put', 'post', 'delete'].indexOf(_method) === -1 || _path.charAt() !== '/') {
-        _.echo(chalk.red(`Invalid request, given '${_method} ${_path}'`), '\n');
+        print(chalk.red(`Invalid request, given '${_method} ${_path}'`), '\n');
         return;
       }
 
@@ -143,7 +179,7 @@ module.exports = ($, isDebug) => {
 
         const _start = new Date();
 
-        $.fetch(_path, _method, _opts).then(res => {
+        farm.fetch(_path, _method, _opts).then(res => {
           let _status = res.statusCode === 200 ? 'green' : 'cyan';
 
           if (res.statusCode >= 500) {
@@ -151,15 +187,15 @@ module.exports = ($, isDebug) => {
           }
 
           process.nextTick(() => {
-            _.echo(chalk[_status](res.statusCode), ' ', chalk.yellow(res.statusMessage), ' ',
+            print(chalk[_status](res.statusCode), ' ', chalk.yellow(res.statusMessage), ' ',
               `${(new Date() - _start) / 1000}ms ${res.body.length} `);
-            _.echo(chalk.gray(res.body), '\n');
+            print(chalk.gray(res.body), '\n');
           });
         }).catch(error => {
-          _.echo(chalk.red(error.message), '\n');
+          print(chalk.red(error.message), '\n');
         });
       } catch (_e) {
-        _.echo(chalk.red(_e.message), '\n');
+        print(chalk.red(_e.message), '\n');
       }
     },
   });
@@ -171,8 +207,26 @@ module.exports = ($, isDebug) => {
     },
   });
 
-  $.on('done', () => {
-    $.emit('repl', repl, _.logger);
+  repl.defineCommand('history', {
+    help: 'Show the history',
+    action() {
+      print(repl.rli.history.slice().reverse().join('\n'), '\n');
+
+      repl.displayPrompt();
+    },
+  });
+
+  farm.on('done', () => {
+    farm.emit('repl', repl, {
+      ok: msg => print('\r', chalk.green(msg), '\n'),
+      log: msg => print('\r', chalk.gray(msg), '\n'),
+      fail: msg => print('\r', chalk.red(msg), '\n'),
+      write: msg => print(msg),
+    });
+
+    repl.setPrompt(chalk.cyan('$ '));
+    repl.displayPrompt();
+    repl.resume();
   });
 
   return () => {

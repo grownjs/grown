@@ -4,7 +4,7 @@
 
 module.exports = ($, cwd) => {
   const IS_DEBUG = $.flags.debug === true;
-  const IS_REPL = $.flags.repl === true;
+  const IS_REPL = $.flags.repl;
   const IS_DEV = process.env.NODE_ENV === 'development';
 
   const PORT = $.flags.port || process.env.PORT || 8080;
@@ -39,7 +39,7 @@ module.exports = ($, cwd) => {
 
   function _startApplication(done) {
     try {
-      _.echo(chalk.gray('↺ Initializing server ...'), '\r');
+      _.echo(chalk.gray('↺ Initializing framework ...'), '\r\r');
 
       const _host = `${_protocol}://${HOST}:${PORT}`;
 
@@ -49,13 +49,15 @@ module.exports = ($, cwd) => {
       if (IS_REPL) {
         farm.fetch = _test(farm);
 
-        const _close = _repl(farm, IS_DEBUG);
+        const _close = _repl($, cwd, farm);
 
         farm.on('close', () => _close());
       }
 
+      _.echo(chalk.gray('↺ Starting server ...'), '\r\r');
+
       // start server
-      farm.emit('start').then(() => {
+      farm.emit('start').then(() =>
         farm.listen(_host, app => {
           _.echo(chalk.green('✔ Server is ready'), '\r\n');
           _.echo(chalk.gray('› Listening at '), chalk.yellow(app.location.href), '\n');
@@ -72,8 +74,7 @@ module.exports = ($, cwd) => {
         }).catch(e => {
           _.echo(chalk.red((IS_DEBUG && cleanStack(e.stack)) || e.message), '\r\n');
           _.die(1);
-        });
-      });
+        }));
     } catch (e) {
       _.echo(chalk.red((IS_DEBUG && cleanStack(e.stack)) || e.message), '\r\n');
       _.die(1);

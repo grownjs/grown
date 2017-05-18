@@ -26,23 +26,24 @@ module.exports = ($, cwd) => {
 
   // small bootstrap
   function _startApplication() {
-    _.echo(chalk.gray('↺ Initializing REPL ...'), '\r');
+    _.echo(chalk.gray('↺ Initializing framework ...'), '\r\r');
 
     farm = _farm(cwd);
 
     farm.fetch = _test(farm);
 
-    const _close = _repl(farm, IS_DEBUG);
+    const _close = _repl($, cwd, farm);
 
     farm.on('close', () => _close());
 
-    farm.emit('start').then(() => {
+    _.echo(chalk.gray('↺ Starting server ...'), '\r\r');
+
+    farm.emit('start').then(() =>
       farm.listen('test://', app => {
         _.echo(chalk.green('✔ REPL is ready'), '\r\n');
         _.echo(chalk.gray('› Listening at '), chalk.yellow(app.location.href), '\n');
         _.echo(chalk.gray('› Type .help to list all available commands'), '\n');
-      });
-    });
+      }));
   }
 
   _startApplication();
