@@ -46,18 +46,21 @@ describe 'Formidable', ->
 
     $.server.mount (conn) ->
       conn.upload_files().then ->
-        conn.resp_body = conn.params
+        conn.resp_body = [conn.params, conn.uploaded_files]
 
     $.server.fetch('/', 'post', {
       body:
         foo: 'bar'
+        example: "@#{__filename}"
       headers:
         'content-type': 'multipart/form-data'
         'accept': 'application/json'
     })
 
     .then (res) ->
-      expect(res.json).toEqual { foo: 'bar' }
+      expect(res.json[0]).toEqual { foo: 'bar' }
+      expect(res.json[1].example.type).toEqual 'text/coffeescript'
+      expect(res.json[1].example.name).toEqual 'formidable-spec.coffee'
       done()
 
    # TODO: octet-stream
