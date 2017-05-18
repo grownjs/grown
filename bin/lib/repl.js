@@ -179,20 +179,24 @@ module.exports = ($, cwd, farm) => {
 
         const _start = new Date();
 
-        farm.fetch(_path, _method, _opts).then(res => {
-          let _status = res.statusCode === 200 ? 'green' : 'cyan';
+        print(chalk.green(_method.toUpperCase()), ' ', chalk.gray(_path), '\n');
 
-          if (res.statusCode >= 500) {
-            _status = 'red';
-          }
+        process.nextTick(() => {
+          farm.fetch(_path, _method, _opts).then(res => {
+            let _status = res.statusCode === 200 ? 'green' : 'cyan';
 
-          process.nextTick(() => {
-            print(chalk[_status](res.statusCode), ' ', chalk.yellow(res.statusMessage), ' ',
-              `${(new Date() - _start) / 1000}ms ${res.body.length} `);
-            print(chalk.gray(res.body), '\n');
+            if (res.statusCode >= 500) {
+              _status = 'red';
+            }
+
+            process.nextTick(() => {
+              print(chalk[_status](res.statusCode), ' ', chalk.yellow(res.statusMessage), ' ',
+                `${(new Date() - _start) / 1000}ms ${res.body ? res.body.length : -1} `);
+              print(chalk.gray(res.body), '\n');
+            });
+          }).catch(error => {
+            print(chalk.red(error.message), '\n');
           });
-        }).catch(error => {
-          print(chalk.red(error.message), '\n');
         });
       } catch (_e) {
         print(chalk.red(_e.message), '\n');
@@ -211,8 +215,6 @@ module.exports = ($, cwd, farm) => {
     help: 'Show the history',
     action() {
       print(repl.rli.history.slice().reverse().join('\n'), '\n');
-
-      repl.displayPrompt();
     },
   });
 
@@ -224,8 +226,6 @@ module.exports = ($, cwd, farm) => {
       write: msg => print(msg),
     });
 
-    repl.setPrompt(chalk.cyan('$ '));
-    repl.displayPrompt();
     repl.resume();
   });
 
