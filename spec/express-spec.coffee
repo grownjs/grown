@@ -1,5 +1,7 @@
 $ = require('./_protocol')
 
+fs = require('fs')
+
 describe 'known express-middleware', ->
   beforeEach $
 
@@ -50,4 +52,13 @@ describe 'known express-middleware', ->
       , { headers: { 'content-length': 8, 'content-type': 'application/x-www-form-urlencoded' } }
       .then ->
         expect($.params).toEqual { baz: 'buzz' }
+        done()
+
+    it 'support `serve-static` for serving files', (done) ->
+      $.server.mount require('serve-static')(__dirname)
+
+      $.server.fetch('/express-spec.coffee')
+
+      .then (res) ->
+        expect(res.body).toEqual fs.readFileSync(__filename).toString()
         done()
