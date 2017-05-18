@@ -165,17 +165,7 @@ module.exports = ($, cwd, farm) => {
       }
 
       try {
-        if (args.flags.multipart) {
-          args.params['content-type'] = 'multipart/form-data';
-        }
-
-        if (args.flags.json) {
-          args.params.accept = 'application/json';
-        }
-
-        if (args.flags.text) {
-          args.params.accept = 'text/plain';
-        }
+        const _start = new Date();
 
         // normalize input
         const _opts = {
@@ -183,14 +173,29 @@ module.exports = ($, cwd, farm) => {
           headers: args.params,
         };
 
-        const _start = new Date();
+        /* istanbul ignore else */
+        if (args.flags.text) {
+          args.params.accept = 'text/plain';
+        }
 
-        print(chalk.green(_method.toUpperCase()), ' ', chalk.gray(_path), '\n');
+        /* istanbul ignore else */
+        if (args.flags.json) {
+          args.params['content-type'] = 'application/json';
+          args.params.accept = 'application/json';
+        }
+
+        /* istanbul ignore else */
+        if (args.flags.multipart) {
+          args.params['content-type'] = 'multipart/form-data';
+        }
 
         process.nextTick(() => {
+          print(chalk.green(_method.toUpperCase()), ' ', chalk.gray(_path), '\n');
+
           farm.fetch(_path, _method, _opts).then(res => {
             let _status = res.statusCode === 200 ? 'green' : 'cyan';
 
+            /* istanbul ignore else */
             if (res.statusCode >= 500) {
               _status = 'red';
             }
