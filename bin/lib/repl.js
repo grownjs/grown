@@ -166,7 +166,7 @@ module.exports = ($, cwd, farm) => {
 
       try {
         if (args.flags.multipart) {
-          args.params.accept = 'multipart/form-data';
+          args.params['content-type'] = 'multipart/form-data';
         }
 
         if (args.flags.json) {
