@@ -111,6 +111,7 @@ module.exports = ($, cwd, farm) => {
           D: 'delete',
           J: 'json',
           T: 'text',
+          M: 'multipart',
         },
       }, v => {
         // allow dynamic value interpolation
@@ -121,22 +122,9 @@ module.exports = ($, cwd, farm) => {
         }
       });
 
-      let _method = 'get';
-      let _path = args._.shift();
-
-      /* istanbul ignore else */
-      if (_path && _path.charAt() !== '/') {
-        _method = _path;
-        _path = args._.shift();
-
-        const _aliased = farm.extensions.routes(_method);
-
-        /* istanbul ignore else */
-        if (_aliased) {
-          _method = _aliased.verb;
-          _path = _aliased.path;
-        }
-      }
+      // let _aliased;
+      let _method = '';
+      let _path = '';
 
       // variations:
       // alias                 => ...
@@ -144,7 +132,7 @@ module.exports = ($, cwd, farm) => {
       // <verb> /<path>        => VERB /path
       // /<path> --<verb>      => VERB /path
       // --<verb> /<path>      => VERB /path
-      ['put', 'post', 'delete'].forEach(key => {
+      ['get', 'put', 'post', 'delete'].forEach(key => {
         _method = args.flags[key] === true ? key : _method;
 
         /* istanbul ignore else */
@@ -154,8 +142,22 @@ module.exports = ($, cwd, farm) => {
         }
       });
 
-      // normalize initial path
-      _path = _path || '/';
+      /* istanbul ignore else */
+      if (!_method && _path.charAt() !== '/') {
+        _method = _path;
+        _path = args._.shift();
+      }
+
+      const _aliased = _path && farm.extensions.routes(_path);
+
+      _method = _method || 'get';
+      _path = _path || args._.shift() || '/';
+
+      /* istanbul ignore else */
+      if (_aliased) {
+        _method = _aliased.verb;
+        _path = _aliased.path;
+      }
 
       if (['get', 'put', 'post', 'delete'].indexOf(_method) === -1 || _path.charAt() !== '/') {
         print(chalk.red(`Invalid request, given '${_method} ${_path}'`), '\n');
@@ -163,6 +165,10 @@ module.exports = ($, cwd, farm) => {
       }
 
       try {
+        if (args.flags.multipart) {
+          args.params.accept = 'multipart/form-data';
+        }
+
         if (args.flags.json) {
           args.params.accept = 'application/json';
         }
