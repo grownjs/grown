@@ -148,7 +148,16 @@ module.exports = ($, cwd, farm) => {
         _path = args._.shift();
       }
 
-      const _aliased = _path && farm.extensions.routes(_path);
+      let _aliased;
+
+      try {
+        _aliased = _path && _path.charAt() !== '/'
+          ? farm.extensions.routes(_path)
+          : null;
+      } catch (e) {
+        print(chalk.red(`Route not found, given '${_path}'`), '\n');
+        return;
+      }
 
       _method = _method || 'get';
       _path = _path || args._.shift() || '/';
@@ -201,9 +210,15 @@ module.exports = ($, cwd, farm) => {
             }
 
             process.nextTick(() => {
-              print(chalk[_status](res.statusCode), ' ', chalk.yellow(res.statusMessage), ' ',
-                `${(new Date() - _start) / 1000}ms ${res.body ? res.body.length : -1} `);
-              print(chalk.gray(res.body), '\n');
+              print(chalk[_status](res.statusCode),
+                ' ', chalk.yellow(res.statusMessage),
+                ' ', `${(new Date() - _start) / 1000}ms\n`);
+
+              Object.keys(res._headers).forEach(key =>
+                print(chalk.gray(`${key.replace(/\b([a-z])/g, $0 =>
+                  $0.toUpperCase())}:`), ' ', res._headers[key], '\n'));
+
+              print('\n', chalk.gray(res.body), '\n');
             });
           }).catch(e => {
             print(chalk.red(($.flags.debug && cleanStack(e.stack)) || e.message || e.toString()), '\n');
