@@ -191,7 +191,12 @@ function run() {
         const _farm = require(path.join(cwd, $._[0] || 'app/server'));
 
         _farm.teardown(() => _farm().emit('start')
-          .then(ctx => require(_script)(ctx, $, _.logger)));
+          .then(ctx => require(_script)(ctx, $, {
+            ok: msg => _.echo('\r', chalk.green(msg), '\n'),
+            log: msg => _.echo('\r', chalk.gray(msg), '\n'),
+            fail: msg => _.echo('\r', chalk.red(msg), '\n'),
+            write: msg => _.echo(msg),
+          })));
       }
     }
   } catch (e) {
