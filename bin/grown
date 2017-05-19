@@ -20,7 +20,7 @@ const GROWN_TXT = `
 `;
 
 const $ = require('wargs')(process.argv.slice(2), {
-  booleans: 'IGRCAvdfqhl',
+  booleans: 'IGRCARUSvdfqhl',
   defaults: {
     cwd: process.cwd(),
     port: process.env.PORT || 8080,
