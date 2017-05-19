@@ -21,13 +21,19 @@ module.exports = ($, cwd, farm) => {
   const logName = ($.flags.repl === true ? 'default' : $.flags.repl) || 'default';
   const logFile = process.env.NODE_REPL_HISTORY || path.join(cwd, `log/REPL.${logName}.log`);
 
-  const fd = fs.openSync(logFile, 'a');
+  let fd;
+  let ws;
 
-  const wstream = fs.createWriteStream(logFile, { fd });
+  try {
+    fd = fs.openSync(logFile, 'a');
+    ws = fs.createWriteStream(logFile, { fd });
 
-  wstream.on('error', err => {
-    throw err;
-  });
+    ws.on('error', err => {
+      throw err;
+    });
+  } catch (e) {
+    // do nothing
+  }
 
   const repl = REPL.start({
     stdout: process.stdout,
@@ -64,7 +70,10 @@ module.exports = ($, cwd, farm) => {
   .on('exit', () => {
     /* istanbul ignore else */
     if (kill) {
-      fs.closeSync(fd);
+      if (fd) {
+        fs.closeSync(fd);
+      }
+
       _.die();
     }
   });
@@ -81,7 +90,9 @@ module.exports = ($, cwd, farm) => {
 
   repl.rli.addListener('line', code => {
     if (code && code !== '.history') {
-      wstream.write(`${code}\n`);
+      if (ws) {
+        ws.write(`${code}\n`);
+      }
     } else {
       repl.rli.historyIndex += 1;
       repl.rli.history.pop();
