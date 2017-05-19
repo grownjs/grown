@@ -10,8 +10,12 @@ describe '#uws', ->
     $.mount (conn) ->
       conn.resp_body = 'OK'
 
-    $.listen('uws://0.0.0.0:3000').then (app) ->
-      $.close().then ->
-        done()
+    $.listen('uws://0.0.0.0:3000').then ->
+      done()
 
-  it 'should be ok', ->
+  it 'should be ok', (done) ->
+    $.close().then ->
+      done()
+
+      setTimeout ->
+        process.exit()
