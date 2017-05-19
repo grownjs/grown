@@ -5,8 +5,22 @@
 
 'use strict';
 
+process.stdout.write('Loading server...\r');
+
 const app = require('../app/server');
 
 if (require.main === module) {
-  app().listen(process.env.PORT || 3000);
+  const farm = app();
+
+  process.stdout.write('Starting framework...\r');
+
+  farm.emit('start').then(() =>
+    farm.listen(process.env.PORT || 3000, $ => {
+      process.stdout.write(`Listening on ${$.location.href}\n`);
+    }).catch(error => {
+      process.stderr.write(`${error.toString()}\n`);
+      process.exit(1);
+    }));
+
+  process.on('SIGINT', () => app.teardown(() => process.exit()));
 }

@@ -6,11 +6,11 @@ const path = require('path');
 
 const cwd = process.cwd();
 
+// setup environment
+Grown.env(cwd);
+
 // fresh context
 module.exports = () => {
-  // setup environment
-  Grown.env(cwd);
-
   const $ = new Grown({
     // basedir
     cwd,
