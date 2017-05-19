@@ -58,6 +58,7 @@
     "socket.io-client": "^1.7.3",
     "sqlite3": "^3.1.8",
     "std-mocks": "^1.0.1",
+    "uws": "^0.14.5",
     "winston": "^2.3.0"
   }
 }
