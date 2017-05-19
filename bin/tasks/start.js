@@ -43,13 +43,13 @@ module.exports = ($, cwd) => {
 
       const _host = `${_protocol}://${HOST}:${PORT}`;
 
-      farm = _farm(cwd);
+      farm = _farm();
 
       /* istanbul ignore else */
       if (IS_REPL) {
         farm.fetch = _test(farm);
 
-        const _close = _repl($, cwd, farm);
+        const _close = _repl($, farm);
 
         farm.on('close', () => _close());
       }

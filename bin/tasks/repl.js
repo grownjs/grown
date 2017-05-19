@@ -28,11 +28,11 @@ module.exports = ($, cwd) => {
   function _startApplication() {
     _.echo(chalk.gray('↺ Initializing framework ...'), '\r\r');
 
-    farm = _farm(cwd);
+    farm = _farm();
 
     farm.fetch = _test(farm);
 
-    const _close = _repl($, cwd, farm);
+    const _close = _repl($, farm);
 
     farm.on('close', () => _close());
 

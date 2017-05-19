@@ -9,7 +9,7 @@ const _ = require('./util');
 const path = require('path');
 const fs = require('fs');
 
-module.exports = ($, cwd, farm) => {
+module.exports = ($, farm) => {
   const vm = require('vm');
   const REPL = require('repl');
   const chalk = require('chalk');
@@ -19,7 +19,9 @@ module.exports = ($, cwd, farm) => {
   let kill = true;
 
   const logName = ($.flags.repl === true ? 'default' : $.flags.repl) || 'default';
-  const logFile = process.env.NODE_REPL_HISTORY || path.join(cwd, `log/REPL.${logName}.log`);
+
+  const logFile = process.env.NODE_REPL_HISTORY
+    || path.join(farm.get('cwd', process.cwd()), `log/REPL.${logName}.log`);
 
   let fd;
   let ws;

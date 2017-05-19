@@ -1,0 +1,12 @@
+#!/bin/sh
+
+':' // ; exec "$(command -v nodejs || command -v node)" "$0" "$@"
+;
+
+'use strict';
+
+const app = require('../app/server');
+
+if (require.main === module) {
+  app().listen(process.env.PORT || 3000);
+}

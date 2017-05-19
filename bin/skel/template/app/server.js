@@ -4,8 +4,10 @@
 const Grown = require('grown');
 const path = require('path');
 
+const cwd = process.cwd();
+
 // fresh context
-module.exports = cwd => {
+module.exports = () => {
   // setup environment
   Grown.env(cwd);
 
