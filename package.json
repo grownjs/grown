@@ -1,6 +1,6 @@
 {
   "name": "grown",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Experimental DSL for web applications",
   "author": "Alvaro Cabrera",
   "license": "MIT",
@@ -31,7 +31,7 @@
     "send": "^0.15.3",
     "source-map-support": "^0.4.11",
     "type-is": "^1.6.14",
-    "wargs": "^1.0.0"
+    "wargs": "^1.0.1"
   },
   "devDependencies": {
     "body-parser": "^1.16.1",
