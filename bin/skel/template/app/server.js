@@ -20,7 +20,13 @@ module.exports = () => {
   });
 
   // enable file server
-  $.mount(require('serve-static')(path.join(cwd, 'public')));
+  const serveStatic = require('serve-static');
+
+  // serve all static files
+  $.mount(serveStatic(path.join(cwd, 'public')));
+
+  // serve generated source files
+  $.mount(serveStatic(path.join(cwd, 'build/public')));
 
   // {{#DATABASE}}initialize models before
   $.use(Grown.plugs.models(cwd));

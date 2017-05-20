@@ -10,6 +10,7 @@
     "dev": "tarima -e -d"
   },
   "tarima": {
+    "cwd": ".",
     "src": [
       "app/views",
       "app/assets"
@@ -32,7 +33,8 @@
       "**/index.js"
     ],
     "rename": [
-      "**:{fullpath/1}",
+      "**/views/**:{fullpath/1}",
+      "**/assets/**:public/{fullpath/2}",
       "**/index.(css|js):{basedir}.{ext}"
     ],
     "ignoreFiles": [

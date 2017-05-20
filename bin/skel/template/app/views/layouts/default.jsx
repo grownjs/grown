@@ -5,5 +5,6 @@ export default (locals, h) => <html>
   </head>
   <body>
     {locals.yield || ''}
+    <script src='javascripts/application.js'></script>
   </body>
 </html>
