@@ -71,7 +71,7 @@ module.exports = ($, cwd) => {
     } : null, {
       type: 'install',
       dependencies: [
-        'pateketrueke/grown',
+        'grown',
         'route-mappings',
 
         // required
@@ -93,12 +93,14 @@ module.exports = ($, cwd) => {
         $.data.DATABASE ? ['sequelize', 'pateketrueke/json-schema-sequelizer'] : null,
       ],
       devDependencies: [
-        $.data.DATABASE && $.data.DATABASE !== 'sqlite' ? 'sqlite3' : null,
-      ],
-      optionalDependencies: [
         'eslint',
         'eslint-plugin-import',
         'eslint-config-airbnb-base',
+        $.data.DATABASE && $.data.DATABASE !== 'sqlite' ? 'sqlite3' : null,
+        ['tarima', 'pug', 'less', 'buble', 'rollup', 'talavera', 'less-plugin-autoprefix'],
+      ],
+      optionalDependencies: [
+        ['tarima-lr', 'chokidar', 'node-notifier'],
       ],
     }],
   }, _.merge({

@@ -1,7 +1,10 @@
 .DS_Store
+.tarima
+.env
 *~
 *.log
-*.sqlite
 /build
+/public
 /coverage
 /node_modules
+/bower_components

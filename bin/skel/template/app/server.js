@@ -36,7 +36,7 @@ module.exports = () => {
   }));
 
   $.use(Grown.plugs.render({
-    folders: path.join(cwd, 'app/views'),
+    folders: path.join(cwd, 'build/views'),
   }));
 
   // required for CSRF

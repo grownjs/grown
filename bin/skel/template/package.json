@@ -2,7 +2,71 @@
   "name": "{{paramCase APP_NAME}}",
   "version": "0.0.0",
   "scripts": {
-    "eslint": "eslint app boot config",
-    "start": "grown up"
+    "test": "yarn lint",
+    "lint": "eslint app bin boot config",
+    "start": "grown up",
+    "watch": "yarn dev -- -P localhost:8080 -- grown up -P 8080",
+    "dist": "tarima -fqe production",
+    "dev": "tarima -e -d"
+  },
+  "tarima": {
+    "src": [
+      "app/views",
+      "app/assets"
+    ],
+    "watch": [
+      "app/server.js",
+      "app/models",
+      "app/controllers",
+      "boot",
+      "config",
+      ".env",
+      "package.json"
+    ],
+    "filter": [
+      "!_*",
+      "!**/_*",
+      "!**/_*/**"
+    ],
+    "bundle": [
+      "**/index.js"
+    ],
+    "rename": [
+      "**:{fullpath/1}",
+      "**/index.(css|js):{basedir}.{ext}"
+    ],
+    "ignoreFiles": [
+      ".gitignore"
+    ],
+    "devPlugins": [
+      "tarima-lr"
+    ],
+    "plugins": [
+      "talavera"
+    ],
+    "pluginOptions": {
+      "talavera": {
+        "dest": "images"
+      },
+      "tarima-lr": {
+        "timeout": 1000
+      }
+    },
+    "bundleOptions": {
+      "bundleCache": true,
+      "entryCache": true,
+      "extensions": {
+        "js": "es6",
+        "css": "less"
+      },
+      "buble": {
+        "jsx": "h"
+      },
+      "less": {
+        "plugins": [
+          "less-plugin-autoprefix"
+        ]
+      }
+    }
   }
 }

@@ -1518,9 +1518,9 @@ grunt-exec@~0.4.5:
   version "0.4.7"
   resolved "https://registry.yarnpkg.com/grunt-exec/-/grunt-exec-0.4.7.tgz#40051ffa4eb0c9657e053b95e88d44352a1c2c25"
 
-haki@^0.2.3:
-  version "0.2.3"
-  resolved "https://registry.yarnpkg.com/haki/-/haki-0.2.3.tgz#b85ae431dae7488432bae9a7341fbb9b49dca9d2"
+haki@0.2.4:
+  version "0.2.4"
+  resolved "https://registry.yarnpkg.com/haki/-/haki-0.2.4.tgz#0a05bc9fff3cc5f1573d0740065ae0e95cd5cd98"
   dependencies:
     chalk "^1.1.3"
     change-case "^3.0.1"
@@ -3544,6 +3544,10 @@ walkdir@~0.0.7:
 wargs@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/wargs/-/wargs-1.0.1.tgz#b1ca298e0cda6ef12c4054a06512e63a2c3d661d"
+
+wargs@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/wargs/-/wargs-1.0.2.tgz#fa16295214d480bcd7fd101550291fc1bf9591eb"
 
 warning-symbol@^0.1.0:
   version "0.1.0"
