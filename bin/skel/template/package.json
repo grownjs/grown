@@ -28,10 +28,10 @@
       "!_*",
       "!**/_*",
       "!**/_*/**"
-    ],
+    ]{{#BUNDLER}},
     "bundle": [
       "**/index.js"
-    ],
+    ]{{/BUNDLER}},
     "rename": [
       "**/views/**:{fullpath/1}",
       "**/assets/**:public/{fullpath/2}",
@@ -40,8 +40,9 @@
     "ignoreFiles": [
       ".gitignore"
     ],
-    "devPlugins": [
-      "tarima-lr"
+    "devPlugins": [{{#IS_BROWSER_SYNC}}
+      "tarima-browser-sync"{{/IS_BROWSER_SYNC}}{{^IS_BROWSER_SYNC}}
+      "tarima-lr"{{/IS_BROWSER_SYNC}}
     ],
     "plugins": [
       "talavera"
@@ -49,26 +50,50 @@
     "pluginOptions": {
       "talavera": {
         "dest": "images"
-      },
+      }{{^IS_BROWSER_SYNC}},
       "tarima-lr": {
         "timeout": 1000
-      }
+      }{{/IS_BROWSER_SYNC}}
     },
     "bundleOptions": {
-      "bundleCache": true,
+      {{#ES6}}{{^IS_BUBLE}}"transpiler": "{{ES6}}",
+      {{/IS_BUBLE}}{{/ES6}}{{#BUNDLER}}{{^IS_ROLLUP}}"bundler": "{{BUNDLER}}",
+      {{/IS_ROLLUP}}{{#IS_ROLLUP}}"bundleCache": true,
       "entryCache": true,
-      "extensions": {
+      {{/IS_ROLLUP}}{{/BUNDLER}}"extensions": {
         "js": "es6",
-        "css": "less"
-      },
+        "css": "{{#IS_POSTCSS}}post{{/IS_POSTCSS}}{{^IS_POSTCSS}}{{CSS_LANG}}{{/IS_POSTCSS}}"
+      }{{#IS_BUBLE}},
       "buble": {
         "jsx": "h"
-      },
+      }{{/IS_BUBLE}}{{#IS_BABEL}},
+      "babel": {
+        "presets": [
+          [
+            "es2015",
+            {}
+          ]
+        ],
+        "plugins": [
+          [
+            "transform-react-jsx",
+            {
+              "pragma": "h"
+            }
+          ]
+        ]
+      }{{/IS_BABEL}}{{#IS_LESS}},
       "less": {
         "plugins": [
           "less-plugin-autoprefix"
         ]
-      }
+      }{{/IS_LESS}}{{#IS_POSTCSS}},
+      "postcss": {
+        "plugins": [
+          "postcss-import",
+          "postcss-cssnext"
+        ]
+      }{{/IS_POSTCSS}}
     }
   }
 }
