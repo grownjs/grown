@@ -149,6 +149,7 @@ module.exports = ($, cwd) => {
   }, _.merge({
     APP_NAME: name,
     CSS_LANG: $.data.STYLES,
+    CAN_BUNDLE: $.data.BUNDLER || $.data.STYLES || $.data.ES6,
     IS_LESS: $.data.STYLES === 'less',
     IS_BUBLE: $.data.ES6 === 'buble',
     IS_BABEL: $.data.ES6 === 'babel',

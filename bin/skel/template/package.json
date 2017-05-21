@@ -51,20 +51,20 @@
         "dest": "images"
       }{{#IS_BROWSER_SYNC}},
       "tarima-browser-sync": {
-        "timeout": 1000
+        "timeout": 100
       }{{/IS_BROWSER_SYNC}}{{^IS_BROWSER_SYNC}},
       "tarima-lr": {
-        "timeout": 1000
+        "timeout": 100
       }{{/IS_BROWSER_SYNC}}
-    },
+    }{{#CAN_BUNDLE}},
     "bundleOptions": {
       {{#ES6}}{{^IS_BUBLE}}"transpiler": "{{ES6}}",
       {{/IS_BUBLE}}{{/ES6}}{{#BUNDLER}}{{^IS_ROLLUP}}"bundler": "{{BUNDLER}}",
       {{/IS_ROLLUP}}{{#IS_ROLLUP}}"bundleCache": true,
       "entryCache": true,
       {{/IS_ROLLUP}}{{/BUNDLER}}"extensions": {
-        "js": "es6",
-        "css": "{{#IS_POSTCSS}}post{{/IS_POSTCSS}}{{^IS_POSTCSS}}{{CSS_LANG}}{{/IS_POSTCSS}}"
+        {{#ES6}}"js": "es6",
+        {{/ES6}}"css": "{{#IS_POSTCSS}}post{{/IS_POSTCSS}}{{^IS_POSTCSS}}{{CSS_LANG}}{{/IS_POSTCSS}}"
       }{{#IS_BUBLE}},
       "buble": {
         "jsx": "h"
@@ -96,6 +96,6 @@
           "postcss-cssnext"
         ]
       }{{/IS_POSTCSS}}
-    }
+    }{{/CAN_BUNDLE}}
   }
 }
