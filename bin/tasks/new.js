@@ -160,8 +160,5 @@ module.exports = ($, cwd) => {
   .catch(err => {
     _.echo(chalk.red((IS_DEBUG && err.stack) || err.message), '\r\n');
     _.die(1);
-  })
-  .then(() => {
-    _.echo(chalk.green('Done.'), '\r\n');
   });
 };
