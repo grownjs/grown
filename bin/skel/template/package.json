@@ -30,12 +30,11 @@
       "!**/_*/**"
     ]{{#BUNDLER}},
     "bundle": [
-      "**/index.js"
+      "**/javascripts/*.js"
     ]{{/BUNDLER}},
     "rename": [
       "**/views/**:{fullpath/1}",
-      "**/assets/**:public/{fullpath/2}",
-      "**/index.(css|js):{basedir}.{ext}"
+      "**/assets/**:public/{fullpath/2}"
     ],
     "ignoreFiles": [
       ".gitignore"
