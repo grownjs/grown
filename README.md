@@ -102,11 +102,58 @@ Try with `.render layouts/default csrf_token="oh noes" yield=OSOM` and see the r
 
 ### 1.2 - Controllers
 
+Routes are the way to go, then you can take control.
+
 #### Routing
+
+Route mappings are defined in the `config/routes.js` file.
+
+```js
+module.exports = map =>
+  map()
+    .root('Home#index')
+    .get('/login', 'Session#login')
+    .delete('/login', 'Session#logout')
+    .namespace('/account', map =>
+      map()
+        .root('Account#profile'));
+```
+
+Each time you call a `map()` factory you can pass values and they will be inherited down
 
 #### Definition
 
+Let's examine the `app/controllers/Home.js` source:
+
+```js
+module.exports = {
+  methods: {
+    index() {}
+  },
+};
+```
+By the mere fact of being declared, the render system will try to render a `Home/index` view.
+
 #### End responses
+
+Any method receives the connection object, in turn it can responds or return a string,
+buffer, stream or promise:
+
+```js
+index(conn) {
+  conn.resp_body = '42';
+  // return 42;
+  // return new Buffer('42');
+  // return Promise.resolve(42);
+}
+```
+
+Call `put_status()` to set a proper status code:
+
+```js
+conn.put_status(400);
+conn.resp_body = { status: 'error', message: 'Invalid input' };
+```
 
 #### Testing actions
 
