@@ -1444,7 +1444,7 @@ glob@^5.0.15:
     once "^1.3.0"
     path-is-absolute "^1.0.0"
 
-glob@^7.0.0, glob@^7.0.3, glob@^7.0.5, glob@^7.0.6:
+glob@^7.0.0, glob@^7.0.3, glob@^7.0.5, glob@^7.0.6, glob@^7.1.2:
   version "7.1.2"
   resolved "https://registry.yarnpkg.com/glob/-/glob-7.1.2.tgz#c19c9df9a028702d678612384a6552404c636d15"
   dependencies:
@@ -1518,9 +1518,9 @@ grunt-exec@~0.4.5:
   version "0.4.7"
   resolved "https://registry.yarnpkg.com/grunt-exec/-/grunt-exec-0.4.7.tgz#40051ffa4eb0c9657e053b95e88d44352a1c2c25"
 
-haki@0.2.4:
-  version "0.2.4"
-  resolved "https://registry.yarnpkg.com/haki/-/haki-0.2.4.tgz#0a05bc9fff3cc5f1573d0740065ae0e95cd5cd98"
+haki@^0.2.6:
+  version "0.2.6"
+  resolved "https://registry.yarnpkg.com/haki/-/haki-0.2.6.tgz#9b3ef4c76a5cfb4e42a245506fc2463b167522dd"
   dependencies:
     chalk "^1.1.3"
     change-case "^3.0.1"
@@ -1528,6 +1528,7 @@ haki@0.2.4:
     download-github-repo "^0.1.3"
     enquirer-prompt-input "^0.4.0"
     fs-extra "^2.0.0"
+    glob "^7.1.2"
     mustache "^2.3.0"
     pluralize "^3.1.0"
     prompt-checkbox "^0.4.2"
@@ -2339,9 +2340,9 @@ object-keys@~0.4.0:
   version "0.4.0"
   resolved "https://registry.yarnpkg.com/object-keys/-/object-keys-0.4.0.tgz#28a6aae7428dd2c3a92f3d95f21335dd204e0336"
 
-"object-new@https://github.com/pateketrueke/object-new.git#master":
-  version "0.0.1"
-  resolved "https://github.com/pateketrueke/object-new.git#b646d534d73e744cca831534bcc760960fc0a58b"
+object-new@^0.0.2:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/object-new/-/object-new-0.0.2.tgz#48d4d7aca2f907f2f4b61b9f0016dd70d1e85875"
 
 object-visit@^0.3.4:
   version "0.3.4"
@@ -3541,11 +3542,7 @@ walkdir@~0.0.7:
   version "0.0.11"
   resolved "https://registry.yarnpkg.com/walkdir/-/walkdir-0.0.11.tgz#a16d025eb931bd03b52f308caed0f40fcebe9532"
 
-wargs@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/wargs/-/wargs-1.0.1.tgz#b1ca298e0cda6ef12c4054a06512e63a2c3d661d"
-
-wargs@^1.0.2:
+wargs@^1.0.1, wargs@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/wargs/-/wargs-1.0.2.tgz#fa16295214d480bcd7fd101550291fc1bf9591eb"
 
