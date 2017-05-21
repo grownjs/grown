@@ -50,7 +50,10 @@
     "pluginOptions": {
       "talavera": {
         "dest": "images"
-      }{{^IS_BROWSER_SYNC}},
+      }{{#IS_BROWSER_SYNC}},
+      "tarima-browser-sync": {
+        "timeout": 1000
+      }{{/IS_BROWSER_SYNC}}{{^IS_BROWSER_SYNC}},
       "tarima-lr": {
         "timeout": 1000
       }{{/IS_BROWSER_SYNC}}
