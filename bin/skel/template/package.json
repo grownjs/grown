@@ -5,7 +5,7 @@
     "test": "yarn lint",
     "lint": "eslint app bin boot config",
     "start": "grown up",
-    "watch": "yarn dev -- -P localhost:8080 -- grown up -P 8080",
+    "watch": "yarn dev -- -P localhost:8080 -r bin/server",
     "dist": "tarima -Ofqe production",
     "dev": "tarima -e -d"
   },

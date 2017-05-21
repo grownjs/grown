@@ -9,18 +9,26 @@ process.stdout.write('Loading server...\r');
 
 const app = require('../app/server');
 
-if (require.main === module) {
+function runApplication() {
   const farm = app();
 
   process.stdout.write('Starting framework...\r');
 
   farm.emit('start').then(() =>
-    farm.listen(process.env.PORT || 3000, $ => {
+    farm.listen(process.env.PORT || 8080, $ => {
       process.stdout.write(`Listening on ${$.location.href}\n`);
     }).catch(error => {
       process.stderr.write(`${error.toString()}\n`);
       process.exit(1);
     }));
 
-  process.on('SIGINT', () => app.teardown(() => process.exit()));
+  return () => app.teardown();
 }
+
+if (require.main === module) {
+  runApplication();
+}
+
+module.exports = () => runApplication();
+
+process.on('SIGINT', () => app.teardown(() => process.exit()));
