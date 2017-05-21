@@ -113,6 +113,7 @@ module.exports = map =>
   map()
     .root('Home#index')
     .get('/login', 'Session#login')
+    .post('/login', 'Session#create')
     .delete('/login', 'Session#logout')
     .namespace('/account', map =>
       map()
@@ -181,11 +182,19 @@ describe 'web pages', ->
 
 Run your tests with `yarn spec` or `npm run spec` and see the results.
 
-> So you think CoffeeScript is weird? You can switch back to `.js` sources
-
 #### Interactive mode
 
 On the REPL you can `.fetch` resources too.
+
+Example:
+
+```bash
+.fetch POST /session --json username=foo password=bazzinga
+```
+
+To list all available routes just type `.routes` and hit ENTER.
+
+Try `.routes <something>` to filter out matching routes.
 
 ### 1.3 - Models
 
