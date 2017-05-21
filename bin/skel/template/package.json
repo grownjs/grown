@@ -2,10 +2,10 @@
   "name": "{{paramCase APP_NAME}}",
   "version": "0.0.0",
   "scripts": {
-    "test": "yarn lint",
+    "test": "{{#IS_NPM}}npm run{{/IS_NPM}}{{^IS_NPM}}yarn{{/IS_NPM}} lint",
     "lint": "eslint app bin boot config",
     "start": "grown up",
-    "watch": "yarn dev -- -P localhost:8080 -r bin/server",
+    "watch": "{{#IS_NPM}}npm run{{/IS_NPM}}{{^IS_NPM}}yarn{{/IS_NPM}} dev -- -P localhost:8080 -r bin/server",
     "dist": "tarima -Ofqe production",
     "dev": "tarima -e -d"
   },
