@@ -1,4 +1,4 @@
-export default locals => `<html>
+module.exports = locals => `<html>
   <head>
     <title>${locals.title || 'Untitled'}</title>
     <meta name="_csrf" content="${locals.csrf_token}"/>

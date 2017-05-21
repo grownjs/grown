@@ -20,7 +20,7 @@ const GROWN_TXT = `
 `;
 
 const $ = require('wargs')(process.argv.slice(2), {
-  booleans: 'ODIGRCARUSVrvdfqhl',
+  booleans: 'ODIGRCAusVvdfqhly',
   camelCase: true,
   defaults: {
     cwd: process.cwd(),
@@ -28,6 +28,7 @@ const $ = require('wargs')(process.argv.slice(2), {
     host: process.env.HOST || '0.0.0.0',
   },
   aliases: {
+    y: 'interactive',
     O: 'no-install-opts',
     D: 'no-install-dev',
     I: 'no-install',
@@ -35,9 +36,9 @@ const $ = require('wargs')(process.argv.slice(2), {
     R: 'no-exec',
     C: 'no-copy',
     A: 'no-add',
-    r: 'repl',
-    U: 'uws',
-    S: 'https',
+    i: 'repl',
+    u: 'uws',
+    s: 'https',
     v: 'version',
     V: 'verbose',
     d: 'debug',
@@ -99,6 +100,7 @@ function showHelp() {
     -C, [--no-copy]           # Skip copying sources
     -A, [--no-add]            # Skip writing files
     -V, [--verbose]           # Installation logs
+    -y, [--interactive]       # Interactive mode
 
   Runtime options:
     -f, [--force]             # Overwrite files that already exist
@@ -110,9 +112,9 @@ function showHelp() {
     -e, [--env]               # Set NODE_ENV value (default: development)
 
   Server options:
-    -R, [--repl]              # Enable the REPL
-    -U, [--uws]               # Force UWS
-    -S, [--https]             # Force HTTP
+    -i, [--repl]              # Enable the REPL
+    -u, [--uws]               # Force UWS
+    -s, [--https]             # Force HTTP
 
   Other actions:
     ${_bin} g|add|generate [...]
@@ -160,7 +162,7 @@ function start(cb) {
   const _start = new Date();
 
   process.on('exit', () => _.echo('\r',
-    chalk.green($.flags.force ? `Done in ${(new Date() - _start) / 1000}s` : 'Done.'), '\r\n'));
+    chalk.green($.flags.force && !$.flags.interactive ? `Done in ${(new Date() - _start) / 1000}s` : 'Done.'), '\r\n'));
 
   if ($.flags.exec) {
     const child = exec($.flags.exec);

@@ -82,83 +82,153 @@ module.exports = ($, cwd) => {
     _.echo(chalk.gray('↺ Initializing, please wait...'), '\r\r');
   }
 
-  haki.runGenerator({
-    abortOnFail: true,
-    basePath: path.join(__dirname, '../skel/template'),
-    actions: [{
-      copy: '.',
-      src: '.',
-    }, {
-      render: [
-        'package.json',
-        'app/server.js',
-      ],
-    }, $.data.DATABASE ? {
-      type: 'add',
-      dest: 'config/database.js',
-      template: DATABASE_TEMPLATE,
-    } : null, {
-      type: 'install',
-      quiet: $.flags.verbose !== true,
-      dependencies: [
-        ['grown', 'route-mappings'],
-        ['formidable', 'serve-static', 'winston'],
-        ['csurf', 'body-parser', 'cookie-parser', 'cookie-session'],
-      ],
-      devDependencies: [
-        ['eslint', 'eslint-plugin-import', 'eslint-config-airbnb-base'],
-        ['tarima', 'pug', 'talavera', 'csso', 'google-closure-compiler-js'],
-      ],
-      optionalDependencies: [
-        ['chokidar', 'node-notifier'],
-      ],
-    }, $.data.DATABASE ? {
-      type: 'install',
-      quiet: $.flags.verbose !== true,
-      dependencies: [
-        ['sequelize', 'json-schema-sequelizer'],
-        $.data.DATABASE === 'mysql' ? 'mysql' : null,
-        $.data.DATABASE === 'mssql' ? 'mssql' : null,
-        $.data.DATABASE === 'sqlite' ? 'sqlite3' : null,
-        $.data.DATABASE === 'postgres' ? ['pg', 'pg-native'] : null,
-      ],
-    } : null, ($.data.DATABASE || $.data.BUNDLER || $.data.STYLES || $.data.ES6) ? {
-      type: 'install',
-      quiet: $.flags.verbose !== true,
-      devDependencies: [
-        $.data.DATABASE && $.data.DATABASE !== 'sqlite' ? 'sqlite3' : null,
-        $.data.BUNDLER === 'fusebox' ? 'fuse-box' : null,
-        $.data.BUNDLER === 'webpack' ? 'webpack' : null,
-        $.data.BUNDLER === 'rollup' ? 'rollup' : null,
-        $.data.STYLES === 'less' ? ['less', 'less-plugin-autoprefix'] : null,
-        $.data.STYLES === 'postcss' ? ['postcss', 'postcss-import', 'postcss-cssnext'] : null,
-        $.data.STYLES === 'sass' ? 'node-sass' : null,
-        $.data.STYLES === 'styl' ? 'styl' : null,
-        $.data.ES6 === 'traceur' ? 'traceur' : null,
-        $.data.ES6 === 'babel' ? ['babel-core', 'babel-preset-es2015', 'babel-plugin-transform-react-jsx'] : null,
-        $.data.ES6 === 'buble' ? 'buble' : null,
-      ],
-    } : null, $.data.RELOADER ? {
-      type: 'install',
-      quiet: $.flags.verbose !== true,
-      optionalDependencies: [
-        $.data.RELOADER === 'browser-sync' ? 'tarima-browser-sync' : null,
-        $.data.RELOADER === 'live-reload' ? 'tarima-lr' : null,
-      ],
-    } : null],
-  }, _.merge({
-    APP_NAME: name,
-    CSS_LANG: $.data.STYLES,
-    CAN_BUNDLE: $.data.BUNDLER || $.data.STYLES || $.data.ES6,
-    IS_NPM: $.flags.npm === true,
-    IS_LESS: $.data.STYLES === 'less',
-    IS_BUBLE: $.data.ES6 === 'buble',
-    IS_BABEL: $.data.ES6 === 'babel',
-    IS_ROLLUP: $.data.BUNDLER === 'rollup',
-    IS_POSTCSS: $.data.STYLES === 'postcss',
-    IS_SQLITE3: $.data.DATABASE === 'sqlite',
-    IS_BROWSER_SYNC: $.data.RELOADER === 'browser-sync',
-  }, $.data))
+  function ask() {
+    return haki.runGenerator({
+      abortOnFail: true,
+      prompts: [{
+        name: 'DATABASE',
+        type: 'list',
+        message: 'Database:',
+        choices: [
+          { value: 'None (default)', result: null },
+          { value: 'PostgreSQL', result: 'postgres' },
+          { value: 'MySQL', result: 'mysql' },
+          { value: 'MSSQL', result: 'mssql' },
+          { value: 'SQLite3', result: 'sqlite' },
+        ],
+      }, {
+        name: 'RELOADER',
+        type: 'list',
+        message: 'Reloader:',
+        choices: [
+          { value: 'None (default)', result: null },
+          { value: 'LiveReload', result: 'live-reload' },
+          { value: 'BrowserSync', result: 'browser-sync' },
+        ],
+      }, {
+        name: 'BUNDLER',
+        type: 'list',
+        message: 'Bundler:',
+        choices: [
+          { value: 'None (default)', result: null },
+          { value: 'Rollup', result: 'rollup' },
+          { value: 'Webpack', result: 'webpack' },
+          { value: 'FuseBox', result: 'fusebox' },
+        ],
+      }, {
+        name: 'STYLES',
+        type: 'list',
+        message: 'Styles:',
+        choices: [
+          { value: 'None (default)', result: null },
+          { value: 'LESS', result: 'less' },
+          { value: 'Sass', result: 'sass' },
+          { value: 'Styl', result: 'styl' },
+          { value: 'PostCSS', result: 'postcss' },
+        ],
+      }, {
+        name: 'ES6',
+        type: 'list',
+        message: 'Scripts:',
+        choices: [
+          { value: 'None (default)', result: null },
+          { value: 'Bublé', result: 'buble' },
+          { value: 'Babel', result: 'babel' },
+          { value: 'Traceur', result: 'traceur' },
+        ],
+      }],
+      // merge user-input
+      actions: values => {
+        Object.keys(values).forEach(key => {
+          $.data[key] = values[key] || $.data[key];
+        });
+      },
+    });
+  }
+
+  function run() {
+    return haki.runGenerator({
+      abortOnFail: true,
+      basePath: path.join(__dirname, '../skel/template'),
+      actions: [{
+        copy: '.',
+        src: '.',
+      }, {
+        render: [
+          'package.json',
+          'app/server.js',
+        ],
+      }, $.data.DATABASE ? {
+        type: 'add',
+        dest: 'config/database.js',
+        template: DATABASE_TEMPLATE,
+      } : null, {
+        type: 'install',
+        quiet: $.flags.verbose !== true,
+        dependencies: [
+          ['grown', 'route-mappings'],
+          ['formidable', 'serve-static', 'winston'],
+          ['csurf', 'body-parser', 'cookie-parser', 'cookie-session'],
+        ],
+        devDependencies: [
+          ['eslint', 'eslint-plugin-import', 'eslint-config-airbnb-base'],
+          ['tarima', 'pug', 'talavera', 'csso', 'google-closure-compiler-js'],
+        ],
+        optionalDependencies: [
+          ['chokidar', 'node-notifier'],
+        ],
+      }, $.data.DATABASE ? {
+        type: 'install',
+        quiet: $.flags.verbose !== true,
+        dependencies: [
+          ['sequelize', 'json-schema-sequelizer'],
+          $.data.DATABASE === 'mysql' ? 'mysql' : null,
+          $.data.DATABASE === 'mssql' ? 'mssql' : null,
+          $.data.DATABASE === 'sqlite' ? 'sqlite3' : null,
+          $.data.DATABASE === 'postgres' ? ['pg', 'pg-native'] : null,
+        ],
+      } : null, ($.data.DATABASE || $.data.BUNDLER || $.data.STYLES || $.data.ES6) ? {
+        type: 'install',
+        quiet: $.flags.verbose !== true,
+        devDependencies: [
+          $.data.DATABASE && $.data.DATABASE !== 'sqlite' ? 'sqlite3' : null,
+          $.data.BUNDLER === 'fusebox' ? 'fuse-box' : null,
+          $.data.BUNDLER === 'webpack' ? 'webpack' : null,
+          $.data.BUNDLER === 'rollup' ? 'rollup' : null,
+          $.data.STYLES === 'less' ? ['less', 'less-plugin-autoprefix'] : null,
+          $.data.STYLES === 'postcss' ? ['postcss', 'postcss-import', 'postcss-cssnext'] : null,
+          $.data.STYLES === 'sass' ? 'node-sass' : null,
+          $.data.STYLES === 'styl' ? 'styl' : null,
+          $.data.ES6 === 'traceur' ? 'traceur' : null,
+          $.data.ES6 === 'babel' ? ['babel-core', 'babel-preset-es2015', 'babel-plugin-transform-react-jsx'] : null,
+          $.data.ES6 === 'buble' ? 'buble' : null,
+        ],
+      } : null, $.data.RELOADER ? {
+        type: 'install',
+        quiet: $.flags.verbose !== true,
+        optionalDependencies: [
+          $.data.RELOADER === 'browser-sync' ? 'tarima-browser-sync' : null,
+          $.data.RELOADER === 'live-reload' ? 'tarima-lr' : null,
+        ],
+      } : null],
+    }, _.merge({
+      APP_NAME: name,
+      CSS_LANG: $.data.STYLES,
+      CAN_BUNDLE: $.data.BUNDLER || $.data.STYLES || $.data.ES6,
+      IS_NPM: $.flags.npm === true,
+      IS_LESS: $.data.STYLES === 'less',
+      IS_BUBLE: $.data.ES6 === 'buble',
+      IS_BABEL: $.data.ES6 === 'babel',
+      IS_ROLLUP: $.data.BUNDLER === 'rollup',
+      IS_POSTCSS: $.data.STYLES === 'postcss',
+      IS_SQLITE3: $.data.DATABASE === 'sqlite',
+      IS_BROWSER_SYNC: $.data.RELOADER === 'browser-sync',
+    }, $.data));
+  }
+
+  ($.flags.interactive
+    ? ask().then(() => run())
+    : run())
   .catch(err => {
     _.echo(chalk.red((IS_DEBUG && err.stack) || err.message), '\r\n');
     _.die(1);

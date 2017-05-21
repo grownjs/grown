@@ -5,6 +5,7 @@
     "test": "{{#IS_NPM}}npm run{{/IS_NPM}}{{^IS_NPM}}yarn{{/IS_NPM}} lint",
     "lint": "eslint app bin boot config",
     "start": "grown up",
+    "debug": "grown repl -i `date +'%Y-%m-%d_%H%M'`",
     "watch": "{{#IS_NPM}}npm run{{/IS_NPM}}{{^IS_NPM}}yarn{{/IS_NPM}} dev -- -P localhost:8080 -r bin/server",
     "dist": "tarima -Ofqe production",
     "dev": "tarima -ed"

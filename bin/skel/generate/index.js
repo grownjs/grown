@@ -8,6 +8,7 @@ module.exports = {
 
 module.exports = haki => {
   haki.setGenerator('controller', {
+    description: 'Some controllers',
     arguments: ['controllerName'],
     prompts: [{
       name: 'controllerName',

@@ -1518,9 +1518,9 @@ grunt-exec@~0.4.5:
   version "0.4.7"
   resolved "https://registry.yarnpkg.com/grunt-exec/-/grunt-exec-0.4.7.tgz#40051ffa4eb0c9657e053b95e88d44352a1c2c25"
 
-haki@^0.2.7:
-  version "0.2.7"
-  resolved "https://registry.yarnpkg.com/haki/-/haki-0.2.7.tgz#47f4ffd0cddd2ec1aef7f5aa17ec4ea1306345b3"
+haki@^0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/haki/-/haki-0.3.0.tgz#e07f80f84863c1e01a991eb01f6db2d4cc862a2d"
   dependencies:
     chalk "^1.1.3"
     change-case "^3.0.1"

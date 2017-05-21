@@ -29,7 +29,10 @@ module.exports = () => {
   $.mount(serveStatic(path.join(cwd, 'build/public')));
 
   // {{#DATABASE}}initialize models before
-  $.use(Grown.plugs.models(cwd));
+  $.use(Grown.plugs.models({
+    settings: path.join(cwd, 'config/database.js'),
+    folders: path.join(cwd, 'app/models'),
+  }));
 
   // {{/DATABASE}}load routes and views
   $.use(Grown.plugs.router({
@@ -42,7 +45,10 @@ module.exports = () => {
   }));
 
   $.use(Grown.plugs.render({
-    folders: path.join(cwd, 'build/views'),
+    folders: [
+      path.join(cwd, 'app/views'),
+      path.join(cwd, 'build/views'),
+    ],
   }));
 
   // required for CSRF
