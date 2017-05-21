@@ -24,7 +24,7 @@ $ yarn watch # or `npm run watch`
 
 ### More settings
 
-Run `grown new -i` to start a new project interactively.
+Run `grown new -y` to start a new project interactively.
 
 Also, you can specify each preset manually on the command line, e.g.
 
@@ -83,7 +83,24 @@ example
 └── tmp
 ```
 
-### 1.1 - Controllers
+### 1.1 - Interactive mode
+
+Execute `grown repl` to start an interactive session.
+
+You can explore the available actions typing `.help` and hitting ENTER.
+
+Most actions responds to the same syntax `arg1 arg2 ... -pq x=y a:b` where:
+
+- `argN` are regular values (can be quoted)
+- `-pq` are **flag** values (short or long, as CLI does)
+- `x=y` are **data** values (can be quoted, e.g. `x="foo bar"`)
+- `a:b` are **param** values (can be quoted, e.g. `a:"foo bar"`)
+
+Try with `.render layouts/default csrf_token="oh noes" yield=OSOM` and see the results.
+
+> Save/load different REPL sessions using the `-i` flag, e.g. `grown repl -i debug`
+
+### 1.2 - Controllers
 
 #### Routing
 
@@ -95,7 +112,7 @@ example
 
 #### Interactive mode
 
-### 1.2 - Models
+### 1.3 - Models
 
 #### JSON-Schema
 
@@ -105,7 +122,7 @@ example
 
 #### Interactive mode
 
-### 1.3 - Views
+### 1.4 - Views
 
 #### Functions as templates
 
