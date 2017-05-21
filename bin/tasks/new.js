@@ -106,8 +106,8 @@ module.exports = ($, cwd) => {
         ['csurf', 'body-parser', 'cookie-parser', 'cookie-session'],
       ],
       devDependencies: [
-        ['tarima', 'pug', 'talavera'],
         ['eslint', 'eslint-plugin-import', 'eslint-config-airbnb-base'],
+        ['tarima', 'pug', 'talavera', 'csso', 'google-closure-compiler-js'],
       ],
       optionalDependencies: [
         ['chokidar', 'node-notifier'],

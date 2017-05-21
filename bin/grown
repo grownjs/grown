@@ -157,7 +157,10 @@ Object.keys(aliases).forEach(key => {
 });
 
 function start(cb) {
-  process.on('exit', () => _.echo('\r', chalk.green('Done.'), '\r\n'));
+  const _start = new Date();
+
+  process.on('exit', () => _.echo('\r',
+    chalk.green($.flags.force ? `Done in ${(new Date() - _start) / 1000}s` : 'Done.'), '\r\n'));
 
   if ($.flags.exec) {
     const child = exec($.flags.exec);
