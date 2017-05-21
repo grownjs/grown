@@ -120,3 +120,20 @@ describe '#router', ->
     $.server.fetch('/other-example').then (res) ->
       expect(res.body).toEqual 'SYNC,ASYNC!'
       done()
+
+  it 'should render() as fallback', (done) ->
+    useConfig 'valid-routes', true
+
+    test = null
+
+    $.server.extensions('Conn', {
+      methods:
+        render: (msg) ->
+          test = msg
+          Promise.resolve('42')
+    })
+
+    $.server.fetch('/').then (res) ->
+      expect(test).toEqual 'Clean/empty'
+      expect(res.body).toEqual '42'
+      done()

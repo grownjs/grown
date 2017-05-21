@@ -30,3 +30,11 @@ describe '#render', ->
     $.server.fetch().then (res) ->
       expect(res.body).toContain '<p>TEXT(FOO),TEXT(FUU),TEXT(FUA)</p>'
       done()
+
+  it 'should render using the default layout', (done) ->
+    $.server.mount (conn) ->
+      conn.put_local 'index', 'OK'
+
+    $.server.fetch().then (res) ->
+      expect(res.body).toContain '<p>OK</p>'
+      done()
