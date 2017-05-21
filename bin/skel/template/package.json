@@ -7,7 +7,7 @@
     "start": "grown up",
     "watch": "{{#IS_NPM}}npm run{{/IS_NPM}}{{^IS_NPM}}yarn{{/IS_NPM}} dev -- -P localhost:8080 -r bin/server",
     "dist": "tarima -Ofqe production",
-    "dev": "tarima -e -d"
+    "dev": "tarima -ed"
   },
   "tarima": {
     "cwd": ".",
