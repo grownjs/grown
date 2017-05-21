@@ -20,13 +20,16 @@ const GROWN_TXT = `
 `;
 
 const $ = require('wargs')(process.argv.slice(2), {
-  booleans: 'IGRCARUSrvdfqhl',
+  booleans: 'ODIGRCARUSVrvdfqhl',
+  camelCase: true,
   defaults: {
     cwd: process.cwd(),
     port: process.env.PORT || 8080,
     host: process.env.HOST || '0.0.0.0',
   },
   aliases: {
+    O: 'no-install-opts',
+    D: 'no-install-dev',
     I: 'no-install',
     G: 'no-clone',
     R: 'no-exec',
@@ -36,6 +39,7 @@ const $ = require('wargs')(process.argv.slice(2), {
     U: 'uws',
     S: 'https',
     v: 'version',
+    V: 'verbose',
     d: 'debug',
     f: 'force',
     q: 'quiet',
@@ -87,25 +91,28 @@ function showHelp() {
     DATABASE=postgres|mysql|mssql|sqlite
 
   Initialization options:
-    -I, [--no-install]   # Skip installing dependencies
-    -G, [--no-clone]     # Skip cloning repositories
-    -R, [--no-exec]      # Skip running commands
-    -C, [--no-copy]      # Skip copying sources
-    -A, [--no-add]       # Skip writing files
+    -O, [--no-install-opts]   # Skip installing dependencies
+    -D, [--no-install-dev]    # Skip installing dependencies
+    -I, [--no-install]        # Skip installing dependencies
+    -G, [--no-clone]          # Skip cloning repositories
+    -R, [--no-exec]           # Skip running commands
+    -C, [--no-copy]           # Skip copying sources
+    -A, [--no-add]            # Skip writing files
+    -V, [--verbose]           # Installation logs
 
   Runtime options:
-    -f, [--force]        # Overwrite files that already exist
-    -d, [--debug]        # Enable all debug messages
-    -q, [--quiet]        # Suppress status output
-    -c, [--cwd]          # Set the process.cwd()
-    -P, [--port]         # Set PORT value (default: 80)
-    -H, [--host]         # Set HOST value (default: 0.0.0.0)
-    -e, [--env]          # Set NODE_ENV value (default: development)
+    -f, [--force]             # Overwrite files that already exist
+    -d, [--debug]             # Enable all debug messages
+    -q, [--quiet]             # Suppress status output
+    -c, [--cwd]               # Set the process.cwd()
+    -P, [--port]              # Set PORT value (default: 80)
+    -H, [--host]              # Set HOST value (default: 0.0.0.0)
+    -e, [--env]               # Set NODE_ENV value (default: development)
 
   Server options:
-    -R, [--repl]         # Enable the REPL
-    -U, [--uws]          # Force UWS
-    -S, [--https]        # Force HTTP
+    -R, [--repl]              # Enable the REPL
+    -U, [--uws]               # Force UWS
+    -S, [--https]             # Force HTTP
 
   Other actions:
     ${_bin} g|add|generate [...]

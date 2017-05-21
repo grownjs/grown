@@ -77,6 +77,11 @@ module.exports = ($, cwd) => {
 
   const haki = new Haki(cwd, _.merge({}, $.flags));
 
+  /* istanbul ignore else */
+  if ($.flags.quiet) {
+    _.echo(chalk.gray('↺ Initializing, please wait...'), '\r\r');
+  }
+
   haki.runGenerator({
     abortOnFail: true,
     basePath: path.join(__dirname, '../skel/template'),
@@ -94,6 +99,7 @@ module.exports = ($, cwd) => {
       template: DATABASE_TEMPLATE,
     } : null, {
       type: 'install',
+      quiet: $.flags.verbose !== true,
       dependencies: [
         ['grown', 'route-mappings'],
         ['formidable', 'serve-static'],
@@ -107,6 +113,8 @@ module.exports = ($, cwd) => {
         ['chokidar', 'node-notifier'],
       ],
     }, $.data.DATABASE ? {
+      type: 'install',
+      quiet: $.flags.verbose !== true,
       dependencies: [
         ['sequelize', 'json-schema-sequelizer'],
         $.data.DATABASE === 'mysql' ? 'mysql' : null,
@@ -115,6 +123,8 @@ module.exports = ($, cwd) => {
         $.data.DATABASE === 'postgres' ? ['pg', 'pg-native'] : null,
       ],
     } : null, ($.data.DATABASE || $.data.BUNDLER || $.data.STYLES || $.data.ES6) ? {
+      type: 'install',
+      quiet: $.flags.verbose !== true,
       devDependencies: [
         $.data.DATABASE && $.data.DATABASE !== 'sqlite' ? 'sqlite3' : null,
         $.data.BUNDLER === 'fusebox' ? 'fuse-box' : null,
@@ -129,6 +139,8 @@ module.exports = ($, cwd) => {
         $.data.ES6 === 'buble' ? 'buble' : null,
       ],
     } : null, $.data.RELOADER ? {
+      type: 'install',
+      quiet: $.flags.verbose !== true,
       optionalDependencies: [
         $.data.RELOADER === 'browser-sync' ? 'tarima-browser-sync' : null,
         $.data.RELOADER === 'live-reload' ? 'tarima-lr' : null,
