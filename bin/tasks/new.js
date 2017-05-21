@@ -102,7 +102,7 @@ module.exports = ($, cwd) => {
       quiet: $.flags.verbose !== true,
       dependencies: [
         ['grown', 'route-mappings'],
-        ['formidable', 'serve-static'],
+        ['formidable', 'serve-static', 'winston'],
         ['csurf', 'body-parser', 'cookie-parser', 'cookie-session'],
       ],
       devDependencies: [

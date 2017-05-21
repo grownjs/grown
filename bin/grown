@@ -157,6 +157,8 @@ Object.keys(aliases).forEach(key => {
 });
 
 function start(cb) {
+  process.on('exit', () => _.echo('\r', chalk.gray('› Stopped'), '\r\n'));
+
   if ($.flags.exec) {
     const child = exec($.flags.exec);
 

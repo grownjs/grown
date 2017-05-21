@@ -89,5 +89,4 @@ module.exports = ($, cwd) => {
   }
 
   process.on('SIGINT', () => _farm.teardown(() => process.exit()));
-  process.on('exit', () => _.echo('\r', chalk.gray('› Stopped'), '\r\n'));
 };
