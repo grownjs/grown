@@ -105,7 +105,6 @@ module.exports = ($, cwd) => {
         'cookie-session',
 
         // common
-        'winston',
         'formidable',
         'serve-static',
 
