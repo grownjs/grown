@@ -95,30 +95,27 @@ module.exports = ($, cwd) => {
     } : null, {
       type: 'install',
       dependencies: [
-        'grown',
-        'route-mappings',
-
-        // required
-        'csurf',
-        'body-parser',
-        'cookie-parser',
-        'cookie-session',
-
-        // common
-        'formidable',
-        'serve-static',
-
-        // database
+        ['grown', 'route-mappings'],
+        ['formidable', 'serve-static'],
+        ['csurf', 'body-parser', 'cookie-parser', 'cookie-session'],
+      ],
+      devDependencies: [
+        ['tarima', 'pug', 'talavera'],
+        ['eslint', 'eslint-plugin-import', 'eslint-config-airbnb-base'],
+      ],
+      optionalDependencies: [
+        ['chokidar', 'node-notifier'],
+      ],
+    }, $.data.DATABASE ? {
+      dependencies: [
+        ['sequelize', 'json-schema-sequelizer'],
         $.data.DATABASE === 'mysql' ? 'mysql' : null,
         $.data.DATABASE === 'mssql' ? 'mssql' : null,
         $.data.DATABASE === 'sqlite' ? 'sqlite3' : null,
         $.data.DATABASE === 'postgres' ? ['pg', 'pg-native'] : null,
-        $.data.DATABASE ? ['sequelize', 'json-schema-sequelizer'] : null,
       ],
+    } : null, ($.data.DATABASE || $.data.BUNDLER || $.data.STYLES || $.data.ES6) ? {
       devDependencies: [
-        'eslint',
-        'eslint-plugin-import',
-        'eslint-config-airbnb-base',
         $.data.DATABASE && $.data.DATABASE !== 'sqlite' ? 'sqlite3' : null,
         $.data.BUNDLER === 'fusebox' ? 'fuse-box' : null,
         $.data.BUNDLER === 'webpack' ? 'webpack' : null,
@@ -130,14 +127,13 @@ module.exports = ($, cwd) => {
         $.data.ES6 === 'traceur' ? 'traceur' : null,
         $.data.ES6 === 'babel' ? ['babel-core', 'babel-preset-es2015', 'babel-plugin-transform-react-jsx'] : null,
         $.data.ES6 === 'buble' ? 'buble' : null,
-        ['tarima', 'pug', 'talavera'],
       ],
+    } : null, $.data.RELOADER ? {
       optionalDependencies: [
         $.data.RELOADER === 'browser-sync' ? 'tarima-browser-sync' : null,
         $.data.RELOADER === 'live-reload' ? 'tarima-lr' : null,
-        ['chokidar', 'node-notifier'],
       ],
-    }],
+    } : null],
   }, _.merge({
     APP_NAME: name,
     CSS_LANG: $.data.STYLES,
