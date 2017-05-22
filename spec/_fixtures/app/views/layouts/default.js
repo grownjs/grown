@@ -1,4 +1,4 @@
 module.exports = (locals, h) =>
   h('html', null,
   h('body', null,
-    h('p', null, locals.index)));
+    h('p', null, locals.yield)));

@@ -124,12 +124,14 @@ describe '#router', ->
   it 'should render() as fallback', (done) ->
     useConfig 'valid-routes', true
 
+    test = null
+
     $.server.extensions('Conn', {
       methods:
-        render: (msg) ->
-          Promise.resolve(msg)
+        view: (msg) ->
+          test = msg
     })
 
     $.server.fetch('/').then (res) ->
-      expect(res.body).toEqual 'Clean/empty'
+      expect(test).toEqual 'Clean/empty'
       done()
