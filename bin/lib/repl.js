@@ -52,15 +52,13 @@ module.exports = ($, farm) => {
 
       /* istanbul ignore else */
       if (typeof value === 'undefined') {
-        return callback(null, undefined);
+        return callback();
       }
 
       /* istanbul ignore else */
       if (value && typeof value.then === 'function') {
         return value
-          .then(result => {
-            callback(null, result);
-          })
+          .then(result => callback(null, result))
           .catch(e => {
             callback(chalk.red(($.flags.debug && cleanStack(e.stack)) || e.message || e.toString()));
           });
@@ -72,6 +70,7 @@ module.exports = ($, farm) => {
   .on('exit', () => {
     /* istanbul ignore else */
     if (kill) {
+      /* istanbul ignore else */
       if (fd) {
         fs.closeSync(fd);
       }
@@ -92,6 +91,7 @@ module.exports = ($, farm) => {
 
   repl.rli.addListener('line', code => {
     if (code && code !== '.history') {
+      /* istanbul ignore else */
       if (ws) {
         ws.write(`${code}\n`);
       }
