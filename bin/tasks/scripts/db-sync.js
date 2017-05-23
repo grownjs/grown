@@ -1,21 +1,12 @@
-module.exports = function db($, argv, logger) {
-  const _tasks = [];
+module.exports = ($, argv, logger) =>
+  Promise.all((argv._.length ? argv._ : Object.keys($.extensions.models)).map(name => {
+    if (!$.extensions.models[name]) {
+      throw new Error(`Undefined model ${name}`);
+    }
 
-  if (argv._.length) {
-    argv._.forEach(name => {
-      if (!$.extensions.models[name]) {
-        throw new Error(`Undefined model: ${name}`);
-      }
-
-      logger.log(`Syncing ${name} model...`);
-
-      _tasks.push($.extensions.models[name].sync({ force: argv.flags.true }));
+    return $.extensions.models[name].sync({
+      force: argv.flags.true,
+    }).then(() => {
+      logger.log(`— ${name} was synced`);
     });
-  } else {
-    logger.log('Syncing all models...');
-
-    _tasks.push($.extensions.models.sync({ force: argv.flags.force }));
-  }
-
-  return Promise.all(_tasks);
-};
+  }));
