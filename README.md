@@ -22,6 +22,40 @@ Start the application in `development`:
 $ yarn watch # or `npm run watch`
 ```
 
+## Table of contents
+
+* [Overview](#overview)
+  * [Interactive mode](#interactive-mode)
+  * [Controllers](#controllers)
+     * [Routing](#routing)
+     * [Definition](#definition)
+     * [End responses](#end-responses)
+     * [Testing actions](#testing-actions)
+     * [Interactive mode .fetch](#interactive-mode-fetch)
+  * [Models](#models)
+     * [JSON-Schema](#json-schema)
+     * [Model syncing](#model-syncing)
+     * [Testing models](#testing-models)
+     * [Interactive mode .models](#interactive-mode-models)
+  * [Views](#views)
+     * [Functions as templates](#functions-as-templates)
+     * [Pre-compiled templates](#pre-compiled-templates)
+     * [Layouts and blocks](#layouts-and-blocks)
+     * [Testing views](#testing-views)
+     * [Interactive mode .render](#interactive-mode-render)
+* [Booting](#booting)
+  * [Server](#server)
+  * [Plugins](#plugins)
+  * [Initializers](#initializers)
+  * [Middlewares](#middlewares)
+  * [Testing the app](#testing-the-app)
+  * [Interactive mode .reload](#interactive-mode-reload)
+* [Asset pipeline](#asset-pipeline)
+  * [Images](#images)
+  * [Static files](#static-files)
+  * [Javascripts](#javascripts)
+  * [Stylesheets](#stylesheets)
+
 ### More settings
 
 Run `grown new -y` to start a new project interactively.
@@ -39,7 +73,7 @@ $ grown new . ES6=traceur BUNDLER=rollup STYLES=less DATABASE=sqlite
   Run `yarn` or `npm i` without arguments again, it will try to reinstall `talavera` for you.
 
 
-## 1.0 - Overview
+## Overview
 
 **Grown** is a _homegrown_ nodejs framework built on top of open-source technology,
 it reuse many patterns from other frameworks and rely on terrific third-party libraries.
@@ -89,7 +123,7 @@ example
 └── tmp
 ```
 
-### 1.1 - Interactive mode
+### Interactive mode
 
 Execute `grown repl` to start an interactive session.
 
@@ -106,7 +140,7 @@ Try with `.render layouts/default csrf_token="oh noes" yield=OSOM` and see the r
 
 > Save/load different REPL sessions using the `-i` flag, e.g. `grown repl -i debug`
 
-### 1.2 - Controllers
+### Controllers
 
 Routes are the way to go, then you can take control.
 
@@ -188,7 +222,7 @@ describe 'web pages', ->
 
 Run your tests with `yarn spec` or `npm run spec` and see the results.
 
-#### Interactive mode
+#### Interactive mode (fetch)
 
 On the REPL you can `.fetch` resources too.
 
@@ -205,7 +239,7 @@ To list all available routes just type `.routes` and hit ENTER.
 
 Try `.routes <something>` to filter out matching routes.
 
-### 1.3 - Models
+### Models
 
 Simple and well-known data structures that just works.
 
@@ -268,13 +302,13 @@ describe 'all models', ->
       done()
 ```
 
-#### Interactive mode
+#### Interactive mode (models)
 
 Within the REPL you can run `.models` to inspect them.
 
 Models are available within the REPL, so `Dummy` will be a local.
 
-### 1.4 - Views
+### Views
 
 Responses are in their most beauty.
 
@@ -345,7 +379,7 @@ module.exports = ({ pageTitle, yield }, h) => <html>
 </html>;
 ```
 
-#### Layout and blocks
+#### Layouts and blocks
 
 This can be changed through `locals`, `conn.layout` or from any controller:
 
@@ -426,7 +460,7 @@ describe 'all views', ->
       done()
 ```
 
-#### Interactive mode
+#### Interactive mode (render)
 
 The `.render` command help you to achieve similar results.
 
@@ -455,10 +489,10 @@ Locals declared on `before_send()` filters are not available on the REPL or `@re
 
 ## 3.0 - Asset pipeline
 
-### Stylesheets
-
-### Javascripts
+### Images
 
 ### Static files
 
-### Images
+### Javascripts
+
+### Stylesheets
