@@ -31,16 +31,17 @@ module.exports = ($, cwd) => {
 
     _.echo(chalk.gray('↺ Starting server ...'), '\r\r');
 
-    farm.emit('start').then(() =>
+    farm.run(() =>
       farm.listen('test://', app => {
         _.echo(chalk.green('✔ REPL is ready'), '\r\n');
         _.echo(chalk.gray('› Listening at '), chalk.yellow(app.location.href), '\n');
         _.echo(chalk.gray('› Type .help to list all available commands'), '\n');
       }));
+
+    farm.on('reload', () => _farm.teardown(_startApplication));
   }
 
   _startApplication();
 
-  process.on('repl:reload', () => _farm.teardown(_startApplication));
   process.on('SIGINT', () => _farm.teardown(() => process.exit()));
 };

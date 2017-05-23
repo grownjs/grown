@@ -14,7 +14,7 @@ describe '#uws', ->
       done()
 
   it 'should be ok', (done) ->
-    $.close().then ->
+    $.stop().then ->
       done()
 
       setTimeout ->

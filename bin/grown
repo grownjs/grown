@@ -223,8 +223,8 @@ function run() {
 
         const _farm = require(path.join(cwd, 'app/server'));
 
-        _farm().emit('start')
-          .then(ctx => _call(ctx, $, {
+        _farm()
+          .run(ctx => _call(ctx, $, {
             ok: msg => _.echo('\r', chalk.green(msg), '\n'),
             log: msg => _.echo('\r', chalk.gray(msg), '\n'),
             fail: msg => _.echo('\r', chalk.red(msg), '\n'),

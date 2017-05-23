@@ -14,7 +14,7 @@ function runApplication() {
 
   process.stdout.write('Starting framework...\r');
 
-  farm.emit('start').then(() =>
+  farm.run(() =>
     farm.listen(process.env.PORT || 8080, $ => {
       process.stdout.write(`Listening on ${$.location.href}\r`);
     }).catch(error => {

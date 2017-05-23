@@ -52,7 +52,7 @@ module.exports = ($, cwd) => {
       _.echo(chalk.gray('↺ Starting server ...'), '\r\r');
 
       // start server
-      farm.emit('start').then(() =>
+      farm.run(() =>
         farm.listen(_host, app => {
           _.echo(chalk.green('✔ Server is ready'), '\r\n');
           _.echo(chalk.gray('› Listening at '), chalk.yellow(app.location.href), '\n');
@@ -70,6 +70,11 @@ module.exports = ($, cwd) => {
           _.echo(chalk.red((IS_DEBUG && cleanStack(e.stack)) || e.message), '\r\n');
           _.die(1);
         }));
+
+      /* istanbul ignore else */
+      if (IS_REPL) {
+        farm.on('reload', () => _farm.teardown(_startApplication));
+      }
     } catch (e) {
       _.echo(chalk.red((IS_DEBUG && cleanStack(e.stack)) || e.message), '\r\n');
       _.die(1);
@@ -77,11 +82,6 @@ module.exports = ($, cwd) => {
   }
 
   _startApplication();
-
-  /* istanbul ignore else */
-  if (IS_REPL) {
-    process.on('repl:reload', () => _farm.teardown(_startApplication));
-  }
 
   process.on('SIGINT', () => _farm.teardown(() => process.exit()));
 };

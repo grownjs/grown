@@ -105,6 +105,13 @@ module.exports = ($, farm) => {
     repl.outputStream.write(Array.prototype.slice.call(arguments).join(''));
   }
 
+  const _logger = {
+    ok: msg => print('\r', chalk.green(msg), '\n'),
+    log: msg => print('\r', chalk.gray(msg), '\n'),
+    fail: msg => print('\r', chalk.red(msg), '\n'),
+    write: msg => print(msg),
+  };
+
   Object.defineProperty(repl.context, 'Grown', {
     configurable: false,
     enumerable: true,
@@ -246,7 +253,7 @@ module.exports = ($, farm) => {
   repl.defineCommand('reload', {
     help: 'Restart the current session',
     action() {
-      process.emit('repl:reload');
+      farm.emit('reload', repl, _logger);
     },
   });
 
@@ -258,13 +265,7 @@ module.exports = ($, farm) => {
   });
 
   farm.on('done', () => {
-    farm.emit('repl', repl, {
-      ok: msg => print('\r', chalk.green(msg), '\n'),
-      log: msg => print('\r', chalk.gray(msg), '\n'),
-      fail: msg => print('\r', chalk.red(msg), '\n'),
-      write: msg => print(msg),
-    });
-
+    farm.emit('repl', repl, _logger);
     repl.resume();
   });
 
