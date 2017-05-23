@@ -259,7 +259,7 @@ Prove your models without any trouble:
 app = require('../app/server')
 Grown = require('grown')
 
-describe 'some models', ->
+describe 'all models', ->
   beforeEach Grown.test(app)
 
   it 'can be tested', (done) ->
@@ -272,15 +272,128 @@ describe 'some models', ->
 
 Within the REPL you can run `.models` to inspect them.
 
-All models are available within the REPL context, so `Dummy` will be a local.
+Models are available within the REPL, so `Dummy` will be a local.
 
 ### 1.4 - Views
 
+Responses are in their most beauty.
+
 #### Functions as templates
+
+Views are plain-old functions that receive data:
+
+```js
+// app/views/layouts/default.js
+
+module.exports = locals => `<html>
+  <head>
+    <title>${locals.pageTiele || 'Untitled'}</title>
+  </head>
+  <body>${locals.yield}</body>
+</html>`;
+```
+
+Values to render are mostly strings but they can be buffers or streams:
+
+```js
+const fs = ;
+
+module.exports = locals =>
+  fs.createReadStream(locals.filePath);
+
+// or
+module.exports = locals => new Buffer('42');
+```
+
+Regular objects are rendered as JSON responses:
+
+```js
+module.exports = locals => ({
+  status: 'ok',
+  data: locals.userInput,
+});
+```
+
+Promised values are resolved before they get finally rendered.
 
 #### Pre-compiled templates
 
-#### layout and blocks
+How this can be possible may you think?
+
+Support for turning JSX, Pug, EJS, Handlebars, etc. into views is built-in:
+
+```pug
+//- app/views/layouts/default.js.pug
+
+html
+  head
+    title= pageTitle || 'Untitled'
+  body
+    != yield
+```
+
+In the case of JSX you must pass a second argument for the `h()` helper:
+
+```jsx
+// app/views/layouts/default.jsx
+
+module.exports = ({ pageTitle, yield }, h) => <html>
+  <head>
+    <title>${pageTiele || 'Untitled'}</title>
+  </head>
+  <body>${yield}</body>
+</html>;
+```
+
+#### Layout and blocks
+
+This can be changed through `locals`, `conn.layout` or from any controller:
+
+```js
+// app/controllers/Home.js
+
+module.exports = {
+  layout: 'website',
+  methods: {
+    index(conn) {
+      // conn.layout = false;
+      // conn.put_local('layout', false);
+      // return conn.render('pages/welcome', { layout: false });
+    },
+  },
+};
+```
+
+Also you can set `layout` functions to render:
+
+```js
+{
+  layout: (locals, h) => (
+    locals.isDebug
+      ? h('pre', null, JSON.stringify(locals, null, 2))
+      : locals.yield
+  ),
+}
+```
+
+Lazy-views are created the same way as regular views and render functions:
+
+```js
+conn.view('pages/first-chunk', { as: 'main' });
+conn.view('pages/second-chunk', { as: 'sidebar' });
+conn.view('pages/third-and-last', { as: 'sidebar' });
+```
+
+Chunks are grouped by using the same `as` local, once rendered they are arrays:
+
+```js
+locals => `<div>
+  <aside>${locals.sidebar.join('\n')}</aside>
+  <main>${locals.main}</main>
+</div>`;
+```
+
+Wisely use `Array.isArray()` to check your locals for avoiding unexpected results.
 
 #### Testing views
 
