@@ -5,9 +5,7 @@ module.exports = {
   },
   _suffix($) {
     return $.next(() => {
-      if ($.resp_body) {
-        $.resp_body = `${$.resp_body}!`;
-      }
+      $.resp_body = `${$.resp_body}!`;
     });
   },
   index($) {
