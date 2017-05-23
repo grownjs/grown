@@ -31,25 +31,25 @@ $ yarn watch # or `npm run watch`
      * [Definition](#definition)
      * [End responses](#end-responses)
      * [Testing actions](#testing-actions)
-     * [Interactive mode .fetch](#interactive-mode-fetch)
+     * [Interactive mode (fetch)](#interactive-mode-fetch)
   * [Models](#models)
      * [JSON-Schema](#json-schema)
      * [Model syncing](#model-syncing)
      * [Testing models](#testing-models)
-     * [Interactive mode .models](#interactive-mode-models)
+     * [Interactive mode (models)](#interactive-mode-models)
   * [Views](#views)
      * [Functions as templates](#functions-as-templates)
      * [Pre-compiled templates](#pre-compiled-templates)
      * [Layouts and blocks](#layouts-and-blocks)
      * [Testing views](#testing-views)
-     * [Interactive mode .render](#interactive-mode-render)
+     * [Interactive mode (render)](#interactive-mode-render)
 * [Booting](#booting)
   * [Server](#server)
   * [Plugins](#plugins)
   * [Initializers](#initializers)
   * [Middlewares](#middlewares)
   * [Testing the app](#testing-the-app)
-  * [Interactive mode .reload](#interactive-mode-reload)
+  * [Interactive mode (reload)](#interactive-mode-reload)
 * [Asset pipeline](#asset-pipeline)
   * [Images](#images)
   * [Static files](#static-files)
@@ -485,7 +485,7 @@ Locals declared on `before_send()` filters are not available on the REPL or `@re
 
 ### Testing the app
 
-### Interactive mode
+### Interactive mode (reload)
 
 ## 3.0 - Asset pipeline
 
