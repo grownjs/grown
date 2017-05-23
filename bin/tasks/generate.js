@@ -27,6 +27,19 @@ module.exports = ($, cwd) => {
       return haki.runGenerator(_cmd, _.merge({}, $.data, $.params));
     }
 
+    /* istanbul ignore else */
+    if ($.flags.list) {
+      return Promise.resolve(haki.getGeneratorList().forEach(task => {
+        _.echo(chalk.gray('—'), ' ',
+          chalk.cyan(task.result.description || task.name), '\r\n');
+
+        _.echo('  ',
+          chalk.gray(`grown g ${task.generate}`),
+          task.result.arguments ? chalk.gray(` [${task.result.arguments.join('] [')}]`) : '',
+          '\r\n');
+      }));
+    }
+
     return haki.chooseGeneratorList(_.merge({}, $.data, $.params));
   }
 

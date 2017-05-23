@@ -11,11 +11,6 @@ module.exports = ($, cwd) => {
   const HOST = $.flags.host || process.env.HOST || '0.0.0.0';
 
   /* istanbul ignore else */
-  if (IS_DEBUG) {
-    require('debug').enable('grown,grown:*');
-  }
-
-  /* istanbul ignore else */
   if (IS_DEV) {
     require('source-map-support').install();
   }
@@ -32,7 +27,7 @@ module.exports = ($, cwd) => {
 
   const _test = require('../../lib/plugs/testing.js');
 
-  const _farm = require(path.join(cwd, $._[0] || 'app/server'));
+  const _farm = require(path.join(cwd, 'app/server'));
 
   // initialization
   let farm;

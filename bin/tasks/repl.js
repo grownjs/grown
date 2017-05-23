@@ -3,13 +3,6 @@
 /* eslint-disable global-require */
 
 module.exports = ($, cwd) => {
-  const IS_DEBUG = $.flags.debug === true;
-
-  /* istanbul ignore else */
-  if (IS_DEBUG) {
-    require('debug').enable('grown,grown:*');
-  }
-
   require('source-map-support').install();
 
   const _ = require('../lib/util');
@@ -20,7 +13,7 @@ module.exports = ($, cwd) => {
 
   const _test = require('../../lib/plugs/testing.js');
 
-  const _farm = require(path.join(cwd, $._[0] || 'app/server'));
+  const _farm = require(path.join(cwd, 'app/server'));
 
   let farm;
 

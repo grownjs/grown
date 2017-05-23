@@ -79,6 +79,35 @@ const _ = require('./lib/util');
 
 const _bin = path.basename(thisPkg.bin);
 
+const aliases = {
+  generate: ['g', 'add'],
+  start: ['s', 'up'],
+  repl: ['c'],
+};
+
+Object.keys(aliases).forEach(key => {
+  /* istanbul ignore else */
+  if (aliases[key].indexOf(_task) > -1) {
+    _task = key;
+  }
+});
+
+/* istanbul ignore else */
+if (!_task && $.flags.list) {
+  _task = 'generate';
+}
+
+const IS_DEBUG = $.flags.debug === true;
+
+/* istanbul ignore else */
+if (IS_DEBUG) {
+  require('debug').enable('grown,grown:*');
+}
+
+const cwd = $.flags.cwd || process.cwd();
+
+delete $.flags.cwd;
+
 function showHelp() {
   _.echo(`${GROWN_TXT}
   Usage:
@@ -99,11 +128,11 @@ function showHelp() {
     -R, [--no-exec]           # Skip running commands
     -C, [--no-copy]           # Skip copying sources
     -A, [--no-add]            # Skip writing files
+    -f, [--force]             # Force without asking
     -V, [--verbose]           # Installation logs
     -y, [--interactive]       # Interactive mode
 
   Runtime options:
-    -f, [--force]             # Overwrite files that already exist
     -d, [--debug]             # Enable all debug messages
     -q, [--quiet]             # Suppress status output
     -c, [--cwd]               # Set the process.cwd()
@@ -128,41 +157,13 @@ function showHelp() {
     -v, [--version]      # Show Grown version number and quit\n`);
 }
 
-/* istanbul ignore else */
-if ($.flags.version) {
-  _.echo(chalk.green(`${thisPkg.name} v${thisPkg.version}`), '\r\n');
-  _.die();
-}
-
-/* istanbul ignore else */
-if (!_task && $.flags.list) {
-  _task = 'generate';
-}
-
-/* istanbul ignore else */
-if ((!_task || $.flags.help) && !$.flags.exec) {
-  showHelp();
-  _.die();
-}
-
-const aliases = {
-  generate: ['g', 'add'],
-  start: ['s', 'up'],
-  repl: ['c'],
-};
-
-Object.keys(aliases).forEach(key => {
-  /* istanbul ignore else */
-  if (aliases[key].indexOf(_task) > -1) {
-    _task = key;
-  }
-});
-
 function start(cb) {
   const _start = new Date();
 
   process.on('exit', () => _.echo('\r',
-    chalk.green($.flags.force && !$.flags.interactive ? `Done in ${(new Date() - _start) / 1000}s` : 'Done.'), '\r\n'));
+    chalk.green($.flags.force && !$.flags.interactive
+      ? `✔ Done in ${(new Date() - _start) / 1000}s`
+      : '✔ Done.'), '\r\n'));
 
   if ($.flags.exec) {
     const child = exec($.flags.exec);
@@ -193,10 +194,6 @@ function run() {
       new: require('./tasks/new'),
     };
 
-    const cwd = $.flags.cwd || process.cwd();
-
-    delete $.flags.cwd;
-
     switch (_task) {
       case 'generate':
       case 'start':
@@ -206,22 +203,37 @@ function run() {
         break;
 
       default: {
-        const _script = path.join(cwd, `app/scripts/${_task}.js`);
+        const _file = path.join(cwd, `lib/tasks/${_task}`);
 
-        /* istanbul ignore else */
-        if (!fs.existsSync(_script)) {
-          throw new Error(`Not implemented: ${_task}`);
+        let _call;
+
+        try {
+          // try user first, then built-in
+          _call = require(!fs.existsSync(_file)
+            ? `./tasks/scripts/${_task}`
+            : _file);
+        } catch (e) {
+          throw new Error(`Task 'lib/tasks/${_task}' not implemented`);
         }
 
-        const _farm = require(path.join(cwd, $._[0] || 'app/server'));
+        /* istanbul ignore else */
+        if (typeof _call !== 'function') {
+          throw new Error(`Task must be a function, given: ${_call}`);
+        }
+
+        const _farm = require(path.join(cwd, 'app/server'));
 
         _farm().emit('start')
-          .then(ctx => require(_script)(ctx, $, {
+          .then(ctx => _call(ctx, $, {
             ok: msg => _.echo('\r', chalk.green(msg), '\n'),
             log: msg => _.echo('\r', chalk.gray(msg), '\n'),
             fail: msg => _.echo('\r', chalk.red(msg), '\n'),
             write: msg => _.echo(msg),
-          }));
+          }))
+          .catch(e => {
+            _.echo(chalk.red(($.flags.debug && cleanStack(e.stack)) || e.message), '\r\n');
+            _.die(1);
+          });
       }
     }
   } catch (e) {
@@ -230,4 +242,16 @@ function run() {
   }
 }
 
-start(_task ? run : _.die);
+/* istanbul ignore else */
+if ($.flags.version) {
+  _.echo(chalk.green(`${thisPkg.name} v${thisPkg.version}`), '\r\n');
+  _.die();
+}
+
+/* istanbul ignore else */
+if ((!_task || $.flags.help) && !$.params.exec) {
+  showHelp();
+  _.die();
+} else {
+  start(_task ? run : _.die);
+}
