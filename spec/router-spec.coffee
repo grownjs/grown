@@ -111,14 +111,14 @@ describe '#router', ->
     useConfig 'with-middlewares', true
 
     $.server.fetch('/surely').then (res) ->
-      expect(res.body).toEqual 'OSOM!!'
+      expect(res.body).toEqual 'OSOM!'
       done()
 
   it 'should inject values and methods', (done) ->
     useConfig 'with-middlewares', true
 
     $.server.fetch('/other-example').then (res) ->
-      expect(res.body).toEqual 'SYNC,ASYNC!'
+      expect(res.body).toEqual '["SYNC","ASYNC"]'
       done()
 
   it 'should render() as fallback', (done) ->
