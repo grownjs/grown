@@ -48,7 +48,6 @@ $ yarn watch # or `npm run watch`
   * [API](#api)
   * [Hooks](#hooks)
   * [Plugins](#plugins)
-  * [Initializers](#initializers)
   * [Middlewares](#middlewares)
   * [Testing the app](#testing-the-app)
   * [Interactive mode (reload)](#interactive-mode-reload)
@@ -612,22 +611,64 @@ Emitted events are returned as promises.
 
 ### Plugins
 
-```
-use
+Self-contained functionality can be plugged-in on your farms.
+
+```js
+$.use(ctx => {
+  console.log($ === ctx); // true
+
+  // enhance connection
+  ctx.util.props({
+    foo: Promise.resolve(42),
+  })
+  .then(result => {
+    ctx.extensions.something = result;
+  );
+});
 ```
 
-### Initializers
+Built-in plugs are:
+
+- `Grown.plugs.logger` &mdash; Add logging methods to the connection
+- `Grown.plugs.models` &mdash; Support for look-up and loading models
+- `Grown.plugs.render` &mdash; Support for views and layouts
+- `Grown.plugs.router` &mdash; Support for app-routing
+- `Grown.plugs.session` &mdash; Support for session and cookies
+- `Grown.plugs.socket` &mdash; Support for SocketIO methods
+- `Grown.plugs.testing` &mdash; Testing-wrapper harness
+- `Grown.plugs.container` &mdash; Support for IoC/DI
+- `Grown.plugs.formidable` &mdash; Support for file uploads
 
 ### Extensions
 
-```
-extensions
+Plugins can and usually do enhance the `$.extensions` property.
+
+All those values are attached to the connection instance:
+
+```js
+$.mount(conn => {
+  console.log(conn.something); // { foo: 42 }
+});
 ```
 
 ### Middlewares
 
+Functions that can manipulate the connection details.
+
+```js
+$.mount(conn => {
+  console.log('Before all middleware is run');
+
+  return conn.next(() => {
+    console.log('After all middleware was run');
+  });
+});
 ```
-mount
+
+Express-middleware can be mounted too:
+
+```js
+$.mount(require('serve-static')(__dirname));
 ```
 
 ### Testing the app
