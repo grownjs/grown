@@ -47,9 +47,18 @@ describe '#render', ->
     $.server.mount (conn) ->
       conn.view 'example', foo: fs.createReadStream(__filename)
       conn.view 'example', foo: Promise.resolve(42)
-      conn.end()
 
     $.server.fetch().then (res) ->
       expect(res.body).toContain "TEXT(#{fs.readFileSync(__filename).toString()})"
       expect(res.body).toContain 'TEXT(42)'
+      done()
+
+  it 'should render functions', (done) ->
+    $.server.mount (conn) ->
+      conn.put_local 'layout', (locals) -> locals.yield
+      conn.view (locals) -> 'FOO'
+      conn.view (locals, h) -> h('span', null, 'BAR')
+
+    $.server.fetch().then (res) ->
+      expect(res.body).toEqual '["FOO","<span>BAR</span>"]'
       done()
