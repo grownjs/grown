@@ -49,13 +49,11 @@ In a glance it resembles a well-known directory structure:
 ```bash
 $ tree example
 example
-├── package.json
-├── bin
-│   └── server
 ├── app
 │   ├── server.js
 │   ├── assets
 │   │   ├── images
+│   │   │   └── favicon.ico
 │   │   ├── javascripts
 │   │   │   └── application.js
 │   │   └── stylesheets
@@ -63,23 +61,31 @@ example
 │   ├── controllers
 │   │   └── Home.js
 │   ├── models
+│   │   └── Dummy.js
 │   └── views
 │       └── layouts
 │           └── default.js
+├── bin
+│   └── server
 ├── boot
 │   ├── initializers
+│   │   └── globals.js
 │   └── middlewares
 │       ├── body-parsers.js
 │       ├── csrf-protection.js
 │       ├── method-override.js
 │       └── no-cache.js
+├── build
 ├── config
+│   ├── database.js
 │   ├── middlewares.js
 │   └── routes.js
+├── lib
+│   └── tasks
+├── log
+├── package.json
 ├── public
 │   └── robots.txt
-├── build
-├── log
 └── tmp
 ```
 
@@ -106,34 +112,30 @@ Routes are the way to go, then you can take control.
 
 #### Routing
 
-Route mappings are defined in the `config/routes.js` file.
+Route mappings are defined in the `config/routes.js` file:
 
 ```js
 module.exports = map =>
   map()
-    .root('Home#index')
-    .get('/login', 'Session#login')
-    .post('/login', 'Session#create')
-    .delete('/login', 'Session#logout')
-    .namespace('/account', map =>
-      map()
-        .root('Account#profile'));
+    .get('/', 'Home#index', { as: 'root' });
 ```
 
-Each time you call a `map()` factory you can pass values and they will be inherited down
+Each time you call a `map()` factory you can pass values and they will be inherited down.
 
 #### Definition
 
-Let's examine the `app/controllers/Home.js` source:
+Controllers can be plain-old javascript objects.
 
 ```js
+// app/controllers/Home.js
+
 module.exports = {
   methods: {
     index() {}
   },
 };
 ```
-By the mere fact of being declared, the render system will try to render a `Home/index` view.
+By the mere fact of being declared, the render plug will try to render a `Home/index` view.
 
 #### End responses
 
@@ -143,9 +145,10 @@ buffer, stream or promise:
 ```js
 index(conn) {
   conn.resp_body = '42';
-  // return 42;
+  // return '42';
   // return new Buffer('42');
-  // return Promise.resolve(42);
+  // return Promise.resolve('42');
+  // return conn.end('42').then(...);
 }
 ```
 
@@ -153,16 +156,19 @@ Call `put_status()` to set a proper status code:
 
 ```js
 conn.put_status(400);
-conn.resp_body = { status: 'error', message: 'Invalid input' };
+conn.resp_body = {
+  status: 'error',
+  message: 'Invalid input',
+};
 ```
 
 #### Testing actions
 
 Doing assertions on your controllers' responses is easy peasy.
 
-Let's examine the `spec/pages-spec.coffee` source:
+```coffee
+# spec/pages-spec.coffee
 
-```js
 app = require('../app/server')
 Grown = require('grown')
 
@@ -170,12 +176,12 @@ describe 'web pages', ->
   beforeEach Grown.test(app)
 
   it 'not all pages exists', (done) ->
-    @fetch('/x').then (resp) ->
+    @server.fetch('/x').then (resp) ->
       expect(resp.body).toContain('Not Found')
       done()
 
   it 'but the homepage yes!', (done) ->
-    @fetch('/').then (resp) ->
+    @server.fetch('/').then (resp) ->
       expect(resp.body).toContain('It works!')
       done()
 ```
@@ -186,10 +192,13 @@ Run your tests with `yarn spec` or `npm run spec` and see the results.
 
 On the REPL you can `.fetch` resources too.
 
-Example:
+Examples:
 
 ```bash
-.fetch POST /session --json username=foo password=bazzinga
+.fetch POST /account --json username=foo
+.fetch destroyAccount
+.fetch showLogin
+.fetch ...
 ```
 
 To list all available routes just type `.routes` and hit ENTER.
@@ -198,13 +207,72 @@ Try `.routes <something>` to filter out matching routes.
 
 ### 1.3 - Models
 
+Simple and well-known data structures that just works.
+
 #### JSON-Schema
+
+At least declaring a `$schema` will be enough.
+
+```js
+// app/models/Dummy.js
+
+module.exports = {
+  $schema: {
+    type: 'object',
+    properties: {
+      id: {
+        type: 'integer',
+        minimum: 1,
+        primaryKey: true,
+        autoIncrement: true,
+      },
+    },
+    required: [
+      'id',
+    ],
+  },
+},
+```
+
+Add more props according the [Sequelize models](http://docs.sequelizejs.com/), e.g.
+
+```js
+module.exports = {
+  $schema: { ... },
+  hooks: { ... },
+  scope: { ... },
+  ...
+}
+```
 
 #### Model syncing
 
+To synchronize your database execute `grown db-sync` on your terminal.
+
 #### Testing models
 
+Prove your models without any trouble:
+
+```coffee
+# spec/models-spec.coffee
+
+app = require('../app/server')
+Grown = require('grown')
+
+describe 'some models', ->
+  beforeEach Grown.test(app)
+
+  it 'can be tested', (done) ->
+    @models.Dummy.findAll().then (result) ->
+      expect(result.length).toEqual 0
+      done()
+```
+
 #### Interactive mode
+
+Within the REPL you can run `.models` to inspect them.
+
+All models are available within the REPL context, so `Dummy` will be a local.
 
 ### 1.4 - Views
 
