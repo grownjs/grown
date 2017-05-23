@@ -296,7 +296,7 @@ module.exports = locals => `<html>
 Values to render are mostly strings but they can be buffers or streams:
 
 ```js
-const fs = ;
+const fs = require('fs');
 
 module.exports = locals =>
   fs.createReadStream(locals.filePath);
@@ -397,7 +397,47 @@ Wisely use `Array.isArray()` to check your locals for avoiding unexpected result
 
 #### Testing views
 
+Render, validate and assert all kind-of views:
+
+```coffee
+# spec/views-spec.coffee
+
+app = require('../app/server')
+Grown = require('grown')
+
+describe 'all views', ->
+  beforeEach Grown.test(app)
+
+  it 'can be tested', (done) ->
+    data =
+      value: 'OSOM'
+
+    partial = @render (locals, h) ->
+      h('p', null, locals.value)
+    , data
+
+    @render 'layouts/default',
+      yield: partial
+      routes: @routes
+
+    .then (result) ->
+      expect(result).toContain '<!doctype html>'
+      expect(result).toContain '<p>OSOM</p>'
+      done()
+```
+
 #### Interactive mode
+
+The `.render` command help you to achieve similar results.
+
+Examples:
+
+```bash
+.render layouts/default
+.render Home/index
+```
+
+Locals declared on `before_send()` filters are not available on the REPL or `@render` method.
 
 ## 2.0 - Booting
 
