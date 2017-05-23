@@ -1,5 +1,7 @@
 { resolve } = require('path')
 
+fs = require('fs')
+
 $ = require('./_protocol')
 
 render = require('../lib/plugs/render')
@@ -39,4 +41,15 @@ describe '#render', ->
     $.server.fetch().then (res) ->
       expect(res.body).toContain '<!doctype html>'
       expect(res.body).toContain '<p>OK</p>'
+      done()
+
+  it 'should reduce promises and streams', (done) ->
+    $.server.mount (conn) ->
+      conn.view 'example', foo: fs.createReadStream(__filename)
+      conn.view 'example', foo: Promise.resolve(42)
+      conn.end()
+
+    $.server.fetch().then (res) ->
+      expect(res.body).toContain "TEXT(#{fs.readFileSync(__filename).toString()})"
+      expect(res.body).toContain 'TEXT(42)'
       done()
