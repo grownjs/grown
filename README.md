@@ -45,6 +45,8 @@ $ yarn watch # or `npm run watch`
      * [Interactive mode (render)](#interactive-mode-render)
 * [Booting](#booting)
   * [Server](#server)
+  * [API](#api)
+  * [Hooks](#hooks)
   * [Plugins](#plugins)
   * [Initializers](#initializers)
   * [Middlewares](#middlewares)
@@ -473,21 +475,166 @@ Examples:
 
 Locals declared on `before_send()` filters are not available on the REPL or `@render` method.
 
-## 2.0 - Booting
+## Booting
+
+About the `Grown.env/new/burn()` mechanism.
 
 ### Server
 
+Farms are created by instantiating application servers:
+
+```js
+const Grown = require('grown');
+
+const cwd = process.cwd();
+
+// initialize dot-env
+Grown.env(cwd);
+
+// a fresh farm
+const $ = Grown.new({ cwd });
+```
+
+Callling `Grown.env()` is optional, but is there to help you loading `dot-env` settings.
+
+If you don't pass a `cwd` value it will be taken from `process.cwd()` instead.
+
+### API
+
+&mdash; Retrieve and option value by its keypath
+
+`$.get(option[, default])`
+
+```js
+const value = $.get('cwd');
+const nestedValue = $.get('foo.bar');
+const withDefaultValue = $.get('something', null);
+```
+
+If you don't provide a default value if the option is missing an exception will be thrown.
+
+&mdash; Close the current server instance
+
+`$.close([cb])`
+
+```js
+$.close(() => process.exit(0));
+
+// or
+$.close().then(() => {
+  process.exit(0);
+});
+```
+
+&mdash; Starts the server connection
+
+`$.listen([connection[, opts, [, cb]]])`
+
+Being called without arguments will use `http://0.0.0.0:80` as connection.
+
+Otherwise connection should be a port-number, a full hostname, or even an object like:
+
+```js
+{
+  protocol: 'https:',
+  host: '0.0.0.0:80',
+  port: 80,
+}
+```
+
+Additional options and callback will be passed as-is to any `createServer()` call afterwards.
+
+### Hooks
+
+Farms has lifecycle events and hooks.
+
+```js
+// once you call $.run()
+$.on('start', () => console.log('Starting application'));
+
+// once you call $.stop()
+$.on('close', () => console.log('Closing application'));
+
+// once you call $.listen()
+$.on('listen', () => console.log('Starting listener'));
+$.on('done', () => console.log('Listener ready'));
+
+// hooks from the REPL
+$.on('repl', (repl, logger) => logger.ok('Hello CLI'));
+$.on('reload', (repl, logger) => logger.ok('Reloading...'));
+```
+
+&mdash; Attach event listeners
+
+`$.on(evt, cb)`
+
+```js
+$.on('delay', ms =>
+  new Promise(resolve => {
+    setTimeout(resolve, ms);
+  }));
+```
+
+Event callbacks can return promises.
+
+&mdash; Remove a single event listener
+
+`$.off(evt, cb)`
+
+```js
+const cb = () => 42;
+
+$.on('truth', cb);
+$.off('truth', cb);
+```
+
+&mdash; Attach event listener once
+
+`$.once(evt, cb)`
+
+```js
+$.once('reload', () => {
+  console.log('Once and no more!');
+});
+```
+
+&mdash; Emit event to its listeners
+
+`$.emit(evt[, ...])`
+
+```js
+$.emit('delay', 1000)
+  .then(() => console.log('OK'))
+  .catch(() => console.log('FAIL'));
+```
+
+Emitted events are returned as promises.
+
 ### Plugins
+
+```
+use
+```
 
 ### Initializers
 
+### Extensions
+
+```
+extensions
+```
+
 ### Middlewares
+
+```
+mount
+```
 
 ### Testing the app
 
 ### Interactive mode (reload)
 
-## 3.0 - Asset pipeline
+## Asset pipeline
 
 ### Images
 
