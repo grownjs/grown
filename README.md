@@ -56,6 +56,7 @@ $ yarn watch # or `npm run watch`
   * [Static files](#static-files)
   * [Javascripts](#javascripts)
   * [Stylesheets](#stylesheets)
+  * [Templating (views)](#templating-views)
 
 ### More settings
 
@@ -673,9 +674,182 @@ $.mount(require('serve-static')(__dirname));
 
 ### Testing the app
 
+You can leverage on `Grown.test()` for starting and adding hooks.
+
+So a typical test-harness may involve no configuration:
+
+```coffee
+# spec/app-spec.coffee
+
+app = require('../app/server')
+Grown = require('grown')
+
+describe 'any application', ->
+  beforeEach Grown.test(app)
+
+  it 'can be tested', (done) ->
+    # calling `Grown.test(app)` will return a function that:
+    # - call `app.teardown()` to stop any previous instance
+    # - setup a new `farm` by calling `app()`
+    # - call `farm.run()`
+    # - attach `farm.extensions` to `this`
+    # - start listening at `test://`
+    done()
+
+  describe 'all extensions', ->
+    it 'can be tested too', (done) ->
+      # middleware and plugins can be loaded separatedly
+      test = require('../boot/midlewares/test')
+      result = null
+
+      # assert or capture before
+      @mount (conn) ->
+        null
+
+      # mount before using
+      @mount test()
+
+      # assert or capture after
+      @mount (conn) ->
+        result = conn.something_returned_by_middleware_test
+        null
+
+      # start requesting
+      @server.fetch().then (res) ->
+        expect(result).toEqual { foo: 42 }
+        done()
+
+      .catch (error) ->
+        # capture in case of error
+        console.log error
+        done()
+```
+
+Depending on your needs you can go further.
+
 ### Interactive mode (reload)
 
+To reload all your code without restarting the whole process call `.reload` on the REPL.
+
+This action will also stop and teardown on any hooked events.
+
+```js
+$.on('close', () => {
+  console.log('All connections were properly closed?');
+});
+```
+
+Be sure to listen `close` for cleanup anything else.
+
 ## Asset pipeline
+
+**Tarima** is used for that hard-thing: frontend.
+
+Let's examine our default settings:
+
+```js
+{
+  // all sources will be relativized from this "cwd"
+  "cwd": ".",
+
+  // source files are watched/scanned from here
+  "src": [
+    "app/views",
+    "app/assets"
+  ],
+
+  // additional sources to watch for changes
+  // on any, dependant sources will be notified
+  "watch": [
+    "app/server.js",
+    "app/models",
+    "app/controllers",
+    "boot",
+    "config",
+    ".env",
+    "package.json"
+  ],
+
+  // source files filtering, e.g.
+  // "skip all underscored files/directories"
+  "filter": [
+    "!_*",
+    "!**/_*",
+    "!**/_*/**"
+  ],
+
+  // only scripts matching this globs are bundled
+  "bundle": [
+    "**/javascripts/**"
+  ],
+
+  // quick renaming patterns as "FROM_GLOB:TO_PATH"
+  // /1 and /2 will slice their fullpath, e.g.
+  // "app/views/foo/bar.js" => "views/foo/bar.js"
+  // "app/assets/stylesheets/foo.css" => "public/stylesheets/foo.css"
+  "rename": [
+    "**/views/**:{fullpath/1}",
+    "**/assets/**:public/{fullpath/2}"
+  ],
+
+  // ignore sources from read/watch (globs ala-gitignore)
+  // useful in case you don't have "ignoreFiles"
+  "ignore": [
+    ".DS_Store",
+    ".tarima",
+    "*.swp",
+    ".env"
+  ],
+
+  // same as "ignore" but parse ignoreFiles's files and
+  // append its values as regular "ignore" globs
+  "ignoreFiles": [
+    ".gitignore"
+  ],
+
+  // general-purpose plugins:
+  // talavera is used for building images and sprites
+  "plugins": [
+    "talavera"
+  ],
+
+  // development-only plugins:
+  // tarima-lr provides live-reload integration
+  "devPlugins": [
+    "tarima-lr"
+  ],
+
+  // automatic source prefixing, e.g. "foo.js" => "foo.es6.js"
+  "extensions": {
+    "js": "es6",
+    "css": "less"
+  },
+
+  // custom settings for plugins
+  "pluginOptions": {
+    "talavera": {
+      "dest": "images"
+    }
+  },
+
+  // custom settings for bundling
+  "bundleOptions": {
+    "rollup": {
+      "format": "iife",
+      "plugins": [
+        "rollup-plugin-node-resolve",
+        "rollup-plugin-commonjs"
+      ],
+      "rollup-plugin-node-resolve": {
+        "module": true,
+        "jsnext": true,
+        "main": true,
+        "browser": true
+      }
+    }
+  }
+}
+```
 
 ### Images
 
@@ -684,3 +858,5 @@ $.mount(require('serve-static')(__dirname));
 ### Javascripts
 
 ### Stylesheets
+
+### Templating (views)
