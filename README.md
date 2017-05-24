@@ -829,7 +829,8 @@ Let's examine our default settings:
   // custom settings for plugins
   "pluginOptions": {
     "talavera": {
-      "dest": "images"
+      "dest": "public/images",
+      "public": "build/public"
     }
   },
 
@@ -939,6 +940,46 @@ Same as `.js` files but for LESS, Sass, PostCSS or Styl:
 Source file is saved to `public/stylesheets/example.css` dest.
 
 ### Images & Sprites
+
+**Talavera** will handle all found images and sprites within our sources.
+
+&mdash; Files matching `**/images/**/*.{png,jpg,jpeg}`:
+
+- are copied to `public/images`
+- are referenced on `public/images/images.css`
+
+&mdash; Files matching `**/sprites/**/*.{png,svg}`:
+
+- are bundled to `public/images/sprites.svg` (`.svg` sources only)
+- are bundled to `public/images/sprites.png` (`.png` files only)
+- are referenced on `public/images/sprites.css` (`.png` files only)
+
+&mdash; Exported sources are grouped by their immediate dirname:
+
+Given `app/assets/sprites/foo/bar.png` the generated files are `foo.css`, `foo.png`
+and  `foo.svg` respectively, all within `public/images`.
+
+> Images are copied as-is so subdirectories works fine there
+
+&mdash; Exported sources can be rendered using a shared view or partial:
+
+```pug
+//- app/views/shared/icons.pug
+
+<@includeTag "images/sprites.css">
+<@destFile "public/images/sprites.svg">
+<@image "salads">
+<@icon "npm">
+<@svg "agenda">
+```
+
+Then call `view()` to render the previous fragment:
+
+```js
+conn.view('shared/icons.html', { as: 'resources' });
+```
+
+This will create a `resources` local available on the layout.
 
 ### Templating (views)
 
