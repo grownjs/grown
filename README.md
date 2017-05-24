@@ -52,10 +52,10 @@ $ yarn watch # or `npm run watch`
   * [Testing the app](#testing-the-app)
   * [Interactive mode (reload)](#interactive-mode-reload)
 * [Asset pipeline](#asset-pipeline)
-  * [Images](#images)
   * [Static files](#static-files)
   * [Javascripts](#javascripts)
   * [Stylesheets](#stylesheets)
+  * [Images & Sprites](#images-sprites)
   * [Templating (views)](#templating-views)
 
 ### More settings
@@ -780,6 +780,7 @@ Let's examine our default settings:
 
   // only scripts matching this globs are bundled
   "bundle": [
+    "**/views/**/*.{md,pug}",
     "**/javascripts/**"
   ],
 
@@ -851,12 +852,119 @@ Let's examine our default settings:
 }
 ```
 
-### Images
-
 ### Static files
+
+Any supported file that is not processed (see below) is just copied.
+
+&mdash; If you need to render a static file just add a supported extension:
+
+```text
+User-agent: *
+Allow: <%= env.SITE_ROOT %>
+```
+
+Source file `app/assets/robots.txt.ejs` is rendered to `public/robots.txt` dest.
+
+> Make sure you install `yarn add ejs --dev` or `npm i ejs --save-dev` for `.ejs` files
+
+&mdash; If you need markup to be generated from templates use `.pug` instead:
+
+```pug
+doctype html
+html
+  head
+    title Welcome to #{section.title}!
+  body
+    != yield || section.body
+```
+
+Source file `app/assets/welcome.pug` is rendered to `public/welcome.html` dest.
+
+&mdash; If you prefer Markdown try using `.md` for having more fun:
+
+```md
+# About us
+```
+
+Source file `app/assets/about.md` is rendered to `public/about.html` dest.
 
 ### Javascripts
 
+Bundle from [supported sources](https://github.com/tacoss/tarima#20---supported-engines): CoffeeScript, TypeScript, Svelte, Vue, etc.
+
+Just rename your source files for custom support:
+
+```pug
+//- app/assets/javascripts/_components/example.vue.pug
+
+template
+  h1 It works!
+
+script.
+  export default {
+    mounted() {
+      console.log('OSOM!');
+    },
+  };
+```
+
+This source is not rendered (see [filter](#asset-pipeline)), but can be loaded by an entry-point:
+
+```js
+// app/assets/javascripts/welcome.js
+
+import Example from './_components/example.vue.pug';
+
+new Example({
+  el: '#app',
+});
+```
+
 ### Stylesheets
 
+Same as `.js` files but for LESS, Sass, PostCSS or Styl:
+
+```css
+/* app/assets/stylesheets/example.post.css */
+
+::root {
+  --color: red;
+}
+
+.error {
+  color: var(--color);
+}
+```
+
+Source file is saved to `public/stylesheets/example.css` dest.
+
+### Images & Sprites
+
 ### Templating (views)
+
+&mdash; If you like exotic stuff, try `.jsx`:
+
+```jsx
+// app/views/foo/bar.jsx
+
+module.exports = (locals, h) => <div>
+  <h1>It works!</h1>
+  <p>Hello, ${locals.name}.</p>
+</div>;
+```
+
+&mdash; If you prefer Pug templates use `.js.pug`:
+
+```pug
+//- app/views/foo/bar.js.pug
+
+div
+  h1 It works!
+  p Hello, #{name}.
+```
+
+&mdash; If you want to pre-compile Markdown switch to `.js.md`:
+
+```md
+> OSOM!
+```
