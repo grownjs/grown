@@ -1,0 +1,23 @@
+<!DOCTYPE html><html><head><base href="/"><meta lang="en"><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><meta name="HandheldFriendly" content="true"><meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no"><!--[if lt IE 9]><script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script><script src="//css3-mediaqueries-js.googlecode.com/svn/trunk/css3-mediaqueries.js"></script><![endif]--><title>FTW</title><link rel="stylesheet" href="styles.css"><style>pre { overflow:auto }</style></head><body><main style="margin-left:20em;"><h4 id="testing-models">Testing models</h4>
+<p>Prove your models without any trouble:</p>
+<pre><code class="lang-coffee"># spec/models-spec.coffee
+
+app = require(&#39;../app/server&#39;)
+Grown = require(&#39;grown&#39;)
+
+describe &#39;all models&#39;, -&gt;
+  beforeEach Grown.test(app)
+
+  it &#39;can be tested&#39;, (done) -&gt;
+    @models.Dummy.findAll().then (result) -&gt;
+      expect(result.length).toEqual 0
+      done()
+</code></pre>
+<p>JSON-Schema allows you to generate random data through the <code>faked</code> property:</p>
+<pre><code class="lang-js">const result = Dummy.faked.findAll();
+</code></pre>
+<p>&mdash; Known issues:</p>
+<ul>
+<li>only <code>findOne()</code> and <code>findAll()</code> are supported</li>
+</ul>
+</main><aside style="position:fixed;bottom:0;top:0;max-width:20em;overflow:auto;"><ul><li><a href="/">home</a></li><li><a href="/docs">docs</a><ul><li><a href="/docs/initialization">Initialization</a></li><li><a href="/docs/interactive-mode">Interactive mode</a></li><li><a href="/docs/controllers">Controllers</a><ul><li><a href="/docs/controllers/routing">Routing</a></li><li><a href="/docs/controllers/definition">Definition</a></li><li><a href="/docs/controllers/end-responses">End responses</a></li><li><a href="/docs/controllers/testing-actions">Testing actions</a></li><li><a href="/docs/controllers/interactive-mode-fetch">Interactive mode (fetch)</a></li></ul></li><li><a href="/docs/models">Models</a><ul><li><a href="/docs/models/json-schema">JSON-Schema</a></li><li><a href="/docs/models/model-syncing">Model syncing</a></li><li><strong><a class="here" href="/docs/models/testing-models">Testing models</a></strong></li><li><a href="/docs/models/interactive-mode-models">Interactive mode (models)</a></li></ul></li><li><a href="/docs/views">Views</a><ul><li><a href="/docs/views/functions-as-templates">Functions as templates</a></li><li><a href="/docs/views/pre-compiled-templates">Pre-compiled templates</a></li><li><a href="/docs/views/layouts-blocks">Layouts &amp; blocks</a></li><li><a href="/docs/views/testing-views">Testing views</a></li><li><a href="/docs/views/interactive-mode-render">Interactive mode (render)</a></li></ul></li><li><a href="/docs/booting">Booting</a><ul><li><a href="/docs/booting/server">Server</a></li><li><a href="/docs/booting/api">API</a></li><li><a href="/docs/booting/plugins">Plugins</a></li><li><a href="/docs/booting/middlewares">Middlewares</a></li><li><a href="/docs/booting/testing-the-app">Testing the app</a></li><li><a href="/docs/booting/interactive-mode-reload">Interactive mode (reload)</a></li></ul></li><li><a href="/docs/assets">Assets</a><ul><li><a href="/docs/assets/static-files">Static files</a></li><li><a href="/docs/assets/javascripts">Javascripts</a></li><li><a href="/docs/assets/stylesheets">Stylesheets</a></li><li><a href="/docs/assets/images-sprites">Images &amp; Sprites</a></li><li><a href="/docs/assets/templating-views">Templating (views)</a></li></ul></li></ul></li></ul></aside></body></html>
