@@ -16,8 +16,6 @@ html
 
     title= title || Untitled
     link(rel='stylesheet' href='styles.css')
-    style.
-      pre { overflow:auto }
   body
     if env.NODE_ENV === 'production'
       script.
@@ -29,8 +27,8 @@ html
         ga('create', '#{env.GA}', 'auto');
         ga('send', 'pageview');
 
-    main(style='margin-left:20em')
+    main
       != yield
 
-    aside(style='position:fixed;bottom:0;top:0;max-width:20em;overflow:auto')
+    aside
       include ../_shared/docs
