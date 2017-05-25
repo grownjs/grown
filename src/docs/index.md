@@ -5,4 +5,4 @@ $render: ../_layouts/default.pug
 
 # docs
 
-- [back](/)
+- [back](../)

@@ -5,4 +5,4 @@ $render: _layouts/default.pug
 
 # OK
 
-- [docs](/docs)
+- [docs](docs/)
