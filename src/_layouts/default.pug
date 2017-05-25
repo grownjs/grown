@@ -14,9 +14,7 @@ html
     script(src='//css3-mediaqueries-js.googlecode.com/svn/trunk/css3-mediaqueries.js')
     <![endif]-->
 
-    title Untitled
+    title= title || Untitled
     link(rel='stylesheet' href='styles.css')
   body
-    h1 It works!
-    //- change "_src" with "src" ;-)
-    script(_src='scripts.js')
+    != yield
