@@ -1,0 +1,125 @@
+<!DOCTYPE html><html><head><base href="/"><meta lang="en"><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><meta name="HandheldFriendly" content="true"><meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no"><!--[if lt IE 9]><script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script><script src="//css3-mediaqueries-js.googlecode.com/svn/trunk/css3-mediaqueries.js"></script><![endif]--><title>FTW</title><link rel="stylesheet" href="styles.css"></head><body><main style="margin-left:20em;"><h3 id="views">Views</h3>
+<p>Responses are in their most beauty.</p>
+<h4 id="functions-as-templates">Functions as templates</h4>
+<p>Views are plain-old functions that receive data:</p>
+<pre><code class="lang-js">// app/views/layouts/default.js
+
+module.exports = locals =&gt; `&lt;html&gt;
+  &lt;head&gt;
+    &lt;title&gt;${locals.pageTiele || &#39;Untitled&#39;}&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;${locals.yield}&lt;/body&gt;
+&lt;/html&gt;`;
+</code></pre>
+<p>Values to render are mostly strings but they can be buffers or streams:</p>
+<pre><code class="lang-js">const fs = require(&#39;fs&#39;);
+
+module.exports = locals =&gt;
+  fs.createReadStream(locals.filePath);
+
+// or
+module.exports = locals =&gt; new Buffer(&#39;42&#39;);
+</code></pre>
+<p>Regular objects are rendered as JSON responses:</p>
+<pre><code class="lang-js">module.exports = locals =&gt; ({
+  status: &#39;ok&#39;,
+  data: locals.userInput,
+});
+</code></pre>
+<p>Promised values are resolved before they get finally rendered.</p>
+<h4 id="pre-compiled-templates">Pre-compiled templates</h4>
+<p>How this can be possible may you think?</p>
+<p>Support for turning JSX, Pug, EJS, Handlebars, etc. into views is built-in:</p>
+<pre><code class="lang-jade">//- app/views/layouts/default.js.pug
+
+html
+  head
+    title= pageTitle || &#39;Untitled&#39;
+  body
+    != yield
+</code></pre>
+<p>In the case of JSX you must pass a second argument for the <code>h()</code> helper:</p>
+<pre><code class="lang-jsx">// app/views/layouts/default.jsx
+
+module.exports = ({ pageTitle, yield }, h) =&gt; &lt;html&gt;
+  &lt;head&gt;
+    &lt;title&gt;${pageTiele || &#39;Untitled&#39;}&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;${yield}&lt;/body&gt;
+&lt;/html&gt;;
+</code></pre>
+<h4 id="layouts-blocks">Layouts &amp; blocks</h4>
+<p>This can be changed through <code>locals</code>, <code>conn.layout</code> or from any controller:</p>
+<pre><code class="lang-js">// app/controllers/Home.js
+
+module.exports = {
+  layout: &#39;website&#39;,
+  methods: {
+    index(conn) {
+      // conn.layout = false;
+      // conn.put_local(&#39;layout&#39;, false);
+      // return conn.render(&#39;pages/welcome&#39;, { layout: false });
+    },
+  },
+};
+</code></pre>
+<p>Also you can set <code>layout</code> functions to render:</p>
+<pre><code class="lang-js">{
+  layout: (locals, h) =&gt; (
+    locals.isDebug
+      ? h(&#39;pre&#39;, null, JSON.stringify(locals, null, 2))
+      : locals.yield
+  ),
+}
+</code></pre>
+<p>Lazy-views are created the same way as regular views and render functions:</p>
+<pre><code class="lang-js">conn.view(&#39;pages/first-chunk&#39;, { as: &#39;main&#39; });
+conn.view(&#39;pages/second-chunk&#39;, { as: &#39;sidebar&#39; });
+conn.view(&#39;pages/third-and-last&#39;, { as: &#39;sidebar&#39; });
+</code></pre>
+<p>Chunks are grouped by using the same <code>as</code> local, once rendered they are arrays:</p>
+<pre><code class="lang-js">locals =&gt; `&lt;div&gt;
+  &lt;aside&gt;${locals.sidebar.join(&#39;\n&#39;)}&lt;/aside&gt;
+  &lt;main&gt;${locals.main}&lt;/main&gt;
+&lt;/div&gt;`;
+</code></pre>
+<p>Wisely use <code>Array.isArray()</code> to check your locals for avoiding unexpected results.</p>
+<h4 id="testing-views">Testing views</h4>
+<p>Render, validate and assert all kind-of views:</p>
+<pre><code class="lang-coffee"># spec/views-spec.coffee
+
+app = require(&#39;../app/server&#39;)
+Grown = require(&#39;grown&#39;)
+
+describe &#39;all views&#39;, -&gt;
+  beforeEach Grown.test(app)
+
+  it &#39;can be tested&#39;, (done) -&gt;
+    data =
+      value: &#39;OSOM&#39;
+
+    partial = @render (locals, h) -&gt;
+      h(&#39;p&#39;, null, locals.value)
+    , data
+
+    @render &#39;layouts/default&#39;,
+      yield: partial
+      routes: @routes
+
+    .then (result) -&gt;
+      expect(result).toContain &#39;&lt;!doctype html&gt;&#39;
+      expect(result).toContain &#39;&lt;p&gt;OSOM&lt;/p&gt;&#39;
+      done()
+</code></pre>
+<h4 id="interactive-mode-render">Interactive mode (render)</h4>
+<p>The <code>.render</code> command help you to achieve similar results.</p>
+<p>Examples:</p>
+<pre><code class="lang-bash">.render layouts/default
+.render Home/index
+</code></pre>
+<p>Locals declared on <code>before_send()</code> filters are not available on the REPL or <code>@render</code> method.</p>
+<ul>
+<li><a href="/">back</a></li>
+<li><a href="/docs/booting">next</a></li>
+</ul>
+</main><aside style="position:fixed;top:0;max-width:20em;overflow:hidden;"><ul><li><a href="/">home</a></li><li><a href="/docs">docs</a><ul><li><a href="/docs/initialization">Initialization</a></li><li><a href="/docs/interactive-mode">Interactive mode</a></li><li><a href="/docs/controllers">Controllers<ul><li><a href="/docs/controllers#routing">Routing</a></li><li><a href="/docs/controllers#definition">Definition</a></li><li><a href="/docs/controllers#end-responses">End responses</a></li><li><a href="/docs/controllers#testing-actions">Testing actions</a></li><li><a href="/docs/controllers#interactive-mode-fetch">Interactive mode (fetch)</a></li></ul></a></li><li><a href="/docs/models">Models<ul><li><a href="/docs/models#json-schema">JSON-Schema</a></li><li><a href="/docs/models#model-syncing">Model syncing</a></li><li><a href="/docs/models#testing-models">Testing models</a></li><li><a href="/docs/models#interactive-mode-models">Interactive mode (models)</a></li></ul></a></li><li><a href="/docs/views">Views<ul><li><a href="/docs/views#functions-as-templates">Functions as templates</a></li><li><a href="/docs/views#pre-compiled-templates">Pre-compiled templates</a></li><li><a href="/docs/views#layouts-blocks">Layouts & blocks</a></li><li><a href="/docs/views#testing-views">Testing views</a></li><li><a href="/docs/views#interactive-mode-render">Interactive mode (render)</a></li></ul></a></li><li><a href="/docs/booting">Booting<ul><li><a href="/docs/booting#server">Server</a></li><li><a href="/docs/booting#api">API</a></li><li><a href="/docs/booting#hooks">Hooks</a></li><li><a href="/docs/booting#plugins">Plugins</a></li><li><a href="/docs/booting#middlewares">Middlewares</a></li><li><a href="/docs/booting#testing-the-app">Testing the app</a></li><li><a href="/docs/booting#interactive-mode-reload">Interactive mode (reload)</a></li></ul></a></li><li><a href="/docs/assets">Assets<ul><li><a href="/docs/assets#static-files">Static files</a></li><li><a href="/docs/assets#javascripts">Javascripts</a></li><li><a href="/docs/assets#stylesheets">Stylesheets</a></li><li><a href="/docs/assets#images-sprites">Images & Sprites</a></li><li><a href="/docs/assets#templating-views">Templating (views)</a></li></ul></a></li></ul></li></ul></aside></body></html>

@@ -17,4 +17,12 @@ html
     title= title || Untitled
     link(rel='stylesheet' href='styles.css')
   body
-    != yield
+    main(style='margin-left:20em')
+      != yield
+
+    aside(style='position:fixed;top:0;max-width:20em;overflow:hidden')
+      ul
+        li: a(href='/') home
+        li
+          a(href='/docs') docs
+          include ../_shared/docs
