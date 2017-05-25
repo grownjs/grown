@@ -158,7 +158,10 @@ module.exports = ($, cwd) => {
           'package.json',
           'app/server.js',
         ],
-      }, $.data.DATABASE ? {
+      }, $.data.DATABSE ? {
+        type: 'add',
+        dest: 'app/models/.gitkeep',
+      } : null, $.data.DATABASE ? {
         type: 'add',
         dest: 'config/database.js',
         template: DATABASE_TEMPLATE,
