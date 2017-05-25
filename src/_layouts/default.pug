@@ -22,9 +22,5 @@ html
     main(style='margin-left:20em')
       != yield
 
-    aside(style='position:fixed;top:0;max-width:20em;overflow:hidden')
-      ul
-        li: a(href='/') home
-        li
-          a(href='/docs') docs
-          include ../_shared/docs
+    aside(style='position:fixed;bottom:0;top:0;max-width:20em;overflow:auto')
+      include ../_shared/docs

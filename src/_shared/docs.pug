@@ -1,4 +1,5 @@
-- var url = self && `/docs/${self.parent.split('/').pop().replace('.md', '')}`
+- var segment = self && self.parent.split('/').slice(2).join('/').replace('.md', '')
+- var url = `/${segment || ''}`;
 
 mixin linkTo(href, title)
   if href === url
@@ -10,41 +11,44 @@ mixin linkTo(href, title)
     block
 
 ul
-  li: +linkTo('/docs/initialization', 'Initialization')
-  li: +linkTo('/docs/interactive-mode', 'Interactive mode')
-  li: +linkTo('/docs/controllers', 'Controllers')
+  li: +linkTo('/', 'home')
+  li: +linkTo('/docs', 'docs')
     ul
-      li: +linkTo('/docs/controllers#routing', 'Routing')
-      li: +linkTo('/docs/controllers#definition', 'Definition')
-      li: +linkTo('/docs/controllers#end-responses', 'End responses')
-      li: +linkTo('/docs/controllers#testing-actions', 'Testing actions')
-      li: +linkTo('/docs/controllers#interactive-mode-fetch', 'Interactive mode (fetch)')
-  li: +linkTo('/docs/models', 'Models')
-    ul
-      li: +linkTo('/docs/models#json-schema', 'JSON-Schema')
-      li: +linkTo('/docs/models#model-syncing', 'Model syncing')
-      li: +linkTo('/docs/models#testing-models', 'Testing models')
-      li: +linkTo('/docs/models#interactive-mode-models', 'Interactive mode (models)')
-  li: +linkTo('/docs/views', 'Views')
-    ul
-      li: +linkTo('/docs/views#functions-as-templates', 'Functions as templates')
-      li: +linkTo('/docs/views#pre-compiled-templates', 'Pre-compiled templates')
-      li: +linkTo('/docs/views#layouts-blocks', 'Layouts & blocks')
-      li: +linkTo('/docs/views#testing-views', 'Testing views')
-      li: +linkTo('/docs/views#interactive-mode-render', 'Interactive mode (render)')
-  li: +linkTo('/docs/booting', 'Booting')
-    ul
-      li: +linkTo('/docs/booting#server', 'Server')
-      li: +linkTo('/docs/booting#api', 'API')
-      li: +linkTo('/docs/booting#hooks', 'Hooks')
-      li: +linkTo('/docs/booting#plugins', 'Plugins')
-      li: +linkTo('/docs/booting#middlewares', 'Middlewares')
-      li: +linkTo('/docs/booting#testing-the-app', 'Testing the app')
-      li: +linkTo('/docs/booting#interactive-mode-reload', 'Interactive mode (reload)')
-  li: +linkTo('/docs/assets', 'Assets')
-    ul
-      li: +linkTo('/docs/assets#static-files', 'Static files')
-      li: +linkTo('/docs/assets#javascripts', 'Javascripts')
-      li: +linkTo('/docs/assets#stylesheets', 'Stylesheets')
-      li: +linkTo('/docs/assets#images-sprites', 'Images & Sprites')
-      li: +linkTo('/docs/assets#templating-views', 'Templating (views)')
+      li: +linkTo('/docs/initialization', 'Initialization')
+      li: +linkTo('/docs/interactive-mode', 'Interactive mode')
+      li: +linkTo('/docs/controllers', 'Controllers')
+        ul
+          li: +linkTo('/docs/controllers#routing', 'Routing')
+          li: +linkTo('/docs/controllers#definition', 'Definition')
+          li: +linkTo('/docs/controllers#end-responses', 'End responses')
+          li: +linkTo('/docs/controllers#testing-actions', 'Testing actions')
+          li: +linkTo('/docs/controllers#interactive-mode-fetch', 'Interactive mode (fetch)')
+      li: +linkTo('/docs/models', 'Models')
+        ul
+          li: +linkTo('/docs/models#json-schema', 'JSON-Schema')
+          li: +linkTo('/docs/models#model-syncing', 'Model syncing')
+          li: +linkTo('/docs/models#testing-models', 'Testing models')
+          li: +linkTo('/docs/models#interactive-mode-models', 'Interactive mode (models)')
+      li: +linkTo('/docs/views', 'Views')
+        ul
+          li: +linkTo('/docs/views#functions-as-templates', 'Functions as templates')
+          li: +linkTo('/docs/views#pre-compiled-templates', 'Pre-compiled templates')
+          li: +linkTo('/docs/views#layouts-blocks', 'Layouts & blocks')
+          li: +linkTo('/docs/views#testing-views', 'Testing views')
+          li: +linkTo('/docs/views#interactive-mode-render', 'Interactive mode (render)')
+      li: +linkTo('/docs/booting', 'Booting')
+        ul
+          li: +linkTo('/docs/booting#server', 'Server')
+          li: +linkTo('/docs/booting#api', 'API')
+          li: +linkTo('/docs/booting#hooks', 'Hooks')
+          li: +linkTo('/docs/booting#plugins', 'Plugins')
+          li: +linkTo('/docs/booting#middlewares', 'Middlewares')
+          li: +linkTo('/docs/booting#testing-the-app', 'Testing the app')
+          li: +linkTo('/docs/booting#interactive-mode-reload', 'Interactive mode (reload)')
+      li: +linkTo('/docs/assets', 'Assets')
+        ul
+          li: +linkTo('/docs/assets#static-files', 'Static files')
+          li: +linkTo('/docs/assets#javascripts', 'Javascripts')
+          li: +linkTo('/docs/assets#stylesheets', 'Stylesheets')
+          li: +linkTo('/docs/assets#images-sprites', 'Images & Sprites')
+          li: +linkTo('/docs/assets#templating-views', 'Templating (views)')
