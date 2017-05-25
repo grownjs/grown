@@ -1,39 +1,50 @@
+- var url = self && `/docs/${self.parent.split('/').pop().replace('.md', '')}`
+
+mixin linkTo(href, title)
+  if href === url
+    strong
+      a.here(href=href)= title
+  else
+    a(href=href)= title
+  if block
+    block
+
 ul
-  li: a(href='/docs/initialization') Initialization
-  li: a(href='/docs/interactive-mode') Interactive mode
-  li: a(href='/docs/controllers') Controllers
+  li: +linkTo('/docs/initialization', 'Initialization')
+  li: +linkTo('/docs/interactive-mode', 'Interactive mode')
+  li: +linkTo('/docs/controllers', 'Controllers')
     ul
-      li: a(href='/docs/controllers#routing') Routing
-      li: a(href='/docs/controllers#definition') Definition
-      li: a(href='/docs/controllers#end-responses') End responses
-      li: a(href='/docs/controllers#testing-actions') Testing actions
-      li: a(href='/docs/controllers#interactive-mode-fetch') Interactive mode (fetch)
-  li: a(href='/docs/models') Models
+      li: +linkTo('/docs/controllers#routing', 'Routing')
+      li: +linkTo('/docs/controllers#definition', 'Definition')
+      li: +linkTo('/docs/controllers#end-responses', 'End responses')
+      li: +linkTo('/docs/controllers#testing-actions', 'Testing actions')
+      li: +linkTo('/docs/controllers#interactive-mode-fetch', 'Interactive mode (fetch)')
+  li: +linkTo('/docs/models', 'Models')
     ul
-      li: a(href='/docs/models#json-schema') JSON-Schema
-      li: a(href='/docs/models#model-syncing') Model syncing
-      li: a(href='/docs/models#testing-models') Testing models
-      li: a(href='/docs/models#interactive-mode-models') Interactive mode (models)
-  li: a(href='/docs/views') Views
+      li: +linkTo('/docs/models#json-schema', 'JSON-Schema')
+      li: +linkTo('/docs/models#model-syncing', 'Model syncing')
+      li: +linkTo('/docs/models#testing-models', 'Testing models')
+      li: +linkTo('/docs/models#interactive-mode-models', 'Interactive mode (models)')
+  li: +linkTo('/docs/views', 'Views')
     ul
-      li: a(href='/docs/views#functions-as-templates') Functions as templates
-      li: a(href='/docs/views#pre-compiled-templates') Pre-compiled templates
-      li: a(href='/docs/views#layouts-blocks') Layouts & blocks
-      li: a(href='/docs/views#testing-views') Testing views
-      li: a(href='/docs/views#interactive-mode-render') Interactive mode (render)
-  li: a(href='/docs/booting') Booting
+      li: +linkTo('/docs/views#functions-as-templates', 'Functions as templates')
+      li: +linkTo('/docs/views#pre-compiled-templates', 'Pre-compiled templates')
+      li: +linkTo('/docs/views#layouts-blocks', 'Layouts & blocks')
+      li: +linkTo('/docs/views#testing-views', 'Testing views')
+      li: +linkTo('/docs/views#interactive-mode-render', 'Interactive mode (render)')
+  li: +linkTo('/docs/booting', 'Booting')
     ul
-      li: a(href='/docs/booting#server') Server
-      li: a(href='/docs/booting#api') API
-      li: a(href='/docs/booting#hooks') Hooks
-      li: a(href='/docs/booting#plugins') Plugins
-      li: a(href='/docs/booting#middlewares') Middlewares
-      li: a(href='/docs/booting#testing-the-app') Testing the app
-      li: a(href='/docs/booting#interactive-mode-reload') Interactive mode (reload)
-  li: a(href='/docs/assets') Assets
+      li: +linkTo('/docs/booting#server', 'Server')
+      li: +linkTo('/docs/booting#api', 'API')
+      li: +linkTo('/docs/booting#hooks', 'Hooks')
+      li: +linkTo('/docs/booting#plugins', 'Plugins')
+      li: +linkTo('/docs/booting#middlewares', 'Middlewares')
+      li: +linkTo('/docs/booting#testing-the-app', 'Testing the app')
+      li: +linkTo('/docs/booting#interactive-mode-reload', 'Interactive mode (reload)')
+  li: +linkTo('/docs/assets', 'Assets')
     ul
-      li: a(href='/docs/assets#static-files') Static files
-      li: a(href='/docs/assets#javascripts') Javascripts
-      li: a(href='/docs/assets#stylesheets') Stylesheets
-      li: a(href='/docs/assets#images-sprites') Images & Sprites
-      li: a(href='/docs/assets#templating-views') Templating (views)
+      li: +linkTo('/docs/assets#static-files', 'Static files')
+      li: +linkTo('/docs/assets#javascripts', 'Javascripts')
+      li: +linkTo('/docs/assets#stylesheets', 'Stylesheets')
+      li: +linkTo('/docs/assets#images-sprites', 'Images & Sprites')
+      li: +linkTo('/docs/assets#templating-views', 'Templating (views)')
