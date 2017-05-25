@@ -7,7 +7,7 @@ $render: ../../../_layouts/default.pug
 
 &mdash; If you like exotic stuff, try `.jsx`:
 
-```jsx
+```xml
 // app/views/foo/bar.jsx
 
 module.exports = (locals, h) => <div>
@@ -18,7 +18,7 @@ module.exports = (locals, h) => <div>
 
 &mdash; If you prefer Pug templates use `.js.pug`:
 
-```pug
+```
 //- app/views/foo/bar.js.pug
 
 div

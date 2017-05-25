@@ -9,7 +9,7 @@ How this can be possible may you think?
 
 Support for turning JSX, Pug, EJS, Handlebars, etc. into views is built-in:
 
-```jade
+```
 //- app/views/layouts/default.js.pug
 
 html
@@ -21,7 +21,7 @@ html
 
 In the case of JSX you must pass a second argument for the `h()` helper:
 
-```jsx
+```xml
 // app/views/layouts/default.jsx
 
 module.exports = ({ pageTitle, yield }, h) => <html>

@@ -28,7 +28,7 @@ Given `app/assets/sprites/foo/bar.png` the generated files are:
 
 &mdash; Exported sources can be rendered using a shared view or partial:
 
-```pug
+```
 //- app/views/shared/icons.pug
 
 <@includeTag "images/sprites.css">

@@ -9,7 +9,7 @@ Bundle from [supported sources](https://github.com/tacoss/tarima#20---supported-
 
 &mdash; Just rename your source files for custom support:
 
-```jade
+```
 //- app/assets/javascripts/_components/example.vue.pug
 
 template

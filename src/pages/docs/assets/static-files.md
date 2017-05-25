@@ -9,7 +9,7 @@ Any supported file that is not processed (see below) is just copied.
 
 &mdash; If you need to render a static file just add a supported extension:
 
-```text
+```
 User-agent: *
 Allow: <%= env.SITE_ROOT %>
 ```
@@ -20,7 +20,7 @@ Source file `app/assets/robots.txt.ejs` is rendered to `public/robots.txt` dest.
 
 &mdash; If you need markup to be generated from templates use `.pug` instead:
 
-```jade
+```
 doctype html
 html
   head
