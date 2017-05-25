@@ -1,0 +1,12 @@
+.*
+deploy
+CNAME
+*.lock
+*.json
+*.log
+*.md
+*.sh
+src
+exclude.txt
+node_modules
+bower_components

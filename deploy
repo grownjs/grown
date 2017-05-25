@@ -1,0 +1,16 @@
+#!/bin/sh
+
+OPTIONS="-avzC --exclude-from exclude.txt"
+TRANSPORT="ssh -p $1"
+CONNECTION="$2"
+REMOTE_PATH="$3"
+
+if [ -z "$3" ] || [ -z "$2" ] || [ -z "$1" ]; then
+  echo 'usage:'
+  echo '  ./deploy PORT HOST REMOTE'
+  echo 'example:'
+  echo '  ./deploy 22022 deploy@example.com /var/www'
+  exit 1
+fi
+
+rsync $OPTIONS -e "$TRANSPORT" . $CONNECTION:$REMOTE_PATH
