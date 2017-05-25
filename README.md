@@ -8,41 +8,28 @@ Experimental DSL for web applications
 $ yarn global add grown # or `npm i -g grown`
 ```
 
-Quick example:
-
-```bash
-$ mkdir example
-$ cd example
-$ grown new .
-```
-
-Start the application in `development`:
-
-```bash
-$ yarn watch # or `npm run watch`
-```
-
 ## Table of contents
 
 * [Overview](#overview)
-  * [Interactive mode](#interactive-mode)
-  * [Controllers](#controllers)
-     * [Routing](#routing)
-     * [Definition](#definition)
-     * [End responses](#end-responses)
-     * [Testing actions](#testing-actions)
-     * [Interactive mode (fetch)](#interactive-mode-fetch)
-  * [Models](#models)
-     * [JSON-Schema](#json-schema)
-     * [Model syncing](#model-syncing)
-     * [Testing models](#testing-models)
-     * [Interactive mode (models)](#interactive-mode-models)
-  * [Views](#views)
-     * [Functions as templates](#functions-as-templates)
-     * [Pre-compiled templates](#pre-compiled-templates)
-     * [Layouts and blocks](#layouts-and-blocks)
-     * [Testing views](#testing-views)
-     * [Interactive mode (render)](#interactive-mode-render)
+* [Initialization](#initialization)
+* [Interactive mode](#interactive-mode)
+* [Controllers](#controllers)
+  * [Routing](#routing)
+  * [Definition](#definition)
+  * [End responses](#end-responses)
+  * [Testing actions](#testing-actions)
+  * [Interactive mode (fetch)](#interactive-mode-fetch)
+* [Models](#models)
+  * [JSON-Schema](#json-schema)
+  * [Model syncing](#model-syncing)
+  * [Testing models](#testing-models)
+  * [Interactive mode (models)](#interactive-mode-models)
+* [Views](#views)
+  * [Functions as templates](#functions-as-templates)
+  * [Pre-compiled templates](#pre-compiled-templates)
+  * [Layouts and blocks](#layouts-and-blocks)
+  * [Testing views](#testing-views)
+  * [Interactive mode (render)](#interactive-mode-render)
 * [Booting](#booting)
   * [Server](#server)
   * [API](#api)
@@ -58,70 +45,66 @@ $ yarn watch # or `npm run watch`
   * [Images & Sprites](#images-sprites)
   * [Templating (views)](#templating-views)
 
-### More settings
-
-Run `grown new -y` to start a new project interactively.
-
-Also, you can specify each preset manually on the command line, e.g.
-
-```bash
-$ grown new . ES6=traceur BUNDLER=rollup STYLES=less DATABASE=sqlite
-```
-
-### Known issues
-
-- `Cannot find module 'talavera'`
-
-  Run `yarn` or `npm i` without arguments again, it will try to reinstall `talavera` for you.
-
-
-## Overview
+### Overview
 
 **Grown** is a _homegrown_ nodejs framework built on top of open-source technology,
 it reuse many patterns from other frameworks and rely on terrific third-party libraries.
 
-In a glance it resembles a well-known directory structure:
+
+Quick example:
 
 ```bash
-$ tree example
-example
+$ mkdir example
+$ cd example
+$ grown new .
+```
+
+Start the application in `development`:
+
+```bash
+$ yarn watch # or `npm run watch`
+```
+
+&mdash; Known issues:
+
+- `Cannot find module 'talavera'`
+
+  Run `yarn` or `npm i` without arguments again to reinstall `talavera`
+
+### Initialization
+
+Run `grown new . -y` to start a new project interactively.
+
+Or you can specify each prese on the command line, e.g.
+
+```bash
+$ grown new . ES6=buble BUNDLER=rollup STYLES=less DATABASE=sqlite
+```
+
+The directory structure resembles a well-known pattern:
+
+
+```bash
 ├── app
-│   ├── server.js
 │   ├── assets
 │   │   ├── images
-│   │   │   └── favicon.ico
+│   │   ├── sprites
 │   │   ├── javascripts
-│   │   │   └── application.js
 │   │   └── stylesheets
-│   │       └── application.css
 │   ├── controllers
-│   │   └── Home.js
 │   ├── models
-│   │   └── Dummy.js
 │   └── views
+│       ├── shared
 │       └── layouts
-│           └── default.js
 ├── bin
-│   └── server
 ├── boot
-│   ├── initializers
-│   │   └── globals.js
 │   └── middlewares
-│       ├── body-parsers.js
-│       ├── csrf-protection.js
-│       ├── method-override.js
-│       └── no-cache.js
 ├── build
 ├── config
-│   ├── database.js
-│   ├── middlewares.js
-│   └── routes.js
 ├── lib
 │   └── tasks
 ├── log
-├── package.json
 ├── public
-│   └── robots.txt
 └── tmp
 ```
 
@@ -270,20 +253,18 @@ module.exports = {
 },
 ```
 
-Add more props according the [Sequelize models](http://docs.sequelizejs.com/), e.g.
+&mdash; References:
 
-```js
-module.exports = {
-  $schema: { ... },
-  hooks: { ... },
-  scope: { ... },
-  ...
-}
-```
+- [json-schema-sequelizer](https://www.npmjs.com/package/json-schema-sequelizer)
+- [json-schema-faker](https://github.com/json-schema-faker/json-schema-faker)
+- [sequelize](http://docs.sequelizejs.com/)
+
 
 #### Model syncing
 
 To synchronize your database execute `grown db-sync` on your terminal.
+
+> If the changes are not applied try again with the `--force` flag
 
 #### Testing models
 
@@ -303,6 +284,16 @@ describe 'all models', ->
       expect(result.length).toEqual 0
       done()
 ```
+
+JSON-Schema allows you to generate random data through the `faked` property:
+
+```js
+const result = Dummy.faked.findAll();
+```
+
+&mdash; Known issues:
+
+- only `findOne()` and `findAll()` are supported
 
 #### Interactive mode (models)
 
@@ -358,7 +349,7 @@ How this can be possible may you think?
 
 Support for turning JSX, Pug, EJS, Handlebars, etc. into views is built-in:
 
-```pug
+```jade
 //- app/views/layouts/default.js.pug
 
 html
@@ -501,7 +492,7 @@ If you don't pass a `cwd` value it will be taken from `process.cwd()` instead.
 
 ### API
 
-&mdash; Retrieve and option value by its keypath
+&mdash; Retrieve and option value by its keypath:
 
 `$.get(option[, default])`
 
@@ -513,7 +504,7 @@ const withDefaultValue = $.get('something', null);
 
 If you don't provide a default value if the option is missing an exception will be thrown.
 
-&mdash; Close the current server instance
+&mdash; Close the current server instance:
 
 `$.close([cb])`
 
@@ -526,7 +517,7 @@ $.close().then(() => {
 });
 ```
 
-&mdash; Starts the server connection
+&mdash; Starts the server connection:
 
 `$.listen([connection[, opts, [, cb]]])`
 
@@ -564,7 +555,7 @@ $.on('repl', (repl, logger) => logger.ok('Hello CLI'));
 $.on('reload', (repl, logger) => logger.ok('Reloading...'));
 ```
 
-&mdash; Attach event listeners
+&mdash; Attach event listeners:
 
 `$.on(evt, cb)`
 
@@ -577,7 +568,7 @@ $.on('delay', ms =>
 
 Event callbacks can return promises.
 
-&mdash; Remove a single event listener
+&mdash; Remove a single event listener:
 
 `$.off(evt, cb)`
 
@@ -588,7 +579,7 @@ $.on('truth', cb);
 $.off('truth', cb);
 ```
 
-&mdash; Attach event listener once
+&mdash; Attach event listener once:
 
 `$.once(evt, cb)`
 
@@ -598,7 +589,7 @@ $.once('reload', () => {
 });
 ```
 
-&mdash; Emit event to its listeners
+&mdash; Emit event to its listeners:
 
 `$.emit(evt[, ...])`
 
@@ -628,23 +619,23 @@ $.use(ctx => {
 });
 ```
 
-Built-in plugs are:
+&mdash; Built-in plugs are:
 
-- `Grown.plugs.logger` &mdash; Add logging methods to the connection
-- `Grown.plugs.models` &mdash; Support for look-up and loading models
-- `Grown.plugs.render` &mdash; Support for views and layouts
-- `Grown.plugs.router` &mdash; Support for app-routing
-- `Grown.plugs.session` &mdash; Support for session and cookies
-- `Grown.plugs.socket` &mdash; Support for SocketIO methods
-- `Grown.plugs.testing` &mdash; Testing-wrapper harness
-- `Grown.plugs.container` &mdash; Support for IoC/DI
-- `Grown.plugs.formidable` &mdash; Support for file uploads
+- `Grown.plugs.logger` &rarr; Add logging methods to the connection
+- `Grown.plugs.models` &rarr; Support for look-up and loading models
+- `Grown.plugs.render` &rarr; Support for views and layouts
+- `Grown.plugs.router` &rarr; Support for app-routing
+- `Grown.plugs.session` &rarr; Support for session and cookies
+- `Grown.plugs.socket` &rarr; Support for SocketIO methods
+- `Grown.plugs.testing` &rarr; Testing-wrapper harness
+- `Grown.plugs.container` &rarr; Support for IoC/DI
+- `Grown.plugs.formidable` &rarr; Support for file uploads
 
 ### Extensions
 
 Plugins can and usually do enhance the `$.extensions` property.
 
-All those values are attached to the connection instance:
+&mdash; All those values are attached to the connection instance:
 
 ```js
 $.mount(conn => {
@@ -666,7 +657,7 @@ $.mount(conn => {
 });
 ```
 
-Express-middleware can be mounted too:
+&mdash; Express-middleware can be mounted too:
 
 ```js
 $.mount(require('serve-static')(__dirname));
@@ -676,7 +667,7 @@ $.mount(require('serve-static')(__dirname));
 
 You can leverage on `Grown.test()` for starting and adding hooks.
 
-So a typical test-harness may involve no configuration:
+&mdash; So a typical test-harness may involve no configuration:
 
 ```coffee
 # spec/app-spec.coffee
@@ -729,9 +720,9 @@ Depending on your needs you can go further.
 
 ### Interactive mode (reload)
 
-To reload all your code without restarting the whole process call `.reload` on the REPL.
+Reload all your code without restarting the whole process call `.reload` on the REPL.
 
-This action will also stop and teardown on any hooked events.
+&mdash; Closing the farm will also stop and teardown any hooked events:
 
 ```js
 $.on('close', () => {
@@ -745,7 +736,7 @@ Be sure to listen `close` for cleanup anything else.
 
 **Tarima** is used for that hard-thing: frontend.
 
-Let's examine our default settings:
+&mdash; Default settings:
 
 ```js
 {
@@ -870,7 +861,7 @@ Source file `app/assets/robots.txt.ejs` is rendered to `public/robots.txt` dest.
 
 &mdash; If you need markup to be generated from templates use `.pug` instead:
 
-```pug
+```jade
 doctype html
 html
   head
@@ -883,7 +874,7 @@ Source file `app/assets/welcome.pug` is rendered to `public/welcome.html` dest.
 
 &mdash; If you prefer Markdown try using `.md` for having more fun:
 
-```md
+```markdown
 # About us
 ```
 
@@ -893,9 +884,9 @@ Source file `app/assets/about.md` is rendered to `public/about.html` dest.
 
 Bundle from [supported sources](https://github.com/tacoss/tarima#20---supported-engines): CoffeeScript, TypeScript, Svelte, Vue, etc.
 
-Just rename your source files for custom support:
+&mdash; Just rename your source files for custom support:
 
-```pug
+```jade
 //- app/assets/javascripts/_components/example.vue.pug
 
 template
@@ -909,7 +900,7 @@ script.
   };
 ```
 
-This source is not rendered (see [filter](#asset-pipeline)), but can be loaded by an entry-point:
+&mdash; The source is not rendered (see [filter](#asset-pipeline)), but can be loaded by an entry-point:
 
 ```js
 // app/assets/javascripts/welcome.js
@@ -921,9 +912,18 @@ new Example({
 });
 ```
 
+&mdash; If you need ES6 async/await support:
+
+- install `nodent` in your project
+- add `"nodent": true` to your `bundleOptions`
+
+&mdash; Known issues:
+
+- using `async/await` within JSX simply won't work
+
 ### Stylesheets
 
-Same as `.js` files but for LESS, Sass, PostCSS or Styl:
+&mdash; Same as `.js` files but for LESS, Sass, PostCSS or Styl:
 
 ```css
 /* app/assets/stylesheets/example.post.css */
@@ -956,10 +956,11 @@ Source file is saved to `public/stylesheets/example.css` dest.
 
 &mdash; Exported sources are grouped by their immediate dirname:
 
-Given `app/assets/sprites/foo/bar.png` the generated files are `foo.css`, `foo.png`
-and  `foo.svg` respectively, all within `public/images`.
+Given `app/assets/sprites/foo/bar.png` the generated files are:
 
-> Images are copied as-is so subdirectories works fine there
+- `public/images/foo.css`
+- `public/images/foo.png`
+- `public/images/foo.svg`
 
 &mdash; Exported sources can be rendered using a shared view or partial:
 
@@ -979,7 +980,9 @@ Then call `view()` to render the previous fragment:
 conn.view('shared/icons.html', { as: 'resources' });
 ```
 
-This will create a `resources` local available on the layout.
+It will create a `resources` local available on the layout.
+
+> This feature is available only during compilation and just for markup sources
 
 ### Templating (views)
 
