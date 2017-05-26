@@ -1539,9 +1539,9 @@ grunt-exec@~0.4.5:
   version "0.4.7"
   resolved "https://registry.yarnpkg.com/grunt-exec/-/grunt-exec-0.4.7.tgz#40051ffa4eb0c9657e053b95e88d44352a1c2c25"
 
-haki@^0.3.0:
-  version "0.3.1"
-  resolved "https://registry.yarnpkg.com/haki/-/haki-0.3.1.tgz#ce45c4d458f7a933b923843e831e091fb53b23b9"
+haki@^0.3.3:
+  version "0.3.3"
+  resolved "https://registry.yarnpkg.com/haki/-/haki-0.3.3.tgz#05a4a4775a69c6beb7d4db703509bde6382af644"
   dependencies:
     chalk "^1.1.3"
     change-case "^3.0.1"
@@ -1562,7 +1562,7 @@ haki@^0.3.0:
     prompt-rawlist "^0.2.1"
     readline-ui "^0.1.2"
     rimraf "^2.6.1"
-    wargs "^1.0.1"
+    wargs "^0.6.2"
 
 handlebars@^4.0.1:
   version "4.0.10"
@@ -3739,13 +3739,9 @@ walkdir@~0.0.7:
   version "0.0.11"
   resolved "https://registry.yarnpkg.com/walkdir/-/walkdir-0.0.11.tgz#a16d025eb931bd03b52f308caed0f40fcebe9532"
 
-wargs@^0.6.1:
-  version "0.6.1"
-  resolved "https://registry.yarnpkg.com/wargs/-/wargs-0.6.1.tgz#b14bf907ed77971e5f942e238c03c42a9c38bd48"
-
-wargs@^1.0.1:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/wargs/-/wargs-1.0.2.tgz#fa16295214d480bcd7fd101550291fc1bf9591eb"
+wargs@^0.6.2:
+  version "0.6.2"
+  resolved "https://registry.yarnpkg.com/wargs/-/wargs-0.6.2.tgz#4c88ba8c9e4b3c1339019117a6196bae2673da8d"
 
 warning-symbol@^0.1.0:
   version "0.1.0"
