@@ -33,7 +33,7 @@ module.exports = ($, cwd) => {
 
     farm.run(() =>
       farm.listen('test://', app => {
-        _.echo(chalk.green('✔ REPL is ready'), '\r\n');
+        _.echo(chalk.green('✔ REPL is ready'), ' ', chalk.gray(`(local v${_farm.version})`), '\r\n');
         _.echo(chalk.gray('› Listening at '), chalk.yellow(app.location.href), '\n');
         _.echo(chalk.gray('› Type .help to list all available commands'), '\n');
       }));

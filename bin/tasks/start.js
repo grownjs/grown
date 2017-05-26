@@ -54,7 +54,7 @@ module.exports = ($, cwd) => {
       // start server
       farm.run(() =>
         farm.listen(_host, app => {
-          _.echo(chalk.green('✔ Server is ready'), '\r\n');
+          _.echo(chalk.green('✔ Server is ready'), ' ', chalk.gray(`(local v${_farm.version})`), '\r\n');
           _.echo(chalk.gray('› Listening at '), chalk.yellow(app.location.href), '\n');
 
           /* istanbul ignore else */
