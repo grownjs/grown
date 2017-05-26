@@ -51,10 +51,12 @@ describe 'Formidable', ->
     $.server.fetch('/', 'post', {
       body:
         foo: 'bar'
-        example: "@#{__filename}"
       headers:
         'content-type': 'multipart/form-data'
         'accept': 'application/json'
+      attachments: [
+        { name: 'example', path: __filename }
+      ]
     })
 
     .then (res) ->
