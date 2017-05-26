@@ -48,6 +48,7 @@
     "json-schema-sequelizer": "https://github.com/pateketrueke/json-schema-sequelizer.git#master",
     "method-override": "^2.3.7",
     "morgan": "^1.8.1",
+    "nodemailer": "^2",
     "pg": "^6.1.5",
     "pg-native": "^1.10.1",
     "route-mappings": "0.3.2",

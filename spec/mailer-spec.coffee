@@ -1,5 +1,3 @@
-# require('debug').enable('grown,grown:*')
-
 $ = require('./_protocol')
 
 path = require('path')
@@ -41,17 +39,21 @@ describe '#mailer', ->
 
     $.server.fetch().then (res) ->
       expect(res.json.status).toEqual 'sent'
-      expect(res.json.result.test).toEqual 42
-      expect(res.json.result.html).not.toContain 'EMPTY'
+
+      if process.env.SMTP_HOST
+        expect(res.json.result.accepted).toEqual ['foo@candy.bar']
+      else
+        expect(res.json.result.test).toEqual 42
+
       done()
 
   it 'should call inline transports', (done) ->
     $.server.mount (conn) ->
       conn.mail({
-        transport: (opts, x) ->
-          opts.foo = 'bar'
-          x(null, opts)
-        layout: 'external'
+        transport: ->
+          sendMail: (opts, x) ->
+            opts.foo = 'bar'
+            x(null, opts)
         to: 'foo@candy.bar'
       }).then (x) ->
         conn.resp_body = x
@@ -60,5 +62,5 @@ describe '#mailer', ->
     $.server.fetch().then (res) ->
       expect(res.json.status).toEqual 'sent'
       expect(res.json.result.foo).toEqual 'bar'
-      expect(res.json.result.html).not.toContain 'EMPTY'
+      expect(res.json.result.html).toContain 'EMPTY'
       done()
