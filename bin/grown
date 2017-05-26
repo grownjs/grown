@@ -160,8 +160,8 @@ function showHelp() {
 function start(cb) {
   const _start = new Date();
 
-  process.on('exit', () => _.echo('\r',
-    chalk.green($.flags.force && !$.flags.interactive
+  process.on('exit', statusCode => _.echo('\r',
+    chalk[statusCode ? 'red' : 'green']($.flags.force && !$.flags.interactive
       ? `✔ Done in ${(new Date() - _start) / 1000}s`
       : '✔ Done.'), '\r\n'));
 
