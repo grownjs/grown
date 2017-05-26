@@ -123,15 +123,17 @@ module.exports = ($, farm) => {
     help: 'Request the current application',
     action(value) {
       const args = wargs(value, {
-        booleans: 'CRUDJT',
+        booleans: 'crudjtm',
+        arrays: 'a',
         aliases: {
-          C: 'post',
-          R: 'get',
-          U: 'put',
-          D: 'delete',
-          J: 'json',
-          T: 'text',
-          M: 'multipart',
+          c: 'post',
+          r: 'get',
+          u: 'put',
+          d: 'delete',
+          j: 'json',
+          t: 'text',
+          a: 'attach',
+          m: 'multipart',
         },
       }, v => {
         // allow dynamic value interpolation
@@ -211,6 +213,12 @@ module.exports = ($, farm) => {
         if (args.flags.json) {
           args.params['content-type'] = 'application/json';
           args.params.accept = 'application/json';
+        }
+
+        /* istanbul ignore else */
+        if (args.flags.attach) {
+          _opts.attachments = args.flags.attach.map(_value =>
+            ({ name: _value.split('=')[0], path: _value.split('=')[1] }));
         }
 
         /* istanbul ignore else */
