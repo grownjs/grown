@@ -1,7 +1,7 @@
 module.exports = {
   defaults: {
     from: 'admin@example.com',
-    other: $ => JSON.stringify($) || 'EMPTY',
+    other: $ => JSON.stringify($.baz) || 'EMPTY',
   },
   methods: {
     missing() {},

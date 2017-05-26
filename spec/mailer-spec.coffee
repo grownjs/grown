@@ -50,7 +50,7 @@ describe '#mailer', ->
   it 'should call inline transports', (done) ->
     $.server.mount (conn) ->
       conn.mail({
-        transport: ->
+        transport: (ctx) ->
           sendMail: (opts, x) ->
             opts.foo = 'bar'
             x(null, opts)
