@@ -158,12 +158,7 @@ function showHelp() {
 }
 
 function start(cb) {
-  const _start = new Date();
-
-  process.on('exit', statusCode => _.echo('\r',
-    chalk[statusCode ? 'red' : 'green']($.flags.force && !$.flags.interactive
-      ? `✔ Done in ${(new Date() - _start) / 1000}s`
-      : '✔ Done.'), '\r\n'));
+  process.on('exit', statusCode => _.echo('\r', statusCode ? chalk.red('✗ Failed') : chalk.green('✔ Done.'), '\r\n'));
 
   if ($.flags.exec) {
     const child = exec($.flags.exec);
@@ -230,6 +225,7 @@ function run() {
             fail: msg => _.echo('\r', chalk.red(msg), '\n'),
             write: msg => _.echo(msg),
           }))
+          .then(() => _farm.teardown())
           .catch(e => {
             _.echo(chalk.red(($.flags.debug && cleanStack(e.stack)) || e.message), '\r\n');
             _.die(1);
