@@ -38,7 +38,7 @@ describe '#router', ->
 
     $.server.fetch('/no').then (res) ->
       expect(res.statusCode).toEqual 500
-      expect(res.body).toMatch /Undefined .+? handler/
+      expect(res.body).toMatch /Undefined .+? action/
       done()
 
   it 'should responds to defined handlers with 200', (done) ->
