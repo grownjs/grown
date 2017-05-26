@@ -14,17 +14,20 @@ describe '#mailer', ->
       folders: path.join(__dirname, '_fixtures/app/views')
     })
 
-  it '...', (done) ->
+  it 'should by-pass transport as default', (done) ->
     $.server.mount (conn) ->
       conn.mail({
         to: 'foo@candy.bar'
-        subject: 'baz'
-        body: 'buzz'
-        bar: 'baz'
-      })
+      }).then (x) ->
+        conn.resp_body = x
+        conn.end()
 
     $.server.fetch().then (res) ->
-      console.log res.body, '?'
+      expect(res.json.status).toEqual 'sent'
+      expect(res.json.result.subject).toEqual 'OSOMS'
+      expect(res.json.result.from).toEqual 'admin@example.com'
+      expect(res.json.result.to).toEqual 'foo@candy.bar'
+      expect(res.json.result.html).toContain 'EMPTY'
       done()
 
     .catch (err) ->

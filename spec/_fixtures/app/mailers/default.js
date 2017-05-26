@@ -2,7 +2,7 @@ module.exports = {
   layout: 'mailer',
   defaults: {
     from: 'admin@example.com',
-    subject: $ => JSON.stringify($),
+    other: $ => JSON.stringify($) || 'EMPTY',
   },
   methods: {
     missing() {},
