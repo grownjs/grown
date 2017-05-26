@@ -3743,6 +3743,10 @@ wargs@^0.6.2:
   version "0.6.2"
   resolved "https://registry.yarnpkg.com/wargs/-/wargs-0.6.2.tgz#4c88ba8c9e4b3c1339019117a6196bae2673da8d"
 
+wargs@^0.6.3:
+  version "0.6.3"
+  resolved "https://registry.yarnpkg.com/wargs/-/wargs-0.6.3.tgz#7b29a4bb60fe128d753917f489182f12cbc5d98d"
+
 warning-symbol@^0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/warning-symbol/-/warning-symbol-0.1.0.tgz#bb31dd11b7a0f9d67ab2ed95f457b65825bbad21"
