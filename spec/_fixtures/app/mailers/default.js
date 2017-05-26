@@ -1,5 +1,4 @@
 module.exports = {
-  layout: 'mailer',
   defaults: {
     from: 'admin@example.com',
     other: $ => JSON.stringify($) || 'EMPTY',

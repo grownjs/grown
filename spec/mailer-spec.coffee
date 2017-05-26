@@ -30,6 +30,35 @@ describe '#mailer', ->
       expect(res.json.result.html).toContain 'EMPTY'
       done()
 
-    .catch (err) ->
-      console.log err
+  it 'should call external transports', (done) ->
+    $.server.mount (conn) ->
+      conn.mail({
+        layout: 'external'
+        to: 'foo@candy.bar'
+      }).then (x) ->
+        conn.resp_body = x
+        conn.end()
+
+    $.server.fetch().then (res) ->
+      expect(res.json.status).toEqual 'sent'
+      expect(res.json.result.test).toEqual 42
+      expect(res.json.result.html).not.toContain 'EMPTY'
+      done()
+
+  it 'should call inline transports', (done) ->
+    $.server.mount (conn) ->
+      conn.mail({
+        transport: (opts, x) ->
+          opts.foo = 'bar'
+          x(null, opts)
+        layout: 'external'
+        to: 'foo@candy.bar'
+      }).then (x) ->
+        conn.resp_body = x
+        conn.end()
+
+    $.server.fetch().then (res) ->
+      expect(res.json.status).toEqual 'sent'
+      expect(res.json.result.foo).toEqual 'bar'
+      expect(res.json.result.html).not.toContain 'EMPTY'
       done()
