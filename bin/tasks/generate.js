@@ -16,7 +16,7 @@ module.exports = ($, cwd) => {
 
   haki.load(require.resolve('../skel/generate'));
 
-  function _onError(err) {
+  function _onError() {
     // _.echo(chalk.red((IS_DEBUG && err.stack) || err.message), '\r\n');
     _.die(1);
   }
@@ -29,7 +29,7 @@ module.exports = ($, cwd) => {
 
     /* istanbul ignore else */
     if ($.flags.list) {
-      return Promise.resolve(haki.getGeneratorList().forEach(task => {
+      return Promise.resolve(haki.getGeneratorList().forEach(() => {
         // _.echo(chalk.gray('—'), ' ',
           // chalk.cyan(task.result.description || task.name), '\r\n');
 

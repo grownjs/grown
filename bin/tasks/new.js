@@ -235,7 +235,7 @@ module.exports = ($, cwd) => {
   ($.flags.interactive
     ? ask().then(() => run())
     : run())
-  .catch(err => {
+  .catch(() => {
     // _.echo(chalk.red((IS_DEBUG && err.stack) || err.message), '\r\n');
     _.die(1);
   });

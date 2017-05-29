@@ -66,7 +66,7 @@ module.exports = ($, cwd) => {
           if (typeof done === 'function') {
             done(farm, app);
           }
-        }).catch(e => {
+        }).catch(() => {
           // _.echo(chalk.red((IS_DEBUG && cleanStack(e.stack)) || e.message), '\r\n');
           _.die(1);
         }));

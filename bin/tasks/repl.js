@@ -32,7 +32,7 @@ module.exports = ($, cwd) => {
     // _.echo(chalk.gray('↺ Starting server ...'), '\r\r');
 
     farm.run(() =>
-      farm.listen('test://', app => {
+      farm.listen('test://', () => {
         // _.echo(chalk.green('✔ REPL is ready'), ' ', chalk.gray(`(v${_farm.version})`), '\r\n');
         // _.echo(chalk.gray('› Listening at '), chalk.yellow(app.location.href), '\n');
         // _.echo(chalk.gray('› Type .help to list all available commands'), '\n');
