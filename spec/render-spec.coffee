@@ -19,7 +19,7 @@ describe '#render', ->
       conn.view 'example', foo: 'bar'
 
     $.server.fetch().then (res) ->
-      expect(res.body).toContain '<!doctype html>'
+      expect(res.body).toContain '<body>'
       expect(res.body).toContain '<p>TEXT(bar)</p>'
       done()
 
@@ -30,7 +30,7 @@ describe '#render', ->
       conn.view 'example', foo: 'FUA'
 
     $.server.fetch().then (res) ->
-      expect(res.body).toContain '<!doctype html>'
+      expect(res.body).toContain '<body>'
       expect(res.body).toContain '<p>TEXT(FOO),TEXT(FUU),TEXT(FUA)</p>'
       done()
 
@@ -39,7 +39,7 @@ describe '#render', ->
       conn.end('OK')
 
     $.server.fetch().then (res) ->
-      expect(res.body).toContain '<!doctype html>'
+      expect(res.body).toContain '<body>'
       expect(res.body).toContain '<p>OK</p>'
       done()
 
