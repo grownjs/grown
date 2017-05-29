@@ -5,18 +5,22 @@
 
 'use strict';
 
+if (process.argv.indexOf('--debug') > -1) {
+  require('debug').enable('grown,grown:*');
+}
+
 process.stdout.write('Loading server...\r');
 
 const app = require('../app/server');
 
 function runApplication() {
-  const farm = app();
-
   process.stdout.write('Starting framework...\r');
+
+  const farm = app();
 
   farm.run(() =>
     farm.listen(process.env.PORT || 8080, $ => {
-      process.stdout.write(`Listening on ${$.location.href}\r`);
+      process.stdout.write(`Listening on ${$.location.href} [press CTRL-C to quit]\r`);
     }).catch(error => {
       process.stderr.write(`${error.toString()}\n`);
       process.exit(1);

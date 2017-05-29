@@ -3,7 +3,7 @@
 /* eslint-disable global-require */
 
 module.exports = ($, cwd) => {
-  const IS_DEBUG = $.flags.debug === true;
+  // const IS_DEBUG = $.flags.debug === true;
   const IS_REPL = $.flags.repl;
   const IS_DEV = process.env.NODE_ENV === 'development';
 
@@ -20,8 +20,8 @@ module.exports = ($, cwd) => {
   const _repl = require('../lib/repl');
 
   const path = require('path');
-  const chalk = require('chalk');
-  const cleanStack = require('clean-stack');
+  // const chalk = require('chalk');
+  // const cleanStack = require('clean-stack');
 
   const _protocol = $.flags.uws === true ? 'uws' : `http${$.flags.https === true ? 's' : ''}`;
 
@@ -34,7 +34,7 @@ module.exports = ($, cwd) => {
 
   function _startApplication(done) {
     try {
-      _.echo(chalk.gray('↺ Initializing framework ...'), '\r\r');
+      // _.echo(chalk.gray('↺ Initializing framework ...'), '\r\r');
 
       const _host = `${_protocol}://${HOST}:${PORT}`;
 
@@ -49,17 +49,17 @@ module.exports = ($, cwd) => {
         farm.on('close', () => _close());
       }
 
-      _.echo(chalk.gray('↺ Starting server ...'), '\r\r');
+      // _.echo(chalk.gray('↺ Starting server ...'), '\r\r');
 
       // start server
       farm.run(() =>
         farm.listen(_host, app => {
-          _.echo(chalk.green('✔ Server is ready'), ' ', chalk.gray(`(local v${_farm.version})`), '\r\n');
-          _.echo(chalk.gray('› Listening at '), chalk.yellow(app.location.href), '\n');
+          // _.echo(chalk.green('✔ Server is ready'), ' ', chalk.gray(`(v${_farm.version})`), '\r\n');
+          // _.echo(chalk.gray('› Listening at '), chalk.yellow(app.location.href), '\n');
 
           /* istanbul ignore else */
           if (IS_REPL) {
-            _.echo(chalk.gray('› Type .help to list all available commands'), '\n');
+            // _.echo(chalk.gray('› Type .help to list all available commands'), '\n');
           }
 
           /* istanbul ignore else */
@@ -67,7 +67,7 @@ module.exports = ($, cwd) => {
             done(farm, app);
           }
         }).catch(e => {
-          _.echo(chalk.red((IS_DEBUG && cleanStack(e.stack)) || e.message), '\r\n');
+          // _.echo(chalk.red((IS_DEBUG && cleanStack(e.stack)) || e.message), '\r\n');
           _.die(1);
         }));
 
@@ -76,7 +76,7 @@ module.exports = ($, cwd) => {
         farm.on('reload', () => _farm.teardown(_startApplication));
       }
     } catch (e) {
-      _.echo(chalk.red((IS_DEBUG && cleanStack(e.stack)) || e.message), '\r\n');
+      // _.echo(chalk.red((IS_DEBUG && cleanStack(e.stack)) || e.message), '\r\n');
       _.die(1);
     }
   }

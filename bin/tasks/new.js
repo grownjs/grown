@@ -5,7 +5,7 @@
 const _ = require('../lib/util');
 
 const path = require('path');
-const chalk = require('chalk');
+// const chalk = require('chalk');
 
 const DATABASE_TEMPLATE = `module.exports = {
   development: {
@@ -27,7 +27,7 @@ const DATABASE_TEMPLATE = `module.exports = {
 `;
 
 module.exports = ($, cwd) => {
-  const IS_DEBUG = $.flags.debug === true;
+  // const IS_DEBUG = $.flags.debug === true;
 
   let name = $._.shift();
 
@@ -75,11 +75,11 @@ module.exports = ($, cwd) => {
 
   const Haki = require('haki');
 
-  const haki = new Haki(cwd, _.merge({}, $.flags));
+  const haki = new Haki(cwd, _.extend({}, $.flags));
 
   /* istanbul ignore else */
   if ($.flags.quiet) {
-    _.echo(chalk.gray('↺ Initializing, please wait...'), '\r\r');
+    // _.echo(chalk.gray('↺ Initializing, please wait...'), '\r\r');
   }
 
   function ask() {
@@ -90,51 +90,51 @@ module.exports = ($, cwd) => {
         type: 'list',
         message: 'Database:',
         choices: [
-          { value: 'None (default)', result: null },
-          { value: 'PostgreSQL', result: 'postgres' },
-          { value: 'MySQL', result: 'mysql' },
-          { value: 'MSSQL', result: 'mssql' },
-          { value: 'SQLite3', result: 'sqlite' },
+          { label: 'None (default)', value: null },
+          { label: 'PostgreSQL', value: 'postgres' },
+          { label: 'MySQL', value: 'mysql' },
+          { label: 'MSSQL', value: 'mssql' },
+          { label: 'SQLite3', value: 'sqlite' },
         ],
       }, {
         name: 'RELOADER',
         type: 'list',
         message: 'Reloader:',
         choices: [
-          { value: 'None (default)', result: null },
-          { value: 'LiveReload', result: 'live-reload' },
-          { value: 'BrowserSync', result: 'browser-sync' },
+          { label: 'None (default)', value: null },
+          { label: 'LiveReload', value: 'live-reload' },
+          { label: 'BrowserSync', value: 'browser-sync' },
         ],
       }, {
         name: 'BUNDLER',
         type: 'list',
         message: 'Bundler:',
         choices: [
-          { value: 'None (default)', result: null },
-          { value: 'Rollup', result: 'rollup' },
-          { value: 'Webpack', result: 'webpack' },
-          { value: 'FuseBox', result: 'fusebox' },
+          { label: 'None (default)', value: null },
+          { label: 'Rollup', value: 'rollup' },
+          { label: 'Webpack', value: 'webpack' },
+          { label: 'FuseBox', value: 'fusebox' },
         ],
       }, {
         name: 'STYLES',
         type: 'list',
         message: 'Styles:',
         choices: [
-          { value: 'None (default)', result: null },
-          { value: 'LESS', result: 'less' },
-          { value: 'Sass', result: 'sass' },
-          { value: 'Styl', result: 'styl' },
-          { value: 'PostCSS', result: 'postcss' },
+          { label: 'None (default)', value: null },
+          { label: 'LESS', value: 'less' },
+          { label: 'Sass', value: 'sass' },
+          { label: 'Styl', value: 'styl' },
+          { label: 'PostCSS', value: 'postcss' },
         ],
       }, {
         name: 'ES6',
         type: 'list',
         message: 'Scripts:',
         choices: [
-          { value: 'None (default)', result: null },
-          { value: 'Bublé', result: 'buble' },
-          { value: 'Babel', result: 'babel' },
-          { value: 'Traceur', result: 'traceur' },
+          { label: 'None (default)', value: null },
+          { label: 'Bublé', value: 'buble' },
+          { label: 'Babel', value: 'babel' },
+          { label: 'Traceur', value: 'traceur' },
         ],
       }],
       // merge user-input
@@ -150,6 +150,9 @@ module.exports = ($, cwd) => {
     return haki.runGenerator({
       abortOnFail: true,
       basePath: path.join(__dirname, '../skel/template'),
+      prompts() {
+        console.log('WUT');
+      },
       actions: [{
         copy: '.',
         src: '.',
@@ -214,7 +217,7 @@ module.exports = ($, cwd) => {
           $.data.RELOADER === 'live-reload' ? 'tarima-lr' : null,
         ],
       } : null],
-    }, _.merge({
+    }, _.extend({
       APP_NAME: name,
       CSS_LANG: $.data.STYLES,
       CAN_BUNDLE: $.data.BUNDLER || $.data.STYLES || $.data.ES6,
@@ -233,7 +236,7 @@ module.exports = ($, cwd) => {
     ? ask().then(() => run())
     : run())
   .catch(err => {
-    _.echo(chalk.red((IS_DEBUG && err.stack) || err.message), '\r\n');
+    // _.echo(chalk.red((IS_DEBUG && err.stack) || err.message), '\r\n');
     _.die(1);
   });
 };

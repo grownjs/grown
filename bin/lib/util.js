@@ -18,15 +18,7 @@ function _clearModules(cwd) {
 
 const die = process.exit.bind(process);
 
-const CLR = '\x1b[K';
-
-function echo() {
-  process.stdout.write(Array.prototype.slice.call(arguments).join('')
-    .replace(/\r\r/g, `${CLR}\r`)
-    .replace(/\r\n/g, `${CLR}\n`));
-}
-
-function merge(target) {
+function extend(target) {
   Array.prototype.slice.call(arguments, 1).forEach(source => {
     Object.keys(source).forEach(key => {
       /* istanbul ignore else */
@@ -41,7 +33,6 @@ function merge(target) {
 
 module.exports = {
   die,
-  echo,
-  merge,
+  extend,
   clearModules: _clearModules,
 };

@@ -6,6 +6,7 @@
 'use strict';
 
 /* eslint-disable global-require */
+/* eslint-disable no-nested-ternary */
 
 const GROWN_TXT = `
   \u001b[32m▄████  ██▀███   ▒█████   █     █░███▄    █\u001b[39m
@@ -19,40 +20,47 @@ const GROWN_TXT = `
       \u001b[32m░    ░         ░ ░      ░            ░\u001b[39m
 `;
 
-const $ = require('wargs')(process.argv.slice(2), {
-  booleans: 'ODIGRCAusVvdfqhly',
-  camelCase: true,
-  defaults: {
-    cwd: process.cwd(),
-    port: process.env.PORT || 8080,
-    host: process.env.HOST || '0.0.0.0',
-  },
-  aliases: {
-    y: 'interactive',
-    O: 'no-install-opts',
-    D: 'no-install-dev',
-    I: 'no-install',
-    G: 'no-clone',
-    R: 'no-exec',
-    C: 'no-copy',
-    A: 'no-add',
-    i: 'repl',
-    u: 'uws',
-    s: 'https',
-    v: 'version',
-    V: 'verbose',
-    d: 'debug',
-    f: 'force',
-    q: 'quiet',
-    x: 'exec',
-    P: 'port',
-    H: 'host',
-    h: 'help',
-    l: 'list',
-    c: 'cwd',
-    e: 'env',
-  },
-});
+let $;
+
+try {
+  $ = require('wargs')(process.argv.slice(2), {
+    booleans: 'ODIGRCAusVvdfqhly',
+    camelCase: true,
+    defaults: {
+      cwd: process.cwd(),
+      port: process.env.PORT || 8080,
+      host: process.env.HOST || '0.0.0.0',
+    },
+    aliases: {
+      y: 'interactive',
+      O: 'no-install-opts',
+      D: 'no-install-dev',
+      I: 'no-install',
+      G: 'no-clone',
+      R: 'no-exec',
+      C: 'no-copy',
+      A: 'no-add',
+      i: 'repl',
+      u: 'uws',
+      s: 'https',
+      v: 'version',
+      V: 'verbose',
+      d: 'debug',
+      f: 'force',
+      q: 'quiet',
+      x: 'exec',
+      P: 'port',
+      H: 'host',
+      h: 'help',
+      l: 'list',
+      c: 'cwd',
+      e: 'env',
+    },
+  });
+} catch (e) {
+  process.stderr.write(`\r\x1b[31m${e.message}\x1b[0m\n`);
+  process.exit(1);
+}
 
 // defaults
 process.name = 'grown';
@@ -68,8 +76,6 @@ delete $.flags.env;
 
 const thisPkg = require('../package.json');
 const exec = require('child_process').exec;
-const cleanStack = require('clean-stack');
-const chalk = require('chalk');
 const path = require('path');
 const fs = require('fs');
 
@@ -97,11 +103,16 @@ if (!_task && $.flags.list) {
   _task = 'generate';
 }
 
-const IS_DEBUG = $.flags.debug === true;
+// nice logs!
+const _level = $.flags.verbose ? 'verbose' : $.flags.debug ? 'debug' : 'info';
 
-/* istanbul ignore else */
-if (IS_DEBUG) {
+const logger = require('log-pose')
+  .setLevel(($.flags.quiet && !$.flags.version && !$.flags.help) ? false : _level)
+  .getLogger(12, process.stdout, process.stderr);
+
+if ($.flags.debug && $.flags.verbose) {
   require('debug').enable('grown,grown:*');
+  require('log-pose').setLevel(false);
 }
 
 const cwd = $.flags.cwd || process.cwd();
@@ -109,7 +120,7 @@ const cwd = $.flags.cwd || process.cwd();
 delete $.flags.cwd;
 
 function showHelp() {
-  _.echo(`${GROWN_TXT}
+  logger.write(`${GROWN_TXT}
   Usage:
     ${_bin} new APP_PATH [...]
 
@@ -154,11 +165,16 @@ function showHelp() {
     -l, [--list]         # List available generators
     -h, [--help]         # Show this help message and quit
     -x, [--exec]         # Execute a command before running
-    -v, [--version]      # Show Grown version number and quit\n`);
+    -v, [--version]      # Show Grown version number and quit
+
+`);
 }
 
 function start(cb) {
-  process.on('exit', statusCode => _.echo('\r', statusCode ? chalk.red('✗ Failed') : chalk.green('✔ Done.'), '\r\n'));
+  process.on('exit', statusCode =>
+    logger.printf('\r\r{% %s %s %}\n',
+      statusCode ? 'error' : 'end',
+      statusCode ? 'Failed' : 'Done'));
 
   if ($.flags.exec) {
     const child = exec($.flags.exec);
@@ -180,7 +196,8 @@ function start(cb) {
 
 function run() {
   try {
-    _.echo(chalk.gray(`Grown v${thisPkg.version} (NODE_ENV=${process.env.NODE_ENV})`), '\r\n');
+    logger.info('\r{% green Grown v%s %} {% gray (node %s) %}\r\n',
+      thisPkg.version, process.version);
 
     const _tasks = {
       generate: require('./tasks/generate'),
@@ -220,27 +237,29 @@ function run() {
 
         _farm()
           .run(ctx => _call(ctx, $, {
-            ok: msg => _.echo('\r', chalk.green(msg), '\n'),
-            log: msg => _.echo('\r', chalk.gray(msg), '\n'),
-            fail: msg => _.echo('\r', chalk.red(msg), '\n'),
-            write: msg => _.echo(msg),
+            // ok: msg => _.echo('\r', chalk.green(msg), '\n'),
+            // log: msg => _.echo('\r', chalk.gray(msg), '\n'),
+            // fail: msg => _.echo('\r', chalk.red(msg), '\n'),
+            // write: msg => _.echo(msg),
           }))
           .then(() => _farm.teardown())
           .catch(e => {
-            _.echo(chalk.red(($.flags.debug && cleanStack(e.stack)) || e.message), '\r\n');
+            // _.echo(chalk.red(($.flags.debug && cleanStack(e.stack)) || e.message), '\r\n');
             _.die(1);
           });
       }
     }
   } catch (e) {
-    _.echo(chalk.red(($.flags.debug && cleanStack(e.stack)) || e.message), '\r\n');
+    // _.echo(chalk.red(($.flags.debug && cleanStack(e.stack)) || e.message), '\r\n');
     _.die(1);
   }
 }
 
 /* istanbul ignore else */
 if ($.flags.version) {
-  _.echo(chalk.green(`${thisPkg.name} v${thisPkg.version}`), '\r\n');
+  logger.printf('\r{% green %s v%s %} {% gray (node %s) %}\r\n',
+    thisPkg.name, thisPkg.version,
+    process.version);
   _.die();
 }
 
