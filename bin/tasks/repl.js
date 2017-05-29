@@ -2,15 +2,13 @@
 
 /* eslint-disable global-require */
 
-module.exports = ($, cwd) => {
+const path = require('path');
+
+module.exports = ($, cwd, logger) => {
   require('source-map-support').install();
 
   // const _ = require('../lib/util');
   const _repl = require('../lib/repl');
-
-  const path = require('path');
-  // const chalk = require('chalk');
-
   const _test = require('../../lib/plugs/testing.js');
 
   const _farm = require(path.join(cwd, 'app/server'));
@@ -19,24 +17,22 @@ module.exports = ($, cwd) => {
 
   // small bootstrap
   function _startApplication() {
-    // _.echo(chalk.gray('↺ Initializing framework ...'), '\r\r');
+    logger('Initializing framework', () => {
+      farm = _farm();
+      farm.fetch = _test(farm);
 
-    farm = _farm();
+      const _close = _repl($, farm);
 
-    farm.fetch = _test(farm);
+      farm.on('close', () => _close());
+    });
 
-    const _close = _repl($, farm);
-
-    farm.on('close', () => _close());
-
-    // _.echo(chalk.gray('↺ Starting server ...'), '\r\r');
-
-    farm.run(() =>
-      farm.listen('test://', () => {
-        // _.echo(chalk.green('✔ REPL is ready'), ' ', chalk.gray(`(v${_farm.version})`), '\r\n');
-        // _.echo(chalk.gray('› Listening at '), chalk.yellow(app.location.href), '\n');
-        // _.echo(chalk.gray('› Type .help to list all available commands'), '\n');
-      }));
+    logger('Starting server', () => {
+      farm.run(() =>
+        farm.listen('test://', () => {
+          logger.info('{% ok REPL is ready %} {% gray (v%s) %}\n', _farm.version);
+          logger.info('{% log Type %} {% bold .help %} {% gray to list all available commands %}\n');
+        }));
+    });
 
     farm.on('reload', () => _farm.teardown(_startApplication));
   }

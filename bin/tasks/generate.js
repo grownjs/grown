@@ -2,24 +2,16 @@
 
 /* eslint-disable global-require */
 
-module.exports = ($, cwd) => {
-  // const IS_DEBUG = $.flags.debug === true;
-
+module.exports = ($, cwd, logger) => {
   const _ = require('../lib/util');
 
   const _cmd = $._.shift();
 
   const Haki = require('haki');
-  // const chalk = require('chalk');
 
   const haki = new Haki(cwd, _.extend({}, $.flags, { data: $._ }));
 
   haki.load(require.resolve('../skel/generate'));
-
-  function _onError() {
-    // _.echo(chalk.red((IS_DEBUG && err.stack) || err.message), '\r\n');
-    _.die(1);
-  }
 
   function _run() {
     /* istanbul ignore else */
@@ -29,19 +21,27 @@ module.exports = ($, cwd) => {
 
     /* istanbul ignore else */
     if ($.flags.list) {
-      return Promise.resolve(haki.getGeneratorList().forEach(() => {
-        // _.echo(chalk.gray('—'), ' ',
-          // chalk.cyan(task.result.description || task.name), '\r\n');
+      return haki.getGeneratorList().forEach(task => {
+        logger.info('\r{% item %s %}\r\n', task.value.description || task.name);
+        logger.info('  {% bold g %s %}%s\n', task.gen, task.value.arguments
+          ? ` {% gray [${task.value.arguments.join('] [')}] %}`
+          : '');
 
-        // _.echo('  ',
-          // chalk.gray(`grown g ${task.generate}`),
-          // task.result.arguments ? chalk.gray(` [${task.result.arguments.join('] [')}]`) : '',
-          // '\r\n');
-      }));
+        /* istanbul ignore else */
+        if (task.value.usage) {
+          logger.info('  {% gray %s %}\n',
+            task.value.usage.split('\n').join('\n  '));
+        }
+      });
     }
 
     return haki.chooseGeneratorList(_.extend({}, $.data, $.params));
   }
 
-  _run().catch(_onError);
+  Promise.resolve()
+    .then(() => _run())
+    .catch(err => {
+      _.printError(err, $.flags, logger);
+      _.die(1);
+    });
 };

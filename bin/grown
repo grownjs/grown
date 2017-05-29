@@ -20,6 +20,8 @@ const GROWN_TXT = `
       \u001b[32m░    ░         ░ ░      ░            ░\u001b[39m
 `;
 
+const _ = require('./lib/util');
+
 let $;
 
 try {
@@ -58,8 +60,8 @@ try {
     },
   });
 } catch (e) {
-  process.stderr.write(`\r\x1b[31m${e.message}\x1b[0m\n`);
-  process.exit(1);
+  _.printError(e);
+  _.die(1);
 }
 
 // defaults
@@ -80,8 +82,6 @@ const path = require('path');
 const fs = require('fs');
 
 let _task = $._.shift();
-
-const _ = require('./lib/util');
 
 const _bin = path.basename(thisPkg.bin);
 
@@ -126,6 +126,8 @@ function showHelp() {
 
   Presets:
     ES6=buble|babel|traceur
+    IMAGES= ?
+    SPRITES= ?
     STYLES=less|sass|styl|postcss
     BUNDLER=fusebox|webpack|rollup
     RELOADER=browser-sync|live-reload
@@ -211,7 +213,7 @@ function run() {
       case 'start':
       case 'repl':
       case 'new':
-        _tasks[_task]($, cwd);
+        _tasks[_task]($, cwd, logger);
         break;
 
       default: {
@@ -236,21 +238,16 @@ function run() {
         const _farm = require(path.join(cwd, 'app/server'));
 
         _farm()
-          .run(ctx => _call(ctx, $, {
-            // ok: msg => _.echo('\r', chalk.green(msg), '\n'),
-            // log: msg => _.echo('\r', chalk.gray(msg), '\n'),
-            // fail: msg => _.echo('\r', chalk.red(msg), '\n'),
-            // write: msg => _.echo(msg),
-          }))
+          .run(ctx => _call(ctx, $, logger))
           .then(() => _farm.teardown())
           .catch(e => {
-            // _.echo(chalk.red(($.flags.debug && cleanStack(e.stack)) || e.message), '\r\n');
+            _.printError(e, $.flags, logger);
             _.die(1);
           });
       }
     }
   } catch (e) {
-    // _.echo(chalk.red(($.flags.debug && cleanStack(e.stack)) || e.message), '\r\n');
+    _.printError(e, $.flags, logger);
     _.die(1);
   }
 }

@@ -5,7 +5,6 @@
 const _ = require('../lib/util');
 
 const path = require('path');
-// const chalk = require('chalk');
 
 const DATABASE_TEMPLATE = `module.exports = {
   development: {
@@ -26,9 +25,7 @@ const DATABASE_TEMPLATE = `module.exports = {
 };
 `;
 
-module.exports = ($, cwd) => {
-  // const IS_DEBUG = $.flags.debug === true;
-
+module.exports = ($, cwd, logger) => {
   let name = $._.shift();
 
   /* istanbul ignore else */
@@ -76,11 +73,6 @@ module.exports = ($, cwd) => {
   const Haki = require('haki');
 
   const haki = new Haki(cwd, _.extend({}, $.flags));
-
-  /* istanbul ignore else */
-  if ($.flags.quiet) {
-    // _.echo(chalk.gray('↺ Initializing, please wait...'), '\r\r');
-  }
 
   function ask() {
     return haki.runGenerator({
@@ -150,9 +142,6 @@ module.exports = ($, cwd) => {
     return haki.runGenerator({
       abortOnFail: true,
       basePath: path.join(__dirname, '../skel/template'),
-      prompts() {
-        console.log('WUT');
-      },
       actions: [{
         copy: '.',
         src: '.',
@@ -235,8 +224,8 @@ module.exports = ($, cwd) => {
   ($.flags.interactive
     ? ask().then(() => run())
     : run())
-  .catch(() => {
-    // _.echo(chalk.red((IS_DEBUG && err.stack) || err.message), '\r\n');
+  .catch(e => {
+    _.printError(e, $.flags, logger);
     _.die(1);
   });
 };

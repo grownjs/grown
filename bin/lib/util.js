@@ -2,6 +2,16 @@
 
 /* eslint-disable prefer-rest-params */
 
+const cleanStack = require('clean-stack');
+
+function _printError(e, flags, logger) {
+  if (!logger || (flags && flags.quiet)) {
+    process.stderr.write(`\r\x1b[31m${(flags && flags.debug && cleanStack(e.stack)) || e.message}\x1b[0m\n`);
+  } else {
+    logger.info('\r{% error %s %}\r\n', (flags.debug && cleanStack(e.stack)) || e.message);
+  }
+}
+
 // runtime hooks
 const Module = require('module');
 
@@ -34,5 +44,6 @@ function extend(target) {
 module.exports = {
   die,
   extend,
+  printError: _printError,
   clearModules: _clearModules,
 };
