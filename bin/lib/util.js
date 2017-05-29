@@ -4,11 +4,15 @@
 
 const cleanStack = require('clean-stack');
 
+function _getError(e, flags) {
+  return (flags.debug && cleanStack(e.stack)) || e.message;
+}
+
 function _printError(e, flags, logger) {
   if (!logger || (flags && flags.quiet)) {
-    process.stderr.write(`\r\x1b[31m${(flags && flags.debug && cleanStack(e.stack)) || e.message}\x1b[0m\n`);
+    process.stderr.write(`\r\x1b[31m${_getError(e, flags)}\x1b[0m\n`);
   } else {
-    logger.info('\r{% error %s %}\r\n', (flags.debug && cleanStack(e.stack)) || e.message);
+    logger.info('\r{% error %s %}\r\n', _getError(e, flags));
   }
 }
 
@@ -44,6 +48,7 @@ function extend(target) {
 module.exports = {
   die,
   extend,
+  getError: _getError,
   printError: _printError,
   clearModules: _clearModules,
 };

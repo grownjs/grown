@@ -12,9 +12,7 @@ const fs = require('fs');
 module.exports = ($, farm) => {
   const vm = require('vm');
   const REPL = require('repl');
-  const chalk = require('chalk');
   const wargs = require('wargs');
-  const cleanStack = require('clean-stack');
 
   let kill = true;
 
@@ -47,7 +45,8 @@ module.exports = ($, farm) => {
       try {
         value = vm.runInNewContext(cmd, context);
       } catch (e) {
-        return callback(chalk.red(($.flags.debug && cleanStack(e.stack)) || e.message || e.toString()));
+        farm.log.info('{% error %s %}\n', _.getError(e, $.flags));
+        return callback();
       }
 
       /* istanbul ignore else */
@@ -60,7 +59,8 @@ module.exports = ($, farm) => {
         return value
           .then(result => callback(null, result))
           .catch(e => {
-            callback(chalk.red(($.flags.debug && cleanStack(e.stack)) || e.message || e.toString()));
+            farm.log.info('{% error %s %}\n', _.getError(e, $.flags));
+            callback();
           });
       }
 
@@ -100,17 +100,6 @@ module.exports = ($, farm) => {
       repl.rli.history.pop();
     }
   });
-
-  function print() {
-    repl.outputStream.write(Array.prototype.slice.call(arguments).join(''));
-  }
-
-  const _logger = {
-    ok: msg => print('\r', chalk.green(msg), '\n'),
-    log: msg => print('\r', chalk.gray(msg), '\n'),
-    fail: msg => print('\r', chalk.red(msg), '\n'),
-    write: msg => print(msg),
-  };
 
   Object.defineProperty(repl.context, 'Grown', {
     configurable: false,
@@ -177,7 +166,7 @@ module.exports = ($, farm) => {
           ? farm.extensions.routes(_path)
           : null;
       } catch (e) {
-        print(chalk.red(`Route not found, given '${_path}'`), '\n');
+        farm.log.info("{% error Route not found, given '%s' %}\n", _path);
         return;
       }
 
@@ -191,13 +180,11 @@ module.exports = ($, farm) => {
       }
 
       if (['get', 'put', 'post', 'delete'].indexOf(_method) === -1 || _path.charAt() !== '/') {
-        print(chalk.red(`Invalid request, given '${_method} ${_path}'`), '\n');
+        farm.log.info("{% error Invalid request, given '%s %s' %}\n", _method, _path);
         return;
       }
 
       try {
-        const _start = new Date();
-
         // normalize input
         const _opts = {
           body: args.data,
@@ -226,9 +213,7 @@ module.exports = ($, farm) => {
           args.params['content-type'] = 'multipart/form-data';
         }
 
-        process.nextTick(() => {
-          print(chalk.green(_method.toUpperCase()), ' ', chalk.gray(_path), '\n');
-
+        farm.log(`${_method.toUpperCase()} ${_path}`, () =>
           farm.fetch(_path, _method, _opts).then(res => {
             let _status = res.statusCode === 200 ? 'green' : 'cyan';
 
@@ -238,22 +223,23 @@ module.exports = ($, farm) => {
             }
 
             process.nextTick(() => {
-              print(chalk[_status](res.statusCode),
-                ' ', chalk.yellow(res.statusMessage),
-                ' ', `${(new Date() - _start) / 1000}ms\n`);
+              farm.log.info('{% %s %s %} {% yellow %s %}\n',
+                _status,
+                res.statusCode,
+                res.statusMessage);
 
               Object.keys(res._headers).forEach(key =>
-                print(chalk.gray(`${key.replace(/\b([a-z])/g, $0 =>
-                  $0.toUpperCase())}:`), ' ', res._headers[key], '\n'));
+                farm.log.info('{% gray %s: %} %s\n',
+                  key.replace(/\b([a-z])/g, $0 => $0.toUpperCase()),
+                  res._headers[key]));
 
-              print('\n', chalk.gray(res.body), '\n');
+              farm.log.info('\n{% gray %s %}\n', res.body);
             });
           }).catch(e => {
-            print(chalk.red(($.flags.debug && cleanStack(e.stack)) || e.message || e.toString()), '\n');
-          });
-        });
+            farm.log.info('{% error %s %}\n', _.getError(e, $.flags));
+          }));
       } catch (_e) {
-        print(chalk.red(($.flags.debug && cleanStack(_e.stack)) || _e.message || _e.toString()), '\n');
+        farm.log.info('{% error %s %}\n', _.getError(_e, $.flags));
       }
     },
   });
@@ -261,19 +247,20 @@ module.exports = ($, farm) => {
   repl.defineCommand('reload', {
     help: 'Restart the current session',
     action() {
-      farm.emit('reload', repl, _logger);
+      farm.emit('reload', repl);
     },
   });
 
   repl.defineCommand('history', {
     help: 'Show the history',
     action() {
-      print(repl.rli.history.slice().reverse().join('\n'), '\n');
+      farm.log.info('%s\n', repl.rli.history.slice().reverse().join('\n'));
     },
   });
 
   farm.on('done', () => {
-    farm.emit('repl', repl, _logger);
+    require('log-pose').setLogger(repl.outputStream);
+    farm.emit('repl', repl);
     repl.resume();
   });
 
