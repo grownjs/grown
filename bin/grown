@@ -198,8 +198,8 @@ function start(cb) {
 
 function run() {
   try {
-    logger.info('\r{% green Grown v%s %} {% gray (node %s) %}\r\n',
-      thisPkg.version, process.version);
+    logger.info('\r{% green Grown v%s %} {% gray (node %s - %s) %}\r\n',
+      thisPkg.version, process.version, process.env.NODE_ENV);
 
     const _tasks = {
       generate: require('./tasks/generate'),
@@ -254,10 +254,9 @@ function run() {
 
 /* istanbul ignore else */
 if ($.flags.version) {
-  logger.printf('\r{% green %s v%s %} {% gray (node %s - %s) %}\r\n',
+  logger.printf('\r{% green %s v%s %} {% gray (node %s) %}\r\n',
     thisPkg.name, thisPkg.version,
-    process.version,
-    process.env.NODE_ENV);
+    process.version);
   _.die();
 }
 
