@@ -254,9 +254,10 @@ function run() {
 
 /* istanbul ignore else */
 if ($.flags.version) {
-  logger.printf('\r{% green %s v%s %} {% gray (node %s) %}\r\n',
+  logger.printf('\r{% green %s v%s %} {% gray (node %s - %s) %}\r\n',
     thisPkg.name, thisPkg.version,
-    process.version);
+    process.version,
+    process.env.NODE_ENV);
   _.die();
 }
 
