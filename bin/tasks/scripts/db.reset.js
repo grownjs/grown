@@ -6,9 +6,9 @@ module.exports = ($, argv, logger) =>
       throw new Error(`Undefined model ${name}`);
     }
 
-    return $.extensions.models[name].sync({
-      force: argv.flags.true,
+    return $.extensions.models[name].destroy({
+      truncate: true,
     }).then(() => {
-      logger.info('{% item %s was synced %}\n', name);
+      logger.info('{% item %s was reset %}\n', name);
     });
   }));
