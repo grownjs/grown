@@ -173,10 +173,11 @@ function showHelp() {
 }
 
 function start(cb) {
-  process.on('exit', statusCode =>
-    logger.printf('\r\r{% %s %s %}\n',
-      statusCode ? 'error' : 'end',
-      statusCode ? 'Failed' : 'Done'));
+  process.on('exit', statusCode => {
+    if (!statusCode) {
+      logger.printf('\r\r{% end Done %}\n');
+    }
+  });
 
   if ($.flags.exec) {
     const child = exec($.flags.exec);

@@ -64,15 +64,6 @@ module.exports = () => {
     maxFiles: parseInt(process.env.UPLOAD_MAXFILES, 0) || 10,
   }));
 
-  // inject logging helpers
-  $.use(Grown.plugs.logger({
-    transports: [{
-      Console: {
-        chalkize: process.env.LOGGER_COLORIZE === 'true' || true,
-      },
-    }],
-  }));
-
   return $;
 };
 

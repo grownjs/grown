@@ -41,13 +41,14 @@ module.exports = ($, cwd, logger) => {
         const _close = _repl($, farm);
 
         farm.on('close', () => _close());
+        farm.on('reload', () => _close());
       }
     });
 
     logger('Starting server', () => {
       farm.run(() =>
         farm.listen(`${_protocol}://${HOST}:${PORT}`, app => {
-          logger.info('{% ok Server is ready %} {% gray (v%s) %}\n', _farm.version);
+          logger.info('{% ok Server is ready %}\n');
           logger.info('{% link %s %}\n', app.location.href);
 
           /* istanbul ignore else */
@@ -59,10 +60,11 @@ module.exports = ($, cwd, logger) => {
           if (typeof done === 'function') {
             done(farm, app);
           }
-        }).catch(e => {
+        }))
+        .catch(e => {
           _.printError(e, $.flags, logger);
           _.die(1);
-        }));
+        });
     });
 
     /* istanbul ignore else */

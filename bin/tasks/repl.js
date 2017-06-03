@@ -2,6 +2,8 @@
 
 /* eslint-disable global-require */
 
+const _ = require('../lib/util');
+
 const path = require('path');
 
 module.exports = ($, cwd, logger) => {
@@ -24,14 +26,19 @@ module.exports = ($, cwd, logger) => {
       const _close = _repl($, farm);
 
       farm.on('close', () => _close());
+      farm.on('reload', () => _close());
     });
 
     logger('Starting server', () => {
       farm.run(() =>
         farm.listen('test://', () => {
-          logger.info('{% ok REPL is ready %} {% gray (v%s) %}\n', _farm.version);
+          logger.info('{% ok REPL is ready %}\n');
           logger.info('{% log Type %} {% bold .help %} {% gray to list all available commands %}\n');
-        }));
+        }))
+        .catch(e => {
+          _.printError(e, $.flags, logger);
+          _.die(1);
+        });
     });
 
     farm.on('reload', () => _farm.teardown(_startApplication));
