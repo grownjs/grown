@@ -259,6 +259,9 @@ module.exports = ($, cwd, logger) => {
             ['body-parser', 'cookie-parser', 'cookie-session'],
           ],
           devDependencies: [
+            ['chokidar', 'node-notifier'],
+            $.flags.talavera !== false ? 'talavera' : null,
+            $.flags.bower !== false ? 'tarima-bower' : null,
             ['tarima', 'pug', 'csso', 'google-closure-compiler-js'],
             ['eslint', 'eslint-plugin-import', 'eslint-config-airbnb-base'],
           ],
@@ -291,8 +294,6 @@ module.exports = ($, cwd, logger) => {
             $.data.ES6 === 'traceur' ? 'traceur' : null,
             $.data.ES6 === 'babel' ? ['babel-core', 'babel-preset-es2015', 'babel-plugin-transform-react-jsx'] : null,
             $.data.ES6 === 'buble' ? 'buble' : null,
-            $.flags.bower !== false ? 'tarima-bower' : null,
-            $.flags.talavera !== false ? 'talavera' : null,
           ],
         } : null,
         // testing dependencies
