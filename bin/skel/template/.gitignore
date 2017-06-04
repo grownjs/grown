@@ -6,5 +6,6 @@
 /build
 /public
 /coverage
+/.nyc_output
 /node_modules
 /bower_components

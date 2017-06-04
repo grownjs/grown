@@ -14,4 +14,6 @@ module.exports = {
   staging: [
     'browser',
   ],
+  http: [],
+  ci: [],
 };

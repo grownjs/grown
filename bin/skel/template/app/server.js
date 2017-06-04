@@ -19,50 +19,52 @@ module.exports = () => {
     env: process.env.NODE_ENV || 'development',
   });
 
-  // enable file server
-  const serveStatic = require('serve-static');
+  $.on('listen', () => {
+    // enable file server
+    const serveStatic = require('serve-static');
 
-  // serve all static files
-  $.mount(serveStatic(path.join(cwd, 'public')));
+    // serve all static files
+    $.mount(serveStatic(path.join(cwd, 'public')));
 
-  // serve generated source files
-  $.mount(serveStatic(path.join(cwd, 'build/public')));
+    // serve generated source files
+    $.mount(serveStatic(path.join(cwd, 'build/public')));
 
-  // {{#DATABASE}}initialize models before
-  $.use(Grown.plugs.models({
-    settings: path.join(cwd, 'config/database.js'),
-    folders: path.join(cwd, 'app/models'),
-  }));
+    // {{#DATABASE}}initialize models before
+    $.use(Grown.plugs.models({
+      settings: path.join(cwd, 'config/database.js'),
+      folders: path.join(cwd, 'app/models'),
+    }));
 
-  // {{/DATABASE}}load routes and views
-  $.use(Grown.plugs.router({
-    middlewares: {
-      settings: path.join(cwd, 'config/middlewares.js'),
-      folders: path.join(cwd, 'boot/middlewares'),
-    },
-    settings: path.join(cwd, 'config/routes.js'),
-    folders: path.join(cwd, 'app/controllers'),
-  }));
+    // {{/DATABASE}}load routes and views
+    $.use(Grown.plugs.router({
+      middlewares: {
+        settings: path.join(cwd, 'config/middlewares.js'),
+        folders: path.join(cwd, 'lib/middlewares'),
+      },
+      settings: path.join(cwd, 'config/routes.js'),
+      folders: path.join(cwd, 'app/controllers'),
+    }));
 
-  $.use(Grown.plugs.render({
-    folders: [
-      path.join(cwd, 'app/views'),
-      path.join(cwd, 'build/views'),
-    ],
-  }));
+    $.use(Grown.plugs.render({
+      folders: [
+        path.join(cwd, 'app/views'),
+        path.join(cwd, 'build/views'),
+      ],
+    }));
 
-  // required for CSRF
-  $.use(Grown.plugs.session({
-    secret: process.env.SESSION_SECRET || 'secret*value',
-    keys: (process.env.SESSION_KEYS || 'secret*value').split(/\s+/),
-    maxAge: parseInt(process.env.SESSION_MAXAGE || 0, 10) || 86400000,
-  }));
+    // required for CSRF
+    $.use(Grown.plugs.session({
+      secret: process.env.SESSION_SECRET || 'secret*value',
+      keys: (process.env.SESSION_KEYS || 'secret*value').split(/\s+/),
+      maxAge: parseInt(process.env.SESSION_MAXAGE || 0, 10) || 86400000,
+    }));
 
-  // enable file uploads
-  $.use(Grown.plugs.formidable({
-    multiple: process.env.UPLOAD_MULTIPLE === 'true' || true,
-    maxFiles: parseInt(process.env.UPLOAD_MAXFILES, 0) || 10,
-  }));
+    // enable file uploads
+    $.use(Grown.plugs.formidable({
+      multiple: process.env.UPLOAD_MULTIPLE === 'true' || true,
+      maxFiles: parseInt(process.env.UPLOAD_MAXFILES, 0) || 10,
+    }));
+  });
 
   return $;
 };

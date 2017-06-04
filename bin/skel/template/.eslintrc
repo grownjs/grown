@@ -8,6 +8,13 @@
   "parserOptions": {
     "sourceType": "module"
   },
+  "globals": {
+    "expect": true,
+    "it": true,
+    "xit": true,
+    "describe": true,
+    "xdescribe": true
+  },
   "rules" : {
     "max-len": ["error", {
       "code": 150

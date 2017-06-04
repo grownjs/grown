@@ -26,7 +26,7 @@ let $;
 
 try {
   $ = require('wargs')(process.argv.slice(2), {
-    booleans: 'ODIGRCAusVvdfqhly',
+    booleans: 'BTODIGRCAusVvdfqhly',
     camelCase: true,
     defaults: {
       cwd: process.cwd(),
@@ -35,6 +35,8 @@ try {
     },
     aliases: {
       y: 'interactive',
+      B: 'no-bower',
+      T: 'no-talavera',
       O: 'no-install-opts',
       D: 'no-install-dev',
       I: 'no-install',
@@ -125,38 +127,44 @@ function showHelp() {
     ${_bin} new APP_PATH [...]
 
   Presets:
-    ES6=buble|babel|traceur
-    IMAGES= ?
-    SPRITES= ?
-    STYLES=less|sass|styl|postcss
-    BUNDLER=fusebox|webpack|rollup
-    RELOADER=browser-sync|live-reload
-    DATABASE=postgres|mysql|mssql|sqlite
+    DATABASE   postgres | mysql | mssql | sqlite
+    TESTS      ava | mocha | jasmine-node
+    ES6        buble | babel | traceur
+    BUNDLER    fusebox | webpack | rollup
+    STYLES     less | sass | styl | postcss
+    RELOADER   browser-sync | live-reload
+
+  Examples:
+    grown new .
+    grown new my-app -y
+    grown new . -fI ES6=buble TESTS=mocha
 
   Initialization options:
-    -O, [--no-install-opts]   # Skip installing dependencies
-    -D, [--no-install-dev]    # Skip installing dependencies
-    -I, [--no-install]        # Skip installing dependencies
-    -G, [--no-clone]          # Skip cloning repositories
-    -R, [--no-exec]           # Skip running commands
-    -C, [--no-copy]           # Skip copying sources
-    -A, [--no-add]            # Skip writing files
-    -f, [--force]             # Force without asking
-    -V, [--verbose]           # Installation logs
-    -y, [--interactive]       # Interactive mode
+    -B, [--no-bower]           # Skip installing tarima-bower support
+    -T, [--no-talavera]        # Skip images and talavera support
+    -O, [--no-install-opts]    # Skip installing dependencies
+    -D, [--no-install-dev]     # Skip installing dependencies
+    -I, [--no-install]         # Skip installing dependencies
+    -G, [--no-clone]           # Skip cloning repositories
+    -R, [--no-exec]            # Skip running commands
+    -C, [--no-copy]            # Skip copying sources
+    -A, [--no-add]             # Skip writing files
+    -f, [--force]              # Force without asking
+    -V, [--verbose]            # Installation logs
+    -y, [--interactive]        # Interactive mode
 
   Runtime options:
-    -d, [--debug]             # Enable all debug messages
-    -q, [--quiet]             # Suppress status output
-    -c, [--cwd]               # Set the process.cwd()
-    -P, [--port]              # Set PORT value (default: 80)
-    -H, [--host]              # Set HOST value (default: 0.0.0.0)
-    -e, [--env]               # Set NODE_ENV value (default: development)
+    -d, [--debug]              # Enable all debug messages
+    -q, [--quiet]              # Suppress status output
+    -c, [--cwd]                # Set the process.cwd()
+    -P, [--port]               # Set PORT value (default: 80)
+    -H, [--host]               # Set HOST value (default: 0.0.0.0)
+    -e, [--env]                # Set NODE_ENV value (default: development)
 
   Server options:
-    -i, [--repl]              # Enable the REPL
-    -u, [--uws]               # Force UWS
-    -s, [--https]             # Force HTTP
+    -i, [--repl]               # Enable the REPL
+    -u, [--uws]                # Force UWS
+    -s, [--https]              # Force HTTP
 
   Other actions:
     ${_bin} g|add|generate [...]
