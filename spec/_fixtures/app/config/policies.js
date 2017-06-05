@@ -21,6 +21,6 @@ module.exports = {
     'Secret.view': {
       Editor: 'allow',
     },
-    'Home.index': 'allow',
+    Home: 'allow',
   },
 };

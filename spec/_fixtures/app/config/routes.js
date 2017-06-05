@@ -1,4 +1,4 @@
 module.exports = map =>
   map()
-    .get('/', 'Home.index')
+    .get('/', 'Home')
     .resources('/Example');
