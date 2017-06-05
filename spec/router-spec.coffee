@@ -42,7 +42,7 @@ describe '#router', ->
       done()
 
   it 'should responds to defined handlers with 200', (done) ->
-    useConfig 'valid-routes', true
+    useConfig 'valid-routes'
 
     $.server.fetch('/yes').then (res) ->
       expect(res.body).toEqual 'OSOM'
