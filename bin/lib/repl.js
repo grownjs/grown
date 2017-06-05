@@ -16,6 +16,8 @@ module.exports = ($, farm) => {
 
   const logger = farm.logger.getLogger();
 
+  const IS_VERBOSE = $.flags.verbose && $.flags.debug;
+
   let kill = true;
 
   const logName = ($.flags.repl === true ? 'default' : $.flags.repl) || 'default';
@@ -38,10 +40,10 @@ module.exports = ($, farm) => {
   }
 
   const repl = REPL.start({
+    replMode: REPL.REPL_MODE_STRICT,
     stdout: process.stdout,
     stdin: process.stdin,
-    replMode: REPL.REPL_MODE_STRICT,
-    prompt: require('log-pose/lib/utils.js').style('{% cyan.pointer %}'),
+    prompt: '',
     eval(cmd, context, filename, callback) {
       let value;
 
@@ -268,9 +270,15 @@ module.exports = ($, farm) => {
 
   farm.on('done', () => {
     require('log-pose').setLogger(repl.outputStream);
-    farm.emit('repl', repl);
+
+    if (!IS_VERBOSE) {
+      repl.setPrompt(require('log-pose/lib/utils.js').style('{% cyan.pointer %}'));
+    }
+
     repl.resume();
     repl.displayPrompt();
+
+    farm.emit('repl', repl);
   });
 
   return () => {
