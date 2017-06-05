@@ -92,3 +92,29 @@ describe '#access', ->
       expect(res.statusCode).toEqual 200
       expect(res.body).toEqual 'OK'
       done()
+
+  it 'should allow Example to editors (edit)', (done) ->
+    useRole 'Editor'
+
+    $.server.mount (conn) ->
+      conn.truth = 42
+
+    $.server.fetch('/example/1/edit').then (res) ->
+      expect(res.statusCode).toEqual 200
+      expect(res.body).toEqual 'EDIT'
+      done()
+
+  it 'should deny Example to editors (destroy)', (done) ->
+    useRole 'Editor'
+
+    $.server.fetch('/example/1', 'delete').then (res) ->
+      expect(res.statusCode).toEqual 403
+      done()
+
+  it 'should allow Example to admins (destroy)', (done) ->
+    useRole 'Admin'
+
+    $.server.fetch('/example/1', 'delete').then (res) ->
+      expect(res.statusCode).toEqual 200
+      expect(res.body).toEqual 'DELETE'
+      done()
