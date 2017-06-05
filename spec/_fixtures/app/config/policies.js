@@ -21,6 +21,6 @@ module.exports = {
     'Secret.view': {
       Editor: 'allow',
     },
-    Home: 'allow',
+    Home: 'inherit',
   },
 };
