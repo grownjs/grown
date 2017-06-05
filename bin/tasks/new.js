@@ -316,7 +316,7 @@ module.exports = ($, cwd, logger) => {
             $.data.RELOADER === 'browser-sync' ? 'tarima-browser-sync' : null,
             $.data.RELOADER === 'live-reload' ? 'tarima-lr' : null,
           ],
-        } : null
+        } : null,
       ],
     }, _.extend({
       APP_NAME: name,
@@ -337,7 +337,7 @@ module.exports = ($, cwd, logger) => {
       IS_JASMINE: $.data.TESTS === 'jasmine-node',
       IS_MOCHA: $.data.TESTS === 'mocha',
       IS_AVA: $.data.TESTS === 'ava',
-    }, $.data))
+    }, $.data));
   }
 
   ($.flags.interactive
