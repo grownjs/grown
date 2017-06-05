@@ -1,6 +1,6 @@
 {
   "name": "grown",
-  "version": "0.4.10",
+  "version": "0.5.0",
   "description": "Experimental DSL for web applications",
   "author": "Alvaro Cabrera",
   "license": "MIT",
