@@ -108,7 +108,7 @@ module.exports = ($, farm) => {
     }
   });
 
-  Object.defineProperty(repl.context, 'Grown', {
+  Object.defineProperty(repl.context, '$', {
     configurable: false,
     enumerable: true,
     writable: false,
