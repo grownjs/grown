@@ -220,6 +220,8 @@ module.exports = ($, farm) => {
           args.params['content-type'] = 'multipart/form-data';
         }
 
+        repl.pause();
+
         logger(`${_method.toUpperCase()} ${_path}`, () =>
           farm.fetch(_path, _method, _opts).then(res => {
             let _status = res.statusCode === 200 ? 'green' : 'cyan';
@@ -241,13 +243,20 @@ module.exports = ($, farm) => {
                   res._headers[key]));
 
               logger.info('\n{% gray %s %}\r\n', res.body);
+
+              repl.resume();
+              repl.displayPrompt();
             });
           }).catch(e => {
             logger.info('\r{% error %s %}\r\n', _.getError(e, $.flags));
+
+            repl.resume();
             repl.displayPrompt();
           }));
       } catch (_e) {
         logger.info('\r{% error %s %}\r\n', _.getError(_e, $.flags));
+
+        repl.resume();
         repl.displayPrompt();
       }
     },
