@@ -10,7 +10,10 @@ describe '#socket', ->
   it 'should handle connections', (done) ->
     url = null
 
-    $.server.use socket(8081)
+    $.server.use socket({
+      server: true
+      port: 8081
+    })
 
     $.server.mount (conn) ->
       url = 'http:' + conn.socket_host + '/x'
