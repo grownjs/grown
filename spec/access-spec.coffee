@@ -12,14 +12,14 @@ useRole = (role, end) ->
     conn.access = role
     conn.truth = 42 if role is 'Editor'
 
-  $.server.use router({
-    settings: path.join(__dirname, '_fixtures/app/config/routes.js')
-    folders: path.join(__dirname, '_fixtures/app/controllers')
-  })
-
   $.server.use access({
     settings: path.join(__dirname, '_fixtures/app/config/policies.js')
     folders: path.join(__dirname, '_fixtures/app/lib/resources')
+  })
+
+  $.server.use router({
+    settings: path.join(__dirname, '_fixtures/app/config/routes.js')
+    folders: path.join(__dirname, '_fixtures/app/controllers')
   })
 
   $.server.mount (conn) ->
@@ -102,6 +102,6 @@ describe '#access', ->
   it 'should allow Example to admins (destroy)', (done) ->
     useRole 'Admin', ->
       $.server.fetch('/example/1', 'delete').then (res) ->
-        #expect(res.statusCode).toEqual 200
-        #expect(res.body).toEqual 'DELETE'
+        expect(res.statusCode).toEqual 200
+        expect(res.body).toEqual 'DELETE'
         done()
