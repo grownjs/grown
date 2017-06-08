@@ -27,6 +27,7 @@ module.exports = ($, cwd, logger) => {
 
       farm.on('close', () => _close());
       farm.on('reload', () => _close());
+      farm.on('reload', () => _farm.teardown(_startApplication));
     });
 
     logger('Starting server', () => {
@@ -40,8 +41,6 @@ module.exports = ($, cwd, logger) => {
           _.die(1);
         });
     });
-
-    farm.on('reload', () => _farm.teardown(_startApplication));
   }
 
   _startApplication();

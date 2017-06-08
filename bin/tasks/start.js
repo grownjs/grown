@@ -42,6 +42,7 @@ module.exports = ($, cwd, logger) => {
 
         farm.on('close', () => _close());
         farm.on('reload', () => _close());
+        farm.on('reload', () => _farm.teardown(_startApplication));
       }
     });
 
@@ -66,11 +67,6 @@ module.exports = ($, cwd, logger) => {
           _.die(1);
         });
     });
-
-    /* istanbul ignore else */
-    if (IS_REPL) {
-      farm.on('reload', () => _farm.teardown(_startApplication));
-    }
   }
 
   _startApplication();
