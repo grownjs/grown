@@ -5,7 +5,9 @@
 const cleanStack = require('clean-stack');
 
 function _getError(e, flags) {
-  return (flags.debug && cleanStack(e.stack)) || e.message;
+  return flags
+    ? (flags.debug && cleanStack(e.stack)) || e.message
+    : cleanStack(e.stack);
 }
 
 function _printError(e, flags, logger) {
