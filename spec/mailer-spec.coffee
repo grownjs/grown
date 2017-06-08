@@ -14,7 +14,7 @@ describe '#mailer', ->
 
   it 'should by-pass transport as default', (done) ->
     $.server.mount (conn) ->
-      conn.mail({
+      conn.mailer({
         to: 'foo@candy.bar'
       }).then (x) ->
         conn.resp_body = x
@@ -30,7 +30,7 @@ describe '#mailer', ->
 
   it 'should call external transports', (done) ->
     $.server.mount (conn) ->
-      conn.mail({
+      conn.mailer({
         layout: 'external'
         to: 'foo@candy.bar'
       }).then (x) ->
@@ -49,7 +49,7 @@ describe '#mailer', ->
 
   it 'should call inline transports', (done) ->
     $.server.mount (conn) ->
-      conn.mail({
+      conn.mailer({
         transport: (ctx) ->
           sendMail: (opts, x) ->
             opts.foo = 'bar'
