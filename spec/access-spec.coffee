@@ -9,12 +9,12 @@ useRole = (role, end) ->
   $()
 
   $.server.mount (conn) ->
-    conn.access = role
     conn.truth = 42 if role is 'Editor'
 
   $.server.use access({
     settings: path.join(__dirname, '_fixtures/app/config/policies.js')
     folders: path.join(__dirname, '_fixtures/app/lib/resources')
+    callback:  -> role
   })
 
   $.server.use router({
@@ -22,13 +22,14 @@ useRole = (role, end) ->
     folders: path.join(__dirname, '_fixtures/app/controllers')
   })
 
-  $.server.mount (conn) ->
-    if conn.request_path.indexOf('foo') > -1
-      conn.resp_body = 'FOO'
+  $.server.on 'listen', ->
+    $.server.mount (conn) ->
+      if conn.request_path.indexOf('foo') > -1
+        conn.resp_body = 'FOO'
 
-    if conn.request_path is '/secret'
-      conn.can(role, 'Secret', 'view').then ->
-        conn.resp_body = 'OSOM'
+      if conn.request_path is '/secret'
+        conn.can(null, 'Secret', 'view').then ->
+          conn.resp_body = 'OSOM'
 
   $.server.run ->
     end()
