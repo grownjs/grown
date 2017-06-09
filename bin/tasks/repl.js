@@ -20,7 +20,13 @@ module.exports = ($, cwd, logger) => {
   // small bootstrap
   function _startApplication() {
     logger('Initializing framework', () => {
-      farm = _farm();
+      try {
+        farm = _farm();
+      } catch (e) {
+        _.printError(e, $.flags, logger);
+        _.die(1);
+      }
+
       farm.fetch = _test(farm);
 
       const _close = _repl($, farm);

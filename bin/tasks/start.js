@@ -32,7 +32,12 @@ module.exports = ($, cwd, logger) => {
 
   function _startApplication(done) {
     logger('Initializing framework', () => {
-      farm = _farm();
+      try {
+        farm = _farm();
+      } catch (e) {
+        _.printError(e, $.flags, logger);
+        _.die(1);
+      }
 
       /* istanbul ignore else */
       if (IS_REPL) {

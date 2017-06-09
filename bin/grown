@@ -269,6 +269,16 @@ if ($.flags.version) {
   _.die();
 }
 
+process.on('unhandledRejection', e => {
+  _.printError(e, $.flags, logger);
+  _.die(1);
+});
+
+process.on('uncaughtException', e => {
+  _.printError(e, $.flags, logger);
+  _.die(1);
+});
+
 /* istanbul ignore else */
 if ((!_task || $.flags.help) && !$.params.exec) {
   showHelp();
