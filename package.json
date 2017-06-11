@@ -1,6 +1,6 @@
 {
   "name": "grown",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "Experimental DSL for web applications",
   "author": "Alvaro Cabrera",
   "license": "MIT",
@@ -52,7 +52,7 @@
     "nodemailer": "^2",
     "pg": "^6.1.5",
     "pg-native": "^1.10.1",
-    "route-mappings": "0.3.2",
+    "route-mappings": "^0.4.0",
     "sequelize": "^3.27.0",
     "serve-index": "^1.8.0",
     "serve-static": "1.12.3",
