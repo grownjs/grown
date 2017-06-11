@@ -1,4 +1,1 @@
-module.exports = {
-  test: [],
-  http: [],
-};
+module.exports = {};
