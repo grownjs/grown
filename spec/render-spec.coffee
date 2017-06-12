@@ -45,12 +45,12 @@ describe '#render', ->
 
   it 'should reduce promises and streams', (done) ->
     $.server.mount (conn) ->
-      conn.view 'example', foo: fs.createReadStream(__filename)
-      conn.view 'example', foo: Promise.resolve(42)
+      conn.view 'example',
+        foo: fs.createReadStream(__filename)
+        bar: Promise.resolve(42)
 
     $.server.fetch().then (res) ->
-      expect(res.body).toContain "TEXT(#{fs.readFileSync(__filename).toString()})"
-      expect(res.body).toContain 'TEXT(42)'
+      expect(res.body).toContain "TEXT(#{fs.readFileSync(__filename).toString()}42)"
       done()
 
   it 'should render functions', (done) ->
