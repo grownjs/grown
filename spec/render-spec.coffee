@@ -16,7 +16,7 @@ describe '#render', ->
 
   it 'should append single views as blocks', (done) ->
     $.server.mount (conn) ->
-      conn.view 'example', foo: 'bar'
+      conn.view('example', foo: 'bar', as: 'yield').end()
 
     $.server.fetch().then (res) ->
       expect(res.body).toContain '<body>'
@@ -25,9 +25,10 @@ describe '#render', ->
 
   it 'should append multiple views as lists', (done) ->
     $.server.mount (conn) ->
-      conn.view 'example', foo: 'FOO'
-      conn.view 'example', foo: 'FUU'
-      conn.view 'example', foo: 'FUA'
+      conn.view 'example', foo: 'FOO', as: 'yield'
+      conn.view 'example', foo: 'FUU', as: 'yield'
+      conn.view 'example', foo: 'FUA', as: 'yield'
+      conn.end()
 
     $.server.fetch().then (res) ->
       expect(res.body).toContain '<body>'
@@ -48,6 +49,8 @@ describe '#render', ->
       conn.view 'example',
         foo: fs.createReadStream(__filename)
         bar: Promise.resolve(42)
+        as: 'yield'
+      conn.end()
 
     $.server.fetch().then (res) ->
       expect(res.body).toContain "TEXT(#{fs.readFileSync(__filename).toString()}42)"
@@ -58,6 +61,7 @@ describe '#render', ->
       conn.put_local 'layout', (locals) -> locals.yield
       conn.view (locals) -> 'FOO'
       conn.view (locals, h) -> h('span', null, 'BAR')
+      conn.end()
 
     $.server.fetch().then (res) ->
       expect(res.body).toEqual '["FOO","<span>BAR</span>"]'

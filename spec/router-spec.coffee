@@ -133,5 +133,5 @@ describe '#router', ->
     })
 
     $.server.fetch('/').then (res) ->
-      expect(test).toEqual 'Clean/empty'
+      expect(test).toEqual { src: 'Clean/empty', as: 'yield' }
       done()
