@@ -32,7 +32,7 @@ useRole = (role, end) ->
           conn.resp_body = 'OSOM'
 
   $.server.run ->
-    end()
+    $.server.stop(end)
 
 describe '#access', ->
   it 'should deny / to unknowns', (done) ->
