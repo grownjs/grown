@@ -48,6 +48,7 @@ describe '#conn', ->
       $.server.mount (conn) ->
         conn.resp_charset = 'UTF-8'
         conn.put_resp_content_type 'text/plain'
+        conn.end()
 
       $.server.fetch().then (res) ->
         expect(res.getHeader('Content-Type')).toEqual 'text/plain; charset=UTF-8'

@@ -130,6 +130,7 @@ describe '#router', ->
       methods:
         view: (msg) ->
           test = msg
+          end: ->
     })
 
     $.server.fetch('/').then (res) ->
