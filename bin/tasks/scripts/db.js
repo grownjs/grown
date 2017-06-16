@@ -34,9 +34,12 @@ module.exports = ($, argv, logger) =>
 
       logger.info('  {% gray count: %} %s\n', results[0]);
 
-      logger.info('  {% gray fields: %} %s\n', $.util.inspect((_model.definition.$uiFields || [])
-        .map(prop => prop.field)));
+      logger.info('  {% gray fields: %} %s\n',
+        $.util.inspect((_model.definition.$uiFields || []).map(prop => prop.field)));
 
-      logger.info('  {% gray references: %} %s\n', $.util.inspect(_model.refs));
+      _model.refs.forEach(ref => {
+        logger.info('  {% gray %s %} {% yellow %s %} {% gray +%s -%s %}\n',
+          ref.method, ref.target, ref.params.onUpdate, ref.params.onDelete);
+      });
     });
   }));
