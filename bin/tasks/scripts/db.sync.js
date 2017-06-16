@@ -7,8 +7,8 @@ module.exports = ($, argv, logger) =>
     }
 
     return $.extensions.models[name].sync({
-      force: argv.flags.true,
+      force: argv.flags.force,
     }).then(() => {
-      logger.info('{% item %s was synced %}\n', name);
+      logger.info('{% item %s was synced %}\r\n', name);
     });
   }));

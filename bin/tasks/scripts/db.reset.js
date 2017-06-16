@@ -9,6 +9,6 @@ module.exports = ($, argv, logger) =>
     return $.extensions.models[name].destroy({
       truncate: true,
     }).then(() => {
-      logger.info('{% item %s was reset %}\n', name);
+      logger.info('{% item %s was reset %}\r\n', name);
     });
   }));
