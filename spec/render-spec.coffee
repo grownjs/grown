@@ -32,7 +32,7 @@ describe '#render', ->
 
     $.server.fetch().then (res) ->
       expect(res.body).toContain '<body>'
-      expect(res.body).toContain '<p>TEXT(FOO),TEXT(FUU),TEXT(FUA)</p>'
+      expect(res.body).toContain '<p>TEXT(FOO)TEXT(FUU)TEXT(FUA)</p>'
       done()
 
   it 'should render using the default layout', (done) ->
@@ -64,5 +64,5 @@ describe '#render', ->
       conn.end()
 
     $.server.fetch().then (res) ->
-      expect(res.body).toEqual '["FOO","<span>BAR</span>"]'
+      expect(res.body).toEqual 'FOO<span>BAR</span>'
       done()
