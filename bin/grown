@@ -246,13 +246,14 @@ function run() {
 
         const _farm = require(path.join(cwd, 'app/server'));
 
-        _farm()
-          .run(ctx => _call(ctx, $, logger))
-          .then(() => _farm.teardown())
-          .catch(e => {
-            _.printError(e, $.flags, logger);
-            _.die(1);
-          });
+        logger(`Running ${_task} task...`, () =>
+          _farm()
+            .run(ctx => _call(ctx, $, logger))
+            .then(() => _farm.teardown())
+            .catch(e => _farm.teardown(() => {
+              _.printError(e, $.flags, logger);
+              _.die(1);
+            })));
       }
     }
   } catch (e) {
