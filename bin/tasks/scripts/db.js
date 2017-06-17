@@ -38,8 +38,8 @@ module.exports = ($, argv, logger) =>
         $.util.inspect((_model.definition.$uiFields || []).map(prop => prop.field)));
 
       Object.keys(_model.refs).forEach(ref => {
-        logger.info('  {% item %s %} {% yellow %s %} %s\n',
-          ref, _model.refs[ref].associationType, _model.refs[ref].target.name);
+        logger.info('  {% item %s %} {% yellow %s %} {% gray as %} %s\n',
+          _model.refs[ref].associationType, _model.refs[ref].target.name, ref);
       });
     });
   }));
