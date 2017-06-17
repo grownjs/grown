@@ -25,13 +25,14 @@ module.exports = ($, cwd, logger) => {
     : 'uws';
 
   const _test = require('../../lib/plugs/testing.js');
-  const _farm = require(path.join(cwd, 'app/server'));
 
   // initialization
   let farm;
 
   function _startApplication(done) {
     logger('Initializing framework', () => {
+      const _farm = require(path.join(cwd, 'app/server'));
+
       try {
         farm = _farm();
       } catch (e) {
