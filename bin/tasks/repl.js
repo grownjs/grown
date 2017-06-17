@@ -12,14 +12,13 @@ module.exports = ($, cwd, logger) => {
   // const _ = require('../lib/util');
   const _repl = require('../lib/repl');
   const _test = require('../../lib/plugs/testing.js');
+  const _farm = require(path.join(cwd, 'app/server'));
 
   let farm;
 
   // small bootstrap
   function _startApplication() {
     logger('Initializing framework', () => {
-      const _farm = require(path.join(cwd, 'app/server'));
-
       try {
         farm = _farm();
       } catch (e) {
