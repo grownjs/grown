@@ -1,14 +1,25 @@
 'use strict';
 
-module.exports = ($, argv, logger) =>
-  Promise.all((argv._.length ? argv._ : Object.keys($.extensions.models)).map(name => {
+module.exports = ($, argv, logger) => {
+  const _opts = {};
+
+  if (argv.flags.force) {
+    _opts.force = true;
+  } else {
+    _opts.alter = true;
+  }
+
+  return (argv._.length ? argv._ : Object.keys($.extensions.models)).map(name => {
     if (!$.extensions.models[name]) {
       throw new Error(`Undefined model ${name}`);
     }
 
-    return $.extensions.models[name].sync({
-      force: argv.flags.force,
-    }).then(() => {
-      logger.info('{% item %s was synced %}\r\n', name);
-    });
-  }));
+    return $.extensions.models[name];
+  })
+  .sort((a, b) => Object.keys(a.refs).length - Object.keys(b.refs).length)
+  .reduce((prev, cur) => prev.then(() =>
+    cur.sync(_opts)
+      .then(() => {
+        logger.info('{% item %s was synced %}\r\n', cur.name);
+      })), Promise.resolve());
+}
