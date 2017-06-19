@@ -24,9 +24,9 @@ describe '#models', ->
   it 'should sync all models without issues', (done) ->
     { sync, Single } = @ctx.extensions.models
 
-    sync().then =>
-      Single.create(value: 'OSOM')
-        .then (result) ->
-          expect(result.get('id')).toEqual 1
-          expect(result.get('value')).toEqual 'OSOM'
-          done()
+    sync(force: true)
+      .then -> Single.describe()
+      .then (x) ->
+        expect(x.id.type).toEqual 'INTEGER'
+        expect(x.id.primaryKey).toBe true
+        done()

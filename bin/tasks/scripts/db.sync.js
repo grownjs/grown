@@ -22,4 +22,4 @@ module.exports = ($, argv, logger) => {
       .then(() => {
         logger.info('{% item %s was synced %}\r\n', cur.name);
       })), Promise.resolve());
-}
+};
