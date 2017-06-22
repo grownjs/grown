@@ -9,17 +9,27 @@ module.exports = ($, argv, logger) => {
     _opts.alter = true;
   }
 
-  return (argv._.length ? argv._ : Object.keys($.extensions.models)).map(name => {
+  const deps = (argv._.length ? argv._ : Object.keys($.extensions.models)).map(name => {
     if (!$.extensions.models[name]) {
       throw new Error(`Undefined model ${name}`);
     }
 
     return $.extensions.models[name];
-  })
-  .sort((a, b) => Object.keys(a.refs).length - Object.keys(b.refs).length)
-  .reduce((prev, cur) => prev.then(() =>
-    cur.sync(_opts)
-      .then(() => {
-        logger.info('{% item %s was synced %}\r\n', cur.name);
-      })), Promise.resolve());
+  });
+
+  deps.forEach(model => {
+    Object.keys(model.refs).forEach(ref => {
+      if (deps.indexOf(model.refs[ref].target) === -1) {
+        deps.push(model.refs[ref].target);
+      }
+    });
+  });
+
+  return deps
+    .sort((a, b) => Object.keys(a.refs).length - Object.keys(b.refs).length)
+    .reduce((prev, cur) => prev.then(() =>
+      cur.sync(_opts)
+        .then(() => {
+          logger.info('{% item %s was synced %}\r\n', cur.name);
+        })), Promise.resolve());
 };
