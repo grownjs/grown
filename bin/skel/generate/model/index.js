@@ -17,11 +17,10 @@ const TYPES = ['string', 'number', 'integer', 'boolean', 'array', 'object'];
 const PROPS = ['required', 'primaryKey', 'autoIncrement', 'hasOne', 'belongsTo'];
 
 // TODO:
-// grown g model:ctrl Admin.Databases.User app/controllers
-// grown g model:views Admin.Databases.User app/views
-// grown g model:routes Admin.Databases.User config/routes.js
+// grown g model.views Admin.Databases.User app/views
+// grown g model.routes Admin.Databases.User config/routes.js
 
-const USAGE_INFO = `
+const MODEL_USAGE = `
 * Attribute types are declared as {% yellow prop:type %}
 * Relationships can be specified as {% yellow prop:Model %}
 
@@ -33,12 +32,29 @@ Options:
   --timestamps --paranoid
 `;
 
+const MODEL_CTRL_USAGE = `
+* Some info...
+`;
+
+const CTRL_TPL = `module.exports = {
+  methods: {
+    index() {},
+    show() {},
+    edit() {},
+    new() {},
+    create() {},
+    update() {},
+    destroy() {},
+  },
+};
+`;
+
 module.exports = haki => {
   haki.setGenerator('model', {
-    description: 'Add a named model within the given directory',
+    description: 'Add a new model',
     arguments: ['NAME', 'DEST'],
     abortOnFail: true,
-    usage: USAGE_INFO,
+    usage: MODEL_USAGE,
     prompts: [{
       name: 'NAME',
       message: 'Model name:',
@@ -115,5 +131,26 @@ module.exports = haki => {
         template: MODEL_TEMPLATE,
       }];
     },
+  });
+
+  haki.setGenerator('model.ctrl', {
+    description: 'Add a model controller',
+    arguments: ['NAME', 'DEST'],
+    abortOnFail: true,
+    usage: MODEL_CTRL_USAGE,
+    prompts: [{
+      name: 'NAME',
+      message: 'Resource name:',
+      validate: value => value.length > 0 || "Don't forget name your resource",
+    }, {
+      name: 'DEST',
+      message: 'Destination path:',
+      validate: value => value.length > 0 || "Please specify your resource path",
+    }],
+    actions: [{
+      type: 'add',
+      dest: '{{{DEST}}}/{{normalize NAME}}.js',
+      content: CTRL_TPL,
+    }],
   });
 };

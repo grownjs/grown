@@ -14,6 +14,9 @@ module.exports = ($, cwd, logger) => {
   const haki = new Haki(cwd, _.extend({}, $.flags, { data: $._, params: $.params }));
 
   // common helpers
+  haki.addHelper('normalize', (text, render) =>
+    render(text).replace(/\./g, '/'));
+
   haki.addHelper('resource', (text, render) =>
     render(text).split('.').pop());
 
@@ -37,6 +40,10 @@ module.exports = ($, cwd, logger) => {
     /* istanbul ignore else */
     if ($.flags.list) {
       return haki.getGeneratorList().forEach(task => {
+        if (_cmd && task.gen.indexOf(_cmd) === -1) {
+          return;
+        }
+
         logger.info('\r{% link %s %}\r\n', task.value.description || task.name);
         logger.info('  {% bold g %s %}%s\n', task.gen, task.value.arguments
           ? ` {% gray [${task.value.arguments.join('] [')}] %}`
