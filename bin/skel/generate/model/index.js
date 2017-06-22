@@ -77,6 +77,15 @@ module.exports = haki => {
         'ui:order': ['*'],
       };
 
+      if (opts.id !== false) {
+        _fields.unshift('id');
+        _schema.properties.id = {
+          type: 'integer',
+          primaryKey: true,
+          autoIncrement: true,
+        };
+      }
+
       Object.keys(opts.params).forEach(prop => {
         const obj = {};
 
