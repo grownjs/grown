@@ -12,7 +12,6 @@ node_js:
 before_script:
   - psql -c 'create database travis_ci_test;' -U postgres
   - yarn add pg sqlite3
-  - yarn build
 script:
   - 'yarn test'
 after_success:
