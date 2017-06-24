@@ -2002,9 +2002,9 @@ json-schema-ref-parser@^3.1.2:
     ono "^2.2.1"
     z-schema "^3.17.0"
 
-json-schema-sequelizer@^0.1.5:
-  version "0.1.7"
-  resolved "https://registry.yarnpkg.com/json-schema-sequelizer/-/json-schema-sequelizer-0.1.7.tgz#a42e35404657c917736039b9a59016514aa0fff1"
+json-schema-sequelizer@^0.2.0:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/json-schema-sequelizer/-/json-schema-sequelizer-0.2.0.tgz#fcbc95ecf4658af5cb49116f4877c97d4527b4d3"
   dependencies:
     json-schema-faker "0.5.0-rc6"
     json-schema-ref-parser "^3.1.2"
