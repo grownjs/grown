@@ -6,7 +6,7 @@ function jsonPad(obj, depth) {
     .replace(/(?:\w|"|'|\}|\])$/gm, '$&,')
     .replace(/"(\$?\w+)":/g, '$1:')
     .replace(/"/g, "'")
-    .replace(/\,$/, '')
+    .replace(/,$/, '');
 }
 
 function isUpper(str) {
@@ -68,7 +68,7 @@ module.exports = haki => {
       const _fields = [];
 
       const _schema = {
-        type:'object',
+        type: 'object',
         required: [],
         properties: {},
       };
@@ -78,7 +78,7 @@ module.exports = haki => {
       };
 
       if (opts.id !== false) {
-        _fields.unshift('id');
+        _fields.unshift({ prop: 'id' });
         _schema.properties.id = {
           type: 'integer',
           primaryKey: true,
@@ -87,8 +87,6 @@ module.exports = haki => {
       }
 
       Object.keys(opts.params).forEach(prop => {
-        const obj = {};
-
         if (!isUpper(opts.params[prop])) {
           _fields.push({ prop });
         }
@@ -154,7 +152,7 @@ module.exports = haki => {
     }, {
       name: 'DEST',
       message: 'Destination path:',
-      validate: value => value.length > 0 || "Please specify your resource path",
+      validate: value => value.length > 0 || "Please specify your resource's path",
     }],
     actions: [{
       type: 'add',
