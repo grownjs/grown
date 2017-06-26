@@ -17,14 +17,6 @@ module.exports = ($, argv, logger) => {
     return $.extensions.models[name];
   });
 
-  deps.forEach(model => {
-    Object.keys(model.refs).forEach(ref => {
-      if (deps.indexOf(model.refs[ref].target) === -1) {
-        deps.push(model.refs[ref].target);
-      }
-    });
-  });
-
   return deps
     .sort((a, b) => Object.keys(a.refs).length - Object.keys(b.refs).length)
     .reduce((prev, cur) => prev.then(() =>
