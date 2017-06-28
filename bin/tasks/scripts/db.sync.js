@@ -19,7 +19,7 @@ module.exports = ($, argv, logger) => {
     return $.extensions.models[name];
   }));
 
-  if (argv.flags.reset === true) {
+  if (argv.flags.destroy === true) {
     return Promise.all(deps.map(model => $.extensions.models[model].destroy({
       truncate: argv.flags.truncate === true,
       where: Object.keys(argv.data).length
@@ -27,7 +27,7 @@ module.exports = ($, argv, logger) => {
         : null,
     })
     .then(() => {
-      logger.info('{% item %s was reset %}\r\n', name);
+      logger.info('{% item %s data was destroyed %}\r\n', name);
     })));
   }
 
