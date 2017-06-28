@@ -6,9 +6,14 @@ module.exports = ($, argv, logger) =>
       throw new Error(`Undefined model ${name}`);
     }
 
-    return $.extensions.models[name].destroy({
-      truncate: true,
-    }).then(() => {
-      logger.info('{% item %s was reset %}\r\n', name);
-    });
+    return $.extensions.models[name]
+      .destroy({
+        truncate: argv.flags.truncate === true,
+        where: Object.keys(argv.data).length
+          ? argv.data
+          : null,
+      })
+      .then(() => {
+        logger.info('{% item %s was reset %}\r\n', name);
+      });
   }));

@@ -34,9 +34,6 @@ module.exports = ($, argv, logger) =>
 
       logger.info('  {% gray count: %} %s\n', results[0]);
 
-      logger.info('  {% gray fields: %} %s\n',
-        $.util.inspect((_model.definition.$uiFields || []).map(prop => prop.field)));
-
       Object.keys(_model.refs).forEach(ref => {
         logger.info('  {% item %s %} {% yellow %s %} {% gray as %} %s\n',
           _model.refs[ref].associationType, _model.refs[ref].target.name, ref);
