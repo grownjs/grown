@@ -47,10 +47,50 @@ function extend(target) {
   return target;
 }
 
+function _sortModels(deps) {
+  const map = {};
+  const out = [];
+
+  deps.forEach(model => {
+    map[model.name] = Object.keys(model.refs)
+      .map(ref => model.refs[ref].target.name)
+      .reduce((prev, cur) => {
+        if (prev.indexOf(cur) === -1) {
+          prev.push(cur);
+        }
+        return prev;
+      }, []);
+  });
+
+  Object.keys(map).forEach(root => {
+    if (!map[root].length) {
+      if (out.indexOf(root) === -1) {
+        out.unshift(root);
+      }
+    } else {
+      if (out.indexOf(root) === -1) {
+        out.push(root);
+      }
+
+      map[root].forEach(sub => {
+        if (out.indexOf(sub) === -1) {
+          out.unshift(sub);
+        } else {
+          out.splice(out.indexOf(root), 1);
+          out.push(root);
+        }
+      });
+    }
+  });
+
+  return out;
+}
+
 module.exports = {
   die,
   extend,
   getError: _getError,
   printError: _printError,
   clearModules: _clearModules,
+  sortModelsByRefs: _sortModels,
 };

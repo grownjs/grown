@@ -4,16 +4,18 @@ const path = require('path');
 const glob = require('glob');
 const fs = require('fs-extra');
 
+const util = require('../../../bin/lib/util');
+
 module.exports = ($, argv, logger) => {
   const cwd = $.get('cwd', process.cwd());
 
-  const deps = (argv._.length ? argv._ : Object.keys($.extensions.models)).map(name => {
+  const deps = util.sortModelsByRefs((argv._.length ? argv._ : Object.keys($.extensions.models)).map(name => {
     if (!$.extensions.models[name]) {
       throw new Error(`Undefined model ${name}`);
     }
 
     return $.extensions.models[name];
-  });
+  }));
 
   if (argv.flags.load) {
     if (typeof argv.flags.load !== 'string') {
@@ -23,14 +25,13 @@ module.exports = ($, argv, logger) => {
     const src = path.join(cwd, argv.flags.load);
 
     return Promise.all(deps
-      .sort((a, b) => Object.keys(a.refs).length - Object.keys(b.refs).length)
       .map(model => {
-        const file = glob.sync(`**/${model.name}.json`, { cwd: src })[0];
+        const file = glob.sync(`**/${model}.json`, { cwd: src })[0];
 
-        return model
+        return $.extensions.models[model]
           .bulkCreate(fs.readJsonSync(path.join(src, file)))
           .then(() => {
-            logger.info('{% item %s was loaded %}\r\n', model.name);
+            logger.info('{% item %s was loaded %}\r\n', model);
           })
           .catch(e => {
             logger.info('\r\r{% error %s %s %}\n', e.message, file);
@@ -39,14 +40,10 @@ module.exports = ($, argv, logger) => {
   }
 
   return Promise.all(deps
-    .map(model => model
+    .map(model => $.extensions.models[model]
       .findAll({ raw: true })
-      .then(data => ({ data, name: model.name })))
+      .then(data => ({ data, model })))
     .then(results => {
-      if (argv.flags.load) {
-        return;
-      }
-
       if (argv.flags.save && typeof argv.flags.save !== 'string') {
         throw new Error(`Invalid directory to --save, given '${argv.flags.save}'`);
       }
@@ -66,7 +63,7 @@ module.exports = ($, argv, logger) => {
             `0${new Date().getMinutes()}`.substr(-2),
           ].join('');
 
-          const file = path.join(dest, fulldate, hourtime, `${result.name}.json`);
+          const file = path.join(dest, fulldate, hourtime, `${result.model}.json`);
 
           return logger('write', path.relative(cwd, file), () => {
             fs.outputJsonSync(file, result.data);
@@ -74,7 +71,7 @@ module.exports = ($, argv, logger) => {
         }
 
         logger.write('\r\n--- BEGIN %s ---\n%s\n--- END %s ---\n',
-          result.name, JSON.stringify(result.data, null, 2), result.name);
+          result.model, JSON.stringify(result.data, null, 2), result.model);
       });
     }));
 };

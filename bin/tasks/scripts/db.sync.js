@@ -1,5 +1,7 @@
 'use strict';
 
+const util = require('../../../bin/lib/util');
+
 module.exports = ($, argv, logger) => {
   const _opts = {};
 
@@ -9,16 +11,16 @@ module.exports = ($, argv, logger) => {
     _opts.alter = true;
   }
 
-  const deps = (argv._.length ? argv._ : Object.keys($.extensions.models)).map(name => {
+  const deps = util.sortModelsByRefs((argv._.length ? argv._ : Object.keys($.extensions.models)).map(name => {
     if (!$.extensions.models[name]) {
       throw new Error(`Undefined model ${name}`);
     }
 
     return $.extensions.models[name];
-  });
+  }));
 
   if (argv.flags.reset === true) {
-    return Promise.all(deps.map(model => model.destroy({
+    return Promise.all(deps.map(model => $.extensions.models[model].destroy({
       truncate: argv.flags.truncate === true,
       where: Object.keys(argv.data).length
         ? argv.data
@@ -30,11 +32,10 @@ module.exports = ($, argv, logger) => {
   }
 
   return deps
-    .sort((a, b) => Object.keys(a.refs).length - Object.keys(b.refs).length)
     .reduce((prev, cur) => prev.then(() =>
-      cur.sync(_opts)
+      $.extensions.models[cur].sync(_opts)
         .catch(e => logger.info('\r\r{% failure %s %}\n', e.message))
         .then(() => {
-          logger.info('{% item %s was synced %}\r\n', cur.name);
+          logger.info('{% item %s was synced %}\r\n', cur);
         })), Promise.resolve());
 };
