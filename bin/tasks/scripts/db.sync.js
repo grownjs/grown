@@ -33,6 +33,7 @@ module.exports = ($, argv, logger) => {
     .sort((a, b) => Object.keys(a.refs).length - Object.keys(b.refs).length)
     .reduce((prev, cur) => prev.then(() =>
       cur.sync(_opts)
+        .catch(e => logger.info('\r\r{% failure %s %}\n', e.message))
         .then(() => {
           logger.info('{% item %s was synced %}\r\n', cur.name);
         })), Promise.resolve());
