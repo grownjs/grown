@@ -42,16 +42,14 @@ module.exports = ($, argv, logger) => {
   return Promise.all(deps
     .map(model => $.extensions.models[model]
       .findAll({ raw: true })
-      .then(data => ({ data, model })))
+      .then(data => ({ data, model }))))
     .then(results => {
-      if (argv.flags.save && typeof argv.flags.save !== 'string') {
-        throw new Error(`Invalid directory to --save, given '${argv.flags.save}'`);
-      }
-
-      const dest = path.join(cwd, argv.flags.save);
-
       results.forEach(result => {
         if (argv.flags.save) {
+          if (typeof argv.flags.save !== 'string') {
+            throw new Error(`Invalid directory to --save, given '${argv.flags.save}'`);
+          }
+
           const fulldate = [
             new Date().getFullYear(),
             `0${new Date().getMonth() + 1}`.substr(-2),
@@ -63,7 +61,7 @@ module.exports = ($, argv, logger) => {
             `0${new Date().getMinutes()}`.substr(-2),
           ].join('');
 
-          const file = path.join(dest, fulldate, hourtime, `${result.model}.json`);
+          const file = path.join(cwd, argv.flags.save, fulldate, hourtime, `${result.model}.json`);
 
           return logger('write', path.relative(cwd, file), () => {
             fs.outputJsonSync(file, result.data);
@@ -73,5 +71,5 @@ module.exports = ($, argv, logger) => {
         logger.write('\r\n--- BEGIN %s ---\n%s\n--- END %s ---\n',
           result.model, JSON.stringify(result.data, null, 2), result.model);
       });
-    }));
+    });
 };
