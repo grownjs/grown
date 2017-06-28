@@ -88,8 +88,8 @@ let _task = $._.shift();
 const _bin = path.basename(thisPkg.bin);
 
 const aliases = {
-  generate: ['g', 'add'],
-  start: ['s', 'up'],
+  generate: ['add', 'make'],
+  start: ['up'],
   repl: ['c'],
 };
 
@@ -167,9 +167,14 @@ function showHelp() {
     -s, [--https]              # Force HTTP
 
   Other actions:
-    ${_bin} g|add|generate [...]
-    ${_bin} s|up|start [...]
-    ${_bin} c|repl
+    ${_bin} add|make|generate [...]
+    ${_bin} up|start [...]
+    ${_bin} repl
+
+  Built-in tasks:
+    ${_bin} db [...]       # Database information
+    ${_bin} db.sync [...]  # Synchronize given models
+    ${_bin} db.dump [...]  # Backup and restore JSON-dumps
 
   Grown options:
     -l, [--list]         # List available generators
