@@ -10,22 +10,6 @@ module.exports = ($, argv, logger) => {
   const cwd = $.get('cwd', process.cwd());
   const src = path.join(cwd, 'db/migrations');
 
-  /*
-
-  FIXME (all can have values):
-
-  grown db.migrate [--latest]  # apply latest migration
-  grown db.migrate --snapshot  # save current schema
-  grown db.mgirate --rollback  # revert last applied migration
-
-  if a value is given, then it will apply the given schema instead of latest/current
-
-  */
-
-  if (argv.flags.rollback) {
-    return;
-  }
-
   if (argv.flags.snapshot) {
     const fulldate = [
       new Date().getFullYear(),
@@ -55,12 +39,7 @@ module.exports = ($, argv, logger) => {
         return $.extensions.models[model];
       }))
       .forEach(model => {
-        schemas[$.extensions.models[model].name] = {
-          schema: $.extensions.models[model].options.$schema,
-          options: {
-            paranoid: $.extensions.models[model].options.paranoid,
-          },
-        };
+        schemas[$.extensions.models[model].name] = $.extensions.models[model].options.$schema;
       });
 
       fs.outputJsonSync(file, {
@@ -78,10 +57,13 @@ module.exports = ($, argv, logger) => {
     const models = fs.readJsonSync(path.join(src, all.pop()));
     const types = require('json-schema-sequelizer/lib/types');
 
+    // FIXME: model this logic inside json-schema-sequelizer; tl-dr
+    // re-creation of schemas should be reusable, also the dereferenced
+    // schema should not mutate model.options.$schema to keep all $refs as-is
+
     return Promise.all(Object.keys(models.definitions).map(model => {
       return $.extensions.models[model].sequelize
-        .define(model, types.convertSchema(models.definitions[model].schema).props, models.definitions[model].options)
-        .sync({ force: true })
+        .define(model, types.convertSchema(models.definitions[model]).props).sync()
         .then(() => {
           logger.info('\r\r{% gray %s was migrated %}\n', model);
         });
