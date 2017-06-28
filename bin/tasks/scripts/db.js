@@ -10,7 +10,9 @@ module.exports = ($, argv, logger) =>
 
     return Promise.all([
       _model.count(),
-      _model.describe(),
+      argv.flags.inspect
+        ? _model.describe()
+        : null,
     ])
     .then(results => {
       logger.info('{% star %s %}\r\n', name);

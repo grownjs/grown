@@ -3,7 +3,7 @@
 module.exports = ($, argv, logger) => {
   const _opts = {};
 
-  if (argv.flags.force) {
+  if (argv.flags.force === true) {
     _opts.force = true;
   } else {
     _opts.alter = true;
@@ -16,6 +16,18 @@ module.exports = ($, argv, logger) => {
 
     return $.extensions.models[name];
   });
+
+  if (argv.flags.reset === true) {
+    return Promise.all(deps.map(model => model.destroy({
+      truncate: argv.flags.truncate === true,
+      where: Object.keys(argv.data).length
+        ? argv.data
+        : null,
+    })
+    .then(() => {
+      logger.info('{% item %s was reset %}\r\n', name);
+    })));
+  }
 
   return deps
     .sort((a, b) => Object.keys(a.refs).length - Object.keys(b.refs).length)
