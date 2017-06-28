@@ -29,11 +29,11 @@ module.exports = ($, argv, logger) => {
 
         return model
           .bulkCreate(fs.readJsonSync(path.join(src, file)))
-          .catch(e => {
-            logger.info('\r\r{% error %s %s %}\n', e.message, cwd, file);
-          })
           .then(() => {
-            logger.info('{% item %s was loaded %}\r\n', name);
+            logger.info('{% item %s was loaded %}\r\n', model.name);
+          })
+          .catch(e => {
+            logger.info('\r\r{% error %s %s %}\n', e.message, file);
           });
       }));
   }
