@@ -113,7 +113,7 @@ const logger = require('log-pose')
   .getLogger(12, process.stdout, process.stderr);
 
 if ($.flags.debug && $.flags.verbose) {
-  require('debug').enable('grown,grown:*');
+  require('debug').enable('json-schema-sequelizer,grown,grown:*');
   require('log-pose').setLevel(false);
 }
 
