@@ -2,23 +2,23 @@
 
 module.exports = ($, argv, logger) =>
   Promise.all((argv._.length ? argv._ : Object.keys($.extensions.models)).map(name => {
-    const _model = $.extensions.models[name];
+    const m = $.extensions.models[name];
 
-    if (!_model) {
+    if (!m) {
       throw new Error(`Undefined model ${name}`);
     }
 
     return Promise.all([
-      _model.count(),
+      m.count(),
       argv.flags.inspect
-        ? _model.describe()
+        ? m.describe()
         : null,
     ])
     .then(results => {
       logger.info('{% star %s %}\r\n', name);
 
       if (argv.flags.schema) {
-        logger.info('%s\n', $.util.inspect(_model.definition.$schema)
+        logger.info('%s\n', $.util.inspect(m.definition.$schema)
           .replace(/"(.+?)"/g, '{% cyan "$1" %}'));
         return;
       }
@@ -36,9 +36,9 @@ module.exports = ($, argv, logger) =>
 
       logger.info('  {% gray count: %} %s\n', results[0]);
 
-      Object.keys(_model.refs).forEach(ref => {
+      Object.keys(m.refs).forEach(ref => {
         logger.info('  {% item %s %} {% yellow %s %} {% gray as %} %s\n',
-          _model.refs[ref].associationType, _model.refs[ref].target.name, ref);
+          m.refs[ref].associationType, m.refs[ref].target.name, ref);
       });
     });
   }));

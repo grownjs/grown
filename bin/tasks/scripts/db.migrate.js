@@ -4,8 +4,6 @@ const path = require('path');
 const glob = require('glob');
 const fs = require('fs-extra');
 
-const util = require('../../../bin/lib/util');
-
 module.exports = ($, argv, logger) => {
   const cwd = $.get('cwd', process.cwd());
   const src = path.join(cwd, 'db/migrations');
@@ -31,13 +29,13 @@ module.exports = ($, argv, logger) => {
     return logger('write', path.relative(cwd, file), () => {
       const schemas = {};
 
-      util.sortModelsByRefs((argv._.length ? argv._ : Object.keys($.extensions.models)).map(model => {
+      (argv._.length ? argv._ : Object.keys($.extensions.models)).map(model => {
         if (!$.extensions.models[model]) {
           throw new Error(`Undefined model ${model}`);
         }
 
         return $.extensions.models[model];
-      }))
+      })
       .forEach(model => {
         schemas[$.extensions.models[model].name] = $.extensions.models[model].options.$schema;
       });

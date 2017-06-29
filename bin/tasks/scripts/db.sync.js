@@ -1,6 +1,6 @@
 'use strict';
 
-const util = require('../../../bin/lib/util');
+const JSONSchemaSequelizer = require('json-schema-sequelizer');
 
 module.exports = ($, argv, logger) => {
   const _opts = {};
@@ -11,31 +11,27 @@ module.exports = ($, argv, logger) => {
     _opts.alter = true;
   }
 
-  const deps = util.sortModelsByRefs((argv._.length ? argv._ : Object.keys($.extensions.models)).map(name => {
+  const deps = (argv._.length ? argv._ : Object.keys($.extensions.models)).map(name => {
     if (!$.extensions.models[name]) {
       throw new Error(`Undefined model ${name}`);
     }
 
     return $.extensions.models[name];
-  }));
+  });
 
   if (argv.flags.destroy === true) {
-    return Promise.all(deps.map(model => $.extensions.models[model].destroy({
-      truncate: argv.flags.truncate === true,
-      where: Object.keys(argv.data).length
-        ? argv.data
-        : null,
-    })
-    .then(() => {
-      logger.info('{% item %s data was destroyed %}\r\n', name);
-    })));
+    return JSONSchemaSequelizer.deleteAll(deps, argv.flags, argv.data)
+      .then(() => {
+        logger.info('\r\r{% log %s model%s reset %}\n',
+          deps.length,
+          deps.length === 1 ? '' : 's');
+      });
   }
 
-  return deps
-    .reduce((prev, cur) => prev.then(() =>
-      $.extensions.models[cur].sync(_opts)
-        .catch(e => logger.info('\r\r{% failure %s %}\n', e.message))
-        .then(() => {
-          logger.info('{% item %s was synced %}\r\n', cur);
-        })), Promise.resolve());
+  return JSONSchemaSequelizer.syncAll(deps, _opts)
+    .then(() => {
+      logger.info('\r\r{% log %s model%s synced %}\n',
+        deps.length,
+        deps.length === 1 ? '' : 's');
+    });
 };

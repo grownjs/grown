@@ -4,18 +4,16 @@ const path = require('path');
 const glob = require('glob');
 const fs = require('fs-extra');
 
-const util = require('../../../bin/lib/util');
-
 module.exports = ($, argv, logger) => {
   const cwd = $.get('cwd', process.cwd());
 
-  const deps = util.sortModelsByRefs((argv._.length ? argv._ : Object.keys($.extensions.models)).map(name => {
+  const deps = (argv._.length ? argv._ : Object.keys($.extensions.models)).map(name => {
     if (!$.extensions.models[name]) {
       throw new Error(`Undefined model ${name}`);
     }
 
     return $.extensions.models[name];
-  }));
+  });
 
   if (argv.flags.load) {
     if (typeof argv.flags.load !== 'string') {
