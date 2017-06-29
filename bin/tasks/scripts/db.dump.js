@@ -22,24 +22,27 @@ module.exports = ($, argv, logger) => {
 
     const src = path.join(cwd, argv.flags.load);
 
-    return Promise.all(deps
-      .map(model => {
-        const file = glob.sync(`**/${model}.json`, { cwd: src })[0];
+    return Promise.all(deps.map(model => {
+      const file = glob.sync(`**/${model.name}.json`, { cwd: src })[0];
 
-        return $.extensions.models[model]
-          .bulkCreate(fs.readJsonSync(path.join(src, file)))
-          .then(() => {
-            logger.info('{% item %s was loaded %}\r\n', model);
-          })
-          .catch(e => {
-            logger.info('\r\r{% error %s %s %}\n', e.message, file);
-          });
-      }));
+      return model
+        .bulkCreate(fs.readJsonSync(path.join(src, file)))
+        .then(() => {
+          logger.info('{% item %s was loaded %}\r\n', model.name);
+        })
+        .catch(e => {
+          logger.info('\r\r{% error %s %s %}\n', e.message, file);
+        });
+    }));
   }
 
   return Promise.all(deps
-    .map(model => $.extensions.models[model]
-      .findAll({ raw: true })
+    .map(model => model
+      .findAll({
+        order: [[model.primaryKeyAttribute, 'ASC']],
+        // FIXME: export nested-data instead?
+        raw: true,
+      })
       .then(data => ({ data, model }))))
     .then(results => {
       results.forEach(result => {
@@ -55,19 +58,19 @@ module.exports = ($, argv, logger) => {
           ].join('');
 
           const hourtime = [
-            `0${new Date().getHours()}`.subtr(-2),
+            `0${new Date().getHours()}`.substr(-2),
             `0${new Date().getMinutes()}`.substr(-2),
           ].join('');
 
-          const file = path.join(cwd, argv.flags.save, fulldate, hourtime, `${result.model}.json`);
+          const file = path.join(cwd, argv.flags.save, fulldate, hourtime, `${result.model.name}.json`);
 
           return logger('write', path.relative(cwd, file), () => {
-            fs.outputJsonSync(file, result.data);
+            fs.outputJsonSync(file, result.data, { spaces: 2 });
           });
         }
 
         logger.write('\r\n--- BEGIN %s ---\n%s\n--- END %s ---\n',
-          result.model, JSON.stringify(result.data, null, 2), result.model);
+          result.model.name, JSON.stringify(result.data, null, 2), result.model.name);
       });
     });
 };
