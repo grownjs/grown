@@ -18,7 +18,7 @@ module.exports = ($, argv, logger) => {
     ].join('');
 
     const hourtime = [
-      `0${new Date().getHours()}`.subtr(-2),
+      `0${new Date().getHours()}`.substr(-2),
       `0${new Date().getMinutes()}`.substr(-2),
     ].join('');
 
@@ -38,10 +38,7 @@ module.exports = ($, argv, logger) => {
       });
 
       fs.outputJsonSync(file, JSONSchemaSequelizer.bundle(deps,
-        typeof argv.flags.snapshot !== 'string'
-          ? new Date().toISOString()
-          : argv.flags.snapshot)
-      , { spaces: 2 });
+        typeof argv.flags.snapshot === 'string' && argv.flags.snapshot), { spaces: 2 });
     });
   }
 
