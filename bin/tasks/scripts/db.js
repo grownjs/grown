@@ -1,44 +1,45 @@
 'use strict';
 
-module.exports = ($, argv, logger) =>
-  Promise.all((argv._.length ? argv._ : Object.keys($.extensions.models)).map(name => {
-    const m = $.extensions.models[name];
+module.exports = ($, argv, logger) => {
+  const dbs = Object.keys($.extensions.dbs);
 
-    if (!m) {
-      throw new Error(`Undefined model ${name}`);
-    }
+  return Promise.all(dbs.map(db => {
+    logger.info('\r\r{% star %s %}\n', db);
 
-    return Promise.all([
-      m.count(),
-      argv.flags.inspect
-        ? m.describe()
-        : null,
-    ])
-    .then(results => {
-      logger.info('{% star %s %}\r\n', name);
+    const models = Object.keys($.extensions.dbs[db].sequelize.models)
+      .filter(m => (argv._.length ? argv._.indexOf(m) > -1 : true));
 
-      if (argv.flags.schema) {
-        logger.info('%s\n', $.util.inspect(m.definition.$schema)
-          .replace(/"(.+?)"/g, '{% cyan "$1" %}'));
-        return;
-      }
+    return Promise.all(models.map(m => {
+      return Promise.all([
+        $.extensions.models[m].count(),
+        argv.flags.inspect
+          ? $.extensions.models[m].describe()
+          : null,
+      ])
+      .then(results => {
+        logger.info('\r\r  {% link %s %} {% gray (%s row%s) %}\n',
+          m,
+          results[0],
+          results[0] === 1 ? '' : 's');
 
-      if (argv.flags.inspect) {
-        Object.keys(results[1]).forEach(key => {
-          logger.info('  {% item %s %} {% yellow %s %}%s%s%s\n', key,
-            results[1][key].type,
-            results[1][key].allowNull ? '' : ' NOT_NULL',
-            results[1][key].primaryKey ? ' PRIMARY_KEY' : '',
-            results[1][key].defaultValue ? ` {% gray ${results[1][key].defaultValue} %}` : '');
+        if (argv.flags.inspect) {
+          Object.keys(results[1]).forEach(key => {
+            logger.info('  {% item %s %} {% yellow %s %}%s%s%s\n', key,
+              results[1][key].type,
+              results[1][key].allowNull ? '' : ' NOT_NULL',
+              results[1][key].primaryKey ? ' PRIMARY_KEY' : '',
+              results[1][key].defaultValue ? ` {% gray ${results[1][key].defaultValue} %}` : '');
+          });
+          return;
+        }
+
+        Object.keys($.extensions.models[m].refs).forEach(ref => {
+          const refs = $.extensions.models[m].refs;
+
+          logger.info('    {% gray %s %} {% yellow %s %} {% gray as %} %s\n',
+            refs[ref].associationType, refs[ref].target.name, ref);
         });
-        return;
-      }
-
-      logger.info('  {% gray count: %} %s\n', results[0]);
-
-      Object.keys(m.refs).forEach(ref => {
-        logger.info('  {% item %s %} {% yellow %s %} {% gray as %} %s\n',
-          m.refs[ref].associationType, m.refs[ref].target.name, ref);
       });
-    });
+    }));
   }));
+};
