@@ -48,17 +48,14 @@ module.exports = ($, argv, logger) => {
     return logger.info('\r\r{% log No migrations found %}\n');
   }
 
-  const models = fs.readJsonSync(path.join(src, all.pop()));
-  const types = require('json-schema-sequelizer/lib/types');
+  const payload = fs.readJsonSync(path.join(src, all.pop()));
+  const length = Object.keys(payload.definitions).length;
 
-  // FIXME: model this logic inside json-schema-sequelizer; tl-dr
-  // re-creation of schemas should be reusable, also the dereferenced
-  // schema should not mutate model.options.$schema to keep all $refs as-is
-  return Promise.all(Object.keys(models.definitions).map(model => {
-    return $.extensions.models[model].sequelize
-      .define(model, types.convertSchema(models.definitions[model]).props).sync()
-      .then(() => {
-        logger.info('\r\r{% log %s was migrated %}\n', model);
-      });
-  }));
+  // FIXME: how to pick connections?
+  return $.extensions.dbs.default.migrate(payload)
+    .then(() => {
+      logger.info('\r\r{% log %s model%s migrated %}\n',
+        length,
+        length === 1 ? '' : 's');
+    });
 };
