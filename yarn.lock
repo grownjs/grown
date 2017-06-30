@@ -1558,9 +1558,9 @@ grunt-exec@~0.4.5:
   version "0.4.7"
   resolved "https://registry.yarnpkg.com/grunt-exec/-/grunt-exec-0.4.7.tgz#40051ffa4eb0c9657e053b95e88d44352a1c2c25"
 
-haki@^0.6.2:
-  version "0.6.2"
-  resolved "https://registry.yarnpkg.com/haki/-/haki-0.6.2.tgz#f0ba00741e94c43f7318f09828dca98de711cfff"
+haki@^0.6.3:
+  version "0.6.3"
+  resolved "https://registry.yarnpkg.com/haki/-/haki-0.6.3.tgz#4c588e1bae8f76ae211d38298d3a088fae890b19"
   dependencies:
     chalk "^1.1.3"
     change-case "^3.0.1"
@@ -1583,7 +1583,7 @@ haki@^0.6.2:
     prompt-rawlist "^0.2.1"
     readline-ui "^0.1.2"
     rimraf "^2.6.1"
-    wargs "^0.7.0"
+    wargs "^0.7.1"
 
 handlebars@^4.0.1:
   version "4.0.10"
@@ -2010,9 +2010,9 @@ json-schema-ref-parser@^3.1.2:
     ono "^2.2.1"
     z-schema "^3.17.0"
 
-json-schema-sequelizer@^0.4.0:
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/json-schema-sequelizer/-/json-schema-sequelizer-0.4.0.tgz#38a8271be016eed64fcb5892e34497348c9f0f24"
+json-schema-sequelizer@^0.5.0:
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/json-schema-sequelizer/-/json-schema-sequelizer-0.5.0.tgz#bb9cfa17bc26c3766f2e863d8707c2d9b858d38d"
   dependencies:
     json-schema-faker "0.5.0-rc6"
     json-schema-ref-parser "^3.1.2"
@@ -3813,9 +3813,9 @@ walkdir@~0.0.7:
   version "0.0.11"
   resolved "https://registry.yarnpkg.com/walkdir/-/walkdir-0.0.11.tgz#a16d025eb931bd03b52f308caed0f40fcebe9532"
 
-wargs@^0.7.0:
-  version "0.7.0"
-  resolved "https://registry.yarnpkg.com/wargs/-/wargs-0.7.0.tgz#5a7835d12fc0e756a278406c0a50e79a541c20e1"
+wargs@^0.7.1:
+  version "0.7.1"
+  resolved "https://registry.yarnpkg.com/wargs/-/wargs-0.7.1.tgz#1be35ff7e4294da0c239d0cac7449f90670cc0f9"
 
 warning-symbol@^0.1.0:
   version "0.1.0"
