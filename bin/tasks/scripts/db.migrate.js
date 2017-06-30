@@ -16,16 +16,24 @@ module.exports = ($, argv, logger) => {
     throw new Error(`Missing connection to --use, given '${argv.flags.use}'`);
   }
 
-  const models = $.extensions.dbs[argv.flags.use].sequelize.models;
-  const deps = argv._.length ? argv._ : Object.keys(models);
+  const models = $.extensions.dbs[argv.flags.use].models;
+  const defns = $.extensions.dbs[argv.flags.use].refs;
 
   if (argv.flags.snapshot) {
-    const fixedDeps = deps.map(model => {
+    const fixedDeps = (argv._.length ? argv._ : Object.keys(models)).map(model => {
       if (!models[model]) {
         throw new Error(`Undefined model ${model}`);
       }
 
-      return models[model];
+      return defns[model].$schema;
+    });
+
+    const fixedRefs = {};
+
+    Object.keys(defns).forEach(ref => {
+      if (!models[ref]) {
+        fixedRefs[ref] = defns[ref].$schema;
+      }
     });
 
     const fulldate = [
@@ -46,8 +54,13 @@ module.exports = ($, argv, logger) => {
     const file = path.join(src, `${fulldate}_${hourtime}${name}.json`);
 
     return logger('write', path.relative(cwd, file), () =>
-      fs.outputJsonSync(file, JSONSchemaSequelizer.bundle(fixedDeps,
-        typeof argv.flags.snapshot === 'string' && argv.flags.snapshot), { spaces: 2 }));
+      fs.outputJsonSync(file, JSONSchemaSequelizer.bundle(fixedDeps, fixedRefs,
+        typeof argv.flags.snapshot === 'string' && argv.flags.snapshot), { spaces: 2 }))
+      .then(() => {
+        logger.info('\r\r{% log %s model%s exported %}\n',
+          fixedDeps.length,
+          fixedDeps.length === 1 ? '' : 's');
+      });
   }
 
   const all = glob.sync('**/*.json', { cwd: src });
@@ -56,12 +69,15 @@ module.exports = ($, argv, logger) => {
     return logger.info('\r\r{% log No migrations found %}\n');
   }
 
-  const payload = fs.readJsonSync(path.join(src, all.pop()));
+  const filename = path.join(src, all.pop());
+  const payload = fs.readJsonSync(filename);
   const length = Object.keys(payload.definitions).length;
+
+  logger('read', path.relative(cwd, filename));
 
   return $.extensions.dbs[argv.flags.use].migrate(payload)
     .then(() => {
-      logger.info('\r\r{% log %s model%s migrated %}\n',
+      logger.info('\r\r{% log %s model%s imported %}\n',
         length,
         length === 1 ? '' : 's');
     });
