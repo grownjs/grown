@@ -22,23 +22,22 @@ module.exports = ($, argv, logger) => {
           results[0],
           results[0] === 1 ? '' : 's');
 
+        Object.keys($.extensions.models[m].refs).forEach(ref => {
+          const refs = $.extensions.models[m].refs;
+
+          logger.info('    {% gray %s %} {% yellow %s %} %s\n',
+            ref, refs[ref].associationType, refs[ref].target.name);
+        });
+
         if (argv.flags.inspect) {
           Object.keys(results[1]).forEach(key => {
-            logger.info('  {% item %s %} {% yellow %s %}%s%s%s\n', key,
+            logger.info('    {% gray %s %} {% yellow %s %}%s%s%s\n', key,
               results[1][key].type,
               results[1][key].allowNull ? '' : ' NOT_NULL',
               results[1][key].primaryKey ? ' PRIMARY_KEY' : '',
               results[1][key].defaultValue ? ` {% gray ${results[1][key].defaultValue} %}` : '');
           });
-          return;
         }
-
-        Object.keys($.extensions.models[m].refs).forEach(ref => {
-          const refs = $.extensions.models[m].refs;
-
-          logger.info('    {% gray %s %} {% yellow %s %} {% gray as %} %s\n',
-            refs[ref].associationType, refs[ref].target.name, ref);
-        });
       });
     }));
   }));
