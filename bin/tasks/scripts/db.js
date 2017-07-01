@@ -22,8 +22,8 @@ module.exports = ($, argv, logger) => {
           results[0],
           results[0] === 1 ? '' : 's');
 
-        Object.keys($.extensions.models[m].refs).forEach(ref => {
-          const refs = $.extensions.models[m].refs;
+        Object.keys($.extensions.models[m].associations).forEach(ref => {
+          const refs = $.extensions.models[m].associations;
 
           logger.info('    {% gray %s %} {% yellow %s %} %s\n',
             ref, refs[ref].associationType, refs[ref].target.name);
