@@ -5,10 +5,6 @@ const fs = require('fs-extra');
 
 const JSONSchemaSequelizer = require('json-schema-sequelizer');
 
-// FIXME: how to create next-diff from current schemas?
-// the latest schema is given by the "schemas/*.json"
-// and the current schema is from model.options.$schema
-
 module.exports = ($, argv, logger) => {
   const cwd = $.get('cwd', process.cwd());
   const dbs = Object.keys($.extensions.dbs);
@@ -16,11 +12,11 @@ module.exports = ($, argv, logger) => {
   const baseDir = path.join(cwd, 'db/migrations');
 
   if (!argv.flags.save) {
-    if (!argv.flags.use || dbs.indexOf(argv.flags.use) === -1) {
-      throw new Error(`Missing connection to --use, given '${argv.flags.use}'`);
+    if (!argv.flags.db || dbs.indexOf(argv.flags.db) === -1) {
+      throw new Error(`Missing connection to --db, given '${argv.flags.db}'`);
     }
 
-    const configFile = path.join(cwd, 'db/migrations.json');
+    const configFile = path.join(baseDir, 'index.json');
 
     fs.ensureDirSync(baseDir);
 
@@ -49,7 +45,7 @@ module.exports = ($, argv, logger) => {
       params.migrations = argv.raw;
     }
 
-    return JSONSchemaSequelizer.migrate($.extensions.dbs[argv.flags.use].sequelize, {
+    return JSONSchemaSequelizer.migrate($.extensions.dbs[argv.flags.db].sequelize, {
       configFile,
       baseDir,
       logging(message) {
@@ -92,12 +88,12 @@ module.exports = ($, argv, logger) => {
     });
   }
 
-  if (!argv.flags.use || dbs.indexOf(argv.flags.use) === -1) {
-    throw new Error(`Missing connection to --use, given '${argv.flags.use}'`);
+  if (!argv.flags.db || dbs.indexOf(argv.flags.db) === -1) {
+    throw new Error(`Missing connection to --db, given '${argv.flags.db}'`);
   }
 
-  const models = $.extensions.dbs[argv.flags.use].models;
-  const defns = $.extensions.dbs[argv.flags.use].refs;
+  const models = $.extensions.dbs[argv.flags.db].models;
+  const defns = $.extensions.dbs[argv.flags.db].refs;
 
   const fulldate = [
     new Date().getFullYear(),
@@ -130,6 +126,10 @@ module.exports = ($, argv, logger) => {
 
     return logger('write', path.relative(cwd, file), () => {
       // FIXME: use previous/latest schema instead
+      // FIXME: how to create next-diff from current schemas?
+      // the latest schema is given by the "schemas/*.json"
+      // and the current schema is from model.options.$schema
+
       const a = {};
       const b = models[schema.id].options.$schema;
 

@@ -10,12 +10,12 @@ module.exports = ($, argv, logger) => {
   const cwd = $.get('cwd', process.cwd());
   const dbs = Object.keys($.extensions.dbs);
 
-  const baseDir = path.join(cwd, 'db/schemas');
+  const baseDir = path.join(cwd, 'db/schema');
 
   const all = glob.sync('**/*.json', { cwd: baseDir });
 
-  if (!all.length) {
-    return logger.info('\r\r{% log No schemas were found %}\n');
+  if (!all.length && !argv.flags.save) {
+    throw new Error('No schemas were found');
   }
 
   if (!(argv.flags.save || argv.flags.load)) {
@@ -27,12 +27,12 @@ module.exports = ($, argv, logger) => {
     return;
   }
 
-  if (!argv.flags.use || dbs.indexOf(argv.flags.use) === -1) {
-    throw new Error(`Missing connection to --use, given '${argv.flags.use}'`);
+  if (!argv.flags.db || dbs.indexOf(argv.flags.db) === -1) {
+    throw new Error(`Missing connection to --db, given '${argv.flags.db}'`);
   }
 
-  const models = $.extensions.dbs[argv.flags.use].models;
-  const defns = $.extensions.dbs[argv.flags.use].refs;
+  const models = $.extensions.dbs[argv.flags.db].models;
+  const defns = $.extensions.dbs[argv.flags.db].refs;
 
   const fulldate = [
     new Date().getFullYear(),
@@ -92,7 +92,7 @@ module.exports = ($, argv, logger) => {
 
     // FIXME: remove non-specified models from given list
 
-    return $.extensions.dbs[argv.flags.use].rehydrate(payload)
+    return $.extensions.dbs[argv.flags.db].rehydrate(payload)
       .then(() => {
         logger.info('\r\r{% log %s model%s imported %}\n',
           length,
