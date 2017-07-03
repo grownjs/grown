@@ -25,13 +25,13 @@ module.exports = ($, argv, logger) => {
     return Promise.all(deps.map(model => {
       const file = glob.sync(`**/${model.name}.json`, { cwd: src })[0];
 
-      return model
+      return file && model
         .bulkCreate(fs.readJsonSync(path.join(src, file)))
         .then(() => {
           logger.info('{% item %s was loaded %}\r\n', model.name);
         })
         .catch(e => {
-          logger.info('\r\r{% error %s %s %}\n', e.message, file);
+          logger.info('\r\r{% error %s (%s) %}\n', e.message, file);
         });
     }));
   }
@@ -54,12 +54,15 @@ module.exports = ($, argv, logger) => {
           const fulldate = [
             new Date().getFullYear(),
             `0${new Date().getMonth() + 1}`.substr(-2),
-            new Date().getDate(),
+            `0${new Date().getDate() + 1}`.substr(-2),
           ].join('');
 
           const hourtime = [
             `0${new Date().getHours()}`.substr(-2),
             `0${new Date().getMinutes()}`.substr(-2),
+            '.',
+            `0${new Date().getSeconds()}`.substr(-2),
+            `000${new Date().getMilliseconds()}`.substr(-3),
           ].join('');
 
           const file = path.join(cwd, argv.flags.save, fulldate, hourtime, `${result.model.name}.json`);

@@ -1,7 +1,6 @@
 'use strict';
 
 const path = require('path');
-const glob = require('glob');
 const fs = require('fs-extra');
 
 const JSONSchemaSequelizer = require('json-schema-sequelizer');
@@ -10,43 +9,32 @@ module.exports = ($, argv, logger) => {
   const cwd = $.get('cwd', process.cwd());
   const dbs = Object.keys($.extensions.dbs);
 
-  const baseDir = path.join(cwd, 'db/schema');
-
-  const all = glob.sync('**/*.json', { cwd: baseDir });
-
-  if (!all.length && !argv.flags.save) {
-    throw new Error('No schemas were found');
-  }
-
-  if (!(argv.flags.save || argv.flags.load)) {
-    logger.info('\r\r{% gray Available schemas: %}\n');
-
-    all.forEach(x => {
-      logger.info('{% yellow.line %s %}\n', x);
-    });
-    return;
-  }
-
   if (!argv.flags.db || dbs.indexOf(argv.flags.db) === -1) {
     throw new Error(`Missing connection to --db, given '${argv.flags.db}'`);
   }
 
+  const schemaFile = path.join(cwd, 'db/schema', `${argv.flags.db}.json`);
+
+  if (!fs.existsSync(schemaFile) && !argv.flags.save) {
+    throw new Error('Missing db/schema.json');
+  }
+
+  if (!(argv.flags.save || argv.flags.load)) {
+    const payload = fs.readJsonSync(schemaFile);
+
+    const length = Object.keys(payload.definitions)
+      .filter(x => $.extensions.models[x])
+      .length;
+
+    logger.info('\r\r{% star %s %}\n', payload.description);
+
+    return logger.info('\r\r{% log %s model%s available %}\n',
+      length,
+      length === 1 ? '' : 's');
+  }
+
   const models = $.extensions.dbs[argv.flags.db].models;
   const defns = $.extensions.dbs[argv.flags.db].refs;
-
-  const fulldate = [
-    new Date().getFullYear(),
-    `0${new Date().getMonth() + 1}`.substr(-2),
-    `0${new Date().getDate() + 1}`.substr(-2),
-  ].join('');
-
-  const hourtime = [
-    `0${new Date().getHours()}`.substr(-2),
-    `0${new Date().getMinutes()}`.substr(-2),
-    '.',
-    `0${new Date().getSeconds()}`.substr(-2),
-    `000${new Date().getMilliseconds()}`.substr(-3),
-  ].join('');
 
   const fixedDeps = (argv._.length ? argv._ : Object.keys(models)).map(model => {
     if (!models[model]) {
@@ -55,8 +43,6 @@ module.exports = ($, argv, logger) => {
 
     return defns[model].$schema;
   });
-
-  fs.ensureDirSync(baseDir);
 
   if (argv.flags.save) {
     const fixedRefs = {};
@@ -67,14 +53,8 @@ module.exports = ($, argv, logger) => {
       }
     });
 
-    const name = typeof argv.flags.save === 'string'
-      ? `_${argv.flags.save.replace(/\W+/g, '_').toLowerCase()}`
-      : '';
-
-    const file = path.join(baseDir, `${fulldate}${hourtime}${name}.json`);
-
-    return logger('write', path.relative(cwd, file), () =>
-      fs.outputJsonSync(file, JSONSchemaSequelizer.bundle(fixedDeps, fixedRefs,
+    return logger('write', path.relative(cwd, schemaFile), () =>
+      fs.outputJsonSync(schemaFile, JSONSchemaSequelizer.bundle(fixedDeps, fixedRefs,
         typeof argv.flags.save === 'string' && argv.flags.save), { spaces: 2 }))
       .then(() => {
         logger.info('\r\r{% log %s model%s exported %}\n',
@@ -84,14 +64,14 @@ module.exports = ($, argv, logger) => {
   }
 
   if (argv.flags.load) {
-    const filename = path.join(baseDir, all.pop());
-    const payload = fs.readJsonSync(filename);
-    const length = Object.keys(payload.definitions).length;
+    const payload = fs.readJsonSync(schemaFile);
+    const length = Object.keys(payload.definitions)
+      .filter(x => $.extensions.models[x])
+      .length;
 
-    logger('read', path.relative(cwd, filename));
+    logger('read', path.relative(cwd, schemaFile));
 
     // FIXME: remove non-specified models from given list
-
     return $.extensions.dbs[argv.flags.db].rehydrate(payload)
       .then(() => {
         logger.info('\r\r{% log %s model%s imported %}\n',

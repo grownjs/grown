@@ -10,13 +10,13 @@ module.exports = ($, argv, logger) => {
   const cwd = $.get('cwd', process.cwd());
   const dbs = Object.keys($.extensions.dbs);
 
-  const baseDir = path.join(cwd, 'db/migrations');
+  if (!argv.flags.db || dbs.indexOf(argv.flags.db) === -1) {
+    throw new Error(`Missing connection to --db, given '${argv.flags.db}'`);
+  }
 
-  if (!argv.flags.save) {
-    if (!argv.flags.db || dbs.indexOf(argv.flags.db) === -1) {
-      throw new Error(`Missing connection to --db, given '${argv.flags.db}'`);
-    }
+  const baseDir = path.join(cwd, 'db/migrations', argv.flags.db);
 
+  if (!argv.flags.make) {
     const configFile = path.join(baseDir, 'index.json');
 
     fs.ensureDirSync(baseDir);
@@ -89,12 +89,7 @@ module.exports = ($, argv, logger) => {
     });
   }
 
-  if (!argv.flags.db || dbs.indexOf(argv.flags.db) === -1) {
-    throw new Error(`Missing connection to --db, given '${argv.flags.db}'`);
-  }
-
   const models = $.extensions.dbs[argv.flags.db].models;
-  const defns = $.extensions.dbs[argv.flags.db].refs;
 
   const fulldate = [
     new Date().getFullYear(),
@@ -107,7 +102,7 @@ module.exports = ($, argv, logger) => {
       throw new Error(`Undefined model ${model}`);
     }
 
-    return defns[model].$schema;
+    return models[model];
   });
 
   const schemaDir = path.join(cwd, 'db/schema');
@@ -116,34 +111,29 @@ module.exports = ($, argv, logger) => {
   const type = all.length ? 'update' : 'create';
   const dump = all.length && fs.readJsonSync(path.join(schemaDir, all.pop()));
 
-  return Promise.all(fixedDeps.map(schema => {
-    const hourtime = [
-      `0${new Date().getHours()}`.substr(-2),
-      `0${new Date().getMinutes()}`.substr(-2),
-      '.',
-      `0${new Date().getSeconds()}`.substr(-2),
-      `000${new Date().getMilliseconds()}`.substr(-3),
-    ].join('');
+  return JSONSchemaSequelizer.generate(dump || {}, fixedDeps, models)
+    .then(results => results.forEach(result => {
+      if (!result.code) {
+        return;
+      }
 
-    const ref = schema.id;
+      const hourtime = [
+        `0${new Date().getHours()}`.substr(-2),
+        `0${new Date().getMinutes()}`.substr(-2),
+        '.',
+        `0${new Date().getSeconds()}`.substr(-2),
+        `000${new Date().getMilliseconds()}`.substr(-3),
+      ].join('');
 
-    const name = typeof argv.flags.save === 'string'
-      ? `_${argv.flags.save.replace(/\W+/g, '_').toLowerCase()}`
-      : `_${type}_${models[ref].tableName.toLowerCase()}`;
+      const name = typeof argv.flags.make === 'string'
+        ? `_${argv.flags.make.replace(/\W+/g, '_').toLowerCase()}`
+        : `_${type}_${result.model.tableName.toLowerCase()}`;
 
-    const file = path.join(baseDir, `${fulldate}${hourtime}${name}.js`);
-    const src = path.relative(cwd, file);
+      const file = path.join(baseDir, `${fulldate}${hourtime}${name}.js`);
+      const src = path.relative(cwd, file);
 
-    return logger('write', src, end =>
-      JSONSchemaSequelizer.generate(ref, dump, models)
-        .then(code => {
-          if (!code) {
-            end(src, 'skip', 'end');
-            return;
-          }
-
-          fs.outputFileSync(file, code);
-          end();
-        }));
-  }));
+      logger('write', src, () => {
+        fs.outputFileSync(file, result.code);
+      });
+    }));
 };
