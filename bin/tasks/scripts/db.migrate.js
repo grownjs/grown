@@ -1,6 +1,7 @@
 'use strict';
 
 const path = require('path');
+const glob = require('glob');
 const fs = require('fs-extra');
 
 const JSONSchemaSequelizer = require('json-schema-sequelizer');
@@ -109,6 +110,12 @@ module.exports = ($, argv, logger) => {
     return defns[model].$schema;
   });
 
+  const schemaDir = path.join(cwd, 'db/schema');
+
+  const all = glob.sync('**/*.json', { cwd: schemaDir });
+  const type = all.length ? 'update' : 'create';
+  const dump = all.length && fs.readJsonSync(path.join(schemaDir, all.pop()));
+
   return Promise.all(fixedDeps.map(schema => {
     const hourtime = [
       `0${new Date().getHours()}`.substr(-2),
@@ -118,24 +125,25 @@ module.exports = ($, argv, logger) => {
       `000${new Date().getMilliseconds()}`.substr(-3),
     ].join('');
 
+    const ref = schema.id;
+
     const name = typeof argv.flags.save === 'string'
       ? `_${argv.flags.save.replace(/\W+/g, '_').toLowerCase()}`
-      : `_create_${models[schema.id].tableName.toLowerCase()}`;
+      : `_${type}_${models[ref].tableName.toLowerCase()}`;
 
     const file = path.join(baseDir, `${fulldate}${hourtime}${name}.js`);
+    const src = path.relative(cwd, file);
 
-    return logger('write', path.relative(cwd, file), () => {
-      // FIXME: use previous/latest schema instead
-      // FIXME: how to create next-diff from current schemas?
-      // the latest schema is given by the "schemas/*.json"
-      // and the current schema is from model.options.$schema
+    return logger('write', src, end =>
+      JSONSchemaSequelizer.generate(ref, dump, models)
+        .then(code => {
+          if (!code) {
+            end(src, 'skip', 'end');
+            return;
+          }
 
-      const a = {};
-      const b = models[schema.id].options.$schema;
-
-      b._tableName = models[schema.id].tableName;
-
-      fs.outputFileSync(file, JSONSchemaSequelizer.generate(a, b));
-    });
+          fs.outputFileSync(file, code);
+          end();
+        }));
   }));
 };
