@@ -5,10 +5,6 @@
 
 'use strict';
 
-if (process.argv.indexOf('--debug') > -1) {
-  require('debug').enable('json-schema-sequelizer,grown,grown:*');
-}
-
 let _closing;
 
 const app = require('../app/server');
