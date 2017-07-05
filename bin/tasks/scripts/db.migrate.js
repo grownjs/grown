@@ -7,8 +7,10 @@ const fs = require('fs-extra');
 const JSONSchemaSequelizer = require('json-schema-sequelizer');
 
 module.exports = ($, argv, logger) => {
+  const _extensions = $.extensions('Conn._');
+
   const cwd = $.get('cwd', process.cwd());
-  const dbs = Object.keys($.extensions.dbs);
+  const dbs = Object.keys(_extensions.dbs);
 
   if (!argv.flags.db || dbs.indexOf(argv.flags.db) === -1) {
     throw new Error(`Missing connection to --db, given '${argv.flags.db}'`);
@@ -46,7 +48,7 @@ module.exports = ($, argv, logger) => {
       params.migrations = argv.raw;
     }
 
-    return JSONSchemaSequelizer.migrate($.extensions.dbs[argv.flags.db].sequelize, {
+    return JSONSchemaSequelizer.migrate(_extensions.dbs[argv.flags.db].sequelize, {
       configFile,
       baseDir,
       logging(message) {
@@ -89,7 +91,7 @@ module.exports = ($, argv, logger) => {
     });
   }
 
-  const models = $.extensions.dbs[argv.flags.db].models;
+  const models = _extensions.dbs[argv.flags.db].models;
 
   const fulldate = [
     new Date().getFullYear(),

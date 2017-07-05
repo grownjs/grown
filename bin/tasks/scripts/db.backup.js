@@ -5,14 +5,16 @@ const glob = require('glob');
 const fs = require('fs-extra');
 
 module.exports = ($, argv, logger) => {
+  const _extensions = $.extensions('Conn._');
+
   const cwd = $.get('cwd', process.cwd());
 
-  const deps = (argv._.length ? argv._ : Object.keys($.extensions.models)).map(name => {
-    if (!$.extensions.models[name]) {
+  const deps = (argv._.length ? argv._ : Object.keys(_extensions.models)).map(name => {
+    if (!_extensions.models[name]) {
       throw new Error(`Undefined model ${name}`);
     }
 
-    return $.extensions.models[name];
+    return _extensions.models[name];
   });
 
   if (argv.flags.load) {

@@ -6,8 +6,10 @@ const fs = require('fs-extra');
 const JSONSchemaSequelizer = require('json-schema-sequelizer');
 
 module.exports = ($, argv, logger) => {
+  const _extensions = $.extensions('Conn._');
+
   const cwd = $.get('cwd', process.cwd());
-  const dbs = Object.keys($.extensions.dbs);
+  const dbs = Object.keys(_extensions.dbs);
 
   if (!argv.flags.db || dbs.indexOf(argv.flags.db) === -1) {
     throw new Error(`Missing connection to --db, given '${argv.flags.db}'`);
@@ -23,7 +25,7 @@ module.exports = ($, argv, logger) => {
     const payload = fs.readJsonSync(schemaFile);
 
     const length = Object.keys(payload.definitions)
-      .filter(x => $.extensions.models[x])
+      .filter(x => _extensions.models[x])
       .length;
 
     logger.info('\r\r{% star %s %}\n', payload.description);
@@ -33,8 +35,8 @@ module.exports = ($, argv, logger) => {
       length === 1 ? '' : 's');
   }
 
-  const models = $.extensions.dbs[argv.flags.db].models;
-  const defns = $.extensions.dbs[argv.flags.db].refs;
+  const models = _extensions.dbs[argv.flags.db].models;
+  const defns = _extensions.dbs[argv.flags.db].refs;
 
   const fixedDeps = (argv._.length ? argv._ : Object.keys(models)).map(model => {
     if (!models[model]) {
@@ -66,13 +68,13 @@ module.exports = ($, argv, logger) => {
   if (argv.flags.load) {
     const payload = fs.readJsonSync(schemaFile);
     const length = Object.keys(payload.definitions)
-      .filter(x => $.extensions.models[x])
+      .filter(x => _extensions.models[x])
       .length;
 
     logger('read', path.relative(cwd, schemaFile));
 
     // FIXME: remove non-specified models from given list
-    return $.extensions.dbs[argv.flags.db].rehydrate(payload)
+    return _extensions.dbs[argv.flags.db].rehydrate(payload)
       .then(() => {
         logger.info('\r\r{% log %s model%s imported %}\n',
           length,
