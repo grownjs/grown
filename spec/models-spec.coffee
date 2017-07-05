@@ -14,15 +14,17 @@ describe '#models', ->
     @ctx = new Grown()
     $(@ctx, util)
 
-    @ctx.emit('start').then done
+    @ctx.emit('start').then =>
+      @models = @ctx.extensions('Conn._.models')
+      done()
 
   it 'should load all models hierarchically', ->
-    expect(@ctx.extensions.models.Single).not.toBeUndefined()
-    expect(@ctx.extensions.models.Parent).not.toBeUndefined()
-    expect(@ctx.extensions.models.ParentChild).not.toBeUndefined()
+    expect(@models.Single).not.toBeUndefined()
+    expect(@models.Parent).not.toBeUndefined()
+    expect(@models.ParentChild).not.toBeUndefined()
 
   it 'should sync all models without issues', (done) ->
-    { sync, Single } = @ctx.extensions.models
+    { sync, Single } = @models
 
     sync(force: true)
       .then -> Single.describe()
