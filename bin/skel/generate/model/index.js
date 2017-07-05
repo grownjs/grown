@@ -69,6 +69,10 @@ module.exports = haki => {
 
       const _schema = {
         type: 'object',
+        options: {
+          timestamps: opts.timestamps === true,
+          paranoid: opts.paranoid === true,
+        },
         required: [],
         properties: {},
       };
@@ -125,11 +129,9 @@ module.exports = haki => {
       });
 
       const MODEL_TEMPLATE = `module.exports = ${jsonPad({
-        timestamps: opts.timestamps === true,
-        paranoid: opts.paranoid === true,
         $schema: _schema,
         $uiSchema: _uiSchema,
-        $uiFields: _fields,
+        $uiFields: { index: _fields },
       }, 0)};\n`;
 
       return [{
