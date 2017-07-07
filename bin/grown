@@ -233,7 +233,7 @@ function run() {
       default: {
         const _file = path.join(cwd, `lib/tasks/${_task}`);
 
-        logger.info('\r{% log Loading %s task... %}\r\r', _task);
+        logger.info('\r{% wait Task %s: loading... %}\r\r', _task);
 
         let _call;
 
@@ -253,7 +253,7 @@ function run() {
 
         const _farm = require(path.join(cwd, 'app/server'));
 
-        logger.info('\r{% log Running %s task... %}\r\r', _task);
+        logger.info('\r{% wait Task %s: running... %}\r\r', _task);
 
         _farm()
           .run(ctx => _call(ctx, $, logger))
