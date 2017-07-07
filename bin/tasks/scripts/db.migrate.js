@@ -16,9 +16,35 @@ module.exports = ($, argv, logger) => {
     throw new Error(`Missing connection to --db, given '${argv.flags.db}'`);
   }
 
+  const schemaFile = path.join(cwd, 'db/schema', `${argv.flags.db}.js`);
+
   const baseDir = path.join(cwd, 'db/migrations', argv.flags.db);
 
+  const models = _extensions.dbs[argv.flags.db].models;
+
+  const fixedDeps = (argv._.length ? argv._ : Object.keys(models)).map(model => {
+    if (!models[model]) {
+      throw new Error(`Undefined model ${model}`);
+    }
+
+    return models[model];
+  });
+
   if (!argv.flags.make) {
+    const conn = _extensions.dbs[argv.flags.db].sequelize;
+
+    if (argv.flags.create || argv.flags.destroy) {
+      if (!fs.existsSync(schemaFile)) {
+        throw new Error(`Missing ${schemaFile} file`);
+      }
+
+      return logger('read', path.relative(cwd, schemaFile), () =>
+        JSONSchemaSequelizer.migrate(conn, require(schemaFile), true)[argv.flags.create ? 'up' : 'down']())
+      .then(() => {
+        logger.info('\r\r{% log %s schema %s %}\n', argv.flags.db, argv.flags.create ? 'applied' : 'reverted');
+      });
+    }
+
     const configFile = path.join(baseDir, 'index.json');
 
     fs.ensureDirSync(baseDir);
@@ -48,22 +74,26 @@ module.exports = ($, argv, logger) => {
       params.migrations = argv.raw;
     }
 
-    return JSONSchemaSequelizer.migrate(_extensions.dbs[argv.flags.db].sequelize, {
-      configFile,
-      baseDir,
-      logging(message) {
-        logger.info('\r\r{% gray %s %}\n', message);
-      },
-    })[method](params).then(result => {
+    return Promise.all([
+      argv.flags.schema === true ? JSONSchemaSequelizer.generate({}, fixedDeps, models, true) : null,
+      JSONSchemaSequelizer.migrate(conn, {
+        configFile,
+        baseDir,
+        logging(message) {
+          logger.info('\r\r{% gray %s %}\n', message);
+        },
+      })[method](params),
+    ])
+    .then(results => {
+      const result = results[1];
+
+      if (results[0]) {
+        logger('write', path.relative(cwd, schemaFile), () => {
+          fs.outputFileSync(schemaFile, results[0]);
+        });
+      }
+
       if (!Array.isArray(result)) {
-        if (result.executed && result.executed.length) {
-          logger.info('\r\r{% log Executed migrations: %}\n');
-
-          result.executed.forEach(x => {
-            logger.info('{% cyan.line %s %}\n', x);
-          });
-        }
-
         if (result.executed && result.executed.length === 0) {
           logger.info('\r\r{% log No executed migrations %}\n');
         }
@@ -91,51 +121,47 @@ module.exports = ($, argv, logger) => {
     });
   }
 
-  const models = _extensions.dbs[argv.flags.db].models;
-
   const fulldate = [
     new Date().getFullYear(),
     `0${new Date().getMonth() + 1}`.substr(-2),
     `0${new Date().getDate() + 1}`.substr(-2),
   ].join('');
 
-  const fixedDeps = (argv._.length ? argv._ : Object.keys(models)).map(model => {
-    if (!models[model]) {
-      throw new Error(`Undefined model ${model}`);
-    }
-
-    return models[model];
-  });
-
   const schemaDir = path.join(cwd, 'db/schema');
 
   const all = glob.sync('**/*.json', { cwd: schemaDir });
-  const type = all.length ? 'update' : 'create';
   const dump = all.length && fs.readJsonSync(path.join(schemaDir, all.pop()));
 
   return JSONSchemaSequelizer.generate(dump || {}, fixedDeps, models)
-    .then(results => results.forEach(result => {
-      if (!result.code) {
+    .then(results => {
+      if (!results.length) {
+        logger.info('\r\r{% log Without changes %}\n');
         return;
       }
 
-      const hourtime = [
-        `0${new Date().getHours()}`.substr(-2),
-        `0${new Date().getMinutes()}`.substr(-2),
-        '.',
-        `0${new Date().getSeconds()}`.substr(-2),
-        `000${new Date().getMilliseconds()}`.substr(-3),
-      ].join('');
+      results.forEach(result => {
+        if (!result.code) {
+          return;
+        }
 
-      const name = typeof argv.flags.make === 'string'
-        ? `_${argv.flags.make.replace(/\W+/g, '_').toLowerCase()}`
-        : `_${type}_${result.model.tableName.toLowerCase()}`;
+        const hourtime = [
+          `0${new Date().getHours()}`.substr(-2),
+          `0${new Date().getMinutes()}`.substr(-2),
+          `0${new Date().getSeconds()}`.substr(-2),
+          '.',
+          `000${new Date().getMilliseconds()}`.substr(-3),
+        ].join('');
 
-      const file = path.join(baseDir, `${fulldate}${hourtime}${name}.js`);
-      const src = path.relative(cwd, file);
+        const name = typeof argv.flags.make === 'string'
+          ? `_${argv.flags.make.replace(/\W+/g, '_').toLowerCase()}`
+          : `_${result.code.indexOf('createTable') > -1 ? 'create' : 'update'}_${result.model.tableName.toLowerCase()}`;
 
-      logger('write', src, () => {
-        fs.outputFileSync(file, result.code);
+        const file = path.join(baseDir, `${fulldate}${hourtime}${name}.js`);
+        const src = path.relative(cwd, file);
+
+        logger('write', src, () => {
+          fs.outputFileSync(file, result.code);
+        });
       });
-    }));
+    });
 };

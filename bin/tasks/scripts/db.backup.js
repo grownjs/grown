@@ -62,8 +62,8 @@ module.exports = ($, argv, logger) => {
           const hourtime = [
             `0${new Date().getHours()}`.substr(-2),
             `0${new Date().getMinutes()}`.substr(-2),
-            '.',
             `0${new Date().getSeconds()}`.substr(-2),
+            '.',
             `000${new Date().getMilliseconds()}`.substr(-3),
           ].join('');
 
