@@ -75,7 +75,7 @@ module.exports = ($, argv, logger) => {
     }
 
     return Promise.all([
-      argv.flags.schema === true ? JSONSchemaSequelizer.generate({}, fixedDeps, models, true) : null,
+      argv.flags.schema === true ? JSONSchemaSequelizer.generate({}, fixedDeps, true) : null,
       JSONSchemaSequelizer.migrate(conn, {
         configFile,
         baseDir,
@@ -132,7 +132,7 @@ module.exports = ($, argv, logger) => {
   const all = glob.sync('**/*.json', { cwd: schemaDir });
   const dump = all.length && fs.readJsonSync(path.join(schemaDir, all.pop()));
 
-  return JSONSchemaSequelizer.generate(dump || {}, fixedDeps, models)
+  return JSONSchemaSequelizer.generate(dump || {}, fixedDeps)
     .then(results => {
       if (!results.length) {
         logger.info('\r\r{% log Without changes %}\n');
