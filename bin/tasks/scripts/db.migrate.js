@@ -89,7 +89,7 @@ module.exports = ($, argv, logger) => {
 
       if (results[0]) {
         logger('write', path.relative(cwd, schemaFile), () => {
-          fs.outputFileSync(schemaFile, results[0]);
+          fs.outputFileSync(schemaFile, results[0].code);
         });
       }
 
