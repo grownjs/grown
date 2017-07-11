@@ -2001,9 +2001,9 @@ jsbn@~0.1.0:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/jsbn/-/jsbn-0.1.1.tgz#a5e654c2e5a2deb5f201d96cefbca80c0ef2f513"
 
-json-schema-faker@0.5.0-rc6:
-  version "0.5.0-rc6"
-  resolved "https://registry.yarnpkg.com/json-schema-faker/-/json-schema-faker-0.5.0-rc6.tgz#3cce7af89d5ce04025970430934fb1ced1675d5b"
+json-schema-faker@0.5.0-rc8:
+  version "0.5.0-rc8"
+  resolved "https://registry.yarnpkg.com/json-schema-faker/-/json-schema-faker-0.5.0-rc8.tgz#2803efd7c145957f18a512e6e23e319e3ccbf599"
   dependencies:
     deref "^0.7.0"
     json-schema-ref-parser "^3.1.2"
@@ -2021,14 +2021,14 @@ json-schema-ref-parser@^3.1.2:
     ono "^2.2.1"
     z-schema "^3.17.0"
 
-json-schema-sequelizer@^0.8.1:
-  version "0.8.1"
-  resolved "https://registry.yarnpkg.com/json-schema-sequelizer/-/json-schema-sequelizer-0.8.1.tgz#4ffd11a1c622cf6b52b565622b7f35abc809e76b"
+json-schema-sequelizer@^0.8.3:
+  version "0.8.3"
+  resolved "https://registry.yarnpkg.com/json-schema-sequelizer/-/json-schema-sequelizer-0.8.3.tgz#6ca3f7bcde610448fc31fd8a1c1af25d95a9ecd3"
   dependencies:
-    json-schema-faker "0.5.0-rc6"
+    json-schema-faker "0.5.0-rc8"
     json-schema-ref-parser "^3.1.2"
     pg-native "^1.10.1"
-    sequelize "^4.1.0"
+    sequelize "^4.2.1"
     umzug "^2.0.1"
 
 json-schema@0.2.3:
@@ -3199,9 +3199,32 @@ sentence-case@^2.1.0:
     no-case "^2.2.0"
     upper-case-first "^1.1.2"
 
-sequelize@^4.1.0, sequelize@^4.2.0:
+sequelize@^4.2.0:
   version "4.2.0"
   resolved "https://registry.yarnpkg.com/sequelize/-/sequelize-4.2.0.tgz#5b58f565d22455808a8a51f443684f851503e32c"
+  dependencies:
+    bluebird "^3.4.6"
+    cls-bluebird "^2.0.1"
+    debug "^2.3.0"
+    depd "^1.1.0"
+    dottie "^2.0.0"
+    env-cmd "^5.0.0"
+    generic-pool "^3.1.6"
+    inflection "1.10.0"
+    lodash "^4.17.1"
+    moment "^2.13.0"
+    moment-timezone "^0.5.4"
+    retry-as-promised "^2.0.0"
+    semver "^5.0.1"
+    terraformer-wkt-parser "^1.1.2"
+    toposort-class "^1.0.1"
+    uuid "^3.0.0"
+    validator "^6.3.0"
+    wkx "^0.4.1"
+
+sequelize@^4.2.1:
+  version "4.3.1"
+  resolved "https://registry.yarnpkg.com/sequelize/-/sequelize-4.3.1.tgz#cd735f1a0267e4fa1d8d22756d02f4e963b808d0"
   dependencies:
     bluebird "^3.4.6"
     cls-bluebird "^2.0.1"
