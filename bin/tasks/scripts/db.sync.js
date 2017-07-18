@@ -21,7 +21,7 @@ module.exports = ($, argv, logger) => {
   });
 
   if (argv.flags.destroy === true) {
-    return JSONSchemaSequelizer.deleteAll(deps, argv.flags, argv.data)
+    return JSONSchemaSequelizer.clear(deps, argv.flags, argv.data)
       .then(() => {
         logger.info('\r\r{% log %s model%s reset %}\n',
           deps.length,
@@ -29,7 +29,7 @@ module.exports = ($, argv, logger) => {
       });
   }
 
-  return JSONSchemaSequelizer.syncAll(deps, _opts)
+  return JSONSchemaSequelizer.sync(deps, _opts)
     .then(() => {
       logger.info('\r\r{% log %s model%s synced %}\n',
         deps.length,
