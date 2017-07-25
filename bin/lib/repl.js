@@ -108,11 +108,13 @@ module.exports = ($, farm) => {
     }
   });
 
+  const _extensions = farm.extensions('Conn._');
+
   Object.defineProperty(repl.context, '$', {
     configurable: false,
     enumerable: true,
     writable: false,
-    value: farm.extensions,
+    value: _extensions,
   });
 
   repl.defineCommand('fetch', {
@@ -170,7 +172,7 @@ module.exports = ($, farm) => {
 
       try {
         _aliased = _path && _path.charAt() !== '/'
-          ? farm.extensions.routes(_path)
+          ? _extensions.routes(_path)
           : null;
       } catch (e) {
         logger.info("{% error Route not found, given '%s' %}\n", _path);
