@@ -200,10 +200,18 @@ module.exports = ($, cwd, logger) => {
       abortOnFail: true,
       basePath: path.join(__dirname, '../skel/template'),
       actions: [
-        // mirror skeleton
+        // application base
         {
           copy: '.',
-          src: '.',
+          src: '_base',
+        },
+        {
+          copy: 'lib/{{paramCase APP_NAME}}',
+          src: 'lib',
+        },
+        {
+          copy: 'lib/{{paramCase APP_NAME}}_web',
+          src: 'web',
         },
         // bower support?
         $.flags.bower !== false ? {
@@ -215,18 +223,18 @@ module.exports = ($, cwd, logger) => {
         {
           render: [
             'package.json',
-            'app/server.js',
+            'lib/{{paramCase APP_NAME}}/application.js',
           ],
         },
         // models directory
         $.data.DATABASE ? {
           type: 'add',
-          dest: 'app/models/.gitkeep',
+          dest: 'lib/{{paramCase APP_NAME}}/models/.gitkeep',
         } : null,
         // default configuration
         $.data.DATABASE ? {
           type: 'add',
-          dest: 'config/database.js',
+          dest: 'config/db/default.js',
           template: DATABASE_TEMPLATE,
         } : null,
         // testing support
