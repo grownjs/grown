@@ -9,10 +9,14 @@ const path = require('path');
 module.exports = ($, cwd, logger) => {
   require('source-map-support').install();
 
-  // const _ = require('../lib/util');
+  /* istanbul ignore else */
+  if (!$._[0]) {
+    throw new Error('Missing application script (add --help for usage info)');
+  }
+
   const _repl = require('../lib/repl');
   const _test = require('../../lib/plugs/testing.js');
-  const _farm = require(path.join(cwd, 'app/server'));
+  const _farm = require(path.join(cwd, $._[0]));
 
   let farm;
 
