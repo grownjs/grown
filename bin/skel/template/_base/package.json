@@ -14,25 +14,29 @@
     "test": "_mocha test -R spec --recursive",<% /IS_MOCHA %><% #IS_AVA %>
     "dev:test": "ava test --watch",
     "test": "ava test",<% /IS_AVA %><% /HAS_TESTS %>
-    "lint": "eslint app lib<% #HAS_TESTS %> test<% /HAS_TESTS %> config",
+    "lint": "eslint config cron bin lib<% #HAS_TESTS %> test<% /HAS_TESTS %>",
     "dist": "tarima -Ofqe production",
     "dev": "tarima -ed"
-  },
+  },<%={{ }}=%>
   "tarima": {
     "cwd": ".",
     "src": [
-      "app/views",
-      "app/assets"
+      "lib/{{paramCase APP_NAME}}_web/views",
+      "lib/{{paramCase APP_NAME}}_web/assets"
     ],
     "watch": [
-      "app/server.js",
-      "app/models",
-      "app/controllers",
-      "boot",
+      "lib/{{paramCase APP_NAME}}/application.js",
+      "lib/{{paramCase APP_NAME}}/models",
+      "lib/{{paramCase APP_NAME}}/services",
+      "lib/{{paramCase APP_NAME}}_web/controllers",
+      "lib/{{paramCase APP_NAME}}_web/middlewares",
+      "lib/{{paramCase APP_NAME}}_web/middlewares.js",
+      "lib/{{paramCase APP_NAME}}_web/policies.js",
+      "lib/{{paramCase APP_NAME}}_web/routes.js",
       "config",
       ".env",
       "package.json"
-    ],
+    ]{{=<% %>=}},
     "filter": [
       "!_*",
       "!**/_*",
@@ -43,8 +47,8 @@
       "**/javascripts/*.js"
     ]<% /BUNDLER %>,
     "rename": [
-      "**/views/**:{fullpath/1}",
-      "**/assets/**:public/{fullpath/2}"
+      "**/views/**:{fullpath/2}",
+      "**/assets/**:public/{fullpath/3}"
     ],
     "ignore": [
       ".gitkeep"

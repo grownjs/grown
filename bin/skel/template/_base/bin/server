@@ -17,13 +17,17 @@ function runApplication() {
 
     const farm = bootstrap();
 
-    return farm.run(() =>
-      farm.listen(process.env.PORT || 8080, app => {
+    return farm.run(() => farm.listen(process.env.PORT || 8080))
+      .then(app => {
         process.stdout.write(`Listening on ${app.location.href} [press CTRL-C to quit]\n`);
-      }).catch(error => {
+      })
+      .catch(error => {
         process.stderr.write(`${error.toString()}\n`);
-        process.exit(1);
-      }));
+
+        if (require.main === module) {
+          process.exit(1);
+        }
+      });
   }
 
   if (!_closing) {

@@ -223,6 +223,7 @@ module.exports = ($, cwd, logger) => {
         {
           render: [
             'package.json',
+            'bin/server',
             'lib/{{paramCase APP_NAME}}/application.js',
           ],
         },
