@@ -24,11 +24,6 @@ module.exports = ($, cwd, logger) => {
     ? `http${$.flags.https === true ? 's' : ''}`
     : 'uws';
 
-  /* istanbul ignore else */
-  if (!$._[0]) {
-    throw new Error('Missing application script (add --help for usage info)');
-  }
-
   const _test = require('../../lib/plugs/testing.js');
   const _farm = require(path.resolve(cwd, $.flags.app));
 
