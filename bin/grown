@@ -59,6 +59,7 @@ try {
       l: 'list',
       c: 'cwd',
       e: 'env',
+      a: 'app',
     },
   });
 } catch (e) {
@@ -121,6 +122,8 @@ const cwd = $.flags.cwd || process.cwd();
 
 delete $.flags.cwd;
 
+const mainPkg = require(path.join(cwd, 'package.json'));
+
 function showHelp() {
   logger.write(`${GROWN_TXT}
   Usage:
@@ -160,6 +163,7 @@ function showHelp() {
     -P, [--port]               # Set PORT value (default: 80)
     -H, [--host]               # Set HOST value (default: 0.0.0.0)
     -e, [--env]                # Set NODE_ENV value (default: development)
+    -a, [--app]                # Set the bootstrap script (default: lib/APP_PATH/application.js)
 
   Server options:
     -i, [--repl]               # Enable the REPL
@@ -215,6 +219,15 @@ function run() {
     logger.info('\r{% green Grown v%s %} {% gray (node %s - %s) %}\r\n',
       thisPkg.version, process.version, process.env.NODE_ENV);
 
+    const mainFile = path.resolve(cwd,
+        $.flags.app || path.join('lib', mainPkg.name, 'application.js'));
+
+    if (!fs.existsSync(mainFile)) {
+      throw new Error('Missing application script (add --help for usage info)');
+    }
+
+    $.flags.app = mainFile;
+
     const _tasks = {
       generate: require('./tasks/generate'),
       start: require('./tasks/start'),
@@ -251,7 +264,7 @@ function run() {
           throw new Error(`Task must be a function, given: ${_call}`);
         }
 
-        const _farm = require(path.join(cwd, 'app/server'));
+        const _farm = require(mainFile);
 
         logger.info('\r{% wait Task %s: running... %}\r\r', _task);
 

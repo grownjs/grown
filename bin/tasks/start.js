@@ -30,7 +30,7 @@ module.exports = ($, cwd, logger) => {
   }
 
   const _test = require('../../lib/plugs/testing.js');
-  const _farm = require(path.join(cwd, $._[0]));
+  const _farm = require(path.resolve(cwd, $.flags.app));
 
   // initialization
   let farm;

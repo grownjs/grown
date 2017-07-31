@@ -2,21 +2,16 @@
 
 /* eslint-disable global-require */
 
-const _ = require('../lib/util');
-
 const path = require('path');
+
+const _ = require('../lib/util');
 
 module.exports = ($, cwd, logger) => {
   require('source-map-support').install();
 
-  /* istanbul ignore else */
-  if (!$._[0]) {
-    throw new Error('Missing application script (add --help for usage info)');
-  }
-
   const _repl = require('../lib/repl');
   const _test = require('../../lib/plugs/testing.js');
-  const _farm = require(path.join(cwd, $._[0]));
+  const _farm = require(path.resolve(cwd, $.flags.app));
 
   let farm;
 
