@@ -33,9 +33,21 @@ module.exports = ($, argv, logger) => {
   if (!argv.flags.make) {
     const conn = _extensions.dbs[argv.flags.db].sequelize;
 
+    const configFile = path.join(baseDir, 'index.json');
+
+    fs.ensureDirSync(baseDir);
+
     if (argv.flags.create || argv.flags.destroy) {
       if (!fs.existsSync(schemaFile)) {
         throw new Error(`Missing ${schemaFile} file`);
+      }
+
+      const migrations = glob.sync('*.js', { cwd: baseDir });
+
+      if (argv.flags.create) {
+        fs.outputJsonSync(configFile, migrations, { spaces: 2 });
+      } else {
+        fs.outputFileSync(configFile, '[]');
       }
 
       return logger('read', path.relative(cwd, schemaFile), () =>
@@ -44,10 +56,6 @@ module.exports = ($, argv, logger) => {
         logger.info('\r\r{% log %s schema %s %}\n', argv.flags.db, argv.flags.create ? 'applied' : 'reverted');
       });
     }
-
-    const configFile = path.join(baseDir, 'index.json');
-
-    fs.ensureDirSync(baseDir);
 
     let method = 'status';
 
@@ -127,10 +135,7 @@ module.exports = ($, argv, logger) => {
     `0${new Date().getDate() + 1}`.substr(-2),
   ].join('');
 
-  const schemaDir = path.join(cwd, 'db/schema');
-
-  const all = glob.sync('**/*.json', { cwd: schemaDir });
-  const dump = all.length && fs.readJsonSync(path.join(schemaDir, all.pop()));
+  const dump = fs.readJsonSync(path.join(cwd, 'db/schema', `${argv.flags.db}.json`));
 
   return JSONSchemaSequelizer.generate(dump || {}, fixedDeps)
     .then(results => {
