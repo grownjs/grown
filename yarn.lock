@@ -2019,9 +2019,9 @@ json-schema-ref-parser@^3.1.2:
     ono "^2.2.1"
     z-schema "^3.17.0"
 
-json-schema-sequelizer@^0.8.5:
-  version "0.8.5"
-  resolved "https://registry.yarnpkg.com/json-schema-sequelizer/-/json-schema-sequelizer-0.8.5.tgz#3dc0e42304ab035f62727ff54b8c721595ed040b"
+json-schema-sequelizer@^0.8.7:
+  version "0.8.7"
+  resolved "https://registry.yarnpkg.com/json-schema-sequelizer/-/json-schema-sequelizer-0.8.7.tgz#1f0f587ce623be142e85a11a1826888cdc09abe4"
   dependencies:
     json-schema-faker "0.5.0-rc8"
     json-schema-ref-parser "^3.1.2"
