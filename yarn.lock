@@ -2029,6 +2029,16 @@ json-schema-sequelizer@^0.8.7:
     sequelize "^4.2.1"
     umzug "^2.0.1"
 
+json-schema-sequelizer@pateketrueke/json-schema-sequelizer:
+  version "0.8.7"
+  resolved "https://codeload.github.com/pateketrueke/json-schema-sequelizer/tar.gz/00038360d1d9c107ed87a3d5eaae9a7b155d6a59"
+  dependencies:
+    json-schema-faker "0.5.0-rc8"
+    json-schema-ref-parser "^3.1.2"
+    pg-native "^1.10.1"
+    sequelize "^4.2.1"
+    umzug "^2.0.1"
+
 json-schema@0.2.3:
   version "0.2.3"
   resolved "https://registry.yarnpkg.com/json-schema/-/json-schema-0.2.3.tgz#b480c892e59a2f05954ce727bd3f2a4e882f9e13"
