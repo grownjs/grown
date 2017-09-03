@@ -62,7 +62,7 @@ module.exports = ($, cwd, logger) => {
 
   /* istanbul ignore else */
   if (!name) {
-    throw new Error("Missing APP_PATH, it's required!");
+    throw new Error("Missing APP_PATH, it's required! (add --help for usage info)");
   }
 
   if (name === '.') {

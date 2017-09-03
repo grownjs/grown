@@ -9,15 +9,15 @@
 /* eslint-disable no-nested-ternary */
 
 const GROWN_TXT = `
-  \u001b[32m▄████  ██▀███   ▒█████   █     █░███▄    █\u001b[39m
- \u001b[32m██▒ ▀█▒▓██ ▒ ██▒▒██▒  ██▒▓█░ █ ░█░██ ▀█   █\u001b[39m
-\u001b[32m▒██░▄▄▄░▓██ ░▄█ ▒▒██░  ██▒▒█░ █ ░█▓██  ▀█ ██▒\u001b[39m
-\u001b[32m░▓█  ██▓▒██▀▀█▄  ▒██   ██░░█░ █ ░█▓██▒  ▐▌██▒\u001b[39m
-\u001b[32m░▒▓███▀▒░██▓ ▒██▒░ ████▓▒░░░██▒██▓▒██░   ▓██░\u001b[39m
- \u001b[32m░▒   ▒ ░ ▒▓ ░▒▓░░ ▒░▒░▒░ ░ ▓░▒ ▒ ░ ▒░   ▒ ▒\u001b[39m
-  \u001b[32m░   ░   ░▒ ░ ▒░  ░ ▒ ▒░   ▒ ░ ░ ░ ░░   ░ ▒░\u001b[39m
-  \u001b[32m░   ░   ░░   ░ ░ ░ ░ ▒    ░   ░    ░   ░ ░\u001b[39m
-      \u001b[32m░    ░         ░ ░      ░            ░\u001b[39m
+   \u001b[32m▄████  ██▀███   ▒█████   █     █░███▄    █\u001b[39m
+  \u001b[32m██▒ ▀█▒▓██ ▒ ██▒▒██▒  ██▒▓█░ █ ░█░██ ▀█   █\u001b[39m
+ \u001b[32m▒██░▄▄▄░▓██ ░▄█ ▒▒██░  ██▒▒█░ █ ░█▓██  ▀█ ██▒\u001b[39m
+ \u001b[32m░▓█  ██▓▒██▀▀█▄  ▒██   ██░░█░ █ ░█▓██▒  ▐▌██▒\u001b[39m
+ \u001b[32m░▒▓███▀▒░██▓ ▒██▒░ ████▓▒░░░██▒██▓▒██░   ▓██░\u001b[39m
+  \u001b[32m░▒   ▒ ░ ▒▓ ░▒▓░░ ▒░▒░▒░ ░ ▓░▒ ▒ ░ ▒░   ▒ ▒\u001b[39m
+   \u001b[32m░   ░   ░▒ ░ ▒░  ░ ▒ ▒░   ▒ ░ ░ ░ ░░   ░ ▒░\u001b[39m
+   \u001b[32m░   ░   ░░   ░ ░ ░ ░ ▒    ░   ░    ░   ░ ░\u001b[39m
+       \u001b[32m░    ░         ░ ░      ░            ░\u001b[39m
 `;
 
 const _ = require('./lib/util');
@@ -88,19 +88,6 @@ let _task = $._.shift();
 
 const _bin = path.basename(thisPkg.bin);
 
-const aliases = {
-  generate: ['add', 'make'],
-  start: ['up'],
-  repl: ['c'],
-};
-
-Object.keys(aliases).forEach(key => {
-  /* istanbul ignore else */
-  if (aliases[key].indexOf(_task) > -1) {
-    _task = key;
-  }
-});
-
 /* istanbul ignore else */
 if (!_task && $.flags.list) {
   _task = 'generate';
@@ -122,12 +109,20 @@ const cwd = $.flags.cwd || process.cwd();
 
 delete $.flags.cwd;
 
-const mainPkg = require(path.join(cwd, 'package.json'));
+function showHelp(taskName) {
+  logger.write(GROWN_TXT);
 
-function showHelp() {
-  logger.write(`${GROWN_TXT}
-  Usage:
-    ${_bin} new APP_PATH [...]
+  switch (taskName) {
+    case 'init':
+      logger.write(`
+  The default preset is a barebones application with just the
+  application kernel, templates and some front-end assets. You
+  can add support for models, bundling, testing, etc.
+
+  Examples:
+    grown init .
+    grown init my-app -y
+    grown init example -fI ES6=buble TESTS=mocha
 
   Presets:
     DATABASE   postgres | mysql | mssql | sqlite
@@ -137,56 +132,84 @@ function showHelp() {
     STYLES     less | sass | styl | postcss
     RELOADER   browser-sync | live-reload
 
-  Examples:
-    grown new .
-    grown new my-app -y
-    grown new . -fI ES6=buble TESTS=mocha
-
-  Initialization options:
-    -B, [--no-bower]           # Skip installing tarima-bower support
-    -T, [--no-talavera]        # Skip images and talavera support
-    -O, [--no-install-opts]    # Skip installing dependencies
-    -D, [--no-install-dev]     # Skip installing dependencies
-    -I, [--no-install]         # Skip installing dependencies
-    -G, [--no-clone]           # Skip cloning repositories
-    -R, [--no-exec]            # Skip running commands
-    -C, [--no-copy]            # Skip copying sources
-    -A, [--no-add]             # Skip writing files
-    -f, [--force]              # Force without asking
-    -V, [--verbose]            # Installation logs
-    -y, [--interactive]        # Interactive mode
-
-  Runtime options:
-    -d, [--debug]              # Enable all debug messages
-    -q, [--quiet]              # Suppress status output
-    -c, [--cwd]                # Set the process.cwd()
-    -P, [--port]               # Set PORT value (default: 80)
-    -H, [--host]               # Set HOST value (default: 0.0.0.0)
-    -e, [--env]                # Set NODE_ENV value (default: development)
-    -a, [--app]                # Set the bootstrap script (default: lib/APP_PATH/application.js)
-
-  Server options:
-    -i, [--repl]               # Enable the REPL
-    -u, [--uws]                # Force UWS
-    -s, [--https]              # Force HTTP
-
-  Other actions:
-    ${_bin} add|make|generate [...]
-    ${_bin} up|start [...]
-    ${_bin} repl
-
-  Built-in tasks:
-    ${_bin} db [...]       # Database information
-    ${_bin} db.sync [...]  # Synchronize given models
-    ${_bin} db.dump [...]  # Backup and restore JSON-dumps
-
-  Grown options:
-    -l, [--list]         # List available generators
-    -h, [--help]         # Show this help message and quit
-    -x, [--exec]         # Execute a command before running
-    -v, [--version]      # Show Grown version number and quit
+  Options:
+    -B, [--no-bower]           Skip installing tarima-bower support
+    -T, [--no-talavera]        Skip images and talavera support
+    -O, [--no-install-opts]    Skip installing dependencies
+    -D, [--no-install-dev]     Skip installing dependencies
+    -I, [--no-install]         Skip installing dependencies
+    -G, [--no-clone]           Skip cloning repositories
+    -R, [--no-exec]            Skip running commands
+    -C, [--no-copy]            Skip copying sources
+    -A, [--no-add]             Skip writing files
+    -f, [--force]              Force without asking
+    -V, [--verbose]            Installation logs
+    -y, [--interactive]        Interactive mode
 
 `);
+      break;
+
+    case 'add':
+      logger.write(`
+  TODO
+
+`);
+      break;
+
+    case 'up':
+      logger.write(`
+  This will start your application under a supervised mode which
+  is fine for most scenarios, edit and run your bin/server script
+  for custom bootstraping.
+
+  Options:
+    -i, [--repl]        Enable the REPL
+    -u, [--uws]         Force UWS
+    -s, [--https]       Force HTTP
+
+`);
+      break;
+
+    case 'db':
+      logger.write(`
+  TODO
+
+`);
+      break;
+
+    case undefined:
+      logger.write(`
+  Usage:
+    ${_bin} COMMAND [ARGS]
+
+  Commands:
+    init      Create a new application boilerplate
+    add       Create application files
+    db        Inspect and manage databases
+    up        Start the application server
+    repl      Start the console
+
+  Grown options:
+    -l, [--list]        List available generators
+    -h, [--help]        Show this help message and quit
+    -x, [--exec]        Execute a command before running
+    -v, [--version]     Show Grown version number and quit
+
+  Runtime options:
+    -d, [--debug]       Enable all debug messages
+    -q, [--quiet]       Suppress status output
+    -c, [--cwd]         Set the process.cwd()
+    -P, [--port]        Set PORT value (default: 80)
+    -H, [--host]        Set HOST value (default: 0.0.0.0)
+    -e, [--env]         Set NODE_ENV value (default: development)
+    -a, [--app]         Set the bootstrap script (default: lib/APP_NAME/application.js)
+
+`);
+      break;
+
+    default:
+      throw new Error(`Unknown ${taskName} task`);
+  }
 }
 
 function start(cb) {
@@ -219,27 +242,36 @@ function run() {
     logger.info('\r{% green Grown v%s %} {% gray (node %s - %s) %}\r\n',
       thisPkg.version, process.version, process.env.NODE_ENV);
 
-    const mainFile = path.resolve(cwd,
-        $.flags.app || path.join('lib', mainPkg.name, 'application.js'));
+    const mainPkg = path.join(cwd, 'package.json');
 
-    if (!fs.existsSync(mainFile)) {
-      throw new Error('Missing application script (add --help for usage info)');
+    let mainFile;
+
+    if (_task !== 'init') {
+      mainFile = path.resolve(cwd,
+        $.flags.app || (fs.existsSync(mainPkg)
+            ? path.join('lib', require(mainPkg).name, 'application.js')
+            : undefined
+          ));
+
+      if (!fs.existsSync(mainFile)) {
+        throw new Error(`Missing ${path.relative(cwd, mainFile)} (add --help for usage info)`);
+      }
+
+      $.flags.app = mainFile;
     }
 
-    $.flags.app = mainFile;
-
     const _tasks = {
-      generate: require('./tasks/generate'),
-      start: require('./tasks/start'),
+      init: require('./tasks/new'),
+      add: require('./tasks/generate'),
+      up: require('./tasks/start'),
       repl: require('./tasks/repl'),
-      new: require('./tasks/new'),
     };
 
     switch (_task) {
-      case 'generate':
-      case 'start':
+      case 'init':
+      case 'add':
+      case 'up':
       case 'repl':
-      case 'new':
         _tasks[_task]($, cwd, logger);
         break;
 
@@ -301,9 +333,8 @@ process.on('uncaughtException', e => {
   _.die(1);
 });
 
-/* istanbul ignore else */
 if ((!_task || $.flags.help) && !$.params.exec) {
-  showHelp();
+  showHelp(_task);
   _.die();
 } else {
   start(_task ? run : _.die);
