@@ -142,6 +142,35 @@ module.exports = haki => {
     },
   });
 
+  haki.setGenerator('model.tpl', {
+    description: 'Add views for model',
+    arguments: ['NAME', 'DEST'],
+    abortOnFail: true,
+    usage: 'TODO',
+    prompts: [{
+      name: 'NAME',
+      message: 'Resource name:',
+      validate: value => value.length > 0 || "Don't forget name your resource",
+    }, {
+      name: 'DEST',
+      message: 'Destination path:',
+      validate: value => value.length > 0 || "Please specify your resource's path",
+    }],
+    actions: [{
+      type: 'add',
+      dest: '{{{DEST}}}/{{normalize NAME}}/edit.js.pug',
+      content: '//- TODO',
+    }, {
+      type: 'add',
+      dest: '{{{DEST}}}/{{normalize NAME}}/index.js.pug',
+      content: '//- TODO',
+    }, {
+      type: 'add',
+      dest: '{{{DEST}}}/{{normalize NAME}}/new.js.pug',
+      content: '//- TODO',
+    }],
+  });
+
   haki.setGenerator('model.ctrl', {
     description: 'Add a model controller',
     arguments: ['NAME', 'DEST'],

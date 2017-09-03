@@ -76,7 +76,7 @@ module.exports = () => {
   $.use(Grown.plugs.render({
     folders: [
       path.join(cwd, 'lib/{{paramCase APP_NAME}}_web/views'),
-      path.join(cwd, 'build/views'),
+      path.join(cwd, DIST_DIR, 'templates'),
     ],
   }));
 
@@ -85,7 +85,7 @@ module.exports = () => {
     settings: path.join(cwd, 'config/mailers.js'),
     folders: [
       path.join(cwd, 'lib/{{paramCase APP_NAME}}_web/views'),
-      path.join(cwd, 'build/views'),
+      path.join(cwd, DIST_DIR, 'templates'),
     ],
   }));
 

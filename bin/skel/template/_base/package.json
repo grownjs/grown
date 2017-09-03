@@ -29,6 +29,7 @@
       "lib/{{paramCase APP_NAME}}/application.js",
       "lib/{{paramCase APP_NAME}}/models",
       "lib/{{paramCase APP_NAME}}/services",
+      "lib/{{paramCase APP_NAME}}/templates",
       "lib/{{paramCase APP_NAME}}_web/controllers",
       "lib/{{paramCase APP_NAME}}_web/middlewares",
       "lib/{{paramCase APP_NAME}}_web/middlewares.js",
@@ -44,8 +45,7 @@
       "!**/_*/**"
     ]<% #BUNDLER %>,
     "bundle": [
-      "**/views/**/*.{md,pug}",
-      "**/javascripts/*.js"
+      "**/{views,javascripts}/**"
     ]<% /BUNDLER %>,
     "rename": [
       "**/views/**:{fullpath/2}",
