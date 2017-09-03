@@ -46,7 +46,7 @@
     "formidable": "^1.1.1",
     "istanbul": "^0.4.3",
     "jasmine-node": "2.0.0-beta4",
-    "json-schema-sequelizer": "pateketrueke/json-schema-sequelizer",
+    "json-schema-sequelizer": "^0.8.10",
     "method-override": "^2.3.7",
     "morgan": "^1.8.1",
     "nodemailer": "^2",

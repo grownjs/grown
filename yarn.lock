@@ -2019,19 +2019,9 @@ json-schema-ref-parser@^3.1.2:
     ono "^2.2.1"
     z-schema "^3.17.0"
 
-json-schema-sequelizer@^0.8.7:
-  version "0.8.7"
-  resolved "https://registry.yarnpkg.com/json-schema-sequelizer/-/json-schema-sequelizer-0.8.7.tgz#1f0f587ce623be142e85a11a1826888cdc09abe4"
-  dependencies:
-    json-schema-faker "0.5.0-rc8"
-    json-schema-ref-parser "^3.1.2"
-    pg-native "^1.10.1"
-    sequelize "^4.2.1"
-    umzug "^2.0.1"
-
-json-schema-sequelizer@pateketrueke/json-schema-sequelizer:
-  version "0.8.7"
-  resolved "https://codeload.github.com/pateketrueke/json-schema-sequelizer/tar.gz/00038360d1d9c107ed87a3d5eaae9a7b155d6a59"
+json-schema-sequelizer@^0.8.10:
+  version "0.8.10"
+  resolved "https://registry.yarnpkg.com/json-schema-sequelizer/-/json-schema-sequelizer-0.8.10.tgz#249e912fc1bbc320b1d03b645e2aa3fd9cb69283"
   dependencies:
     json-schema-faker "0.5.0-rc8"
     json-schema-ref-parser "^3.1.2"
