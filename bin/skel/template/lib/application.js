@@ -56,13 +56,7 @@ module.exports = () => {
     ],
   }));
 
-  // {{#DATABASE}}initialize models before
-  $.use(Grown.plugs.models([{
-    settings: path.join(cwd, 'config/db/default.js'),
-    folders: path.join(cwd, 'lib/{{paramCase APP_NAME}}/models'),
-  }]));
-
-  // {{/DATABASE}}load routes and views
+  // load routes and views
   $.use(Grown.plugs.router({
     middlewares: {
       settings: path.join(cwd, 'lib/{{paramCase APP_NAME}}_web/middlewares.js'),
@@ -72,11 +66,17 @@ module.exports = () => {
     folders: path.join(cwd, 'lib/{{paramCase APP_NAME}}_web/controllers'),
   }));
 
-  // rendering support
+  // {{#DATABASE}}initialize models before
+  $.use(Grown.plugs.models([{
+    settings: path.join(cwd, 'config/db/default.js'),
+    folders: path.join(cwd, 'lib/{{paramCase APP_NAME}}/models'),
+  }]));
+
+  // {{/DATABASE}}rendering support
   $.use(Grown.plugs.render({
     folders: [
-      path.join(cwd, 'lib/{{paramCase APP_NAME}}_web/views'),
-      path.join(cwd, DIST_DIR, 'templates'),
+      path.join(cwd, 'lib/{{paramCase APP_NAME}}/templates'),
+      path.join(cwd, DIST_DIR, 'views'),
     ],
   }));
 
@@ -84,8 +84,8 @@ module.exports = () => {
   $.use(Grown.plugs.mailer({
     settings: path.join(cwd, 'config/mailers.js'),
     folders: [
-      path.join(cwd, 'lib/{{paramCase APP_NAME}}_web/views'),
-      path.join(cwd, DIST_DIR, 'templates'),
+      path.join(cwd, 'lib/{{paramCase APP_NAME}}/templates'),
+      path.join(cwd, DIST_DIR, 'views'),
     ],
   }));
 
