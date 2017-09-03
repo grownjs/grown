@@ -15,6 +15,7 @@
     "dev:test": "ava test --watch",
     "test": "ava test",<% /IS_AVA %><% /HAS_TESTS %>
     "lint": "eslint config cron bin lib<% #HAS_TESTS %> test<% /HAS_TESTS %>",
+    "prod": "yarn start -- -e production",
     "dist": "tarima -Ofqe production",
     "dev": "tarima -ed"
   },<%={{ }}=%>
