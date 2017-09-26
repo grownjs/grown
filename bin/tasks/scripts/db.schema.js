@@ -11,11 +11,11 @@ module.exports = ($, argv, logger) => {
   const cwd = $.get('cwd', process.cwd());
   const dbs = Object.keys(_extensions.dbs);
 
-  if (!argv.flags.db || dbs.indexOf(argv.flags.db) === -1) {
-    throw new Error(`Missing connection to --db, given '${argv.flags.db}'`);
+  if (!argv.flags.use || dbs.indexOf(argv.flags.use) === -1) {
+    throw new Error(`Missing connection to --db, given '${argv.flags.use}'`);
   }
 
-  const databaseDir = path.join(cwd, argv.flags.path || 'db', argv.flags.db);
+  const databaseDir = path.dirname(_extensions.dbs[argv.flags.use].sequelize.options.file);
   const schemaFile = path.join(databaseDir, 'schema.json');
 
   if (!fs.existsSync(schemaFile) && !argv.flags.save) {
@@ -36,8 +36,8 @@ module.exports = ($, argv, logger) => {
       length === 1 ? '' : 's');
   }
 
-  const models = _extensions.dbs[argv.flags.db].models;
-  const defns = _extensions.dbs[argv.flags.db].refs;
+  const models = _extensions.dbs[argv.flags.use].models;
+  const defns = _extensions.dbs[argv.flags.use].refs;
 
   const fixedDeps = (argv._.length ? argv._ : Object.keys(models)).map(model => {
     if (!models[model]) {
@@ -75,7 +75,7 @@ module.exports = ($, argv, logger) => {
     logger('read', path.relative(cwd, schemaFile));
 
     // FIXME: remove non-specified models from given list
-    return _extensions.dbs[argv.flags.db].rehydrate(payload)
+    return _extensions.dbs[argv.flags.use].rehydrate(payload)
       .then(() => {
         logger.info('\r\r{% log %s model%s imported %}\n',
           length,

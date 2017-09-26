@@ -12,15 +12,15 @@ module.exports = ($, argv, logger) => {
   const cwd = $.get('cwd', process.cwd());
   const dbs = Object.keys(_extensions.dbs);
 
-  if (!argv.flags.db || dbs.indexOf(argv.flags.db) === -1) {
-    throw new Error(`Missing connection to --db, given '${argv.flags.db}'`);
+  if (!argv.flags.use || dbs.indexOf(argv.flags.use) === -1) {
+    throw new Error(`Missing connection to --db, given '${argv.flags.use}'`);
   }
 
-  const databaseDir = path.join(cwd, argv.flags.path || 'db', argv.flags.db);
+  const databaseDir = path.dirname(_extensions.dbs[argv.flags.use].sequelize.options.file);
   const schemaFile = path.join(databaseDir, 'schema.js');
   const baseDir = path.join(databaseDir, 'migrations');
 
-  const models = _extensions.dbs[argv.flags.db].models;
+  const models = _extensions.dbs[argv.flags.use].models;
 
   const fixedDeps = (argv._.length ? argv._ : Object.keys(models)).map(model => {
     if (!models[model]) {
@@ -31,7 +31,7 @@ module.exports = ($, argv, logger) => {
   });
 
   if (!argv.flags.make) {
-    const conn = _extensions.dbs[argv.flags.db].sequelize;
+    const conn = _extensions.dbs[argv.flags.use].sequelize;
 
     const configFile = path.join(baseDir, 'index.json');
 
@@ -53,7 +53,7 @@ module.exports = ($, argv, logger) => {
       return logger('read', path.relative(cwd, schemaFile), () =>
         JSONSchemaSequelizer.migrate(conn, require(schemaFile), true)[argv.flags.create ? 'up' : 'down']())
       .then(() => {
-        logger.info('\r\r{% log %s schema %s %}\n', argv.flags.db, argv.flags.create ? 'applied' : 'reverted');
+        logger.info('\r\r{% log %s schema %s %}\n', argv.flags.use, argv.flags.create ? 'applied' : 'reverted');
       });
     }
 
@@ -135,7 +135,10 @@ module.exports = ($, argv, logger) => {
     `0${new Date().getDate() + 1}`.substr(-2),
   ].join('');
 
-  const dump = fs.readJsonSync(path.join(databaseDir, 'schema.json'));
+  const schema = path.join(databaseDir, 'schema.json');
+  const dump = fs.existsSync(schema)
+    ? fs.readJsonSync(schema)
+    : {};
 
   return JSONSchemaSequelizer.generate(dump || {}, fixedDeps)
     .then(results => {
