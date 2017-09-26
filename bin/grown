@@ -288,7 +288,7 @@ function run() {
             ? `./tasks/scripts/${_task}`
             : _file);
         } catch (e) {
-          throw new Error(`Task 'lib/tasks/${_task}' not implemented`);
+          _.printError(e, $.flags, logger);
         }
 
         /* istanbul ignore else */
