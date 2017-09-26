@@ -16,9 +16,9 @@ module.exports = ($, argv, logger) => {
     throw new Error(`Missing connection to --db, given '${argv.flags.db}'`);
   }
 
-  const schemaFile = path.join(cwd, 'db/schema', `${argv.flags.db}.js`);
-
-  const baseDir = path.join(cwd, 'db/migrations', argv.flags.db);
+  const databaseDir = path.join(cwd, argv.flags.path || 'db', argv.flags.db);
+  const schemaFile = path.join(databaseDir, 'schema.js');
+  const baseDir = path.join(databaseDir, 'migrations');
 
   const models = _extensions.dbs[argv.flags.db].models;
 
@@ -135,7 +135,7 @@ module.exports = ($, argv, logger) => {
     `0${new Date().getDate() + 1}`.substr(-2),
   ].join('');
 
-  const dump = fs.readJsonSync(path.join(cwd, 'db/schema', `${argv.flags.db}.json`));
+  const dump = fs.readJsonSync(path.join(databaseDir, 'schema.json'));
 
   return JSONSchemaSequelizer.generate(dump || {}, fixedDeps)
     .then(results => {

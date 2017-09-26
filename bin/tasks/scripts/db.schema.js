@@ -15,10 +15,11 @@ module.exports = ($, argv, logger) => {
     throw new Error(`Missing connection to --db, given '${argv.flags.db}'`);
   }
 
-  const schemaFile = path.join(cwd, 'db/schema', `${argv.flags.db}.json`);
+  const databaseDir = path.join(cwd, argv.flags.path || 'db', argv.flags.db);
+  const schemaFile = path.join(databaseDir, 'schema.json');
 
   if (!fs.existsSync(schemaFile) && !argv.flags.save) {
-    throw new Error('Missing db/schema.json');
+    throw new Error('Missing schema.json definition');
   }
 
   if (!(argv.flags.save || argv.flags.load)) {
