@@ -2538,9 +2538,9 @@ object-keys@~0.4.0:
   version "0.4.0"
   resolved "https://registry.yarnpkg.com/object-keys/-/object-keys-0.4.0.tgz#28a6aae7428dd2c3a92f3d95f21335dd204e0336"
 
-object-new@^0.0.5:
-  version "0.0.5"
-  resolved "https://registry.yarnpkg.com/object-new/-/object-new-0.0.5.tgz#9955438a0d2516cda4106d2905cf4dd1ddae0fc7"
+object-new@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/object-new/-/object-new-0.1.0.tgz#eb607c0f9ddeeab4707eed92e550c100ba1b3e38"
 
 object-visit@^0.3.4:
   version "0.3.4"
