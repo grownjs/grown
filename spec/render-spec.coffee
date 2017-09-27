@@ -58,7 +58,7 @@ describe '#render', ->
 
   it 'should render functions', (done) ->
     $.server.mount (conn) ->
-      conn.set_state 'layout', (locals) -> locals.yield
+      conn.layout = (locals) -> locals.yield
       conn.view (locals) -> 'FOO'
       conn.view (locals, h) -> h('span', null, 'BAR')
       conn.end()
