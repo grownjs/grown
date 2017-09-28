@@ -46,8 +46,14 @@ module.exports = ($, cwd, logger) => {
         const _close = _repl($, farm);
 
         farm.on('close', () => _close());
-        farm.on('reload', () => _close());
-        farm.on('reload', () => _farm.teardown(_startApplication));
+        farm.on('reload', () => {
+          _close();
+
+          // delay restart
+          _farm.teardown(() => {
+            setTimeout(_startApplication, 100);
+          });
+        });
       }
     });
 
