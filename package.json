@@ -31,7 +31,6 @@
     "object-new": "^0.1.0",
     "send": "^0.15.3",
     "source-map-support": "^0.4.11",
-    "tmp": "^0.0.33",
     "type-is": "^1.6.14",
     "wargs": "^0.7.1"
   },
