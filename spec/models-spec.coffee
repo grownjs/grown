@@ -15,7 +15,8 @@ describe '#models', ->
     $(@ctx, util)
 
     @ctx.emit('start').then =>
-      @models = @ctx.extensions('Conn._.models')
+      @models = @ctx.extensions('Conn._.dbs').config.models
+      @syncAll = @ctx.extensions('Conn._.dbs').sync
       done()
 
   it 'should load all models hierarchically', ->
@@ -24,9 +25,9 @@ describe '#models', ->
     expect(@models.ParentChild).not.toBeUndefined()
 
   it 'should sync all models without issues', (done) ->
-    { sync, Single } = @models
+    { Single } = @models
 
-    sync(force: true)
+    @syncAll(force: true)
       .then -> Single.describe()
       .then (x) ->
         expect(x.id.type).toEqual 'INTEGER'
