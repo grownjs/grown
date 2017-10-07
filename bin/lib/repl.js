@@ -23,7 +23,7 @@ module.exports = ($, farm) => {
   const logName = ($.flags.repl === true ? 'default' : $.flags.repl) || 'default';
 
   const logFile = process.env.NODE_REPL_HISTORY
-    || path.join(farm.get('cwd', process.cwd()), `log/REPL.${logName}.log`);
+    || path.join(farm.config('cwd'), `log/REPL.${logName}.log`);
 
   let fd;
   let ws;

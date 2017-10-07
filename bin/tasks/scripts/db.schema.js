@@ -8,7 +8,7 @@ const JSONSchemaSequelizer = require('json-schema-sequelizer');
 module.exports = ($, argv, logger) => {
   const _extensions = $.extensions('Conn._');
 
-  const cwd = $.get('cwd', process.cwd());
+  const cwd = $.config('cwd');
   const dbs = Object.keys(_extensions.dbs);
 
   if (!argv.flags.use || dbs.indexOf(argv.flags.use) === -1) {

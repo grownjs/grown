@@ -7,7 +7,7 @@ const fs = require('fs-extra');
 module.exports = ($, argv, logger) => {
   const _extensions = $.extensions('Conn._');
 
-  const cwd = $.get('cwd', process.cwd());
+  const cwd = $.config('cwd');
 
   const deps = (argv._.length ? argv._ : Object.keys(_extensions.models)).map(name => {
     if (!_extensions.models[name]) {
