@@ -11,7 +11,10 @@ $ = models({
 
 describe '#models', ->
   beforeEach (done) ->
-    @ctx = new Grown()
+    @ctx = new Grown({
+      cwd: __dirname
+      env: 'testing'
+    })
     $(@ctx, util)
 
     @ctx.emit('start').then =>

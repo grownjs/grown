@@ -5,6 +5,7 @@ $ = module.exports = ->
 
   $.server = new Grown
     cwd: process.cwd()
+    env: 'testing'
 
   $.server.fetch = Grown.plugs.testing($.server)
 

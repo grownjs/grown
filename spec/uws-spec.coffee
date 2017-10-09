@@ -6,6 +6,7 @@ describe '#uws', ->
   beforeEach (done) ->
     $ = Grown.new
       cwd: __dirname
+      env: 'testing'
 
     $.mount (conn) ->
       conn.resp_body = 'OK'
