@@ -12,7 +12,7 @@ module.exports = ($, argv, logger) => {
   const dbs = Object.keys(_extensions.dbs);
 
   if (!argv.flags.use || dbs.indexOf(argv.flags.use) === -1) {
-    throw new Error(`Missing connection to --db, given '${argv.flags.use}'`);
+    throw new Error(`Missing connection to --use, given '${argv.flags.use}'`);
   }
 
   const databaseDir = path.dirname(_extensions.dbs[argv.flags.use].sequelize.options.file);
