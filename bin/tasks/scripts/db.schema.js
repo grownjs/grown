@@ -15,7 +15,7 @@ module.exports = ($, argv, logger) => {
     throw new Error(`Missing connection to --use, given '${argv.flags.use}'`);
   }
 
-  const databaseDir = path.dirname(_extensions.dbs[argv.flags.use].sequelize.options.file);
+  const databaseDir = _extensions.dbs[argv.flags.use].sequelize.options.baseDir;
   const schemaFile = path.join(databaseDir, 'schema.json');
 
   if (!fs.existsSync(schemaFile) && !argv.flags.save) {
