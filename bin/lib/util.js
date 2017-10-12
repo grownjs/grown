@@ -4,6 +4,8 @@
 
 const cleanStack = require('clean-stack');
 
+const die = process.exit.bind(process);
+
 function _getError(e, flags) {
   return flags
     ? (flags.debug && cleanStack(e.stack)) || e.message
@@ -17,22 +19,6 @@ function _printError(e, flags, logger) {
     logger.info('\r{% error %s %}\r\n', _getError(e, flags));
   }
 }
-
-// runtime hooks
-const Module = require('module');
-
-function _clearModules(cwd) {
-  Object.keys(Module._cache)
-    .forEach(key => {
-      /* istanbul ignore else */
-      if (key.indexOf('node_modules') === -1
-        && (cwd && key.indexOf(cwd) === 0)) {
-        delete Module._cache[key];
-      }
-    });
-}
-
-const die = process.exit.bind(process);
 
 function extend(target) {
   Array.prototype.slice.call(arguments, 1).forEach(source => {
@@ -52,5 +38,4 @@ module.exports = {
   extend,
   getError: _getError,
   printError: _printError,
-  clearModules: _clearModules,
 };

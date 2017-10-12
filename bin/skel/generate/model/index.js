@@ -1,13 +1,5 @@
 // FIXME: move this to haki?
-function jsonPad(obj, depth) {
-  return JSON.stringify(obj, null, 2)
-    .split('\n')
-    .join(`\n${new Array((depth || 0) + 1).join('  ')}`)
-    .replace(/(?:\w|"|'|\}|\])$/gm, '$&,')
-    .replace(/"(\$?\w+)":/g, '$1:')
-    .replace(/"/g, "'")
-    .replace(/,$/, '');
-}
+const util = require('../../../../lib/util');
 
 function isUpper(str) {
   return /^[A-Z]/.test(str.charAt());
@@ -128,7 +120,7 @@ module.exports = haki => {
         });
       });
 
-      const MODEL_TEMPLATE = `module.exports = ${jsonPad({
+      const MODEL_TEMPLATE = `module.exports = ${util.safeJSON({
         $schema: _schema,
         $uiSchema: _uiSchema,
         $uiFields: { index: _fields },
