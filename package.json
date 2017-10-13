@@ -13,7 +13,7 @@
     "cover": "istanbul cover --root lib --x '**/spec/**' -- jasmine-node --coffee spec",
     "cover:up": "codecov --file=coverage/lcov.info --disable=gcov -e TRAVIS_NODE_VERSION",
     "example": "node examples/_runner.js",
-    "test": "yarn lint && yarn cover",
+    "test": "npm run lint && npm run cover",
     "test:uws": "./examples/_test.sh"
   },
   "dependencies": {
