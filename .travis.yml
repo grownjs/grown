@@ -11,10 +11,10 @@ node_js:
   - 7
 before_script:
   - psql -c 'create database travis_ci_test;' -U postgres
-  - yarn add pg sqlite3
+  - npm install pg sqlite3
 script:
-  - 'yarn test'
+  - 'npm run test'
 after_success:
-  - 'yarn cover:up'
+  - 'npm run cover:up'
 notifications:
   email: false
