@@ -86,8 +86,6 @@ const fs = require('fs');
 
 let _task = $._.shift();
 
-const _bin = path.basename(thisPkg.bin);
-
 /* istanbul ignore else */
 if (!_task && $.flags.list) {
   _task = 'generate';
@@ -180,7 +178,7 @@ function showHelp(taskName) {
     case undefined:
       logger.write(`
   Usage:
-    ${_bin} COMMAND [ARGS]
+    grown COMMAND [ARGS]
 
   Commands:
     init      Create a new application boilerplate
