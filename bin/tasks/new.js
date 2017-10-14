@@ -68,7 +68,7 @@ module.exports = ($, cwd, logger) => {
   if (name === '.') {
     name = path.basename(cwd);
   } else {
-    name = (name || '').replace(/\W+/g, '-');
+    name = name.replace(/\W+/g, '-').toLowerCase();
     cwd = path.join(cwd, name);
   }
 
