@@ -20,7 +20,7 @@ const GROWN_TXT = `
        \u001b[32m░    ░         ░ ░      ░            ░\u001b[39m
 `;
 
-const _ = require('./lib/util');
+const util = require('../lib/util');
 
 let $;
 
@@ -63,8 +63,8 @@ try {
     },
   });
 } catch (e) {
-  _.printError(e);
-  _.die(1);
+  util.printError(e);
+  util.die(1);
 }
 
 // defaults
@@ -225,7 +225,7 @@ function start(cb) {
 
     child.on(process.version.split('.')[1] === '6' ? 'exit' : 'close', exitCode => {
       if (exitCode !== 0) {
-        _.die(1);
+        util.die(1);
       } else {
         cb();
       }
@@ -286,7 +286,7 @@ function run() {
             ? `./tasks/scripts/${_task}`
             : _file);
         } catch (e) {
-          _.printError(e, $.flags, logger);
+          util.printError(e, $.flags, logger);
         }
 
         /* istanbul ignore else */
@@ -302,14 +302,14 @@ function run() {
           .run(ctx => _call(ctx, $, logger))
           .then(() => _farm.teardown())
           .catch(e => _farm.teardown(() => {
-            _.printError(e, $.flags, logger);
-            _.die(1);
+            util.printError(e, $.flags, logger);
+            util.die(1);
           }));
       }
     }
   } catch (e) {
-    _.printError(e, $.flags, logger);
-    _.die(1);
+    util.printError(e, $.flags, logger);
+    util.die(1);
   }
 }
 
@@ -318,22 +318,22 @@ if ($.flags.version) {
   logger.printf('\r{% green %s v%s %} {% gray (node %s) %}\r\n',
     thisPkg.name, thisPkg.version,
     process.version);
-  _.die();
+  util.die();
 }
 
 process.on('unhandledRejection', e => {
-  _.printError(e, $.flags, logger);
-  _.die(1);
+  util.printError(e, $.flags, logger);
+  util.die(1);
 });
 
 process.on('uncaughtException', e => {
-  _.printError(e, $.flags, logger);
-  _.die(1);
+  util.printError(e, $.flags, logger);
+  util.die(1);
 });
 
 if ((!_task || $.flags.help) && !$.params.exec) {
   showHelp(_task);
-  _.die();
+  util.die();
 } else {
-  start(_task ? run : _.die);
+  start(_task ? run : util.die);
 }

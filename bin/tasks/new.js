@@ -2,7 +2,7 @@
 
 /* eslint-disable global-require */
 
-const _ = require('../lib/util');
+const util = require('../../lib/util');
 
 const path = require('path');
 
@@ -110,7 +110,7 @@ module.exports = ($, cwd, logger) => {
 
   const Haki = require('haki');
 
-  const haki = new Haki(cwd, _.extend({}, $.flags));
+  const haki = new Haki(cwd, util.extend({}, $.flags));
 
   function ask() {
     return haki.runGenerator({
@@ -327,7 +327,7 @@ module.exports = ($, cwd, logger) => {
           ],
         } : null,
       ],
-    }, _.extend({
+    }, util.extend({
       APP_NAME: name,
       CSS_LANG: $.data.STYLES,
       CAN_BUNDLE: $.data.BUNDLER || $.data.STYLES || $.data.ES6,
@@ -353,7 +353,7 @@ module.exports = ($, cwd, logger) => {
     ? ask().then(() => run())
     : run())
   .catch(e => {
-    _.printError(e, $.flags, logger);
-    _.die(1);
+    util.printError(e, $.flags, logger);
+    util.die(1);
   });
 };

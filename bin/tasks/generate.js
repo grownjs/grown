@@ -2,16 +2,16 @@
 
 /* eslint-disable global-require */
 
+const util = require('../../lib/util');
+
 const path = require('path');
 
 module.exports = ($, cwd, logger) => {
-  const _ = require('../lib/util');
-
   const _cmd = $._.shift();
 
   const Haki = require('haki');
 
-  const haki = new Haki(cwd, _.extend({}, $.flags, { data: $._, params: $.params }));
+  const haki = new Haki(cwd, util.extend({}, $.flags, { data: $._, params: $.params }));
 
   // common helpers
   haki.addHelper('normalize', (text, render) =>
@@ -34,7 +34,7 @@ module.exports = ($, cwd, logger) => {
   function _run() {
     /* istanbul ignore else */
     if (!$.flags.list && _cmd) {
-      return haki.runGenerator(_cmd, _.extend({}, $.data));
+      return haki.runGenerator(_cmd, util.extend({}, $.data));
     }
 
     /* istanbul ignore else */
@@ -57,13 +57,13 @@ module.exports = ($, cwd, logger) => {
       });
     }
 
-    return haki.chooseGeneratorList(_.extend({}, $.data));
+    return haki.chooseGeneratorList(util.extend({}, $.data));
   }
 
   Promise.resolve()
     .then(() => _run())
     .catch(err => {
-      _.printError(err, $.flags, logger);
-      _.die(1);
+      util.printError(err, $.flags, logger);
+      util.die(1);
     });
 };

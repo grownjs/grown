@@ -2,9 +2,9 @@
 
 /* eslint-disable global-require */
 
-const path = require('path');
+const util = require('../../lib/util');
 
-const _ = require('../lib/util');
+const path = require('path');
 
 module.exports = ($, cwd, logger) => {
   require('source-map-support').install();
@@ -21,8 +21,8 @@ module.exports = ($, cwd, logger) => {
       try {
         farm = _farm();
       } catch (e) {
-        _.printError(e, $.flags, logger);
-        _.die(1);
+        util.printError(e, $.flags, logger);
+        util.die(1);
       }
 
       farm.fetch = _test(farm);
@@ -41,8 +41,8 @@ module.exports = ($, cwd, logger) => {
           logger.info('{% log Type %} {% bold .help %} {% gray to list all available commands %}\n');
         }))
         .catch(e => {
-          _.printError(e, $.flags, logger);
-          _.die(1);
+          util.printError(e, $.flags, logger);
+          util.die(1);
         });
     });
   }

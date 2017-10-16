@@ -1,9 +1,4 @@
-// FIXME: move this to haki?
 const util = require('../../../../lib/util');
-
-function isUpper(str) {
-  return /^[A-Z]/.test(str.charAt());
-}
 
 const TYPES = ['string', 'number', 'integer', 'boolean', 'array', 'object'];
 const PROPS = ['required', 'primaryKey', 'autoIncrement', 'hasOne', 'belongsTo'];
@@ -40,6 +35,10 @@ const CTRL_TPL = `module.exports = {
   },
 };
 `;
+
+function isUpper(str) {
+  return /^[A-Z]/.test(str.charAt());
+}
 
 module.exports = haki => {
   haki.setGenerator('model', {
@@ -120,7 +119,7 @@ module.exports = haki => {
         });
       });
 
-      const MODEL_TEMPLATE = `module.exports = ${util.safeJSON({
+      const MODEL_TEMPLATE = `module.exports = ${util.serialize({
         $schema: _schema,
         $uiSchema: _uiSchema,
         $uiFields: { index: _fields },

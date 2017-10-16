@@ -2,15 +2,12 @@
 
 /* eslint-disable global-require */
 
-const reInterpolate = /`([^`]+)`/g;
-
-const _ = require('./util');
+const util = require('../../lib/util');
 
 const path = require('path');
 const fs = require('fs');
 
 module.exports = ($, farm) => {
-  const vm = require('vm');
   const REPL = require('repl');
   const wargs = require('wargs');
 
@@ -48,15 +45,16 @@ module.exports = ($, farm) => {
       let value;
 
       try {
-        value = vm.runInNewContext(cmd, context);
+        value = util.invoke(cmd, context);
       } catch (e) {
-        logger.info('\r{% error %s %}\r\n', _.getError(e, $.flags));
+        logger.info('\r{% error %s %}\r\n', util.getError(e, $.flags));
         repl.displayPrompt();
         return callback();
       }
 
       /* istanbul ignore else */
       if (typeof value === 'undefined') {
+        logger.info('\r%s\r\n', cmd);
         return callback();
       }
 
@@ -65,7 +63,7 @@ module.exports = ($, farm) => {
         return value
           .then(result => callback(null, result))
           .catch(e => {
-            logger.info('\r{% error %s %}\r\n', _.getError(e, $.flags));
+            logger.info('\r{% error %s %}\r\n', util.getError(e, $.flags));
             repl.displayPrompt();
             callback();
           });
@@ -82,7 +80,7 @@ module.exports = ($, farm) => {
         fs.closeSync(fd);
       }
 
-      _.die();
+      util.die();
     }
   });
 
@@ -136,7 +134,7 @@ module.exports = ($, farm) => {
       }, v => {
         // allow dynamic value interpolation
         try {
-          return v.replace(reInterpolate, ($0, $1) => vm.runInNewContext($1, repl.context));
+          return util.invoke(v, repl.context);
         } catch (e) {
           throw new Error(`Invalid expression within '${v}'. ${e.message}`);
         }
@@ -165,7 +163,7 @@ module.exports = ($, farm) => {
       /* istanbul ignore else */
       if (!_method && _path.charAt() !== '/') {
         _method = _path;
-        _path = args._.shift();
+        _path = args.util.shift();
       }
 
       let _aliased;
@@ -180,7 +178,7 @@ module.exports = ($, farm) => {
       }
 
       _method = _method || 'get';
-      _path = _path || args._.shift() || '/';
+      _path = _path || args.util.shift() || '/';
 
       /* istanbul ignore else */
       if (_aliased) {
@@ -250,13 +248,13 @@ module.exports = ($, farm) => {
               repl.displayPrompt();
             });
           }).catch(e => {
-            logger.info('\r{% error %s %}\r\n', _.getError(e, $.flags));
+            logger.info('\r{% error %s %}\r\n', util.getError(e, $.flags));
 
             repl.resume();
             repl.displayPrompt();
           }));
       } catch (_e) {
-        logger.info('\r{% error %s %}\r\n', _.getError(_e, $.flags));
+        logger.info('\r{% error %s %}\r\n', util.getError(_e, $.flags));
 
         repl.resume();
         repl.displayPrompt();
