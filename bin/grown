@@ -30,7 +30,7 @@ try {
     camelCase: true,
     defaults: {
       cwd: process.cwd(),
-      port: process.env.PORT || 8080,
+      port: process.env.PORT || '8080',
       host: process.env.HOST || '0.0.0.0',
     },
     aliases: {
@@ -197,7 +197,7 @@ function showHelp(taskName) {
     -d, [--debug]       Enable all debug messages
     -q, [--quiet]       Suppress status output
     -c, [--cwd]         Set the process.cwd()
-    -P, [--port]        Set PORT value (default: 80)
+    -P, [--port]        Set PORT value (default: 8080)
     -H, [--host]        Set HOST value (default: 0.0.0.0)
     -e, [--env]         Set NODE_ENV value (default: development)
     -a, [--app]         Set the bootstrap script (default: lib/APP_NAME/application.js)

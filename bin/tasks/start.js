@@ -8,7 +8,7 @@ module.exports = ($, cwd, logger) => {
   const IS_REPL = $.flags.repl;
   const IS_DEV = process.env.NODE_ENV === 'development';
 
-  const PORT = $.flags.port || process.env.PORT || 8080;
+  const PORT = $.flags.port || process.env.PORT || '8080';
   const HOST = $.flags.host || process.env.HOST || '0.0.0.0';
 
   /* istanbul ignore else */

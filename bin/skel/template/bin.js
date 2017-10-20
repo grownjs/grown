@@ -18,7 +18,7 @@ function runApplication() {
     const farm = app();
 
     return farm.run(() =>
-      farm.listen(process.env.PORT || 8080, $ => {
+      farm.listen(process.env.PORT || '8080', $ => {
         process.stdout.write(`Listening on ${$.location.href} [press CTRL-C to quit]\n`);
       }).catch(error => {
         process.stderr.write(`${error.toString()}\n`);
