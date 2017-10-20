@@ -134,5 +134,5 @@ describe '#router', ->
     })
 
     $.server.fetch('/').then (res) ->
-      expect(test).toEqual { src: ['pages/Clean/empty'], as: 'yield' }
+      expect(test).toEqual { fallthrough: true, src: ['views/Clean/empty'], as: 'yield' }
       done()
