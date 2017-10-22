@@ -403,6 +403,22 @@ module.exports = ($, cwd, logger) => {
     }, $.data));
   }
 
+  if ($.data.TEMPLATE === 'basic') {
+    $.data.ES6 = $.data.ES6 || 'babel';
+    $.data.TESTS = $.data.TESTS || 'mocha';
+    $.data.STYLES = $.data.STYLES || 'postcss';
+    $.data.BUNDLER = $.data.BUNDLER || 'webpack';
+    $.data.RELOADER = $.data.RELOADER || 'browser-sync';
+  }
+
+  if ($.data.TEMPLATE === 'rad') {
+    $.data.ES6 = $.data.ES6 || 'buble';
+    $.data.TESTS = $.data.TESTS || 'jasmine-node';
+    $.data.STYLES = $.data.STYLES || 'less';
+    $.data.BUNDLER = $.data.BUNDLER || 'rollup';
+    $.data.RELOADER = $.data.RELOADER || 'live-reload';
+  }
+
   ($.flags.interactive
     ? ask().then(() => run($.data.TEMPLATE))
     : run($.data.TEMPLATE))
