@@ -248,7 +248,33 @@ function run() {
     let mainFile;
 
     if (_task !== 'init' && !$.flags.app) {
-      mainFile = path.resolve(cwd, $.flags.app || appPkg.main || path.join('lib', appPkg.name, 'application.js'));
+      const files = [
+        `lib/${appPkg.name}/application.js`,
+        `lib/${appPkg.name}/server.js`,
+        `lib/${appPkg.name}/index.js`,
+        `lib/${appPkg.name}.js`,
+        'lib/application.js',
+        'lib/server.js',
+        `${appPkg.name}.js`,
+        'application.js',
+        'server.js',
+        'index.js',
+      ];
+
+      if (files.indexOf(appPkg.main) === -1) {
+        files.push(appPkg.main);
+      }
+
+      for (let i = 0; i < files.length; i += 1) {
+        if (fs.existsSync(files[i])) {
+          mainFile = path.resolve(cwd, files[i]);
+          break;
+        }
+      }
+
+      if (!mainFile) {
+        throw new Error('Missing application script (add --help for usage info)');
+      }
 
       if (!fs.existsSync(mainFile)) {
         throw new Error(`Missing ${path.relative(cwd, mainFile)} (add --help for usage info)`);
