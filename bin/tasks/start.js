@@ -17,7 +17,7 @@ module.exports = ($, cwd, logger) => {
   }
 
   // common helpers
-  const _ = require('../lib/util');
+  const _ = require('../../lib/util');
   const _repl = require('../lib/repl');
 
   const _protocol = $.flags.uws !== true

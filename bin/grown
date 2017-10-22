@@ -82,7 +82,7 @@ delete $.flags.env;
 const thisPkg = require('../package.json');
 const exec = require('child_process').exec;
 const path = require('path');
-const fs = require('fs');
+const fs = require('fs-extra');
 
 let _task = $._.shift();
 
@@ -241,15 +241,14 @@ function run() {
       thisPkg.version, process.version, process.env.NODE_ENV);
 
     const mainPkg = path.join(cwd, 'package.json');
+    const appPkg = fs.existsSync(mainPkg)
+      ? fs.readJsonSync(mainPkg)
+      : {};
 
     let mainFile;
 
-    if (_task !== 'init') {
-      mainFile = path.resolve(cwd,
-        $.flags.app || (fs.existsSync(mainPkg)
-            ? path.join('lib', require(mainPkg).name, 'application.js')
-            : undefined
-          ));
+    if (_task !== 'init' && !$.flags.app) {
+      mainFile = path.resolve(cwd, $.flags.app || appPkg.main || path.join('lib', appPkg.name, 'application.js'));
 
       if (!fs.existsSync(mainFile)) {
         throw new Error(`Missing ${path.relative(cwd, mainFile)} (add --help for usage info)`);
