@@ -117,8 +117,17 @@ function showHelp(taskName) {
   application kernel, templates and some front-end assets. You
   can add support for models, bundling, testing, etc.
 
+  However you can override the default layout by setting a different TEMPLATE.
+
+  Templates:
+    advanced   Full layout -deps
+    starter    No layout -deps
+    basic      No layout +deps (mocha babel webpack postcss browser-sync)
+    rad        No layout +deps (jasmine-node buble rollup less live-reload)
+
   Examples:
     grown init .
+    grown init site rad
     grown init my-app -y
     grown init example -fI ES6=buble TESTS=mocha
 

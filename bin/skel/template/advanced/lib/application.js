@@ -1,7 +1,8 @@
 /* eslint-disable global-require */
 /* eslint-disable import/no-unresolved */
 
-process.env.NODE_ENV = process.env.NODE_ENV || 'development';
+const env = process.env.NODE_ENV || 'development';
+const cwd = process.cwd();
 
 const DIST_DIR = process.env.NODE_ENV === 'production'
   ? 'dist'
@@ -9,8 +10,6 @@ const DIST_DIR = process.env.NODE_ENV === 'production'
 
 const Grown = require('grown');
 const path = require('path');
-
-const cwd = process.cwd();
 
 // setup environment
 Grown.env(cwd);
@@ -22,13 +21,21 @@ module.exports = () => {
     cwd,
 
     // environment
-    env: process.env.NODE_ENV,
+    env,
 
     // application settings
     paths: {
       publicDir: path.join(DIST_DIR, 'public'),
     },
   });
+
+  // enable file server
+  $.use(Grown.plugs.static({
+    folders: [
+      path.join(cwd, 'public'),
+      path.join(cwd, DIST_DIR, 'public'),
+    ],
+  }));
 
   // enable file uploads
   $.use(Grown.plugs.formidable({
@@ -48,14 +55,6 @@ module.exports = () => {
     callback: conn => conn.session.currentUser && conn.session.currentUser.role,
   }));
 
-  // enable file server
-  $.use(Grown.plugs.static({
-    folders: [
-      path.join(cwd, 'public'),
-      path.join(cwd, DIST_DIR, 'public'),
-    ],
-  }));
-
   // load routes and views
   $.use(Grown.plugs.router({
     middlewares: {
@@ -68,7 +67,7 @@ module.exports = () => {
 
   // {{#DATABASE}}initialize models before
   $.use(Grown.plugs.models([{
-    settings: path.join(cwd, 'config/db/default.js'),
+    settings: path.join(cwd, 'db/default/database.js'),
     folders: path.join(cwd, 'lib/{{paramCase APP_NAME}}/models'),
   }]));
 

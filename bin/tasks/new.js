@@ -72,6 +72,13 @@ module.exports = ($, cwd, logger) => {
     cwd = path.join(cwd, name);
   }
 
+  $.data.TEMPLATE = $.data.TEMPLATE || $._.shift() || 'advanced';
+
+  /* istanbul ignore else */
+  if (['advanced', 'starter', 'basic', 'rad'].indexOf($.data.TEMPLATE) === -1) {
+    throw new Error(`Unsupported TEMPLATE=${$.data.TEMPLATE}`);
+  }
+
   /* istanbul ignore else */
   if ($.data.DATABASE
     && ['postgres', 'mysql', 'mssql', 'sqlite'].indexOf($.data.DATABASE) === -1) {
@@ -116,6 +123,17 @@ module.exports = ($, cwd, logger) => {
     return haki.runGenerator({
       abortOnFail: true,
       prompts: [
+        {
+          name: 'TEMPLATE',
+          type: 'list',
+          message: 'Template:',
+          choices: [
+            { label: 'Advanced', value: 'advanced' },
+            { label: 'Starter', value: 'starter' },
+            { label: 'Basic', value: 'basic' },
+            { label: 'RAD', value: 'rad' },
+          ],
+        },
         {
           name: 'DATABASE',
           type: 'list',
@@ -195,13 +213,19 @@ module.exports = ($, cwd, logger) => {
     });
   }
 
-  function run() {
-    return haki.runGenerator({
-      abortOnFail: true,
-      basePath: path.join(__dirname, '../skel/template'),
-      actions: [
-        // application base
-        {
+  const ACTIONS = {
+    bowerPackage: () => [
+      // bower support?
+      $.flags.bower !== false ? {
+        type: 'add',
+        dest: 'bower.json',
+        template: BOWER_TEMPLATE,
+      } : null,
+    ],
+    // application base
+    setupSources: isAdvanced => (
+      isAdvanced
+        ? [{
           copy: '.',
           src: '_base',
         },
@@ -212,126 +236,156 @@ module.exports = ($, cwd, logger) => {
         {
           copy: 'lib/{{paramCase APP_NAME}}_web',
           src: 'web',
-        },
-        // bower support?
-        $.flags.bower !== false ? {
-          type: 'add',
-          dest: 'bower.json',
-          template: BOWER_TEMPLATE,
-        } : null,
-        // evaluate templates
-        {
-          render: [
-            'package.json',
-            'bin/server',
-            'lib/{{paramCase APP_NAME}}/application.js',
-          ],
-        },
-        // models directory
-        $.data.DATABASE ? {
-          type: 'add',
-          dest: 'lib/{{paramCase APP_NAME}}/models/.gitkeep',
-        } : null,
-        // default configuration
-        $.data.DATABASE ? {
-          type: 'add',
-          dest: 'config/db/default.js',
-          template: DATABASE_TEMPLATE,
-        } : null,
-        // testing support
-        $.data.TESTS ? {
-          type: 'add',
-          dest: 'test/.gitkeep',
-        } : null,
-        $.data.TESTS === 'ava' ? {
-          type: 'add',
-          dest: 'test/blank.test.js',
-          content: AVA_TEST,
-        } : null,
-        $.data.TESTS === 'mocha' ? {
-          type: 'add',
-          dest: 'test/blank.test.js',
-          content: MOCHA_TEST,
-        } : null,
-        $.data.TESTS === 'jasmine-node' ? {
-          type: 'add',
-          dest: 'test/blank.spec.js',
-          content: JASMINE_TEST,
-        } : null,
-        // framework dependencies
-        {
-          type: 'install',
-          quiet: $.flags.verbose !== true,
-          dependencies: [
-            ['grown', 'route-mappings'],
-            ['csurf', 'formidable', 'serve-static'],
-            ['body-parser', 'cookie-parser', 'cookie-session'],
-          ],
-          devDependencies: [
-            ['chokidar', 'node-notifier'],
-            $.flags.talavera !== false ? 'talavera' : null,
-            $.flags.bower !== false ? 'tarima-bower' : null,
-            ['tarima', 'pug', 'csso', 'google-closure-compiler-js'],
-            ['eslint', 'eslint-plugin-import', 'eslint-config-airbnb-base'],
-          ],
-        },
-        // database dependencies
-        $.data.DATABASE ? {
-          type: 'install',
-          quiet: $.flags.verbose !== true,
-          dependencies: [
-            ['sequelize', 'json-schema-sequelizer'],
-            $.data.DATABASE === 'mysql' ? 'mysql' : null,
-            $.data.DATABASE === 'mssql' ? 'mssql' : null,
-            $.data.DATABASE === 'sqlite' ? 'sqlite3' : null,
-            $.data.DATABASE === 'postgres' ? ['pg', 'pg-native'] : null,
-          ],
-        } : null,
-        // extra dependencies
-        ($.data.DATABASE || $.data.BUNDLER || $.data.STYLES || $.data.ES6) ? {
-          type: 'install',
-          quiet: $.flags.verbose !== true,
-          devDependencies: [
-            $.data.DATABASE && $.data.DATABASE !== 'sqlite' ? 'sqlite3' : null,
-            $.data.BUNDLER === 'fusebox' ? 'fuse-box' : null,
-            $.data.BUNDLER === 'webpack' ? 'webpack' : null,
-            $.data.BUNDLER === 'rollup' ? ['rollup', 'rollup-plugin-node-resolve', 'rollup-plugin-commonjs'] : null,
-            $.data.STYLES === 'less' ? ['less', 'less-plugin-autoprefix'] : null,
-            $.data.STYLES === 'postcss' ? ['postcss', 'postcss-import', 'postcss-cssnext'] : null,
-            $.data.STYLES === 'sass' ? 'node-sass' : null,
-            $.data.STYLES === 'styl' ? 'styl' : null,
-            $.data.ES6 === 'traceur' ? 'traceur' : null,
-            $.data.ES6 === 'babel' ? ['babel-core', 'babel-preset-es2015', 'babel-plugin-transform-react-jsx'] : null,
-            $.data.ES6 === 'buble' ? 'buble' : null,
-          ],
-        } : null,
-        // testing dependencies
-        $.data.TESTS ? {
-          type: 'install',
-          quiet: $.flags.verbose !== true,
-          devDependencies: [
-            ['nyc', 'codecov'],
-            $.data.TESTS === 'jasmine-node'
-              ? ['jasmine-node@2.0.0-beta4']
-              : $.data.TESTS,
-            $.data.TESTS === 'mocha' ? 'chai' : null,
-          ],
-        } : null,
-        // reloader dependencies
-        $.data.RELOADER ? {
-          type: 'install',
-          quiet: $.flags.verbose !== true,
-          optionalDependencies: [
-            $.data.RELOADER === 'browser-sync' ? 'tarima-browser-sync' : null,
-            $.data.RELOADER === 'live-reload' ? 'tarima-lr' : null,
-          ],
-        } : null,
-      ],
+        }]
+      : [{
+        copy: '.',
+        src: '_base',
+      }]),
+    renderTemplates: isAdvanced => [
+      // evaluate templates
+      {
+        render: [
+          'package.json',
+          'bin/server',
+          isAdvanced
+            ? 'lib/{{paramCase APP_NAME}}/application.js'
+            : 'application.js',
+        ],
+      },
+    ],
+    setupDatabase: isAdvanced => [
+      // models directory
+      $.data.DATABASE ? {
+        type: 'add',
+        dest: isAdvanced
+          ? 'lib/{{paramCase APP_NAME}}/models/.gitkeep'
+          : 'models/.gitkeep',
+      } : null,
+      // default configuration
+      $.data.DATABASE ? {
+        type: 'add',
+        template: DATABASE_TEMPLATE,
+        dest: isAdvanced
+          ? 'db/default/database.js'
+          : 'database.js',
+      } : null,
+    ],
+    setupTests: () => [
+      // testing support
+      $.data.TESTS ? {
+        type: 'add',
+        dest: 'test/.gitkeep',
+      } : null,
+      $.data.TESTS === 'ava' ? {
+        type: 'add',
+        dest: 'test/blank.test.js',
+        content: AVA_TEST,
+      } : null,
+      $.data.TESTS === 'mocha' ? {
+        type: 'add',
+        dest: 'test/blank.test.js',
+        content: MOCHA_TEST,
+      } : null,
+      $.data.TESTS === 'jasmine-node' ? {
+        type: 'add',
+        dest: 'test/blank.spec.js',
+        content: JASMINE_TEST,
+      } : null,
+    ],
+    setupDeps: () => [
+      // framework dependencies
+      {
+        type: 'install',
+        quiet: $.flags.verbose !== true,
+        dependencies: [
+          ['grown', 'route-mappings'],
+          ['csurf', 'formidable', 'serve-static'],
+          ['body-parser', 'cookie-parser', 'cookie-session'],
+        ],
+        devDependencies: [
+          ['chokidar', 'node-notifier'],
+          $.flags.talavera !== false ? 'talavera' : null,
+          $.flags.bower !== false ? 'tarima-bower' : null,
+          ['tarima', 'pug', 'csso', 'google-closure-compiler-js'],
+          ['eslint', 'eslint-plugin-import', 'eslint-config-airbnb-base'],
+        ],
+      },
+      // database dependencies
+      $.data.DATABASE ? {
+        type: 'install',
+        quiet: $.flags.verbose !== true,
+        dependencies: [
+          ['sequelize', 'json-schema-sequelizer'],
+          $.data.DATABASE === 'mysql' ? 'mysql' : null,
+          $.data.DATABASE === 'mssql' ? 'mssql' : null,
+          $.data.DATABASE === 'sqlite' ? 'sqlite3' : null,
+          $.data.DATABASE === 'postgres' ? ['pg', 'pg-native'] : null,
+        ],
+      } : null,
+      // extra dependencies
+      ($.data.DATABASE || $.data.BUNDLER || $.data.STYLES || $.data.ES6) ? {
+        type: 'install',
+        quiet: $.flags.verbose !== true,
+        devDependencies: [
+          $.data.DATABASE && $.data.DATABASE !== 'sqlite' ? 'sqlite3' : null,
+          $.data.BUNDLER === 'fusebox' ? 'fuse-box' : null,
+          $.data.BUNDLER === 'webpack' ? 'webpack' : null,
+          $.data.BUNDLER === 'rollup' ? ['rollup', 'rollup-plugin-node-resolve', 'rollup-plugin-commonjs'] : null,
+          $.data.STYLES === 'less' ? ['less', 'less-plugin-autoprefix'] : null,
+          $.data.STYLES === 'postcss' ? ['postcss', 'postcss-import', 'postcss-cssnext'] : null,
+          $.data.STYLES === 'sass' ? 'node-sass' : null,
+          $.data.STYLES === 'styl' ? 'styl' : null,
+          $.data.ES6 === 'traceur' ? 'traceur' : null,
+          $.data.ES6 === 'babel' ? ['babel-core', 'babel-preset-es2015', 'babel-plugin-transform-react-jsx'] : null,
+          $.data.ES6 === 'buble' ? 'buble' : null,
+        ],
+      } : null,
+      // testing dependencies
+      $.data.TESTS ? {
+        type: 'install',
+        quiet: $.flags.verbose !== true,
+        devDependencies: [
+          ['nyc', 'codecov'],
+          $.data.TESTS === 'jasmine-node'
+            ? ['jasmine-node@2.0.0-beta4']
+            : $.data.TESTS,
+          $.data.TESTS === 'mocha' ? 'chai' : null,
+        ],
+      } : null,
+      // reloader dependencies
+      $.data.RELOADER ? {
+        type: 'install',
+        quiet: $.flags.verbose !== true,
+        optionalDependencies: [
+          $.data.RELOADER === 'browser-sync' ? 'tarima-browser-sync' : null,
+          $.data.RELOADER === 'live-reload' ? 'tarima-lr' : null,
+        ],
+      } : null,
+    ],
+  };
+
+  function run(template) {
+    return haki.runGenerator({
+      abortOnFail: true,
+      basePath: template === 'advanced'
+        ? path.join(__dirname, '../skel/template/advanced')
+        : path.join(__dirname, '../skel/template/starter'),
+      actions: [].concat(
+        ACTIONS.bowerPackage(),
+        ACTIONS.setupSources(template === 'advanced'),
+        ACTIONS.renderTemplates(template === 'advanced'),
+        ACTIONS.setupDatabase(template === 'advanced'),
+        ACTIONS.setupTests(),
+        ACTIONS.setupDeps()).filter(x => x),
     }, util.extend({
       APP_NAME: name,
       CSS_LANG: $.data.STYLES,
       CAN_BUNDLE: $.data.BUNDLER || $.data.STYLES || $.data.ES6,
-      RUN: $.flags.npm === true ? 'npm run' : 'yarn',
+      RUN: $.flags.yarn === true ? 'yarn' : 'npm run',
+      IS_ADVANCED: template === 'advanced',
+      IS_STARTER: template === 'starter',
+      IS_BASIC: template === 'basic',
+      IS_RAD: template === 'rad',
       IS_LESS: $.data.STYLES === 'less',
       IS_BUBLE: $.data.ES6 === 'buble',
       IS_BABEL: $.data.ES6 === 'babel',
@@ -350,8 +404,8 @@ module.exports = ($, cwd, logger) => {
   }
 
   ($.flags.interactive
-    ? ask().then(() => run())
-    : run())
+    ? ask().then(() => run($.data.TEMPLATE))
+    : run($.data.TEMPLATE))
   .catch(e => {
     util.printError(e, $.flags, logger);
     util.die(1);
