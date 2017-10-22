@@ -9,7 +9,6 @@ const JSONSchemaSequelizer = require('json-schema-sequelizer');
 module.exports = ($, argv, logger) => {
   const _extensions = $.extensions('Conn._');
 
-  const cwd = $.config('cwd');
   const dbs = Object.keys(_extensions.dbs);
 
   if (!argv.flags.use || dbs.indexOf(argv.flags.use) === -1) {
@@ -50,7 +49,7 @@ module.exports = ($, argv, logger) => {
         fs.outputFileSync(configFile, '[]');
       }
 
-      return logger('read', path.relative(cwd, schemaFile), () =>
+      return logger('read', path.relative($.cwd, schemaFile), () =>
         JSONSchemaSequelizer.migrate(conn, require(schemaFile), true)[argv.flags.create ? 'up' : 'down']())
       .then(() => {
         logger.info('\r\r{% log %s schema %s %}\n', argv.flags.use, argv.flags.create ? 'applied' : 'reverted');
@@ -96,7 +95,7 @@ module.exports = ($, argv, logger) => {
       const result = results[1];
 
       if (results[0]) {
-        logger('write', path.relative(cwd, schemaFile), () => {
+        logger('write', path.relative($.cwd, schemaFile), () => {
           fs.outputFileSync(schemaFile, results[0].code);
         });
       }
@@ -165,7 +164,7 @@ module.exports = ($, argv, logger) => {
           : `_${result.code.indexOf('createTable') > -1 ? 'create' : 'update'}_${result.model.tableName.toLowerCase()}`;
 
         const file = path.join(baseDir, `${fulldate}${hourtime}${name}.js`);
-        const src = path.relative(cwd, file);
+        const src = path.relative($.cwd, file);
 
         logger('write', src, () => {
           fs.outputFileSync(file, result.code);

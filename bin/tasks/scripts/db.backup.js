@@ -7,8 +7,6 @@ const fs = require('fs-extra');
 module.exports = ($, argv, logger) => {
   const _extensions = $.extensions('Conn._');
 
-  const cwd = $.config('cwd');
-
   const deps = (argv._.length ? argv._ : Object.keys(_extensions.models)).map(name => {
     if (!_extensions.models[name]) {
       throw new Error(`Undefined model ${name}`);
@@ -22,7 +20,7 @@ module.exports = ($, argv, logger) => {
       throw new Error(`Invalid directory to --load, given '${argv.flags.load}'`);
     }
 
-    const src = path.join(cwd, argv.flags.load);
+    const src = path.join($.cwd, argv.flags.load);
 
     return Promise.all(deps.map(model => {
       const file = glob.sync(`**/${model.name}.json`, { cwd: src })[0];
@@ -67,9 +65,9 @@ module.exports = ($, argv, logger) => {
             `000${new Date().getMilliseconds()}`.substr(-3),
           ].join('');
 
-          const file = path.join(cwd, argv.flags.save, fulldate, hourtime, `${result.model.name}.json`);
+          const file = path.join($.cwd, argv.flags.save, fulldate, hourtime, `${result.model.name}.json`);
 
-          return logger('write', path.relative(cwd, file), () => {
+          return logger('write', path.relative($.cwd, file), () => {
             fs.outputJsonSync(file, result.data, { spaces: 2 });
           });
         }

@@ -8,7 +8,6 @@ const JSONSchemaSequelizer = require('json-schema-sequelizer');
 module.exports = ($, argv, logger) => {
   const _extensions = $.extensions('Conn._');
 
-  const cwd = $.config('cwd');
   const dbs = Object.keys(_extensions.dbs);
 
   if (!argv.flags.use || dbs.indexOf(argv.flags.use) === -1) {
@@ -56,7 +55,7 @@ module.exports = ($, argv, logger) => {
       }
     });
 
-    return logger('write', path.relative(cwd, schemaFile), () =>
+    return logger('write', path.relative($.cwd, schemaFile), () =>
       fs.outputJsonSync(schemaFile, JSONSchemaSequelizer.bundle(fixedDeps, fixedRefs,
         typeof argv.flags.save === 'string' && argv.flags.save), { spaces: 2 }))
       .then(() => {
@@ -72,7 +71,7 @@ module.exports = ($, argv, logger) => {
       .filter(x => _extensions.models[x])
       .length;
 
-    logger('read', path.relative(cwd, schemaFile));
+    logger('read', path.relative($.cwd, schemaFile));
 
     // FIXME: remove non-specified models from given list
     return _extensions.dbs[argv.flags.use].rehydrate(payload)
