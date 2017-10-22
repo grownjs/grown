@@ -257,14 +257,16 @@ function run() {
     let mainFile;
 
     if (_task !== 'init' && !$.flags.app) {
+      const baseName = appPkg.name || path.basename(path.dirname(cwd));
+
       const files = [
-        `lib/${appPkg.name}/application.js`,
-        `lib/${appPkg.name}/server.js`,
-        `lib/${appPkg.name}/index.js`,
-        `lib/${appPkg.name}.js`,
+        `lib/${baseName}/application.js`,
+        `lib/${baseName}/server.js`,
+        `lib/${baseName}/index.js`,
+        `lib/${baseName}.js`,
         'lib/application.js',
         'lib/server.js',
-        `${appPkg.name}.js`,
+        `${baseName}.js`,
         'application.js',
         'server.js',
         'index.js',
