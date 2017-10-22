@@ -273,7 +273,7 @@ function run() {
       }
 
       if (!mainFile) {
-        throw new Error('Missing application script (add --help for usage info)');
+        throw new Error(`Missing application script (e.g: ${files.join(', ')})`);
       }
 
       if (!fs.existsSync(mainFile)) {
