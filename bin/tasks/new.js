@@ -307,7 +307,7 @@ module.exports = ($, cwd, logger) => {
           ['eslint', 'eslint-plugin-import', 'eslint-config-airbnb-base'],
           $.data.TEMPLATE === 'advanced' && $.flags.talavera !== false ? 'talavera' : null,
           $.data.TEMPLATE === 'advanced' && $.flags.bower !== false ? 'tarima-bower' : null,
-          $.data.TEMPLATE === 'advanced' && ['pug', 'csso', 'google-closure-compiler-js'],
+          $.data.TEMPLATE === 'advanced' && ['csso', 'google-closure-compiler-js'],
         ],
       },
       // database dependencies
@@ -423,7 +423,7 @@ module.exports = ($, cwd, logger) => {
     ? ask().then(() => run($.data.TEMPLATE))
     : run($.data.TEMPLATE))
   .catch(e => {
-    util.printError(e, $.flags, logger);
+    util.printError(e, $.flags, logger, true);
     util.die(1);
   });
 };

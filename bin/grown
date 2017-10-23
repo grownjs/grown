@@ -113,23 +113,23 @@ function showHelp(taskName) {
   switch (taskName) {
     case 'init':
       logger.write(`
-  The default preset is a barebones application with just the
-  application kernel, templates and some front-end assets. You
-  can add support for models, bundling, testing, etc.
-
-  However you can override the default layout by setting a different TEMPLATE.
-
-  Templates:
-    advanced   Full layout -deps
-    starter    No layout -deps
-    basic      No layout +deps (mocha babel webpack postcss browser-sync)
-    rad        No layout +deps (jasmine-node buble rollup less live-reload)
+  Usage:
+    grown init APP_NAME [TEMPLATE] [...]
 
   Examples:
     grown init .
     grown init site rad
     grown init my-app -y
-    grown init example -fI ES6=buble TESTS=mocha
+    grown init example -fIT ES6=buble TESTS=mocha
+
+  The default preset is an advanced application with just the application kernel,
+  templates and some front-end assets. You can add support for models, bundling, testing, etc.
+
+  However you can override the default layout by setting a different TEMPLATE:
+    advanced   Full layout -deps
+    starter    No layout -deps
+    basic      No layout +deps (mocha babel webpack postcss browser-sync)
+    rad        No layout +deps (jasmine-node buble rollup less live-reload)
 
   Presets:
     DATABASE   postgres | mysql | mssql | sqlite
@@ -189,6 +189,17 @@ function showHelp(taskName) {
   Usage:
     grown COMMAND [ARGS]
 
+  Examples:
+    grown up
+    grown init -y
+    grown repl -dV
+    grown db --help
+    grown db.migrate --use mydb --up
+    grown add model.tpl User lib/controllers
+    grown add model User title:string lib/models
+
+  Any other call will fallback as ./lib/tasks/COMMAND or ./tasks/scripts/COMMAND script.
+
   Commands:
     init      Create a new application boilerplate
     add       Create application files
@@ -198,7 +209,7 @@ function showHelp(taskName) {
 
   Grown options:
     -l, [--list]        List available generators
-    -h, [--help]        Show this help message and quit
+    -h, [--help]        Show any additional usage info
     -x, [--exec]        Execute a command before running
     -v, [--version]     Show Grown version number and quit
 
