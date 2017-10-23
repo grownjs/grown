@@ -325,16 +325,10 @@ function run() {
 
         logger.info('\r{% wait Task %s: loading... %}\r\r', _task);
 
-        let _call;
-
-        try {
-          // try user first, then built-in
-          _call = require(!fs.existsSync(_file)
-            ? `./tasks/scripts/${_task}`
-            : _file);
-        } catch (e) {
-          util.printError(e, $.flags, logger);
-        }
+        // try user first, then built-in
+        const _call = require(!fs.existsSync(_file)
+          ? `./tasks/scripts/${_task}`
+          : _file);
 
         /* istanbul ignore else */
         if (typeof _call !== 'function') {
