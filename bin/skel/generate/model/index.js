@@ -10,17 +10,29 @@ const PROPS = ['required', 'primaryKey', 'autoIncrement', 'hasOne', 'belongsTo']
 const MODEL_USAGE = `
 * Attribute types are declared as {% yellow prop:type %}
 * Relationships can be specified as {% yellow prop:Model %}
+* Other attributes are passed as booleans (e.g. primaryKey)
+* A primary field is added automatically unless you pass --no-id
 
 Examples:
-  g model Account app/models id:integer:primaryKey name:string
-  g model User app/models email:string account:Account
+  grown add model Account app/models name:string
+  grown add model User app/models email:string account:Account
 
 Options:
-  --timestamps --paranoid
+  --timestamps --paranoid --no-id
 `;
 
 const MODEL_CTRL_USAGE = `
-* Some info...
+This will add a controller file for any model.
+
+Example:
+  grown add model.ctrl User app/controllers
+`;
+
+const MODEL_TPL_USAGE = `
+This will add some views for any model.
+
+Example:
+  grown add model.tpl User app/templates
 `;
 
 const CTRL_TPL = `module.exports = {
@@ -45,6 +57,7 @@ module.exports = haki => {
     description: 'Add a new model',
     arguments: ['NAME', 'DEST'],
     abortOnFail: true,
+    options: 'attrs',
     usage: MODEL_USAGE,
     prompts: [{
       name: 'NAME',
@@ -72,8 +85,8 @@ module.exports = haki => {
         'ui:order': ['*'],
       };
 
-      if (opts.id !== false) {
-        _fields.unshift({ prop: 'id' });
+      if (opts.id !== false && !opts.params.id) {
+        _fields.unshift('id');
         _schema.properties.id = {
           type: 'integer',
           primaryKey: true,
@@ -83,7 +96,7 @@ module.exports = haki => {
 
       Object.keys(opts.params).forEach(prop => {
         if (!isUpper(opts.params[prop])) {
-          _fields.push({ prop });
+          _fields.push(prop);
         }
 
         opts.params[prop].split(':').forEach(key => {
@@ -122,13 +135,13 @@ module.exports = haki => {
       const MODEL_TEMPLATE = `module.exports = ${util.serialize({
         $schema: _schema,
         $uiSchema: _uiSchema,
-        $uiFields: { index: _fields },
+        $attributes: { findAll: _fields },
       }, 0)};\n`;
 
       return [{
         type: 'add',
         dest: '{{{DEST}}}/{{resource NAME}}.js',
-        template: MODEL_TEMPLATE,
+        content: MODEL_TEMPLATE,
       }];
     },
   });
@@ -137,7 +150,7 @@ module.exports = haki => {
     description: 'Add views for model',
     arguments: ['NAME', 'DEST'],
     abortOnFail: true,
-    usage: 'TODO',
+    usage: MODEL_TPL_USAGE,
     prompts: [{
       name: 'NAME',
       message: 'Resource name:',

@@ -88,7 +88,7 @@ let _task = $._.shift();
 
 /* istanbul ignore else */
 if (!_task && $.flags.list) {
-  _task = 'generate';
+  _task = 'add';
 }
 
 // nice logs!
@@ -372,7 +372,7 @@ process.on('uncaughtException', e => {
   util.die(1);
 });
 
-if ((!_task || $.flags.help) && !$.params.exec) {
+if ((!_task || (!_task && $.flags.help)) && !$.params.exec) {
   showHelp(_task);
   util.die();
 } else {

@@ -33,28 +33,42 @@ module.exports = ($, cwd, logger) => {
 
   function _run() {
     /* istanbul ignore else */
-    if (!$.flags.list && _cmd) {
+    if (!($.flags.list || $.flags.help) && _cmd) {
       return haki.runGenerator(_cmd, util.extend({}, $.data));
     }
 
     /* istanbul ignore else */
-    if ($.flags.list) {
-      return haki.getGeneratorList().forEach(task => {
-        if (_cmd && task.gen.indexOf(_cmd) === -1) {
+    if ($.flags.list || $.flags.help) {
+      let found;
+
+      haki.getGeneratorList().forEach(task => {
+        if (_cmd && (task.gen !== _cmd)) {
           return;
         }
 
-        logger.info('\r{% link %s %}\r\n', task.value.description || task.name);
-        logger.info('  {% bold g %s %}%s\n', task.gen, task.value.arguments
+        found = true;
+
+        logger.printf('\r{% link %s %}\r\n', task.value.description || task.name);
+        logger.printf('  {% bold %s %}%s%s\n', task.gen, task.value.arguments
           ? ` {% gray [${task.value.arguments.join('] [')}] %}`
+          : '', task.value.options
+          ? ` {% gray [${typeof task.value.options === 'string'
+            ? task.value.options.toUpperCase()
+            : 'OPTIONS'}] %}`
           : '');
 
         /* istanbul ignore else */
-        if (task.value.usage) {
-          logger.info('\n  %s\n',
+        if (task.value.usage && $.flags.help) {
+          logger.printf('\n  %s\n\n',
             task.value.usage.split('\n').join('\n  ').trim());
         }
       });
+
+      if (!found) {
+        throw new Error(`The '${_cmd}' generator does not exists`);
+      }
+
+      return;
     }
 
     return haki.chooseGeneratorList(util.extend({}, $.data));
@@ -63,7 +77,7 @@ module.exports = ($, cwd, logger) => {
   Promise.resolve()
     .then(() => _run())
     .catch(err => {
-      util.printError(err, $.flags, logger);
+      util.printError(err, $.flags, logger, true);
       util.die(1);
     });
 };
