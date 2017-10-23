@@ -34,7 +34,9 @@ module.exports = ($, cwd, logger) => {
   function _run() {
     /* istanbul ignore else */
     if (!($.flags.list || $.flags.help) && _cmd) {
-      return haki.runGenerator(_cmd, util.extend({}, $.data));
+      return haki.runGenerator(_cmd, util.extend({
+        APPLICATION: path.relative(cwd, $.flags.app),
+      }, $.data));
     }
 
     /* istanbul ignore else */

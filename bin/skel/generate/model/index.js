@@ -28,11 +28,28 @@ Example:
   grown add model.ctrl User app/controllers
 `;
 
+const MODEL_TEST_USAGE = `
+This will add some views for any model.
+
+Example:
+  grown add model.tpl User app/templates
+`;
+
 const MODEL_TPL_USAGE = `
 This will add some views for any model.
 
 Example:
   grown add model.tpl User app/templates
+`;
+
+// FIXME: how to apply this relative path?
+const TEST_TPL = `const {{NAME}} = require('../{{{APPLICATION}}}');
+
+describe('{{NAME}}', () => {
+  it('should be synced first', done => {
+    {{NAME}}.sync().then(done);
+  });
+});
 `;
 
 const CTRL_TPL = `module.exports = {
@@ -193,6 +210,27 @@ module.exports = haki => {
       type: 'add',
       dest: '{{{DEST}}}/{{normalize NAME}}.js',
       content: CTRL_TPL,
+    }],
+  });
+
+  haki.setGenerator('model.test', {
+    description: 'Add a model test',
+    arguments: ['NAME', 'FROM'],
+    abortOnFail: true,
+    usage: MODEL_TEST_USAGE,
+    prompts: [{
+      name: 'NAME',
+      message: 'Resource name:',
+      validate: value => value.length > 0 || "Don't forget name your resource",
+    }, {
+      name: 'FROM',
+      message: 'Source path:',
+      validate: value => value.length > 0 || "Please specify your resource's path",
+    }],
+    actions: [{
+      type: 'add',
+      dest: 'test/{{NAME}}.spec.js',
+      template: TEST_TPL,
     }],
   });
 };
