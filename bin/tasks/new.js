@@ -230,11 +230,11 @@ module.exports = ($, cwd, logger) => {
           src: '_base',
         },
         {
-          copy: 'lib/{{paramCase APP_NAME}}',
+          copy: 'lib/{{snakeCase APP_NAME}}',
           src: 'lib',
         },
         {
-          copy: 'lib/{{paramCase APP_NAME}}_web',
+          copy: 'lib/{{snakeCase APP_NAME}}_web',
           src: 'web',
         }]
       : [{
@@ -248,7 +248,7 @@ module.exports = ($, cwd, logger) => {
           'package.json',
           'bin/server',
           isAdvanced
-            ? 'lib/{{paramCase APP_NAME}}/application.js'
+            ? 'lib/{{snakeCase APP_NAME}}/application.js'
             : 'application.js',
         ],
       },
@@ -258,7 +258,7 @@ module.exports = ($, cwd, logger) => {
       $.data.DATABASE ? {
         type: 'add',
         dest: isAdvanced
-          ? 'lib/{{paramCase APP_NAME}}/models/.gitkeep'
+          ? 'lib/{{snakeCase APP_NAME}}/models/.gitkeep'
           : 'models/.gitkeep',
       } : null,
       // default configuration
