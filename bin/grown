@@ -372,7 +372,7 @@ process.on('uncaughtException', e => {
   util.die(1);
 });
 
-if ((!_task || (!_task && $.flags.help)) && !$.params.exec) {
+if ((!_task || $.flags.help || (!_task && $.flags.help)) && !$.params.exec) {
   showHelp(_task);
   util.die();
 } else {
