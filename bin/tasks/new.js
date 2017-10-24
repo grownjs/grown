@@ -213,6 +213,10 @@ module.exports = ($, cwd, logger) => {
     });
   }
 
+  const PREFIX = $.data.TEMPLATE === 'advanced'
+    ? 'advanced'
+    : 'starter';
+
   const ACTIONS = {
     bowerPackage: () => [
       // bower support?
@@ -227,19 +231,19 @@ module.exports = ($, cwd, logger) => {
       isAdvanced
         ? [{
           copy: '.',
-          src: '_base',
+          src: `${PREFIX}/_base`,
         },
         {
           copy: 'lib/{{snakeCase APP_NAME}}',
-          src: 'lib',
+          src: `${PREFIX}/lib`,
         },
         {
           copy: 'lib/{{snakeCase APP_NAME}}_web',
-          src: 'web',
+          src: `${PREFIX}/web`,
         }]
       : [{
         copy: '.',
-        src: '_base',
+        src: `${PREFIX}/_base`,
       }]),
     renderTemplates: isAdvanced => [
       {
@@ -588,10 +592,11 @@ module.exports = ($, cwd, logger) => {
   function run(template) {
     return haki.runGenerator({
       abortOnFail: true,
-      basePath: template === 'advanced'
-        ? path.join(__dirname, '../skel/template/advanced')
-        : path.join(__dirname, '../skel/template/starter'),
-      actions: [].concat(
+      basePath: path.join(__dirname, '../skel/template'),
+      actions: [{
+        copy: '.',
+        src: '_default',
+      }].concat(
         ACTIONS.bowerPackage(),
         ACTIONS.setupSources(template === 'advanced'),
         ACTIONS.renderTemplates(template === 'advanced'),

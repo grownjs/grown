@@ -25,7 +25,7 @@ function runApplication() {
   }
 
   function main() {
-    const bootstrap = require('../lib/{{paramCase APP_NAME}}/application');
+    const bootstrap = require('../{{APPLICATION}}');
 
     process.stdout.write('Starting framework...\r');
 

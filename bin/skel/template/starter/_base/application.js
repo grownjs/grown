@@ -39,7 +39,7 @@ module.exports = () => {
 
   // setup the database connection
   $.mount('db', conn => {
-    conn.database = '{{paramCase APP_NAME}}';
+    conn.database = '{{snakeCase APP_NAME}}';
   });
 
   // {{/DATABASE}}rendering support
