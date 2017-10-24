@@ -242,10 +242,231 @@ module.exports = ($, cwd, logger) => {
         src: '_base',
       }]),
     renderTemplates: isAdvanced => [
+      {
+        type: 'extend',
+        dest: 'package.json',
+        callback(pkg, values) {
+          const appName = values.snakeCase(values.APP_NAME);
+
+          pkg.name = pkg.name || values.paramCase(values.APP_NAME);
+          pkg.version = pkg.version || '0.0.0';
+          pkg.private = true;
+
+          pkg.scripts = {};
+          pkg.scripts.start = 'grown up';
+          pkg.scripts.debug = "grown repl -i `date +'%Y-%m-%d_%H%M'`";
+          pkg.scripts.watch = `${values.RUN} dev -- -P localhost:8080 -r bin/server`;
+
+          if (values.HAS_TESTS) {
+            pkg.scripts.cover = `nyc --reporter=lcov --temp-directory tmp/.nyc ${values.RUN} test`;
+            pkg.scripts['cover:up'] = 'codecov --file=coverage/lcov.info --disable=gcov -e TRAVIS_NODE_VERSION';
+
+            if (values.IS_JASMINE) {
+              pkg.scripts['dev:test'] = 'jasmine-node test --watchFolders app lib';
+              pkg.scripts.test = 'jasmine-node test';
+            }
+
+            if (values.IS_MOCHA) {
+              pkg.scripts['dev:test'] = '_mocha test -R spec --recursive --watch';
+              pkg.scripts.test = '_mocha test -R spec --recursive';
+            }
+
+            if (values.IS_AVA) {
+              pkg.scripts['dev:test'] = 'ava test --watch';
+              pkg.scripts.test = 'ava test';
+            }
+          }
+
+          pkg.scripts.lint = `eslint config cron bin lib${values.HAS_TESTS ? ' test' : ''}`;
+          pkg.scripts.prod = 'yarn start -- -e production';
+          pkg.scripts.dist = 'tarima -Ofqe production';
+          pkg.scripts.dev = 'tarima -ed';
+
+          pkg.main = `lib/${appName}/application.js`;
+
+          pkg.tarima = {
+            cwd: '.',
+          };
+
+          if (values.TEMPLATE === 'advanced') {
+            pkg.tarima.src = [
+              `lib/${appName}_web/views`,
+              `lib/${appName}_web/assets`,
+            ];
+
+            pkg.tarima.watch = [
+              `lib/${appName}/application.js`,
+              `lib/${appName}/models`,
+              `lib/${appName}/services`,
+              `lib/${appName}/templates`,
+              `lib/${appName}_web/controllers`,
+              `lib/${appName}_web/middlewares`,
+              `lib/${appName}_web/middlewares.js`,
+              `lib/${appName}_web/policies.js`,
+              `lib/${appName}_web/routes.js`,
+              'config',
+              '.env',
+              'package.json',
+            ];
+          } else {
+            pkg.tarima.src = [
+              'src/views',
+              'src/assets',
+            ];
+
+            pkg.tarima.watch = [
+              'application.js',
+              'models',
+              'templates',
+              '.env',
+              'package.json',
+            ];
+          }
+
+          pkg.tarima.filter = [
+            '!_*',
+            '!**/_*',
+            '!**/_*/**',
+          ];
+
+          if (values.BUNDLER) {
+            pkg.tarima.bundle = '**/{views,javascripts}/**';
+          }
+
+          if (values.RELOADER) {
+            pkg.tarima.devPlugins = [
+              values.IS_BROWSER_SYNC
+                ? 'tarima-browser-sync'
+                : 'tarima-lr',
+            ];
+          }
+
+          if (values.HAS_PLUGINS) {
+            pkg.tarima.plugins = [
+              values.HAS_BOWER ? 'bower' : null,
+              values.TEMPLATE === 'advanced' && values.HAS_TALAVERA ? 'talavera' : null,
+            ].filter(x => x);
+
+            pkg.tarima.pluginOptions = {};
+
+            if (values.TEMPLATE === 'advanced' && values.HAS_TALAVERA) {
+              pkg.tarima.pluginOptions.talavera = {
+                dest: 'public/images',
+              };
+            }
+            if (values.HAS_BOWER) {
+              pkg.tarima.pluginOptions.bower = {
+                bundle: true,
+              };
+            }
+
+            if (values.RELOADER) {
+              pkg.tarima.pluginOptions[values.IS_BROWSER_SYNC ? 'tarima.browser-sync' : 'tarima-lr'] = {
+                timeout: 1000,
+              };
+            }
+          }
+
+          if (values.CAN_BUNDLE) {
+            pkg.tarima.bundleOptions = {};
+
+            if (values.ES6 && !values.IS_BUBLE) {
+              pkg.tarima.bundleOptions.transpiler = values.ES6;
+            }
+
+            if (values.BUNDLER) {
+              if (!values.IS_ROLLUP) {
+                pkg.tarima.bundleOptions.bundler = values.BUNDLER;
+              } else {
+                pkg.tarima.bundleOptions.bundleCache = true;
+                pkg.tarima.bundleOptions.entryCache = true;
+                pkg.tarima.bundleOptions.rollup = {
+                  plugins: [
+                    'rollup-plugin-node-resolve',
+                    'rollup-plugin-commonjs',
+                  ],
+                  'rollup-plugin-node-resolve': {
+                    module: true,
+                    jsnext: true,
+                    main: true,
+                    browser: true,
+                  },
+                };
+              }
+            }
+
+            pkg.tarima.bundleOptions.extensions = {};
+
+            if (values.ES6) {
+              pkg.tarima.bundleOptions.extensions.js = 'es6';
+            }
+
+            if (values.IS_POSTCSS || values.CSS_LANG) {
+              pkg.tarima.bundleOptions.extensions.css = !values.IS_POSTCSS
+                ? values.CSS_LANG
+                : 'post';
+            }
+
+            if (values.IS_BUBLE) {
+              pkg.tarima.bundleOptions.buble = {
+                jsx: 'h',
+              };
+            }
+
+            if (values.IS_BABEL) {
+              pkg.tarima.bundleOptions.babel = {
+                presets: [
+                  [
+                    'es2015',
+                    {},
+                  ],
+                ],
+                plugins: [
+                  [
+                    'transform-react-jsx',
+                    {
+                      pragma: 'h',
+                    },
+                  ],
+                ],
+              };
+            }
+
+            if (values.IS_LESS) {
+              pkg.tarima.bundleOptions.less = {
+                plugins: [
+                  'less-plugin-autoprefix',
+                ],
+              };
+            }
+
+            if (values.IS_POSTCSS) {
+              pkg.tarima.bundleOptions.postcss = {
+                plugins: [
+                  'postcss-import',
+                  'postcss-cssnext',
+                ],
+              };
+            }
+          }
+
+          pkg.tarima.rename = [
+            '**/views/**:{fullpath/2}',
+            '**/assets/**:public/{fullpath/3}',
+          ];
+
+          pkg.tarima.ignore = [
+            '.gitkeep',
+          ];
+
+          pkg.tarima.ignoreFiles = [
+            '.gitignore',
+          ];
+        },
+      },
       // evaluate templates
       {
         render: [
-          'package.json',
           'bin/server',
           isAdvanced
             ? 'lib/{{snakeCase APP_NAME}}/application.js'

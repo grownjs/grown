@@ -59,7 +59,7 @@ module.exports = ($, cwd, logger) => {
 
     logger('Starting server', () => {
       farm.run(() =>
-        farm.listen(`${_protocol}://${HOST}:${PORT}`, app => {
+        farm.listen(`${_protocol}://${HOST}:${PORT}`).then(app => {
           logger.info('{% ok Server is ready %}\n');
           logger.info('{% link %s %}\n', app.location.href);
 

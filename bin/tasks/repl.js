@@ -36,7 +36,7 @@ module.exports = ($, cwd, logger) => {
 
     logger('Starting server', () => {
       farm.run(() =>
-        farm.listen('test://', () => {
+        farm.listen('test://').then(() => {
           logger.info('{% ok REPL is ready %}\n');
           logger.info('{% log Type %} {% bold .help %} {% gray to list all available commands %}\n');
         }))
