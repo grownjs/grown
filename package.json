@@ -60,7 +60,7 @@
     "serve-static": "1.12.3",
     "socket.io": "^1.7.3",
     "socket.io-client": "^1.7.3",
-    "sqlite3": "^3.1.8",
+    "sqlite3": "^3.1.13",
     "superscript": "^1.1.4",
     "tarima": "^3.8.0",
     "uws": "^0.14.5",
