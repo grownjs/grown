@@ -45,7 +45,7 @@ module.exports = ($, farm) => {
       let value;
 
       try {
-        value = util.invoke(cmd, context);
+        value = util.invoke(cmd, context, true);
       } catch (e) {
         logger.info('\r{% error %s %}\r\n', util.getError(e, $.flags));
         repl.displayPrompt();
@@ -163,7 +163,7 @@ module.exports = ($, farm) => {
       /* istanbul ignore else */
       if (!_method && _path.charAt() !== '/') {
         _method = _path;
-        _path = args.util.shift();
+        _path = args._.shift();
       }
 
       let _aliased;
@@ -178,7 +178,7 @@ module.exports = ($, farm) => {
       }
 
       _method = _method || 'get';
-      _path = _path || args.util.shift() || '/';
+      _path = _path || args._.shift() || '/';
 
       /* istanbul ignore else */
       if (_aliased) {
