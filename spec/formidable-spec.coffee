@@ -9,8 +9,9 @@ describe 'Formidable', ->
     $.server.use formidable()
 
     $.server.mount (conn) ->
-     conn.upload_files().then ->
-       conn.resp_body = conn.params
+      conn.upload_files().then ->
+        conn.resp_body = conn.params
+        conn.end()
 
     $.server.fetch('/', 'post', {
       body: '{"foo":"bar"}'
