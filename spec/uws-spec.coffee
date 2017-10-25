@@ -13,6 +13,9 @@ describe '#uws', ->
 
     $.listen('uws://0.0.0.0:3000').then ->
       done()
+    .catch (e) ->
+      console.log e.message
+      done()
 
   it 'should be ok', (done) ->
     $.stop().then ->
