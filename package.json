@@ -65,5 +65,24 @@
     "tarima": "^3.8.0",
     "uws": "^0.14.5",
     "winston": "^2.3.0"
-  }
+  },
+  "bundledDependencies": [
+    "accepts",
+    "chalk",
+    "clean-stack",
+    "dotenv",
+    "fast-equals",
+    "fs-extra",
+    "glob",
+    "haki",
+    "log-pose",
+    "mime",
+    "mock-req",
+    "mock-res",
+    "object-new",
+    "send",
+    "source-map-support",
+    "type-is",
+    "wargs"
+  ]
 }
