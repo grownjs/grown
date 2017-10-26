@@ -7,13 +7,20 @@ const fs = require('fs-extra');
 module.exports = ($, argv, logger) => {
   const _extensions = $.extensions('Conn._');
 
-  const deps = (argv._.length ? argv._ : Object.keys(_extensions.models)).map(name => {
-    if (!_extensions.models[name]) {
-      throw new Error(`Undefined model ${name}`);
-    }
+  const dbs = Object.keys(_extensions.dbs);
 
-    return _extensions.models[name];
-  });
+  if (!argv.flags.use || dbs.indexOf(argv.flags.use) === -1) {
+    throw new Error(`Missing connection to --use, given '${argv.flags.use}'`);
+  }
+
+  const database = _extensions.dbs[argv.flags.use];
+
+  const models = Object.keys(database.models)
+    .filter(m => (argv._.length ? argv._.indexOf(m) > -1 : true));
+
+  const deps = models
+    .filter(x => !database.models[x].virtual)
+    .map(x => database.models[x]);
 
   if (argv.flags.load) {
     if (typeof argv.flags.load !== 'string') {
