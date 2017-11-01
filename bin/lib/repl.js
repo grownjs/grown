@@ -243,16 +243,15 @@ module.exports = ($, farm) => {
                   res._headers[key]));
 
               logger.info('\n{% gray %s %}\r\n', res.body);
-
-              repl.resume();
-              repl.displayPrompt();
             });
-          }).catch(e => {
+          })
+          .catch(e => {
             logger.info('\r{% error %s %}\r\n', util.getError(e, $.flags));
-
+          }))
+          .then(() => {
             repl.resume();
             repl.displayPrompt();
-          }));
+          });
       } catch (_e) {
         logger.info('\r{% error %s %}\r\n', util.getError(_e, $.flags));
 
