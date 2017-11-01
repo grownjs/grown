@@ -15,6 +15,19 @@ describe 'known express-middleware', ->
 
     $.server.fetch()
 
+  it 'supports mount-paths constraints', (done) ->
+    test = null
+
+    $.server.mount '/test', (req, res, next) ->
+      test = 42
+      next()
+
+    $.server.mount ->
+      done()
+
+    $.server.fetch('/test').then ->
+      expect(test).toEqual 42
+
   describe 'input support', ->
     it 'supports `method-override` for hacking `req.method`', (done) ->
       $.server.mount require('method-override')()
