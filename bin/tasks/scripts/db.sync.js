@@ -3,7 +3,6 @@
 const JSONSchemaSequelizer = require('json-schema-sequelizer');
 
 module.exports = ($, argv, logger) => {
-  const _extensions = $.extensions('Conn._');
   const _opts = {};
 
   if (argv.flags.force === true) {
@@ -12,12 +11,12 @@ module.exports = ($, argv, logger) => {
     _opts.alter = true;
   }
 
-  const deps = (argv._.length ? argv._ : Object.keys(_extensions.models)).map(name => {
-    if (!_extensions.models[name]) {
+  const deps = (argv._.length ? argv._ : Object.keys($.models)).map(name => {
+    if (!$.models[name]) {
       throw new Error(`Undefined model ${name}`);
     }
 
-    return _extensions.models[name];
+    return $.models[name];
   });
 
   if (argv.flags.destroy === true) {
