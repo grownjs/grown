@@ -4,6 +4,8 @@ const path = require('path');
 const glob = require('glob');
 const fs = require('fs-extra');
 
+const JSONSchemaSequelizer = require('json-schema-sequelizer');
+
 module.exports = ($, argv, logger) => {
   const _extensions = $.extensions('Conn._');
 
@@ -29,18 +31,26 @@ module.exports = ($, argv, logger) => {
 
     const src = path.join($.cwd, argv.flags.load);
 
-    return Promise.all(deps.map(model => {
-      const file = glob.sync(`**/${model.name}.json`, { cwd: src })[0];
+    const after = argv.flags.after || path.join(src, 'after.js');
+    const before = argv.flags.before || path.join(src, 'before.js');
 
-      return file && model
-        .bulkCreate(fs.readJsonSync(path.join(src, file)))
-        .then(() => {
-          logger.info('{% item %s was loaded %}\r\n', model.name);
-        })
-        .catch(e => {
-          logger.info('\r\r{% error %s (%s) %}\n', e.message, file);
-        });
-    }));
+    const umzug = (after || before) && JSONSchemaSequelizer.migrate(database.sequelize);
+
+    return Promise.resolve()
+      .then(() => fs.existsSync(before) && umzug.invoke(before))
+      .then(() => Promise.all(deps.map(model => {
+        const file = glob.sync(`**/${model.name}.json`, { cwd: src })[0];
+
+        return file && model
+          .bulkCreate(fs.readJsonSync(path.join(src, file)))
+          .then(() => {
+            logger.info('{% item %s was loaded %}\r\n', model.name);
+          })
+          .catch(e => {
+            logger.info('\r\r{% error %s (%s) %}\n', e.message, file);
+          });
+      })))
+      .then(() => fs.existsSync(after) && umzug.invoke(after));
   }
 
   return Promise.all(deps
