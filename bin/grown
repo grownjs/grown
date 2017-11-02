@@ -340,7 +340,7 @@ function run() {
         logger.info('\r{% wait Task %s: running... %}\r\r', _task);
 
         _farm()
-          .run(ctx => _call(ctx, $, logger))
+          .run(ctx => _call(ctx.extensions('Conn._'), $, logger))
           .then(() => _farm.teardown())
           .catch(e => _farm.teardown(() => {
             util.printError(e, $.flags, logger);
