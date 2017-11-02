@@ -7,19 +7,17 @@ const fs = require('fs-extra');
 const JSONSchemaSequelizer = require('json-schema-sequelizer');
 
 module.exports = ($, argv, logger) => {
-  const _extensions = $.extensions('Conn._');
-
-  const dbs = Object.keys(_extensions.dbs);
+  const dbs = Object.keys($.dbs);
 
   if (!argv.flags.use || dbs.indexOf(argv.flags.use) === -1) {
     throw new Error(`Missing connection to --use, given '${argv.flags.use}'`);
   }
 
-  const databaseDir = _extensions.dbs[argv.flags.use].sequelize.options.baseDir;
+  const databaseDir = $.dbs[argv.flags.use].sequelize.options.baseDir;
   const schemaFile = path.join(databaseDir, 'schema.js');
   const baseDir = path.join(databaseDir, 'migrations');
 
-  const models = _extensions.dbs[argv.flags.use].models;
+  const models = $.dbs[argv.flags.use].models;
 
   const fixedDeps = (argv._.length ? argv._ : Object.keys(models)).map(model => {
     if (!models[model]) {
@@ -30,7 +28,7 @@ module.exports = ($, argv, logger) => {
   });
 
   if (!argv.flags.make) {
-    const conn = _extensions.dbs[argv.flags.use].sequelize;
+    const conn = $.dbs[argv.flags.use].sequelize;
 
     const configFile = path.join(baseDir, 'index.json');
 

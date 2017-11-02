@@ -6,15 +6,13 @@ const fs = require('fs-extra');
 const JSONSchemaSequelizer = require('json-schema-sequelizer');
 
 module.exports = ($, argv, logger) => {
-  const _extensions = $.extensions('Conn._');
-
-  const dbs = Object.keys(_extensions.dbs);
+  const dbs = Object.keys($.dbs);
 
   if (!argv.flags.use || dbs.indexOf(argv.flags.use) === -1) {
     throw new Error(`Missing connection to --use, given '${argv.flags.use}'`);
   }
 
-  const databaseDir = _extensions.dbs[argv.flags.use].sequelize.options.baseDir;
+  const databaseDir = $.dbs[argv.flags.use].sequelize.options.baseDir;
   const schemaFile = path.join(databaseDir, 'schema.json');
 
   if (!fs.existsSync(schemaFile) && !argv.flags.save) {
@@ -25,7 +23,7 @@ module.exports = ($, argv, logger) => {
     const payload = fs.readJsonSync(schemaFile);
 
     const length = Object.keys(payload.definitions)
-      .filter(x => _extensions.models[x])
+      .filter(x => $.models[x])
       .length;
 
     logger.info('\r\r{% star %s %}\n', payload.description);
@@ -35,8 +33,8 @@ module.exports = ($, argv, logger) => {
       length === 1 ? '' : 's');
   }
 
-  const models = _extensions.dbs[argv.flags.use].models;
-  const defns = _extensions.dbs[argv.flags.use].refs;
+  const models = $.dbs[argv.flags.use].models;
+  const defns = $.dbs[argv.flags.use].refs;
 
   const fixedDeps = (argv._.length ? argv._ : Object.keys(models)).map(model => {
     if (!models[model]) {
@@ -68,13 +66,13 @@ module.exports = ($, argv, logger) => {
   if (argv.flags.load) {
     const payload = fs.readJsonSync(schemaFile);
     const length = Object.keys(payload.definitions)
-      .filter(x => _extensions.models[x])
+      .filter(x => $.models[x])
       .length;
 
     logger('read', path.relative($.cwd, schemaFile));
 
     // FIXME: remove non-specified models from given list
-    return _extensions.dbs[argv.flags.use].rehydrate(payload)
+    return $.dbs[argv.flags.use].rehydrate(payload)
       .then(() => {
         logger.info('\r\r{% log %s model%s imported %}\n',
           length,

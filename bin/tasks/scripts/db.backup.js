@@ -7,15 +7,13 @@ const fs = require('fs-extra');
 const JSONSchemaSequelizer = require('json-schema-sequelizer');
 
 module.exports = ($, argv, logger) => {
-  const _extensions = $.extensions('Conn._');
-
-  const dbs = Object.keys(_extensions.dbs);
+  const dbs = Object.keys($.dbs);
 
   if (!argv.flags.use || dbs.indexOf(argv.flags.use) === -1) {
     throw new Error(`Missing connection to --use, given '${argv.flags.use}'`);
   }
 
-  const database = _extensions.dbs[argv.flags.use];
+  const database = $.dbs[argv.flags.use];
 
   const models = Object.keys(database.models)
     .filter(m => (argv._.length ? argv._.indexOf(m) > -1 : true));
