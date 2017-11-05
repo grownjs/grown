@@ -35,7 +35,7 @@ module.exports = ($, argv, logger) => {
     const umzug = (after || before) && JSONSchemaSequelizer.migrate(database.sequelize);
 
     return Promise.resolve()
-      .then(() => fs.existsSync(before) && umzug.invoke(before))
+      .then(() => umzug.run(before))
       .then(() => Promise.all(deps.map(model => {
         const file = glob.sync(`**/${model.name}.json`, { cwd: src })[0];
 
@@ -48,7 +48,7 @@ module.exports = ($, argv, logger) => {
             logger.info('\r\r{% error %s (%s) %}\n', e.message, file);
           });
       })))
-      .then(() => fs.existsSync(after) && umzug.invoke(after));
+      .then(() => umzug.run(after));
   }
 
   return Promise.all(deps
