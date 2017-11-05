@@ -51,6 +51,20 @@ module.exports = ($, argv, logger) => {
       .then(() => umzug.run(after));
   }
 
+  const fulldate = [
+    new Date().getFullYear(),
+    `0${new Date().getMonth() + 1}`.substr(-2),
+    `0${new Date().getDate() + 1}`.substr(-2),
+  ].join('');
+
+  const hourtime = [
+    `0${new Date().getHours()}`.substr(-2),
+    `0${new Date().getMinutes()}`.substr(-2),
+    `0${new Date().getSeconds()}`.substr(-2),
+    '.',
+    `000${new Date().getMilliseconds()}`.substr(-3),
+  ].join('');
+
   return Promise.all(deps
     .map(model => model
       .findAll({
@@ -66,21 +80,7 @@ module.exports = ($, argv, logger) => {
             throw new Error(`Invalid directory to --save, given '${argv.flags.save}'`);
           }
 
-          const fulldate = [
-            new Date().getFullYear(),
-            `0${new Date().getMonth() + 1}`.substr(-2),
-            `0${new Date().getDate() + 1}`.substr(-2),
-          ].join('');
-
-          const hourtime = [
-            `0${new Date().getHours()}`.substr(-2),
-            `0${new Date().getMinutes()}`.substr(-2),
-            `0${new Date().getSeconds()}`.substr(-2),
-            '.',
-            `000${new Date().getMilliseconds()}`.substr(-3),
-          ].join('');
-
-          const file = path.join($.cwd, argv.flags.save, fulldate, hourtime, `${result.model.name}.json`);
+          const file = path.join($.cwd, argv.flags.save, `${fulldate}${hourtime}`, `${result.model.name}.json`);
 
           return logger('write', path.relative($.cwd, file), () => {
             fs.outputJsonSync(file, result.data, { spaces: 2 });
