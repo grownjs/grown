@@ -45,7 +45,7 @@ module.exports = ($, farm) => {
       let value;
 
       try {
-        value = util.invoke(cmd, context, true);
+        value = util.invoke(cmd, context);
       } catch (e) {
         logger.info('\r{% error %s %}\r\n', util.getError(e, $.flags));
         repl.displayPrompt();
@@ -134,7 +134,7 @@ module.exports = ($, farm) => {
       }, v => {
         // allow dynamic value interpolation
         try {
-          return util.invoke(v, repl.context);
+          return util.invoke(v, repl.context, true);
         } catch (e) {
           throw new Error(`Invalid expression within '${v}'. ${e.message}`);
         }
