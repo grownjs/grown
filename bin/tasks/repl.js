@@ -26,7 +26,6 @@ module.exports = ($, cwd, logger) => {
       }
 
       farm.fetch = _test(farm);
-      farm.testing = true;
 
       const _close = _repl($, farm);
 
