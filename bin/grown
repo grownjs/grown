@@ -73,7 +73,7 @@ process.name = 'grown';
 process.env.NODE_ENV = $.flags.env || 'development';
 
 /* istanbul ignore else */
-if (process.env.CI) {
+if (process.env.CI && process.env.NODE_ENV === 'testing') {
   process.env.NODE_ENV = 'ci';
 }
 

@@ -64,6 +64,8 @@ module.exports = main => {
   process.on('SIGINT', () =>
     app.teardown(() => process.exit()));
 
+  let _started;
+
   return function _startApplication(done) {
     let _app;
     let _closing;
@@ -94,8 +96,11 @@ module.exports = main => {
     logger('Starting server', () => {
       _app.run(() =>
         _app.listen(`${PROTOCOL}://${HOST}:${PORT}`).then(ctx => {
-          logger.info('{% ok Server is ready %}\n');
-          logger.info('{% link %s %}\n', ctx.location.href);
+          if (!_started) {
+            logger.info('{% ok Ready: %} {% cyan %s %}\n', ctx.location.href);
+
+            _started = true;
+          }
 
           /* istanbul ignore else */
           if (typeof done === 'function') {

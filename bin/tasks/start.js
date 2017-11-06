@@ -28,12 +28,13 @@ module.exports = ($, cwd, logger) => {
   const _farm = require(path.resolve(cwd, $.flags.app));
 
   // initialization
-  let farm;
 
   function _startApplication(done) {
+    let app;
+
     logger('Initializing framework', () => {
       try {
-        farm = _farm();
+        app = _farm();
       } catch (e) {
         _.printError(e, $.flags, logger);
         _.die(1);
@@ -41,12 +42,12 @@ module.exports = ($, cwd, logger) => {
 
       /* istanbul ignore else */
       if (IS_REPL) {
-        farm.fetch = _test(farm);
+        app.fetch = _test(app);
 
-        const _close = _repl($, farm);
+        const _close = _repl($, app);
 
-        farm.on('close', () => _close());
-        farm.on('reload', () => {
+        app.on('close', () => _close());
+        app.on('reload', () => {
           _close();
 
           // delay restart
@@ -58,10 +59,9 @@ module.exports = ($, cwd, logger) => {
     });
 
     logger('Starting server', () => {
-      farm.run(() =>
-        farm.listen(`${_protocol}://${HOST}:${PORT}`).then(app => {
-          logger.info('{% ok Server is ready %}\n');
-          logger.info('{% link %s %}\n', app.location.href);
+      app.run(() =>
+        app.listen(`${_protocol}://${HOST}:${PORT}`).then(ctx => {
+          logger.info('{% ok Ready: %} {% cyan %s %}\n', ctx.location.href);
 
           /* istanbul ignore else */
           if (IS_REPL) {
@@ -70,7 +70,7 @@ module.exports = ($, cwd, logger) => {
 
           /* istanbul ignore else */
           if (typeof done === 'function') {
-            done(farm, app);
+            done(app, ctx);
           }
         }))
         .catch(e => {
