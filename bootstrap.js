@@ -97,7 +97,7 @@ module.exports = main => {
       _app.run(() =>
         _app.listen(`${PROTOCOL}://${HOST}:${PORT}`).then(ctx => {
           if (!_started) {
-            logger.info('{% ok Ready: %} {% cyan %s %}\n', ctx.location.href);
+            logger.info('{% link %s %}\n', ctx.location.href.replace(/\/$/, ''));
 
             _started = true;
           }

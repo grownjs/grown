@@ -61,7 +61,7 @@ module.exports = ($, cwd, logger) => {
     logger('Starting server', () => {
       app.run(() =>
         app.listen(`${_protocol}://${HOST}:${PORT}`).then(ctx => {
-          logger.info('{% ok Ready: %} {% cyan %s %}\n', ctx.location.href);
+          logger.info('{% link %s %}\n', ctx.location.href.replace(/\/$/, ''));
 
           /* istanbul ignore else */
           if (IS_REPL) {
