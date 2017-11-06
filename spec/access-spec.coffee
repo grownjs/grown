@@ -14,7 +14,7 @@ useRole = (role, end) ->
   $.server.use access({
     settings: path.join(__dirname, '_fixtures/app/config/policies.js')
     folders: path.join(__dirname, '_fixtures/app/lib/resources')
-    callback:  -> role
+    callback: -> role
   })
 
   $.server.use router({
