@@ -287,7 +287,7 @@ module.exports = ($, farm) => {
           if (err) {
             logger.info('\r{% error %s %}\r\n', util.getError(err, $.flags));
           } else {
-            logger.info('%s\n', JSON.stringify(result, null, 2));
+            logger.info('%s\n', repl.writer(result));
           }
 
           if ($.flags.end === true) {
