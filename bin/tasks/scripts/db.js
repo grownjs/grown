@@ -28,29 +28,29 @@ module.exports = ($, argv, logger) => {
             ? model.describe()
             : null,
         ])
-        .then(results => {
-          logger.info('\r\r  {% link %s %} {% gray (%s row%s) %}\n',
-            m,
-            results[0],
-            results[0] === 1 ? '' : 's');
+          .then(results => {
+            logger.info('\r\r  {% link %s %} {% gray (%s row%s) %}\n',
+              m,
+              results[0],
+              results[0] === 1 ? '' : 's');
 
-          Object.keys(model.associations).forEach(ref => {
-            const refs = model.associations;
+            Object.keys(model.associations).forEach(ref => {
+              const refs = model.associations;
 
-            logger.info('    {% gray %s %} {% yellow %s %} %s\n',
-              ref, refs[ref].associationType, refs[ref].target.name);
-          });
-
-          if (argv.flags.inspect) {
-            Object.keys(results[1]).forEach(key => {
-              logger.info('    {% gray %s %} {% yellow %s %}%s%s%s\n', key,
-                results[1][key].type,
-                results[1][key].allowNull ? '' : ' NOT_NULL',
-                results[1][key].primaryKey ? ' PRIMARY_KEY' : '',
-                results[1][key].defaultValue ? ` {% gray ${results[1][key].defaultValue} %}` : '');
+              logger.info('    {% gray %s %} {% yellow %s %} %s\n',
+                ref, refs[ref].associationType, refs[ref].target.name);
             });
-          }
-        });
+
+            if (argv.flags.inspect) {
+              Object.keys(results[1]).forEach(key => {
+                logger.info('    {% gray %s %} {% yellow %s %}%s%s%s\n', key,
+                  results[1][key].type,
+                  results[1][key].allowNull ? '' : ' NOT_NULL',
+                  results[1][key].primaryKey ? ' PRIMARY_KEY' : '',
+                  results[1][key].defaultValue ? ` {% gray ${results[1][key].defaultValue} %}` : '');
+              });
+            }
+          });
       }));
     });
   });

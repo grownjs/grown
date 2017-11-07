@@ -49,9 +49,9 @@ module.exports = ($, argv, logger) => {
 
       return logger('read', path.relative($.cwd, schemaFile), () =>
         JSONSchemaSequelizer.migrate(conn, require(schemaFile), true)[argv.flags.create ? 'up' : 'down']())
-      .then(() => {
-        logger.info('\r\r{% log %s schema %s %}\n', argv.flags.use, argv.flags.create ? 'applied' : 'reverted');
-      });
+        .then(() => {
+          logger.info('\r\r{% log %s schema %s %}\n', argv.flags.use, argv.flags.create ? 'applied' : 'reverted');
+        });
     }
 
     let method = 'status';
@@ -89,41 +89,41 @@ module.exports = ($, argv, logger) => {
         },
       })[method](params),
     ])
-    .then(results => {
-      const result = results[1];
+      .then(results => {
+        const result = results[1];
 
-      if (results[0]) {
-        logger('write', path.relative($.cwd, schemaFile), () => {
-          fs.outputFileSync(schemaFile, results[0].code);
-        });
-      }
-
-      if (!Array.isArray(result)) {
-        if (result.executed && result.executed.length === 0) {
-          logger.info('\r\r{% log No executed migrations %}\n');
-        }
-
-        if (result.pending && result.pending.length) {
-          logger.info('\r\r{% log Pending migrations: %}\n');
-
-          result.pending.forEach(x => {
-            logger.info('{% yellow.line %s %}\n', x);
+        if (results[0]) {
+          logger('write', path.relative($.cwd, schemaFile), () => {
+            fs.outputFileSync(schemaFile, results[0].code);
           });
         }
 
-        if (result.pending && result.pending.length === 0) {
-          logger.info('\r\r{% log No pending migrations %}\n');
+        if (!Array.isArray(result)) {
+          if (result.executed && result.executed.length === 0) {
+            logger.info('\r\r{% log No executed migrations %}\n');
+          }
+
+          if (result.pending && result.pending.length) {
+            logger.info('\r\r{% log Pending migrations: %}\n');
+
+            result.pending.forEach(x => {
+              logger.info('{% yellow.line %s %}\n', x);
+            });
+          }
+
+          if (result.pending && result.pending.length === 0) {
+            logger.info('\r\r{% log No pending migrations %}\n');
+          }
+        } else if (!result.length) {
+          logger.info('\r\r{% log No changes were made %}\n');
+        } else {
+          logger.info('\r\r{% log %s migration%s %s %s %}\n',
+            result.length,
+            result.length === 1 ? '' : 's',
+            result.length === 1 ? 'was' : 'were',
+            argv.flags.up || argv.flags.next ? 'applied' : 'reverted');
         }
-      } else if (!result.length) {
-        logger.info('\r\r{% log No changes were made %}\n');
-      } else {
-        logger.info('\r\r{% log %s migration%s %s %s %}\n',
-          result.length,
-          result.length === 1 ? '' : 's',
-          result.length === 1 ? 'was' : 'were',
-          argv.flags.up || argv.flags.next ? 'applied' : 'reverted');
-      }
-    });
+      });
   }
 
   const fulldate = [

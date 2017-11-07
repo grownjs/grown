@@ -61,8 +61,7 @@ module.exports = ($, cwd, logger) => {
 
         /* istanbul ignore else */
         if (task.value.usage && $.flags.help) {
-          logger.printf('\n  %s\n\n',
-            task.value.usage.split('\n').join('\n  ').trim());
+          logger.printf('\n  %s\n\n', task.value.usage.split('\n').join('\n  ').trim());
         }
       });
 

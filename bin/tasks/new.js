@@ -241,10 +241,10 @@ module.exports = ($, cwd, logger) => {
           copy: 'lib/{{snakeCase APP_NAME}}_web',
           src: `${PREFIX}/web`,
         }]
-      : [{
-        copy: '.',
-        src: `${PREFIX}/_base`,
-      }]),
+        : [{
+          copy: '.',
+          src: `${PREFIX}/_base`,
+        }]),
     renderTemplates: isAdvanced => [
       {
         type: 'extend',
@@ -648,8 +648,8 @@ module.exports = ($, cwd, logger) => {
   ($.flags.interactive
     ? ask().then(() => run($.data.TEMPLATE))
     : run($.data.TEMPLATE))
-  .catch(e => {
-    util.printError(e, $.flags, logger, true);
-    util.die(1);
-  });
+    .catch(e => {
+      util.printError(e, $.flags, logger, true);
+      util.die(1);
+    });
 };
