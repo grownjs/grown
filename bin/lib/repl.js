@@ -60,8 +60,12 @@ module.exports = ($, farm) => {
           callback(null, result);
         })
         .catch(e => {
-          logger.info('\r{% error %s %}\r\n', util.getError(e, $.flags));
-          callback();
+          /* istanbul ignore else */
+          if (e) {
+            logger.info('\r{% error %s %}\r\n', util.getError(e, $.flags));
+          }
+
+          callback(e || new Error(`Did not '${cmd}' failed?`));
         });
     }
 
@@ -284,9 +288,11 @@ module.exports = ($, farm) => {
     if (typeof $.flags.repl === 'string') {
       process.nextTick(() => {
         _run.call(repl, $.flags.repl, repl.context, __filename, (err, result) => {
-          if (err) {
+          if (err instanceof Error) {
             logger.info('\r{% error %s %}\r\n', util.getError(err, $.flags));
-          } else {
+          }
+
+          if (typeof result !== 'undefined') {
             logger.info('%s\n', repl.writer(result));
           }
 
