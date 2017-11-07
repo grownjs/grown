@@ -36,41 +36,43 @@ module.exports = ($, farm) => {
     // do nothing
   }
 
+  function _run(cmd, context, filename, callback) {
+    let value;
+
+    try {
+      value = util.invoke(cmd, context);
+    } catch (e) {
+      logger.info('\r{% error %s %}\r\n', util.getError(e, $.flags));
+      this.displayPrompt();
+      return callback();
+    }
+
+    /* istanbul ignore else */
+    if (typeof value === 'undefined') {
+      logger.info('\r%s\r\n', cmd);
+      return callback();
+    }
+
+    /* istanbul ignore else */
+    if (value && typeof value.then === 'function') {
+      return value
+        .then(result => callback(null, result))
+        .catch(e => {
+          logger.info('\r{% error %s %}\r\n', util.getError(e, $.flags));
+          this.displayPrompt();
+          callback();
+        });
+    }
+
+    callback(null, value);
+  }
+
   const repl = REPL.start({
     replMode: REPL.REPL_MODE_STRICT,
     stdout: process.stdout,
     stdin: process.stdin,
     prompt: '',
-    eval(cmd, context, filename, callback) {
-      let value;
-
-      try {
-        value = util.invoke(cmd, context);
-      } catch (e) {
-        logger.info('\r{% error %s %}\r\n', util.getError(e, $.flags));
-        repl.displayPrompt();
-        return callback();
-      }
-
-      /* istanbul ignore else */
-      if (typeof value === 'undefined') {
-        logger.info('\r%s\r\n', cmd);
-        return callback();
-      }
-
-      /* istanbul ignore else */
-      if (value && typeof value.then === 'function') {
-        return value
-          .then(result => callback(null, result))
-          .catch(e => {
-            logger.info('\r{% error %s %}\r\n', util.getError(e, $.flags));
-            repl.displayPrompt();
-            callback();
-          });
-      }
-
-      callback(null, value);
-    },
+    eval: _run,
   })
   .on('exit', () => {
     /* istanbul ignore else */
@@ -287,6 +289,19 @@ module.exports = ($, farm) => {
     repl.displayPrompt();
 
     farm.emit('repl', repl);
+
+    if (typeof $.flags.repl === 'string') {
+      process.nextTick(() => {
+        _run.call(repl, $.flags.repl, repl.context, __filename, (err, result) => {
+          if (err) {
+            logger.info('\r{% error %s %}\r\n', util.getError(err, $.flags));
+            return;
+          }
+
+          logger.info('{% gray %s %}\n', JSON.stringify(result, null, 2));
+        });
+      });
+    }
   });
 
   return () => {
