@@ -45,6 +45,7 @@ try {
       C: 'no-copy',
       A: 'no-add',
       i: 'repl',
+      n: 'end',
       u: 'uws',
       s: 'https',
       v: 'version',

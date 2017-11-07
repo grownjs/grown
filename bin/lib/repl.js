@@ -285,22 +285,31 @@ module.exports = ($, farm) => {
       repl.setPrompt(require('log-pose/lib/utils.js').style('{% cyan.pointer %}'));
     }
 
-    repl.resume();
-    repl.displayPrompt();
-
-    farm.emit('repl', repl);
-
     if (typeof $.flags.repl === 'string') {
       process.nextTick(() => {
         _run.call(repl, $.flags.repl, repl.context, __filename, (err, result) => {
           if (err) {
             logger.info('\r{% error %s %}\r\n', util.getError(err, $.flags));
-            return;
+          } else {
+            logger.info('%s\n', JSON.stringify(result, null, 2));
           }
 
-          logger.info('{% gray %s %}\n', JSON.stringify(result, null, 2));
+          if ($.flags.end === true) {
+            repl.close();
+            process.exit(err ? 1 : 0);
+          }
+
+          repl.resume();
+          repl.displayPrompt();
+
+          farm.emit('repl', repl);
         });
       });
+    } else {
+      repl.resume();
+      repl.displayPrompt();
+
+      farm.emit('repl', repl);
     }
   });
 
