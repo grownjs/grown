@@ -13,30 +13,45 @@ module.exports = ($, cwd, logger) => {
   const _test = require('../../lib/plugs/testing.js');
   const _farm = require(path.resolve(cwd, $.flags.app));
 
-  let farm;
+  process.on('SIGINT', () =>
+    _farm.teardown(() => process.exit()));
 
-  // small bootstrap
   function _startApplication() {
+    let _app;
+    let _closing;
+
+    function close(cb) {
+      _closing = true;
+
+      return _app.stop(() => {
+        _closing = false;
+        cb();
+      });
+    }
+
     logger('Initializing framework', () => {
       try {
-        farm = _farm();
+        _app = _farm();
+        _app.fetch = _test(_app);
+
+        const _close = _repl($, _app);
+
+        _app.on('reload', () => {
+          _close();
+
+          if (!_closing) {
+            close(() => setTimeout(_startApplication, 100));
+          }
+        });
       } catch (e) {
         util.printError(e, $.flags, logger);
         util.die(1);
       }
-
-      farm.fetch = _test(farm);
-
-      const _close = _repl($, farm);
-
-      farm.on('close', () => _close());
-      farm.on('reload', () => _close());
-      farm.on('reload', () => _farm.teardown(_startApplication));
     });
 
     logger('Starting server', () => {
-      farm.run(() =>
-        farm.listen('test://').then(() => {
+      _app.run(() =>
+        _app.listen('test://').then(() => {
           logger.info('{% ok REPL is ready %}\n');
           logger.info('{% log Type %} {% bold .help %} {% gray to list all available commands %}\n');
         }))
@@ -45,9 +60,9 @@ module.exports = ($, cwd, logger) => {
           util.die(1);
         });
     });
+
+    return close;
   }
 
   _startApplication();
-
-  process.on('SIGINT', () => _farm.teardown(() => process.exit()));
 };

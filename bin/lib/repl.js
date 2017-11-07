@@ -43,23 +43,24 @@ module.exports = ($, farm) => {
       value = util.invoke(cmd, context);
     } catch (e) {
       logger.info('\r{% error %s %}\r\n', util.getError(e, $.flags));
-      this.displayPrompt();
-      return callback();
+      callback();
+      return;
     }
 
     /* istanbul ignore else */
     if (typeof value === 'undefined') {
-      logger.info('\r%s\r\n', cmd);
-      return callback();
+      callback();
+      return;
     }
 
     /* istanbul ignore else */
     if (value && typeof value.then === 'function') {
       return value
-        .then(result => callback(null, result))
+        .then(result => {
+          callback(null, result);
+        })
         .catch(e => {
           logger.info('\r{% error %s %}\r\n', util.getError(e, $.flags));
-          this.displayPrompt();
           callback();
         });
     }
@@ -74,17 +75,17 @@ module.exports = ($, farm) => {
     prompt: '',
     eval: _run,
   })
-  .on('exit', () => {
-    /* istanbul ignore else */
-    if (kill) {
+    .on('exit', () => {
       /* istanbul ignore else */
-      if (fd) {
-        fs.closeSync(fd);
-      }
+      if (kill) {
+        /* istanbul ignore else */
+        if (fd) {
+          fs.closeSync(fd);
+        }
 
-      util.die();
-    }
-  });
+        util.die();
+      }
+    });
 
   repl.pause();
 
@@ -234,22 +235,17 @@ module.exports = ($, farm) => {
             }
 
             process.nextTick(() => {
-              logger.info('\r{% %s %s %} {% yellow %s %}\r\n',
-                _status,
-                res.statusCode,
-                res.statusMessage);
+              logger.info('\r{% %s %s %} {% yellow %s %}\r\n', _status, res.statusCode, res.statusMessage);
 
               Object.keys(res._headers).forEach(key =>
-                logger.info('\r{% gray %s: %} %s\r\n',
-                  key.replace(/\b([a-z])/g, $0 => $0.toUpperCase()),
-                  res._headers[key]));
+                logger.info('\r{% gray %s: %} %s\r\n', key.replace(/\b([a-z])/g, $0 => $0.toUpperCase()), res._headers[key]));
 
               logger.info('\n{% gray %s %}\r\n', res.body);
             });
           })
-          .catch(e => {
-            logger.info('\r{% error %s %}\r\n', util.getError(e, $.flags));
-          }))
+            .catch(e => {
+              logger.info('\r{% error %s %}\r\n', util.getError(e, $.flags));
+            }))
           .then(() => {
             repl.resume();
             repl.displayPrompt();
@@ -302,14 +298,14 @@ module.exports = ($, farm) => {
           repl.resume();
           repl.displayPrompt();
 
-          farm.emit('repl', repl);
+          farm.emit('repl', repl, logger);
         });
       });
     } else {
       repl.resume();
       repl.displayPrompt();
 
-      farm.emit('repl', repl);
+      farm.emit('repl', repl, logger);
     }
   });
 
