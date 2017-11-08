@@ -5,12 +5,6 @@ const server = new Grown({
   cwd: process.cwd(),
 });
 
-Grown.module('Router', {
-  props: {
-    key: 'value',
-  },
-});
-
 server.plug([
   Grown.Conn,
   Grown.Router,
@@ -19,6 +13,7 @@ server.plug([
 server.mount(ctx =>
   ctx.next(() => {
     console.log('DONE', ctx.routes);
+    console.log('DONE', ctx.fun());
     console.log('DONE', ctx.key);
     console.log('DONE', ctx.id);
   }));

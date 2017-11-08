@@ -7,20 +7,6 @@ const util = require('../../lib/util');
 
 const statusCodes = require('http').STATUS_CODES;
 
-function fail(e) {
-  try {
-    if (!this.res.finished) {
-      this.res.writeHead(500, this.resp_headers);
-      this.res.write(errorHandler(e, this));
-      this.res.end();
-    } else {
-      debug('#%s Response already sent', this.pid);
-    }
-  } catch (_e) {
-    debug('#%s Fatal. %s', this.pid, _e.message);
-  }
-}
-
 module.exports = {
   init() {
     const _resp = {
@@ -217,7 +203,19 @@ module.exports = {
 
               this.send(_body);
             })
-            .catch(e => fail.call(this, e));
+            .catch(e => {
+              try {
+                if (!this.res.finished) {
+                  this.res.writeHead(500, this.resp_headers);
+                  this.res.write(errorHandler(e, this));
+                  this.res.end();
+                } else {
+                  debug('#%s Response already sent. %s', this.pid, e.message);
+                }
+              } catch (_e) {
+                debug('#%s Fatal. %s', this.pid, _e.message);
+              }
+            });
         },
       },
     };
