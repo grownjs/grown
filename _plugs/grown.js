@@ -106,7 +106,11 @@ module.exports = $('Grown', opts => {
                   break;
 
                 default:
-                  $new.readOnlyProperty(this, k, p[k]);
+                  if (k[0] !== k[0].toUpperCase()) {
+                    $new.readOnlyProperty(this, k, p[k], {
+                      isMethod: false,
+                    });
+                  }
                   break;
               }
             });
