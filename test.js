@@ -9,22 +9,28 @@ Grown.module('Router', {
   props: {
     key: 'value',
   },
-})
+});
 
 server.plug([
   Grown.Conn,
   Grown.Router,
 ]);
 
-server.mount(ctx => {
-  console.log('>>', ctx);
-});
+server.mount(ctx =>
+  ctx.next(() => {
+    return ctx.end().catch(e => {
+      console.log(e);
+    }).then(() => {
+      console.log('DONE', ctx.routes);
+      console.log('DONE', ctx.key);
+      console.log('DONE', ctx.id);
+    });
+  }));
 
 server.get('/', ctx => {
-  console.log('GOT', ctx);
+  console.log('GOT', ctx.req.url);
 });
 
 server.listen(3001, ctx => {
   console.log('START', ctx);
-  // ctx.close();
 });

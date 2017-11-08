@@ -63,6 +63,7 @@ module.exports = $('Grown', opts => {
   scope._extensions = [];
   scope._pipeline = [];
 
+  scope._factory = $;
   scope._options = _getConfig;
   scope._invoke = pipelineFactory('^', scope._pipeline, done);
 
@@ -106,15 +107,11 @@ $('Grown.module', (id, def) => $(`Grown.${id}`, def), false);
 
 $('Grown.Router', {
   get(path, cb) {
-    console.log(this.mount, path, cb);
+    this.mount(path, cb);
   },
   props: {
     routes: {},
   },
 });
 
-$('Grown.Conn', {
-  props: {
-    id: 42,
-  },
-});
+$('Grown.Conn', require('./conn'));
