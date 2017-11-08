@@ -1,6 +1,6 @@
 'use strict';
 
-function on(method, opts) {
+function on(method) {
   return function route(path, cb) {
     if (typeof cb !== 'function') {
       throw new Error(`Expecting a valid callback, given '${cb}'`);
@@ -11,9 +11,9 @@ function on(method, opts) {
         callback: cb,
       });
     } else {
-      this.mount(path, conn => {
+      this.mount(path, (conn, options) => {
         if (conn.req.method === method) {
-          return cb(conn, opts);
+          return cb(conn, options);
         }
       });
     }
@@ -22,12 +22,12 @@ function on(method, opts) {
   };
 }
 
-module.exports = ($, opts) => {
+module.exports = $ => {
   $.module('Router.HTTP', {
-    get: on('GET', opts),
-    put: on('PUT', opts),
-    post: on('POST', opts),
-    patch: on('PATCH', opts),
-    delete: on('DELETE', opts),
+    get: on('GET'),
+    put: on('PUT'),
+    post: on('POST'),
+    patch: on('PATCH'),
+    delete: on('DELETE'),
   });
 };

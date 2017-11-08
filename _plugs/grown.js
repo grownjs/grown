@@ -118,8 +118,8 @@ function pubsub() {
   };
 }
 
-module.exports = $('Grown', opts => {
-  if (!(opts && opts.env && opts.cwd)) {
+const Grown = $('Grown', options => {
+  if (!(options && options.env && options.cwd)) {
     throw new Error('Missing environment config');
   }
 
@@ -127,7 +127,7 @@ module.exports = $('Grown', opts => {
     let value;
 
     try {
-      value = util.get(opts, key, defvalue);
+      value = util.get(options, key, defvalue);
     } catch (e) {
       throw new Error(`Cannot resolve config: ${key}`);
     }
@@ -207,7 +207,12 @@ module.exports = $('Grown', opts => {
   });
 });
 
-// API and version
 $('Grown.version', () => _pkg.version, false);
-$('Grown.module', (id, def) => $(`Grown.${id}`, def), false);
-$('Grown.use', plugin => plugin(module.exports, util), false);
+
+$('Grown.module', (id, def) =>
+  $(`Grown.${id}`, def), false);
+
+$('Grown.use', cb =>
+  cb(Grown, util), false);
+
+module.exports = Grown;

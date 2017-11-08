@@ -1,5 +1,5 @@
 'use strict';
 
-module.exports = ($, util, onError) => {
-  require('./core')($, util, onError);
+module.exports = ($, util) => {
+  require('./core')($, util);
 };

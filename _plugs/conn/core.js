@@ -4,7 +4,7 @@ const debug = require('debug')('grown:conn');
 
 const statusCodes = require('http').STATUS_CODES;
 
-module.exports = ($, util, onError) => {
+module.exports = ($, util) => {
   $.module('Conn', {
     init() {
       const scope = {
@@ -147,7 +147,7 @@ module.exports = ($, util, onError) => {
             }
 
             if (code instanceof Error) {
-              scope._body = onError(code, this);
+              scope._body = util.ctx.errorHandler(code, this);
             } else {
               // normalize output
               scope._body = typeof _code === 'string' ? _code : message || scope._body;
@@ -170,7 +170,7 @@ module.exports = ($, util, onError) => {
                 try {
                   if (!this.res.finished) {
                     this.res.writeHead(500, this.resp_headers);
-                    this.res.write(onError(e, this));
+                    this.res.write(util.ctx.errorHandler(e, this));
                     this.res.end();
                   } else {
                     debug('#%s Response already sent. %s', this.pid, e.message);

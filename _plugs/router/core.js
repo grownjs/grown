@@ -2,7 +2,7 @@
 
 module.exports = $ => {
   $.module('Router', {
-    install(ctx, opts) {
+    install(ctx, options) {
       const routeMappings = require('route-mappings');
 
       ctx.router = routeMappings();
@@ -12,7 +12,7 @@ module.exports = $ => {
           const route = ctx.router.routes[i];
 
           if (conn.req.method === route.verb && conn.req.url.indexOf(route.path) === 0) {
-            return route.callback(conn, opts);
+            return route.callback(conn, options);
           }
         }
       });

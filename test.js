@@ -33,3 +33,5 @@ server.get('/x', ctx => {
 server.listen(3001, ctx => {
   console.log('START', ctx.location.href);
 });
+
+console.log(Grown);
