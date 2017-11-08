@@ -11,23 +11,18 @@ const _pkg = require('../package.json');
 const _mount = require('../lib/api/mount_');
 const _listen = require('../lib/api/listen_');
 
-const errorHandler = require('../lib/util/error_');
-
-const pipelineFactory = require('../lib/util/pipeline');
-
 function $(id, props, extensions) {
   return $new(id, props, $, extensions);
 }
 
 function end(err, conn, options) {
-  /* istanbul ignore else */
   if (typeof conn.end === 'function') {
     return conn.end(err);
   }
 
   try {
     if (err) {
-      conn.res.write(errorHandler(err, conn, options));
+      conn.res.write(util.ctx.errorHandler(err, conn, options));
     }
 
     conn.res.end();
@@ -41,13 +36,16 @@ function end(err, conn, options) {
   }
 }
 
-// final handler
 function done(err, conn, options) {
   debug('#%s OK. Final handler reached', conn.pid);
 
   return Promise.resolve()
     .then(() => {
-      /* istanbul ignore else */
+      if (!conn.res.finished) {
+        return this._events.emit('before_send', conn, options);
+      }
+    })
+    .then(() => {
       if (err) {
         throw err;
       }
@@ -58,8 +56,69 @@ function done(err, conn, options) {
     .catch(e => end(e, conn, options));
 }
 
+function pubsub() {
+  const _events = {};
+
+  function ee(e) {
+    if (!_events[e.toLowerCase()]) {
+      _events[e.toLowerCase()] = [];
+    }
+
+    return _events[e.toLowerCase()];
+  }
+
+  return {
+    on(e, cb) {
+      util.is('function', cb);
+      ee(e).push(cb);
+
+      return this;
+    },
+
+    off(e, cb) {
+      util.is('function', cb);
+
+      const p = ee(e);
+      const q = p.indexOf(cb);
+
+      if (q > -1) {
+        p.splice(q, 1);
+      }
+
+      return this;
+    },
+
+    once(e, cb) {
+      util.is('function', cb);
+
+      let k;
+
+      function $once() {
+        try {
+          return cb.apply(null, arguments);
+        } catch (_e) {
+          throw _e;
+        } finally {
+          ee(e).splice(k, 1);
+        }
+      }
+
+      k = ee(e).push($once) - 1;
+
+      return this;
+    },
+
+    emit(e) {
+      const args = Array.prototype.slice.call(arguments, 1);
+
+      return ee(e)
+        .reduce((prev, cur) =>
+          prev.then(() => cur.apply(null, args)), Promise.resolve()).then(() => this);
+    },
+  };
+}
+
 module.exports = $('Grown', opts => {
-  /* istanbul ignore else */
   if (!(opts && opts.env && opts.cwd)) {
     throw new Error('Missing environment config');
   }
@@ -84,11 +143,22 @@ module.exports = $('Grown', opts => {
 
   scope._extensions = [];
   scope._pipeline = [];
+  scope._events = pubsub();
 
   scope._options = _getConfig;
-  scope._invoke = pipelineFactory('^', scope._pipeline, done);
+  scope._invoke = util.ctx.pipelineFactory('^', scope._pipeline, done.bind(scope));
 
   return $({
+    init() {
+      return {
+        methods: {
+          on: scope._events.on.bind(this),
+          off: scope._events.off.bind(this),
+          once: scope._events.once.bind(this),
+          emit: scope._events.emit.bind(this),
+        },
+      };
+    },
     methods: {
       plug(object) {
         const plugins = (!Array.isArray(object) && object)
@@ -100,6 +170,7 @@ module.exports = $('Grown', opts => {
             Object.keys(p).forEach(k => {
               switch (k) {
                 case 'before_send':
+                  this.on(k, p[k]);
                   break;
 
                 case 'install':
@@ -139,4 +210,4 @@ module.exports = $('Grown', opts => {
 // API and version
 $('Grown.version', () => _pkg.version, false);
 $('Grown.module', (id, def) => $(`Grown.${id}`, def), false);
-$('Grown.use', plugin => plugin(module.exports, util, errorHandler), false);
+$('Grown.use', plugin => plugin(module.exports, util), false);

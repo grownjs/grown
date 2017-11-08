@@ -14,11 +14,16 @@ server.plug([
   // Grown.Conn,
   // Grown.Router,
   Grown.Router.HTTP,
+  {
+    before_send(ctx) {
+      ctx.res.write('\nBEFORE_SEND');
+    },
+  },
 ]);
 
 server.mount((ctx, options) =>
   ctx.next(() => {
-    ctx.res.end(options('env'));
+    ctx.res.write(`ENV: ${options('env')}`);
   }));
 
 server.get('/x', ctx => {
