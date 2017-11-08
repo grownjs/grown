@@ -6,12 +6,12 @@ Grown.use(require('./_plugs/router'));
 Grown.use(require('./_plugs/conn'));
 
 const server = new Grown({
-  env: process.env.NODE_ENV || 'testing',
+  env: process.env.NODE_ENV || 'development',
   cwd: process.cwd(),
 });
 
 server.plug([
-  Grown.Conn,
+  // Grown.Conn,
   Grown.Router,
   Grown.Router.HTTP,
 ]);
@@ -22,10 +22,9 @@ server.mount((ctx, options) =>
   }));
 
 server.get('/x', ctx => {
-  console.log('GOT', ctx.req.url);
+  console.log('GOT', ctx);
 });
 
 server.listen(3001, ctx => {
-  console.log('START', ctx);
+  console.log('START', ctx.location.href);
 });
-

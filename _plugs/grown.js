@@ -19,7 +19,7 @@ function $(id, props, extensions) {
   return $new(id, props, $, extensions);
 }
 
-function end(err, conn) {
+function end(err, conn, options) {
   /* istanbul ignore else */
   if (typeof conn.end === 'function') {
     return conn.end(err);
@@ -27,7 +27,7 @@ function end(err, conn) {
 
   try {
     if (err) {
-      conn.res.write(errorHandler(err, conn));
+      conn.res.write(errorHandler(err, conn, options));
     }
 
     conn.res.end();
@@ -35,13 +35,14 @@ function end(err, conn) {
     debug('#%s Fatal. %s', conn.pid, e.stack);
 
     conn.res.statusCode = 500;
-    conn.res.write(e.message);
+    conn.res.setHeader('Content-Type', 'text/plain');
+    conn.res.write([err && err.stack, e.stack].filter(x => x).join('\n\n'));
     conn.res.end();
   }
 }
 
 // final handler
-function done(err, conn) {
+function done(err, conn, options) {
   debug('#%s OK. Final handler reached', conn.pid);
 
   return Promise.resolve()
@@ -51,10 +52,10 @@ function done(err, conn) {
         throw err;
       }
 
-      return end(null, conn);
+      return end(null, conn, options);
     })
     .then(() => debug('#%s Finished.', conn.pid))
-    .catch(e => end(e, conn));
+    .catch(e => end(e, conn, options));
 }
 
 module.exports = $('Grown', opts => {

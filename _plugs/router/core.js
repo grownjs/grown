@@ -2,16 +2,20 @@
 
 module.exports = $ => {
   $.module('Router', {
-    install() {
-      console.log('SETUP ROUTER CORE');
-    },
-    get(path, cb) {
-      console.log(this);
-      if (this.router) {
-        console.log('GET', path, cb);
-      } else {
-        this.mount(path, cb);
-      }
+    install(ctx, opts) {
+      const routeMappings = require('route-mappings');
+
+      ctx.router = routeMappings();
+
+      ctx.mount('router', conn => {
+        for (let i = 0; i < ctx.router.routes.length; i += 1) {
+          const route = ctx.router.routes[i];
+
+          if (conn.req.method === route.verb && conn.req.url.indexOf(route.path) === 0) {
+            return route.callback(conn, opts);
+          }
+        }
+      });
     },
   });
 };
