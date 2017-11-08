@@ -6,6 +6,8 @@ const $new = require('object-new');
 
 const util = require('../lib/util');
 
+const _pkg = require('../package.json');
+
 const _mount = require('../lib/api/mount_');
 const _listen = require('../lib/api/listen_');
 
@@ -75,8 +77,6 @@ module.exports = $('Grown', opts => {
 
   const scope = {};
 
-  scope._data = {};
-
   scope._hosts = {};
   scope._servers = {};
   scope._protocols = {};
@@ -84,7 +84,6 @@ module.exports = $('Grown', opts => {
   scope._extensions = [];
   scope._pipeline = [];
 
-  scope._factory = $;
   scope._options = _getConfig;
   scope._invoke = pipelineFactory('^', scope._pipeline, done);
 
@@ -98,17 +97,28 @@ module.exports = $('Grown', opts => {
         plugins.forEach(p => {
           try {
             Object.keys(p).forEach(k => {
-              if (k !== 'before_send') {
-                $new.readOnlyProperty(this, k, p[k]);
+              switch (k) {
+                case 'before_send':
+                  break;
+
+                case 'install':
+                  p.install(this, scope._options);
+                  break;
+
+                default:
+                  $new.readOnlyProperty(this, k, p[k]);
+                  break;
               }
             });
           } catch (e) {
             throw new Error(`${p.name} definition failed. ${e.message}`);
           }
 
-          p.extensions.forEach(x => {
-            scope._extensions.push(x);
-          });
+          if (p.extensions) {
+            p.extensions.forEach(x => {
+              scope._extensions.push(x);
+            });
+          }
         });
 
         return this;
@@ -122,9 +132,6 @@ module.exports = $('Grown', opts => {
 });
 
 // API and version
-$('Grown.version', () => 42, false);
+$('Grown.version', () => _pkg.version, false);
 $('Grown.module', (id, def) => $(`Grown.${id}`, def), false);
-
-// built-ins
-$('Grown.Router', require('./router'));
-$('Grown.Conn', require('./conn'));
+$('Grown.use', plugin => plugin(module.exports, util, errorHandler), false);

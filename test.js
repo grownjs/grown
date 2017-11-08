@@ -1,4 +1,9 @@
+'use strict';
+
 const Grown = require('./_plugs/grown');
+
+Grown.use(require('./_plugs/router'));
+Grown.use(require('./_plugs/conn'));
 
 const server = new Grown({
   env: process.env.NODE_ENV || 'testing',
@@ -8,20 +13,19 @@ const server = new Grown({
 server.plug([
   Grown.Conn,
   Grown.Router,
+  Grown.Router.HTTP,
 ]);
 
-server.mount(ctx =>
+server.mount((ctx, options) =>
   ctx.next(() => {
-    console.log('DONE', ctx.routes);
-    console.log('DONE', ctx.fun());
-    console.log('DONE', ctx.key);
-    console.log('DONE', ctx.id);
+    ctx.resp_body = options('env');
   }));
 
-server.get('/', ctx => {
+server.get('/x', ctx => {
   console.log('GOT', ctx.req.url);
 });
 
 server.listen(3001, ctx => {
   console.log('START', ctx);
 });
+
