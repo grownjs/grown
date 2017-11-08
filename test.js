@@ -1,4 +1,4 @@
-const Grown = require('./grown');
+const Grown = require('./_plugs/grown');
 
 const server = new Grown({
   env: process.env.NODE_ENV || 'testing',

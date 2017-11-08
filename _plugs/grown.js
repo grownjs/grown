@@ -4,14 +4,14 @@ const debug = require('debug')('grown');
 
 const $new = require('object-new');
 
-const util = require('./lib/util');
+const util = require('../lib/util');
 
-const _mount = require('./lib/api/mount_');
-const _listen = require('./lib/api/listen_');
+const _mount = require('../lib/api/mount_');
+const _listen = require('../lib/api/listen_');
 
-const errorHandler = require('./lib/util/error_');
+const errorHandler = require('../lib/util/error_');
 
-const pipelineFactory = require('./lib/util/pipeline');
+const pipelineFactory = require('../lib/util/pipeline');
 
 function $(id, props, extensions) {
   return $new(id, props, $, extensions);
@@ -41,8 +41,6 @@ function end(err, conn) {
 // final handler
 function done(err, conn) {
   debug('#%s OK. Final handler reached', conn.pid);
-
-  // FIXME: run before_send() here?
 
   return Promise.resolve()
     .then(() => {
@@ -123,18 +121,10 @@ module.exports = $('Grown', opts => {
   });
 });
 
-
+// API and version
 $('Grown.version', () => 42, false);
-
 $('Grown.module', (id, def) => $(`Grown.${id}`, def), false);
 
-$('Grown.Router', {
-  get(path, cb) {
-    this.mount(path, cb);
-  },
-  props: {
-    routes: {},
-  },
-});
-
+// built-ins
+$('Grown.Router', require('./router'));
 $('Grown.Conn', require('./conn'));

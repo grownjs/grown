@@ -2,8 +2,8 @@
 
 const debug = require('debug')('grown:conn');
 
-const errorHandler = require('./lib/util/error');
-const util = require('./lib/util');
+const errorHandler = require('../../lib/util/error_');
+const util = require('../../lib/util');
 
 const statusCodes = require('http').STATUS_CODES;
 
@@ -11,7 +11,7 @@ function fail(e) {
   try {
     if (!this.res.finished) {
       this.res.writeHead(500, this.resp_headers);
-      this.res.write(errorHandler(e, this, !this.is_xhr, this.options));
+      this.res.write(errorHandler(e, this));
       this.res.end();
     } else {
       debug('#%s Response already sent', this.pid);
@@ -198,7 +198,7 @@ module.exports = {
           }
 
           if (code instanceof Error) {
-            _resp.body = errorHandler(code, this, !this.is_xhr, this.options);
+            _resp.body = errorHandler(code, this);
           } else {
             // normalize output
             _resp.body = typeof _code === 'string' ? _code : message || _resp.body;
