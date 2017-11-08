@@ -9,10 +9,33 @@ const util = require('./lib/util');
 const _mount = require('./lib/api/mount_');
 const _listen = require('./lib/api/listen_');
 
+const errorHandler = require('./lib/util/error_');
+
 const pipelineFactory = require('./lib/util/pipeline');
 
 function $(id, props, extensions) {
   return $new(id, props, $, extensions);
+}
+
+function end(err, conn) {
+  /* istanbul ignore else */
+  if (typeof conn.end === 'function') {
+    return conn.end(err);
+  }
+
+  try {
+    if (err) {
+      conn.res.write(errorHandler(err, conn));
+    }
+
+    conn.res.end();
+  } catch (e) {
+    debug('#%s Fatal. %s', conn.pid, e.stack);
+
+    conn.res.statusCode = 500;
+    conn.res.write(e.message);
+    conn.res.end();
+  }
 }
 
 // final handler
@@ -28,10 +51,10 @@ function done(err, conn) {
         throw err;
       }
 
-      return conn.end();
+      return end(null, conn);
     })
     .then(() => debug('#%s Finished.', conn.pid))
-    .catch(e => conn.end(e));
+    .catch(e => end(e, conn));
 }
 
 module.exports = $('Grown', opts => {

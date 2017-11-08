@@ -18,13 +18,9 @@ server.plug([
 
 server.mount(ctx =>
   ctx.next(() => {
-    return ctx.end().catch(e => {
-      console.log(e);
-    }).then(() => {
-      console.log('DONE', ctx.routes);
-      console.log('DONE', ctx.key);
-      console.log('DONE', ctx.id);
-    });
+    console.log('DONE', ctx.routes);
+    console.log('DONE', ctx.key);
+    console.log('DONE', ctx.id);
   }));
 
 server.get('/', ctx => {
