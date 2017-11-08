@@ -7,29 +7,29 @@ const statusCodes = require('http').STATUS_CODES;
 module.exports = ($, util, onError) => {
   $.module('Conn', {
     init() {
-      const _resp = {
-        type: 'text/html',
-        body: null,
-        status: null,
-        charset: 'utf8',
-        counter: -1,
+      const scope = {
+        _type: 'text/html',
+        _body: null,
+        _status: null,
+        _charset: 'utf8',
+        _counter: -1,
       };
 
       return {
         props: {
           // pipeline status
-          halted: () => _resp.body !== null && _resp.status !== null,
+          halted: () => scope._body !== null && scope._status !== null,
 
           // response body
-          has_body: () => _resp.body !== null,
-          has_status: () => _resp.status !== null,
+          has_body: () => scope._body !== null,
+          has_status: () => scope._status !== null,
 
-          status_code: () => (_resp.status !== null
-            ? _resp.status
+          status_code: () => (scope._status !== null
+            ? scope._status
             : 200),
 
           get resp_body() {
-            return _resp.body;
+            return scope._body;
           },
 
           set resp_body(value) {
@@ -41,15 +41,15 @@ module.exports = ($, util, onError) => {
 
             debug('#%s Set body', this.pid);
 
-            _resp.body = value;
+            scope._body = value;
           },
 
           get resp_charset() {
-            return _resp.charset;
+            return scope._charset;
           },
 
           set resp_charset(value) {
-            _resp.charset = value || 'utf8';
+            scope._charset = value || 'utf8';
           },
         },
         methods: {
@@ -59,13 +59,13 @@ module.exports = ($, util, onError) => {
               throw new Error(`Invalid type: '${mimeType}'`);
             }
 
-            _resp.type = mimeType;
+            scope._type = mimeType;
 
             return this;
           },
 
           is_status(code) {
-            return _resp.status === code;
+            return scope._status === code;
           },
 
           put_status(code) {
@@ -76,7 +76,7 @@ module.exports = ($, util, onError) => {
 
             debug('#%s Set status %s', this.pid, code);
 
-            _resp.status = code;
+            scope._status = code;
 
             return this;
           },
@@ -90,13 +90,13 @@ module.exports = ($, util, onError) => {
             this.res.statusCode = this.status_code;
             this.res.statusMessage = statusCodes[this.status_code];
 
-            _resp.type = _resp.type || 'application/octet-stream';
+            scope._type = scope._type || 'application/octet-stream';
 
             /* istanbul ignore else */
             if (body && typeof body.pipe === 'function') {
-              debug('#%s Done. Response body is an stream. Sending as %s', this.pid, _resp.type);
+              debug('#%s Done. scope _body is an stream. Sending as %s', this.pid, scope._type);
 
-              this.res.setHeader('Content-Type', _resp.type);
+              this.res.setHeader('Content-Type', scope._type);
               this.res.writeHead(this.res.statusCode);
 
               body.pipe(this.res);
@@ -106,18 +106,18 @@ module.exports = ($, util, onError) => {
 
             /* istanbul ignore else */
             if (body !== null && Buffer.isBuffer(body)) {
-              debug('#%s Response body is a buffer. Sending as %s', this.pid, _resp.type);
+              debug('#%s scope _body is a buffer. Sending as %s', this.pid, scope._type);
 
-              this.res.setHeader('Content-Type', _resp.type);
+              this.res.setHeader('Content-Type', scope._type);
               this.res.setHeader('Content-Length', body.length);
             } else if (body !== null && typeof body === 'object') {
-              debug('#%s Response body is an object. Sending as application/json', this.pid);
+              debug('#%s scope _body is an object. Sending as application/json', this.pid);
 
               body = JSON.stringify(body);
-              _resp.type = 'application/json';
+              scope._type = 'application/json';
             }
 
-            this.res.setHeader('Content-Type', `${_resp.type}; charset=${_resp.charset}`);
+            this.res.setHeader('Content-Type', `${scope._type}; charset=${scope._charset}`);
             this.res.setHeader('Content-Length', Buffer.byteLength(body || ''));
 
             // normalize response
@@ -127,12 +127,12 @@ module.exports = ($, util, onError) => {
           },
 
           end(code, message) {
-            _resp.counter += 1;
+            scope._counter += 1;
 
             /* istanbul ignore else */
             if (this.res.finished) {
               /* istanbul ignore else */
-              if (_resp.counter > 1) {
+              if (scope._counter > 1) {
                 throw new Error('Already finished');
               }
               return;
@@ -147,21 +147,21 @@ module.exports = ($, util, onError) => {
             }
 
             if (code instanceof Error) {
-              _resp.body = onError(code, this);
+              scope._body = onError(code, this);
             } else {
               // normalize output
-              _resp.body = typeof _code === 'string' ? _code : message || _resp.body;
+              scope._body = typeof _code === 'string' ? _code : message || scope._body;
 
               // normalize response
-              _resp.status = typeof _code === 'number' ? _code : _resp.status;
+              scope._status = typeof _code === 'number' ? _code : scope._status;
             }
 
             return Promise.resolve()
-              .then(() => Promise.resolve(_resp.body))
+              .then(() => Promise.resolve(scope._body))
               .then(_body => {
                 /* istanbul ignore else */
-                if (_resp.status === null && _body === null) {
-                  _resp.status = 501;
+                if (scope._status === null && _body === null) {
+                  scope._status = 501;
                 }
 
                 this.send(_body);

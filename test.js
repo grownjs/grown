@@ -12,17 +12,17 @@ const server = new Grown({
 
 server.plug([
   // Grown.Conn,
-  Grown.Router,
+  // Grown.Router,
   Grown.Router.HTTP,
 ]);
 
 server.mount((ctx, options) =>
   ctx.next(() => {
-    ctx.resp_body = options('env');
+    ctx.res.end(options('env'));
   }));
 
 server.get('/x', ctx => {
-  console.log('GOT', ctx);
+  ctx.res.write(`${ctx.script_name}\n`);
 });
 
 server.listen(3001, ctx => {
