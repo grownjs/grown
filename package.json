@@ -7,6 +7,7 @@
   "main": "lib/index.js",
   "bin": "bin/grown",
   "scripts": {
+    "dev:next": "jasmine-node _plugs/spec --coffee --verbose --autoTest --captureExceptions --watchFolders lib _plugs/conn _plugs/router _plugs/grown.js",
     "dev": "jasmine-node spec --coffee --verbose --autoTest --captureExceptions --watchFolders lib",
     "lint": "eslint bin lib spec examples",
     "spec": "jasmine-node spec --coffee --noStackTrace --captureExceptions",
