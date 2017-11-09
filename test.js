@@ -12,17 +12,6 @@ const server = new Grown({
   cwd: process.cwd(),
 });
 
-server.plug([
-  Grown.Conn,
-  Grown.Router,
-  Grown.Router.HTTP,
-  {
-    before_send(ctx) {
-      ctx.res.write('\nBEFORE_SEND');
-    },
-  },
-]);
-
 Grown.module('Example', {
   methods: {
     call(ctx) {
@@ -30,6 +19,17 @@ Grown.module('Example', {
     },
   },
 });
+
+server.plug([
+  // Grown.Conn,
+  // Grown.Router,
+  Grown.Router.HTTP,
+  {
+    before_send(ctx) {
+      ctx.res.write('\nBEFORE_SEND');
+    },
+  },
+]);
 
 server.mount((ctx, options) =>
   ctx.next(() => {
@@ -39,6 +39,8 @@ server.mount((ctx, options) =>
 server.get('/x', ctx => {
   ctx.res.write(`${ctx.script_name}\n`);
 });
+
+console.log(new Grown.Example());
 
 server.get('/mix', [
   Grown.Example,

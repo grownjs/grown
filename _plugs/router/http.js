@@ -5,16 +5,20 @@ module.exports = ($, util) => {
     return function route(path, cb) {
       util.is(['function', 'array'], cb);
 
+      const _cbs = !Array.isArray(cb)
+        ? [cb]
+        : cb;
+
       if (this.router) {
         this.router[method.toLowerCase()](path, {
-          pipeline: !Array.isArray(cb)
-            ? [cb]
-            : cb,
+          pipeline: _cbs,
         });
       } else {
+        const _call = util.ctx.pipelineFactory(path, util.ctx.buildPipeline(path, _cbs));
+
         this.mount(path, (conn, options) => {
           if (conn.req.method === method) {
-            return cb(conn, options);
+            return _call(conn, options);
           }
         });
       }

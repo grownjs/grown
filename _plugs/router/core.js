@@ -3,20 +3,6 @@
 const debug = require('debug')('grown:router');
 
 module.exports = ($, util) => {
-  function fix(name, pipeline) {
-    return (!Array.isArray(pipeline) ? [pipeline] : pipeline)
-      .map((cb, key) => {
-        const factory = util.ctx.buildFactory(cb, `${name}.${key}`);
-
-        // push task to pipeline
-        return {
-          name: factory.name || name,
-          call: factory.call,
-          type: factory.type || 'function',
-        };
-      });
-  }
-
   function group(ctx, _routes, _matches, _resources) {
     const _mappings = ctx.router.mappings;
 
@@ -50,7 +36,7 @@ module.exports = ($, util) => {
 
       /* istanbul ignore else */
       if (route.pipeline) {
-        route.pipeline = fix(route.as, route.pipeline);
+        route.pipeline = util.ctx.buildPipeline(route.as, route.pipeline);
       }
 
       // plain old routes
