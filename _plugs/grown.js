@@ -213,19 +213,23 @@ const Grown = $('Grown', options => {
           ? [object]
           : object;
 
-        (plugins || []).filter(x => {
+        (plugins || []).reduce((prev, cur) => {
           /* istanbul ignore else */
-          if (typeof x === 'undefined') {
-            throw new Error(`Invalid extension, given '${x}'`);
+          if (typeof cur === 'undefined') {
+            throw new Error(`Invalid extension, given '${cur}'`);
           }
 
           /* istanbul ignore else */
-          if (x === null) {
-            return false;
+          if (cur) {
+            if (Array.isArray(cur)) {
+              Array.prototype.push.apply(prev, cur.filter(x => x));
+            } else {
+              prev.push(cur);
+            }
           }
 
-          return true;
-        }).forEach(p => {
+          return prev;
+        }, []).forEach(p => {
           try {
             Object.keys(p).forEach(k => {
               switch (k) {

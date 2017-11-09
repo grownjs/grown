@@ -56,7 +56,7 @@ module.exports = ($, util) => {
     return options;
   }
 
-  return $.module('Test', {
+  return $.module('Test.Request', {
     request(url, method, options, callback) {
       if (typeof url === 'function') {
         callback = url;
