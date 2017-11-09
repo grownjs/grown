@@ -1,6 +1,6 @@
 #require('debug').enable '*'
 
-Grown = require('../grown')
+Grown = require('../index')
 
 Grown.use require('../../test')
 
@@ -16,7 +16,7 @@ describe 'Grown', ->
 
   describe '#version', ->
     it 'will be the package version', ->
-      expect(require('../../../package.json').version).toEqual Grown.version
+      expect(require('../../legacy/package.json').version).toEqual Grown.version
 
   describe '#module', ->
     it 'can access its module definition', ->
