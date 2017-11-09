@@ -4,7 +4,7 @@ const debug = require('debug')('grown:conn');
 
 const statusCodes = require('http').STATUS_CODES;
 
-module.exports = ($, util) => {
+module.exports = $ => {
   return $.module('Conn', {
     init() {
       const scope = {
@@ -83,8 +83,10 @@ module.exports = ($, util) => {
 
           send(body) {
             /* istanbul ignore else */
-            if (this.res.finished) {
-              throw new Error('Already finished');
+            if (!this.res || this.res.finished) {
+              throw new Error(this.res
+                ? 'Already finished'
+                : 'Missing response from connection');
             }
 
             this.res.statusCode = this.status_code;
@@ -130,7 +132,7 @@ module.exports = ($, util) => {
             scope._counter += 1;
 
             /* istanbul ignore else */
-            if (this.res.finished) {
+            if (this.res && this.res.finished) {
               /* istanbul ignore else */
               if (scope._counter > 1) {
                 throw new Error('Already finished');

@@ -23,7 +23,7 @@ function end(err, conn, options) {
       }
     })
     .then(() => {
-      if (typeof conn.end === 'function' && !conn.halted) {
+      if (typeof conn.end === 'function' && !(conn.halted || (conn.res && conn.res._hasBody))) {
         return conn.end(err
           ? util.ctx.errorHandler(err, conn, options)
           : null);
