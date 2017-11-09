@@ -18,6 +18,7 @@ function $(id, props, extensions) {
 function end(err, conn, options) {
   return Promise.resolve()
     .then(() => {
+      /* istanbul ignore else */
       if (typeof conn.end === 'function') {
         return Promise.resolve()
           .then(() => {
@@ -30,10 +31,12 @@ function end(err, conn, options) {
           });
       }
 
+      /* istanbul ignore else */
       if (conn.res && !(conn.res.finished && conn.halted)) {
         conn.res.statusCode = 501;
 
         try {
+          /* istanbul ignore else */
           if (err) {
             conn.res.write(util.ctx.errorHandler(err, conn, options));
           }
@@ -43,22 +46,27 @@ function end(err, conn, options) {
       }
     })
     .then(() => {
+      /* istanbul ignore else */
       if (!(conn.res.finished || conn.halted)) {
         return this._events.emit('before_send', conn, options);
       }
     })
     .then(() => {
+      /* istanbul ignore else */
       if (typeof conn.end === 'function') {
         return conn.end();
+      }
+
+      /* istanbul ignore else */
+      if (conn.res) {
+        conn.res.end();
       }
     })
     .catch(e => {
       debug('#%s Fatal. %s', conn.pid, e.stack);
 
-      if (conn.res && !conn.res.finished) {
-        conn.res.statusCode = 500;
-        conn.res.setHeader('Content-Type', 'text/plain');
-        conn.res.write([err && err.stack, e.stack].filter(x => x).join('\n\n'));
+      /* istanbul ignore else */
+      if (conn.res) {
         conn.res.end();
       }
     });
@@ -71,6 +79,7 @@ function done(err, conn, options) {
 
   return Promise.resolve()
     .then(() => {
+      /* istanbul ignore else */
       if (err) {
         throw err;
       }
@@ -85,6 +94,7 @@ function pubsub() {
   const _events = {};
 
   function ee(e) {
+    /* istanbul ignore else */
     if (!_events[e.toLowerCase()]) {
       _events[e.toLowerCase()] = [];
     }
@@ -106,6 +116,7 @@ function pubsub() {
       const p = ee(e);
       const q = p.indexOf(cb);
 
+      /* istanbul ignore else */
       if (q > -1) {
         p.splice(q, 1);
       }
@@ -144,6 +155,7 @@ function pubsub() {
 }
 
 const Grown = $('Grown', options => {
+  /* istanbul ignore else */
   if (!(options && options.env && options.cwd)) {
     throw new Error('Missing environment config');
   }
@@ -214,6 +226,7 @@ const Grown = $('Grown', options => {
                   break;
 
                 default:
+                  /* istanbul ignore else */
                   if (k[0] !== k[0].toUpperCase()) {
                     $new.readOnlyProperty(this, k, p[k], {
                       isMethod: false,
@@ -226,6 +239,7 @@ const Grown = $('Grown', options => {
             throw new Error(`${p.name} definition failed. ${e.message}`);
           }
 
+          /* istanbul ignore else */
           if (p.extensions) {
             p.extensions.forEach(x => {
               scope._extensions.push(x);

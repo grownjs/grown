@@ -21,7 +21,11 @@ module.exports = $ => {
       debug('#%s Done. Reponse is an stream. Sending as %s', this.pid, ctx._type);
 
       this.res.setHeader('Content-Type', ctx._type);
-      this.res.writeHead(this.res.statusCode);
+
+      /* istanbul ignore else */
+      if (!this.res._header) {
+        this.res.writeHead(this.res.statusCode);
+      }
 
       body.pipe(this.res);
 
@@ -44,8 +48,12 @@ module.exports = $ => {
     this.res.setHeader('Content-Type', `${ctx._type}; charset=${ctx._charset}`);
     this.res.setHeader('Content-Length', Buffer.byteLength(body || ''));
 
+    /* istanbul ignore else */
+    if (!this.res._header) {
+      this.res.writeHead(this.res.statusCode);
+    }
+
     // normalize response
-    this.res.writeHead(this.res.statusCode);
     this.res.write(body || '');
     this.res.end();
   }

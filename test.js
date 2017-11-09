@@ -13,8 +13,8 @@ const server = new Grown({
 });
 
 server.plug([
-  Grown.Conn,
-  Grown.Router,
+  // Grown.Conn,
+  // Grown.Router,
   Grown.Router.HTTP,
   {
     before_send(ctx) {
