@@ -185,7 +185,7 @@ function renderHtml($, util, isDev) {
     </ul>
   </details>` : ''}
 
-  ${isDev ? `<details class="call purple">
+  ${$.context.env && isDev ? `<details class="call purple">
     <summary>env</summary>
     <dl>
     ${Object.keys($.context.env)
