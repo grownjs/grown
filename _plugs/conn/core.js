@@ -20,10 +20,9 @@ module.exports = $ => {
     if (body && typeof body.pipe === 'function') {
       debug('#%s Done. Reponse is an stream. Sending as %s', this.pid, ctx._type);
 
-      this.res.setHeader('Content-Type', ctx._type);
-
       /* istanbul ignore else */
       if (!this.res._header) {
+        this.res.setHeader('Content-Type', ctx._type);
         this.res.writeHead(this.res.statusCode);
       }
 
@@ -36,8 +35,11 @@ module.exports = $ => {
     if (body !== null && Buffer.isBuffer(body)) {
       debug('#%s Response is a buffer. Sending as %s', this.pid, ctx._type);
 
-      this.res.setHeader('Content-Type', ctx._type);
-      this.res.setHeader('Content-Length', body.length);
+      /* istanbul ignore else */
+      if (!this.res._header) {
+        this.res.setHeader('Content-Type', ctx._type);
+        this.res.setHeader('Content-Length', body.length);
+      }
     } else if (body !== null && typeof body === 'object') {
       debug('#%s Response is an object. Sending as application/json', this.pid);
 
@@ -45,11 +47,10 @@ module.exports = $ => {
       ctx._type = 'application/json';
     }
 
-    this.res.setHeader('Content-Type', `${ctx._type}; charset=${ctx._charset}`);
-    this.res.setHeader('Content-Length', Buffer.byteLength(body || ''));
-
     /* istanbul ignore else */
     if (!this.res._header) {
+      this.res.setHeader('Content-Type', `${ctx._type}; charset=${ctx._charset}`);
+      this.res.setHeader('Content-Length', Buffer.byteLength(body || ''));
       this.res.writeHead(this.res.statusCode);
     }
 

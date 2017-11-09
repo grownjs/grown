@@ -32,6 +32,11 @@ server.get('/x', ctx => {
   ctx.res.write(`${ctx.script_name}\n`);
 });
 
+server.get('/mix', [
+  ctx => ctx.res.write('1\n'),
+  ctx => ctx.res.write('2\n'),
+]);
+
 server.listen(8080, ctx => {
   console.log('START', ctx.location.href);
 });
