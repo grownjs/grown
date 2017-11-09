@@ -30,12 +30,13 @@ function end(err, conn, options) {
       }
     })
     .then(() => {
-      if (conn.res && !conn.res.finished) {
+      if (conn.res && !(conn.res.finished || conn.halted)) {
         try {
           if (err) {
             conn.res.write(util.ctx.errorHandler(err, conn, options));
           }
 
+          conn.res.statusCode = 501;
           conn.res.end();
         } catch (e) {
           debug('#%s Fatal. %s', conn.pid, e.stack);

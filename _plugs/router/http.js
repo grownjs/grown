@@ -1,28 +1,28 @@
 'use strict';
 
-function on(method) {
-  return function route(path, cb) {
-    if (typeof cb !== 'function') {
-      throw new Error(`Expecting a valid callback, given '${cb}'`);
-    }
+module.exports = ($, util) => {
+  function on(method) {
+    return function route(path, cb) {
+      util.is(['function', 'array'], cb);
 
-    if (this.router) {
-      this.router[method.toLowerCase()](path, {
-        callback: cb,
-      });
-    } else {
-      this.mount(path, (conn, options) => {
-        if (conn.req.method === method) {
-          return cb(conn, options);
-        }
-      });
-    }
+      if (this.router) {
+        this.router[method.toLowerCase()](path, {
+          callback: !Array.isArray(cb)
+            ? [cb]
+            : cb,
+        });
+      } else {
+        this.mount(path, (conn, options) => {
+          if (conn.req.method === method) {
+            return cb(conn, options);
+          }
+        });
+      }
 
-    return this;
-  };
-}
+      return this;
+    };
+  }
 
-module.exports = $ => {
   return $.module('Router.HTTP', {
     get: on('GET'),
     put: on('PUT'),

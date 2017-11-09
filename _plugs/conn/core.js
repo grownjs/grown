@@ -15,6 +15,11 @@ module.exports = $ => {
         _counter: -1,
       };
 
+      /* istanbul ignore else */
+      if (!this.res) {
+        throw new Error('Missing response from connection');
+      }
+
       return {
         props: {
           // pipeline status
@@ -83,10 +88,8 @@ module.exports = $ => {
 
           send(body) {
             /* istanbul ignore else */
-            if (!this.res || this.res.finished) {
-              throw new Error(this.res
-                ? 'Already finished'
-                : 'Missing response from connection');
+            if (this.res.finished) {
+              throw new Error('Already finished');
             }
 
             this.res.statusCode = this.status_code;
@@ -161,14 +164,7 @@ module.exports = $ => {
 
             return Promise.resolve()
               .then(() => scope._body)
-              .then(_body => {
-                /* istanbul ignore else */
-                if (scope._status === null && _body === null) {
-                  scope._status = 501;
-                }
-
-                this.send(_body);
-              });
+              .then(_body => this.send(_body));
           },
         },
       };
