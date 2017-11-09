@@ -6,7 +6,7 @@
   "license": "MIT",
   "main": "index.js",
   "scripts": {
-    "dev": "jasmine-node spec --coffee --verbose --autoTest --captureExceptions --watchFolders lib index.js",
+    "dev": "jasmine-node spec --coffee --verbose --autoTest --captureExceptions --watchFolders index.js",
     "lint": "eslint bin lib spec examples",
     "spec": "jasmine-node spec --coffee --noStackTrace --captureExceptions",
     "cover": "istanbul cover --root lib --x '**/spec/**' -- jasmine-node --coffee spec",

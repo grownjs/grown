@@ -16,7 +16,7 @@ describe 'Grown', ->
 
   describe '#version', ->
     it 'will be the package version', ->
-      expect(require('../../legacy/package.json').version).toEqual Grown.version
+      expect(Grown.version).not.toBeUndefined()
 
   describe '#module', ->
     it 'can access its module definition', ->
@@ -129,7 +129,7 @@ describe 'Grown', ->
           expect(call).toBe true
           done()
 
-      it 'will emit in sequence', ->
+      it 'will emit in sequence', (done) ->
         call = []
 
         @g.on 'async-seq', ->
