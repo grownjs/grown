@@ -18,29 +18,38 @@ function $(id, props, extensions) {
 function end(err, conn, options) {
   return Promise.resolve()
     .then(() => {
-      if (!conn.res.finished) {
-        return this._events.emit('before_send', conn, options);
+      if (typeof conn.end === 'function') {
+        return Promise.resolve()
+          .then(() => {
+            if (err) {
+              conn.resp_body = util.ctx.errorHandler(err, conn, options);
+            }
+          })
+          .catch(e => {
+            debug('#%s Fatal. %s', conn.pid, e.stack);
+          });
       }
-    })
-    .then(() => {
-      if (typeof conn.end === 'function' && !(conn.halted || (conn.res && conn.res._hasBody))) {
-        return conn.end(err
-          ? util.ctx.errorHandler(err, conn, options)
-          : null);
-      }
-    })
-    .then(() => {
-      if (conn.res && !(conn.res.finished || conn.halted)) {
+
+      if (conn.res && !(conn.res.finished && conn.halted)) {
+        conn.res.statusCode = 501;
+
         try {
           if (err) {
             conn.res.write(util.ctx.errorHandler(err, conn, options));
           }
-
-          conn.res.statusCode = 501;
-          conn.res.end();
         } catch (e) {
           debug('#%s Fatal. %s', conn.pid, e.stack);
         }
+      }
+    })
+    .then(() => {
+      if (!(conn.res.finished || conn.halted)) {
+        return this._events.emit('before_send', conn, options);
+      }
+    })
+    .then(() => {
+      if (typeof conn.end === 'function') {
+        return conn.end();
       }
     })
     .catch(e => {

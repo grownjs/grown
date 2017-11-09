@@ -32,6 +32,6 @@ server.get('/x', ctx => {
   ctx.res.write(`${ctx.script_name}\n`);
 });
 
-server.listen(3001, ctx => {
+server.listen(8080, ctx => {
   console.log('START', ctx.location.href);
 });
