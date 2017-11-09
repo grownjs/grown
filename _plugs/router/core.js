@@ -69,23 +69,28 @@ module.exports = ($, util) => {
     const _handler = this[_method](conn.req.url, 1);
 
     /* istanbul ignore else */
-    if (!_handler) {
-      throw util.ctx.error(404);
+    if (_handler) {
+      /* istanbul ignore else */
+      if (typeof _handler.callback !== 'function' && _handler.pipeline) {
+        _handler.callback = util.ctx.pipelineFactory(_handler.path, _handler.pipeline);
+      }
+
+      /* istanbul ignore else */
+      if (!_handler.callback) {
+        throw new Error(`No callback found for ${_handler.path}`);
+      }
+
+      return _handler.callback(conn, options);
     }
 
-    /* istanbul ignore else */
-    if (typeof _handler.callback !== 'function' && _handler.pipeline) {
-      _handler.callback = util.ctx.pipelineFactory(_handler.path, _handler.pipeline);
-    }
-
-    return _handler.callback(conn, options);
+    throw util.ctx.error(404);
   }
 
   return $.module('Router', {
     init() {
       /* istanbul ignore else */
       if (!this.req) {
-        throw new Error('Missing request from connection');
+        throw new Error('Request is missing from connection');
       }
     },
     install(ctx, options) {

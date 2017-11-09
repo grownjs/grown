@@ -97,6 +97,11 @@ module.exports = $ => {
 
   return $.module('Conn', {
     init() {
+      /* istanbul ignore else */
+      if (!this.res) {
+        throw new Error('Response is missing from connection');
+      }
+
       const scope = {
         _type: 'text/html',
         _body: null,
@@ -104,11 +109,6 @@ module.exports = $ => {
         _charset: 'utf8',
         _counter: -1,
       };
-
-      /* istanbul ignore else */
-      if (!this.res) {
-        throw new Error('Missing response from connection');
-      }
 
       return {
         props: {

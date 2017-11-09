@@ -1,10 +1,13 @@
 'use strict';
 
+const IS_LIVE = process.argv.slice(2).indexOf('--live') > -1;
+
 require('debug').enable('*');
 
 const Grown = require('./_plugs/grown');
 
 Grown.use(require('./_plugs/router'));
+Grown.use(require('./_plugs/test'));
 Grown.use(require('./_plugs/conn'));
 
 const server = new Grown({
@@ -13,6 +16,9 @@ const server = new Grown({
 });
 
 Grown.module('Example', {
+  props: {
+    TRUTH: 42,
+  },
   methods: {
     call(ctx) {
       ctx.res.write('0\n');
@@ -21,6 +27,7 @@ Grown.module('Example', {
 });
 
 server.plug([
+  IS_LIVE ? null : Grown.Test,
   // Grown.Conn,
   // Grown.Router,
   Grown.Router.HTTP,
@@ -40,14 +47,26 @@ server.get('/x', ctx => {
   ctx.res.write(`${ctx.script_name}\n`);
 });
 
-console.log(new Grown.Example());
-
 server.get('/mix', [
-  Grown.Example,
+  Grown.Example({
+    methods: {
+      call(ctx, options) {
+        // FIXME: find a way for doing this?
+        Grown.Example.extensions[0].methods.call(ctx, options);
+        ctx.res.write(`${this.TRUTH}\n`);
+      },
+    },
+  }),
   ctx => ctx.res.write('1\n'),
   ctx => ctx.res.write('2\n'),
 ]);
 
-server.listen(8080, ctx => {
-  console.log('START', ctx.location.href);
-});
+if (IS_LIVE) {
+  server.listen(8080, ctx => {
+    console.log('START', ctx.location.href);
+  });
+} else {
+  server.request('/mix', (e, ctx) => {
+    console.log(ctx.res.body);
+  });
+}

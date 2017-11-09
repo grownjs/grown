@@ -47,7 +47,7 @@ function end(err, conn, options) {
     })
     .then(() => {
       /* istanbul ignore else */
-      if (!(conn.res.finished || conn.halted)) {
+      if (!((conn.res && conn.res.finished) || conn.halted)) {
         return this._events.emit('before_send', conn, options);
       }
     })
@@ -213,7 +213,19 @@ const Grown = $('Grown', options => {
           ? [object]
           : object;
 
-        (plugins || []).filter(x => x).forEach(p => {
+        (plugins || []).filter(x => {
+          /* istanbul ignore else */
+          if (typeof x === 'undefined') {
+            throw new Error(`Invalid extension, given '${x}'`);
+          }
+
+          /* istanbul ignore else */
+          if (x === null) {
+            return false;
+          }
+
+          return true;
+        }).forEach(p => {
           try {
             Object.keys(p).forEach(k => {
               switch (k) {
