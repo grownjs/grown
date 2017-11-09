@@ -5,7 +5,7 @@ module.exports = $ => {
 
   return $.module('Test.Mock.Req', {
     install(ctx) {
-      ctx.mount(conn => {
+      ctx.mount('req', conn => {
         const _body = conn.req && conn.req.body;
 
         if (conn.req) {

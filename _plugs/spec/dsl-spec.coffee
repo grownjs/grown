@@ -1,3 +1,5 @@
+#require('debug').enable '*'
+
 Grown = require('../grown')
 
 Grown.use require('../test')
@@ -28,6 +30,15 @@ describe 'Grown', ->
 
   describe '#use', ->
     it 'can load new module definitions', ->
+      Grown.use ($, util) ->
+        $.module 'Example',
+          props:
+            _: util
+
+      ex = new Grown.Example()
+
+      expect(ex._.ucwords('a b c')).toEqual 'A b c'
+      expect(Object.keys(ex)).toEqual []
 
   describe 'Test', ->
     beforeEach ->
@@ -59,20 +70,19 @@ describe 'Grown', ->
           headers:
             'content-type': 'application/json'
 
+        @g.plug Grown.Test.Mock.Req
+
         @g.request opts, (err, conn) ->
-          expect(conn.req.headers['content-length']).toEqual 6
+          expect(conn.pid).not.toBeUndefined()
+          expect(conn.req.headers['content-length']).toEqual '6'
           done()
 
     describe 'Mock.Req', ->
       it 'provides a mocked request', (done) ->
         @g.plug Grown.Test.Mock.Req
-
-        @g.mount (conn) ->
-          conn.test = if conn.req then conn.req.url else false
-
         @g.run().then (conn) ->
-          expect(conn.test).not.toBe null
-          expect(conn.test).toEqual ''
+          expect(conn.req).not.toBeUndefined()
+          expect(conn.req.url).toEqual ''
           done()
         .catch (e) ->
           console.log 'E_REQ', e.stack

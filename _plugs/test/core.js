@@ -3,8 +3,10 @@
 const path = require('path');
 const fs = require('fs');
 
-module.exports = $ => {
+module.exports = ($, util) => {
   const mime = require('mime');
+
+  let pid = -1;
 
   $.module('Test', {
     request(url, method, options, callback) {
@@ -32,6 +34,8 @@ module.exports = $ => {
       options.url = url || options.url || '/';
       options.method = (method || options.method || 'get').toUpperCase();
       options.headers = options.headers || {};
+
+      util.is('function', callback);
 
       if (options.headers['content-type']) {
         options.body = options.body || '';
@@ -72,14 +76,14 @@ module.exports = $ => {
         }
       }
 
-      const conn = {
-        req: options,
-      };
+      pid += 1;
 
-      return this.run(conn)
-        .then(() => callback(null, conn))
-        .catch(e => callback(e, conn))
-        .then(() => conn);
+      return this.run({
+        props: {
+          req: options,
+          pid: `${process.pid}.${pid}`,
+        },
+      }, callback);
     },
   });
 };

@@ -5,7 +5,7 @@ module.exports = $ => {
 
   return $.module('Test.Mock.Res', {
     install(ctx) {
-      ctx.mount(conn => {
+      ctx.mount('res', conn => {
         conn.res = new MockRes();
         conn.res.cookies = {};
         conn.res.clearCookie = k => { delete conn.res.cookies[k]; };

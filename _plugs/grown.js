@@ -162,12 +162,15 @@ const Grown = $('Grown', options => {
       };
     },
     methods: {
-      run(context) {
-        const conn = util.extend({}, context, {
+      run(context, callback) {
+        const conn = $(util.extend({}, context, {
           extensions: scope._extensions,
-        });
+        }));
 
-        return scope._invoke($(conn), scope._options);
+        return scope._invoke(conn, scope._options)
+          .then(() => typeof callback === 'function' && callback(null, conn))
+          .catch(e => typeof callback === 'function' && callback(e, conn))
+          .then(() => conn);
       },
 
       plug(object) {
