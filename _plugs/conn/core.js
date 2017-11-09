@@ -5,7 +5,7 @@ const debug = require('debug')('grown:conn');
 const statusCodes = require('http').STATUS_CODES;
 
 module.exports = ($, util) => {
-  $.module('Conn', {
+  return $.module('Conn', {
     init() {
       const scope = {
         _type: 'text/html',

@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = $ => {
-  $.module('Router', {
+  return $.module('Router', {
     install(ctx, options) {
       const routeMappings = require('route-mappings');
 

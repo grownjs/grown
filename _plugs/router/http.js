@@ -23,7 +23,7 @@ function on(method) {
 }
 
 module.exports = $ => {
-  $.module('Router.HTTP', {
+  return $.module('Router.HTTP', {
     get: on('GET'),
     put: on('PUT'),
     post: on('POST'),

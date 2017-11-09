@@ -29,7 +29,7 @@ describe 'Grown', ->
   describe '#use', ->
     it 'can load new module definitions', ->
 
-  describe 'Instance', ->
+  describe 'Test', ->
     beforeEach ->
       @g = Grown.new({
         cwd: __dirname
@@ -38,8 +38,8 @@ describe 'Grown', ->
 
       @g.plug Grown.Test
 
-    describe '#plug -> #mount -> #listen', ->
-      it 'can extend the current instance', (done) ->
+    describe '#plug -> #mount -> #listen -> #request', ->
+      it 'runs over the current instance', (done) ->
         g = @g.plug Grown.Dummy
 
         expect(g).toBe @g
@@ -49,8 +49,55 @@ describe 'Grown', ->
         g.mount (conn) ->
           test = conn.value
 
-        g.request (err, result) ->
+        g.request ->
           expect(test).toBe 42
+          done()
+
+      it 'should normalize the request body', (done) ->
+        opts =
+          body: '"OSOM"'
+          headers:
+            'content-type': 'application/json'
+
+        @g.request opts, (err, conn) ->
+          expect(conn.req.headers['content-length']).toEqual 6
+          done()
+
+    describe 'Mock.Req', ->
+      it 'provides a mocked request', (done) ->
+        @g.plug Grown.Test.Mock.Req
+
+        @g.mount (conn) ->
+          conn.test = if conn.req then conn.req.url else false
+
+        @g.run().then (conn) ->
+          expect(conn.test).not.toBe null
+          expect(conn.test).toEqual ''
+          done()
+        .catch (e) ->
+          console.log 'E_REQ', e.stack
+          done()
+
+    describe 'Mock.Res', ->
+      it 'provides a mocked response', (done) ->
+        @g.plug Grown.Test.Mock.Res
+
+        @g.mount (conn) ->
+          conn.res.write 'OSOM'
+
+        @g.run().then (conn) ->
+          expect(conn.res.body).toEqual 'OSOM'
+          done()
+        .catch (e) ->
+          console.log 'E_RES', e.stack
+          done()
+
+    describe 'Mock', ->
+      it 'will plug both middlewares', (done) ->
+        @g.plug Grown.Test.Mock
+        @g.run().then (conn) ->
+          expect(conn.req).not.toBeUndefined()
+          expect(conn.res).not.toBeUndefined()
           done()
 
     describe 'Event emitter', ->
