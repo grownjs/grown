@@ -1,5 +1,7 @@
 Grown = require('../grown')
 
+Grown.use require('../test')
+
 describe 'Grown', ->
   it 'is a function', ->
     expect(typeof Grown).toEqual 'function'
@@ -16,13 +18,13 @@ describe 'Grown', ->
 
   describe '#module', ->
     it 'can access its module definition', ->
-      expect(Grown.Test).toBeUndefined()
+      expect(Grown.Dummy).toBeUndefined()
 
-      Grown.module 'Test',
+      Grown.module 'Dummy',
         props:
           value: 42
 
-      expect(Grown.Test.new().value).toEqual 42
+      expect(Grown.Dummy.new().value).toEqual 42
 
   describe '#use', ->
     it 'can load new module definitions', ->
@@ -34,18 +36,21 @@ describe 'Grown', ->
         env: 'development'
       })
 
+      @g.plug Grown.Test
+
     describe '#plug -> #mount -> #listen', ->
       it 'can extend the current instance', (done) ->
-        g = @g.plug Grown.Test
+        g = @g.plug Grown.Dummy
 
         expect(g).toBe @g
 
-        # FIXME: missing Grown.Test for this?
-        g.mount (conn) ->
-          console.log conn
+        test = null
 
-        g.listen '3001', (server) ->
-          server.close()
+        g.mount (conn) ->
+          test = conn.value
+
+        g.request (err, result) ->
+          expect(test).toBe 42
           done()
 
     describe 'Event emitter', ->

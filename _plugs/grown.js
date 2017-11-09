@@ -20,19 +20,21 @@ function end(err, conn, options) {
     return conn.end(err);
   }
 
-  try {
-    if (err) {
-      conn.res.write(util.ctx.errorHandler(err, conn, options));
+  if (conn.res) {
+    try {
+      if (err) {
+        conn.res.write(util.ctx.errorHandler(err, conn, options));
+      }
+
+      conn.res.end();
+    } catch (e) {
+      debug('#%s Fatal. %s', conn.pid, e.stack);
+
+      conn.res.statusCode = 500;
+      conn.res.setHeader('Content-Type', 'text/plain');
+      conn.res.write([err && err.stack, e.stack].filter(x => x).join('\n\n'));
+      conn.res.end();
     }
-
-    conn.res.end();
-  } catch (e) {
-    debug('#%s Fatal. %s', conn.pid, e.stack);
-
-    conn.res.statusCode = 500;
-    conn.res.setHeader('Content-Type', 'text/plain');
-    conn.res.write([err && err.stack, e.stack].filter(x => x).join('\n\n'));
-    conn.res.end();
   }
 }
 
@@ -160,6 +162,14 @@ const Grown = $('Grown', options => {
       };
     },
     methods: {
+      run(context) {
+        const conn = util.extend({}, context, {
+          extensions: scope._extensions,
+        });
+
+        return scope._invoke($(conn), scope._options);
+      },
+
       plug(object) {
         const plugins = (!Array.isArray(object) && object)
           ? [object]
