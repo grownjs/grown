@@ -147,17 +147,18 @@ module.exports = ($, util) => {
             }
 
             if (code instanceof Error) {
-              scope._body = util.ctx.errorHandler(code, this);
-            } else {
-              // normalize output
-              scope._body = typeof _code === 'string' ? _code : message || scope._body;
-
-              // normalize response
-              scope._status = typeof _code === 'number' ? _code : scope._status;
+              message = code.message || code.toString();
+              _code = 500;
             }
 
+            // normalize output
+            scope._body = typeof _code === 'string' ? _code : message || scope._body;
+
+            // normalize response
+            scope._status = typeof _code === 'number' ? _code : scope._status;
+
             return Promise.resolve()
-              .then(() => Promise.resolve(scope._body))
+              .then(() => scope._body)
               .then(_body => {
                 /* istanbul ignore else */
                 if (scope._status === null && _body === null) {

@@ -18,12 +18,19 @@ function $(id, props, extensions) {
 function end(err, conn, options) {
   return Promise.resolve()
     .then(() => {
-      if (typeof conn.end === 'function') {
-        return conn.end(err);
+      if (!conn.res.finished) {
+        return this._events.emit('before_send', conn, options);
       }
     })
     .then(() => {
-      if (conn.res) {
+      if (typeof conn.end === 'function' && !conn.halted) {
+        return conn.end(err
+          ? util.ctx.errorHandler(err, conn, options)
+          : null);
+      }
+    })
+    .then(() => {
+      if (conn.res && !conn.res.finished) {
         try {
           if (err) {
             conn.res.write(util.ctx.errorHandler(err, conn, options));
@@ -32,12 +39,17 @@ function end(err, conn, options) {
           conn.res.end();
         } catch (e) {
           debug('#%s Fatal. %s', conn.pid, e.stack);
-
-          conn.res.statusCode = 500;
-          conn.res.setHeader('Content-Type', 'text/plain');
-          conn.res.write([err && err.stack, e.stack].filter(x => x).join('\n\n'));
-          conn.res.end();
         }
+      }
+    })
+    .catch(e => {
+      debug('#%s Fatal. %s', conn.pid, e.stack);
+
+      if (conn.res && !conn.res.finished) {
+        conn.res.statusCode = 500;
+        conn.res.setHeader('Content-Type', 'text/plain');
+        conn.res.write([err && err.stack, e.stack].filter(x => x).join('\n\n'));
+        conn.res.end();
       }
     });
 }
@@ -45,21 +57,18 @@ function end(err, conn, options) {
 function done(err, conn, options) {
   debug('#%s OK. Final handler reached', conn.pid);
 
+  const _finish = end.bind(this);
+
   return Promise.resolve()
-    .then(() => {
-      if (!conn.res.finished) {
-        return this._events.emit('before_send', conn, options);
-      }
-    })
     .then(() => {
       if (err) {
         throw err;
       }
 
-      return end(null, conn, options);
+      return _finish(null, conn, options);
     })
     .then(() => debug('#%s Finished.', conn.pid))
-    .catch(e => end(e, conn, options));
+    .catch(e => _finish(e, conn, options));
 }
 
 function pubsub() {
