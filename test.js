@@ -46,7 +46,11 @@ server.mount((ctx, options) =>
   }));
 
 server.get('/x', ctx => {
-  ctx.res.write(`${ctx.script_name}\n`);
+  if (ctx.script_name) {
+    ctx.res.write(`${ctx.script_name}\n`);
+  } else {
+    ctx.res.write('N/A\n');
+  }
 });
 
 server.get('/mix', [
@@ -71,6 +75,10 @@ if (IS_LIVE) {
   });
 } else {
   server.request('/mix', (e, ctx) => {
+    console.log(ctx.res.body);
+  });
+
+  Grown.Test.Request.request.call(server, '/x', (e, ctx) => {
     console.log(ctx.res.body);
   });
 }
