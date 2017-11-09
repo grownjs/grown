@@ -4,12 +4,12 @@ const debug = require('debug')('grown');
 
 const $new = require('object-new');
 
-const util = require('../lib/util');
+const util = require('../legacy/lib/util');
 
-const _pkg = require('../package.json');
+const _pkg = require('../legacy/package.json');
 
-const _mount = require('../lib/api/mount_');
-const _listen = require('../lib/api/listen_');
+const _mount = require('../legacy/lib/api/mount_');
+const _listen = require('../legacy/lib/api/listen_');
 
 function $(id, props, extensions) {
   return $new(id, props, $, extensions);

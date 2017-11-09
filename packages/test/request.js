@@ -4,8 +4,6 @@ const path = require('path');
 const fs = require('fs');
 
 module.exports = ($, util) => {
-  const mime = require('mime');
-
   let pid = -1;
 
   function fix(url, method, options) {
@@ -31,7 +29,7 @@ module.exports = ($, util) => {
 
             return Buffer.concat([
               Buffer.from(`--${_boundary}\r\nContent-Disposition: form-data; name="${field.key}"; filename="${filename}"\r\n`, 'ascii'),
-              Buffer.from(`Content-Type: ${mime.getType(filename)}\r\n\r\n`, 'ascii'),
+              Buffer.from(`Content-Type: ${field.type || 'binary/octet-stream'}\r\n\r\n`, 'ascii'),
               Buffer.from(fs.readFileSync(field.value), 'ascii'),
             ]);
           }

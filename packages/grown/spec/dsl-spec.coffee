@@ -2,7 +2,7 @@
 
 Grown = require('../grown')
 
-Grown.use require('../test')
+Grown.use require('../../test')
 
 describe 'Grown', ->
   it 'is a function', ->
@@ -16,7 +16,7 @@ describe 'Grown', ->
 
   describe '#version', ->
     it 'will be the package version', ->
-      expect(require('../../package.json').version).toEqual Grown.version
+      expect(require('../../../package.json').version).toEqual Grown.version
 
   describe '#module', ->
     it 'can access its module definition', ->

@@ -1,12 +1,14 @@
 'use strict';
 
+require('debug').enable('*');
+
 const IS_LIVE = process.argv.slice(2).indexOf('--live') > -1;
 
-const Grown = require('./packages/legacy/_plugs/grown');
+const Grown = require('.');
 
-Grown.use(require('./packages/legacy/_plugs/router'));
-Grown.use(require('./packages/legacy/_plugs/test'));
-Grown.use(require('./packages/legacy/_plugs/conn'));
+Grown.use(require('./../router'));
+Grown.use(require('./../test'));
+Grown.use(require('./../conn'));
 
 const server = new Grown({
   env: process.env.NODE_ENV || 'development',
