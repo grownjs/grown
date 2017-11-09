@@ -49,11 +49,13 @@ server.get('/x', ctx => {
 
 server.get('/mix', [
   Grown.Example({
+    props: {
+      TRUTH: 31,
+    },
     methods: {
       call(ctx, options) {
-        // FIXME: find a way for doing this?
-        Grown.Example.extensions[0].methods.call(ctx, options);
-        ctx.res.write(`${this.TRUTH}\n`);
+        this.super.call(ctx, options);
+        ctx.res.write(`${this.TRUTH} / ${this.super.TRUTH}\n`);
       },
     },
   }),
