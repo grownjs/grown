@@ -8,7 +8,7 @@ module.exports = ($, util) => {
 
   let pid = -1;
 
-  $.module('Test', {
+  return $.module('Test', {
     request(url, method, options, callback) {
       if (typeof url === 'function') {
         callback = url;

@@ -1,7 +1,8 @@
 'use strict';
 
 module.exports = ($, util) => {
-  return require('./core')($, util);
+  require('./core')($, util);
+  require('./http')($, util);
 };
 
 // FIXME: split all this (router.js) into submodules, grouped by funcionality to be

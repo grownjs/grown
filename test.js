@@ -1,5 +1,7 @@
 'use strict';
 
+require('debug').enable('*');
+
 const Grown = require('./_plugs/grown');
 
 Grown.use(require('./_plugs/router'));
@@ -11,7 +13,7 @@ const server = new Grown({
 });
 
 server.plug([
-  // Grown.Conn,
+  Grown.Conn,
   // Grown.Router,
   Grown.Router.HTTP,
   {
@@ -33,5 +35,3 @@ server.get('/x', ctx => {
 server.listen(3001, ctx => {
   console.log('START', ctx.location.href);
 });
-
-console.log(Grown);

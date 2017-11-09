@@ -165,19 +165,6 @@ module.exports = ($, util) => {
                 }
 
                 this.send(_body);
-              })
-              .catch(e => {
-                try {
-                  if (!this.res.finished) {
-                    this.res.writeHead(500, this.resp_headers);
-                    this.res.write(util.ctx.errorHandler(e, this));
-                    this.res.end();
-                  } else {
-                    debug('#%s Response already sent. %s', this.pid, e.message);
-                  }
-                } catch (_e) {
-                  debug('#%s Fatal. %s', this.pid, _e.message);
-                }
               });
           },
         },

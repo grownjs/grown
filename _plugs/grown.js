@@ -16,26 +16,30 @@ function $(id, props, extensions) {
 }
 
 function end(err, conn, options) {
-  if (typeof conn.end === 'function') {
-    return conn.end(err);
-  }
-
-  if (conn.res) {
-    try {
-      if (err) {
-        conn.res.write(util.ctx.errorHandler(err, conn, options));
+  return Promise.resolve()
+    .then(() => {
+      if (typeof conn.end === 'function') {
+        return conn.end(err);
       }
+    })
+    .then(() => {
+      if (conn.res) {
+        try {
+          if (err) {
+            conn.res.write(util.ctx.errorHandler(err, conn, options));
+          }
 
-      conn.res.end();
-    } catch (e) {
-      debug('#%s Fatal. %s', conn.pid, e.stack);
+          conn.res.end();
+        } catch (e) {
+          debug('#%s Fatal. %s', conn.pid, e.stack);
 
-      conn.res.statusCode = 500;
-      conn.res.setHeader('Content-Type', 'text/plain');
-      conn.res.write([err && err.stack, e.stack].filter(x => x).join('\n\n'));
-      conn.res.end();
-    }
-  }
+          conn.res.statusCode = 500;
+          conn.res.setHeader('Content-Type', 'text/plain');
+          conn.res.write([err && err.stack, e.stack].filter(x => x).join('\n\n'));
+          conn.res.end();
+        }
+      }
+    });
 }
 
 function done(err, conn, options) {
@@ -178,7 +182,7 @@ const Grown = $('Grown', options => {
           ? [object]
           : object;
 
-        plugins.forEach(p => {
+        (plugins || []).filter(x => x).forEach(p => {
           try {
             Object.keys(p).forEach(k => {
               switch (k) {
