@@ -23,6 +23,14 @@ server.plug([
   },
 ]);
 
+Grown.module('Example', {
+  methods: {
+    call(ctx) {
+      ctx.res.write('0\n');
+    },
+  },
+});
+
 server.mount((ctx, options) =>
   ctx.next(() => {
     ctx.res.write(`ENV: ${options('env')}`);
@@ -33,6 +41,7 @@ server.get('/x', ctx => {
 });
 
 server.get('/mix', [
+  Grown.Example,
   ctx => ctx.res.write('1\n'),
   ctx => ctx.res.write('2\n'),
 ]);
