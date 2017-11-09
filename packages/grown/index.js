@@ -90,70 +90,6 @@ function done(err, conn, options) {
     .catch(e => _finish(e, conn, options));
 }
 
-function pubsub() {
-  const _events = {};
-
-  function ee(e) {
-    /* istanbul ignore else */
-    if (!_events[e.toLowerCase()]) {
-      _events[e.toLowerCase()] = [];
-    }
-
-    return _events[e.toLowerCase()];
-  }
-
-  return {
-    on(e, cb) {
-      util.is('function', cb);
-      ee(e).push(cb);
-
-      return this;
-    },
-
-    off(e, cb) {
-      util.is('function', cb);
-
-      const p = ee(e);
-      const q = p.indexOf(cb);
-
-      /* istanbul ignore else */
-      if (q > -1) {
-        p.splice(q, 1);
-      }
-
-      return this;
-    },
-
-    once(e, cb) {
-      util.is('function', cb);
-
-      let k;
-
-      function $once() {
-        try {
-          return cb.apply(null, arguments);
-        } catch (_e) {
-          throw _e;
-        } finally {
-          ee(e).splice(k, 1);
-        }
-      }
-
-      k = ee(e).push($once) - 1;
-
-      return this;
-    },
-
-    emit(e) {
-      const args = Array.prototype.slice.call(arguments, 1);
-
-      return ee(e)
-        .reduce((prev, cur) =>
-          prev.then(() => cur.apply(null, args)), Promise.resolve()).then(() => this);
-    },
-  };
-}
-
 const Grown = $('Grown', options => {
   /* istanbul ignore else */
   if (!(options && options.env && options.cwd)) {
@@ -180,7 +116,7 @@ const Grown = $('Grown', options => {
 
   scope._extensions = [];
   scope._pipeline = [];
-  scope._events = pubsub();
+  scope._events = util.ctx.buildPubsub();
 
   scope._options = _getConfig;
   scope._invoke = util.ctx.pipelineFactory('^', scope._pipeline, done.bind(scope));
