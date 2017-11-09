@@ -4,9 +4,12 @@
   "description": "Experimental DSL for web applications",
   "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
   "license": "MIT",
-  "main": "index.js",
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.esm.js",
   "scripts": {
-    "dev": "jasmine-node spec --coffee --verbose --autoTest --captureExceptions --watchFolders index.js",
+    "build": "rollup -c",
+    "watch": "rollup -c -w",
+    "dev": "jasmine-node spec --coffee --verbose --autoTest --captureExceptions --watchFolders src",
     "lint": "eslint bin lib spec examples",
     "spec": "jasmine-node spec --coffee --noStackTrace --captureExceptions",
     "cover": "istanbul cover --root lib --x '**/spec/**' -- jasmine-node --coffee spec",
@@ -19,9 +22,13 @@
     "eslint-config-airbnb-base": "^12.1.0",
     "eslint-plugin-import": "^2.2.0",
     "istanbul": "^0.4.3",
-    "jasmine-node": "2.0.0-beta4"
+    "jasmine-node": "2.0.0-beta4",
+    "rollup": "^0.51.2"
   },
   "dependencies": {
     "object-new": "^0.1.3"
-  }
+  },
+  "files": [
+    "dist"
+  ]
 }
