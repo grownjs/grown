@@ -15,97 +15,10 @@ function $(id, props, extensions) {
   return $new(id, props, $, extensions);
 }
 
-function end(err, conn, options) {
-  return Promise.resolve()
-    .then(() => {
-      /* istanbul ignore else */
-      if (typeof conn.end === 'function') {
-        return Promise.resolve()
-          .then(() => {
-            if (err) {
-              conn.resp_body = util.ctx.errorHandler(err, conn, options);
-            }
-          })
-          .catch(e => {
-            debug('#%s Fatal. %s', conn.pid, e.stack);
-          });
-      }
-
-      /* istanbul ignore else */
-      if (conn.res && !(conn.res.finished && conn.halted)) {
-        conn.res.statusCode = 501;
-
-        try {
-          /* istanbul ignore else */
-          if (err) {
-            conn.res.write(util.ctx.errorHandler(err, conn, options));
-          }
-        } catch (e) {
-          debug('#%s Fatal. %s', conn.pid, e.stack);
-        }
-      }
-    })
-    .then(() => {
-      /* istanbul ignore else */
-      if (!((conn.res && conn.res.finished) || conn.halted)) {
-        return this._events.emit('before_send', conn, options);
-      }
-    })
-    .then(() => {
-      /* istanbul ignore else */
-      if (typeof conn.end === 'function') {
-        return conn.end();
-      }
-
-      /* istanbul ignore else */
-      if (conn.res) {
-        conn.res.end();
-      }
-    })
-    .catch(e => {
-      debug('#%s Fatal. %s', conn.pid, e.stack);
-
-      /* istanbul ignore else */
-      if (conn.res) {
-        conn.res.end();
-      }
-    });
-}
-
-function done(err, conn, options) {
-  debug('#%s OK. Final handler reached', conn.pid);
-
-  const _finish = end.bind(this);
-
-  return Promise.resolve()
-    .then(() => {
-      /* istanbul ignore else */
-      if (err) {
-        throw err;
-      }
-
-      return _finish(null, conn, options);
-    })
-    .then(() => debug('#%s Finished.', conn.pid))
-    .catch(e => _finish(e, conn, options));
-}
-
 const Grown = $('Grown', options => {
   /* istanbul ignore else */
   if (!(options && options.env && options.cwd)) {
     throw new Error('Missing environment config');
-  }
-
-  function _getConfig(key, defvalue) {
-    let value;
-
-    try {
-      value = util.get(options, key, defvalue);
-    } catch (e) {
-      throw new Error(`Cannot resolve config: ${key}`);
-    }
-
-    return typeof value !== 'undefined' ? value : defvalue;
   }
 
   const scope = {};
@@ -116,10 +29,10 @@ const Grown = $('Grown', options => {
 
   scope._extensions = [];
   scope._pipeline = [];
-  scope._events = util.ctx.buildPubsub();
 
-  scope._options = _getConfig;
-  scope._invoke = util.ctx.pipelineFactory('^', scope._pipeline, done.bind(scope));
+  scope._events = util.ctx.buildPubsub();
+  scope._options = util.ctx.optionsFactory(options);
+  scope._invoke = util.ctx.pipelineFactory('^', scope._pipeline, util.ctx.done.bind(scope));
 
   return $({
     init() {
