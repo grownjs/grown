@@ -3,6 +3,98 @@
 const debug = require('debug')('grown:router');
 
 module.exports = ($, util) => {
+  function fix(name, pipeline) {
+    return (!Array.isArray(pipeline) ? [pipeline] : pipeline)
+      .map((cb, key) => {
+        const factory = util.ctx.buildFactory(cb, `${name}.${key}`);
+
+        // push task to pipeline
+        return {
+          name: factory.name || name,
+          call: factory.call,
+          type: factory.type || 'function',
+        };
+      });
+  }
+
+  function group(ctx, _routes, _matches, _resources) {
+    const _mappings = ctx.router.mappings;
+
+    // resolve routing for controllers lookup
+    ctx.router.routes.forEach(route => {
+      const _handler = route.handler.slice();
+
+      const action = _handler.length > 1 ? _handler.pop() : 'index';
+      const controller = _handler.join('.');
+
+      /* istanbul ignore else */
+      if (!_matches[route.verb]) {
+        _matches[route.verb] = [];
+      }
+
+      /* istanbul ignore else */
+      if (route.use && !Array.isArray(route.use)) {
+        route.use = [route.use];
+      }
+
+      // route definition
+      route.controller = controller;
+      route.action = action;
+
+      /* istanbul ignore else */
+      if (route.resource && !_resources[route.resource]) {
+        _resources[route.resource] = _mappings(route.controller);
+      }
+
+      delete route.handler;
+
+      /* istanbul ignore else */
+      if (route.pipeline) {
+        route.pipeline = fix(route.as, route.pipeline);
+      }
+
+      // plain old routes
+      _routes.push(route);
+
+      // group all routes per-verb
+      _matches[route.verb].push(route);
+    });
+
+    // build mapping per-verb
+    Object.keys(_matches).forEach(verb => {
+      _matches[verb] = ctx.router.map(_matches[verb]);
+    });
+  }
+
+  function invoke(conn, options) {
+    const _method = conn.req.method.toUpperCase();
+
+    // resolve matched routes to a single one
+    debug('#%s Trying to resolve any route matching %s %s', conn.pid, conn.req.method, conn.req.url);
+
+    /* istanbul ignore else */
+    if (!this[_method]) {
+      debug('#%s Error. There are no routes matching for this verb', conn.pid);
+
+      throw util.ctx.error(405);
+    }
+
+    // speed up static routes
+    const _handler = this[_method](conn.req.url, 1);
+
+    /* istanbul ignore else */
+    if (!_handler) {
+      throw util.ctx.error(404);
+    }
+
+    /* istanbul ignore else */
+    if (typeof _handler.callback !== 'function' && _handler.pipeline) {
+      _handler.callback = util.ctx.pipelineFactory(_handler.path, _handler.pipeline);
+    }
+
+    return _handler.callback(conn, options);
+  }
+
   return $.module('Router', {
     init() {
       /* istanbul ignore else */
@@ -10,7 +102,7 @@ module.exports = ($, util) => {
         throw new Error('Missing request from connection');
       }
     },
-    install(ctx) {
+    install(ctx, options) {
       const routeMappings = require('route-mappings');
 
       ctx.router = routeMappings();
@@ -20,76 +112,11 @@ module.exports = ($, util) => {
       const _routes = [];
 
       // compile fast-routes
-      ctx.on('listen', () => {
-        const _mappings = ctx.router.mappings;
+      ctx.on('listen', () =>
+        group(ctx, _routes, _matches, _resources));
 
-        // resolve routing for controllers lookup
-        ctx.router.routes.forEach(route => {
-          const _handler = route.handler.slice();
-
-          const action = _handler.length > 1 ? _handler.pop() : 'index';
-          const controller = _handler.join('.');
-
-
-          /* istanbul ignore else */
-          if (!_matches[route.verb]) {
-            _matches[route.verb] = [];
-          }
-
-          /* istanbul ignore else */
-          if (route.use && !Array.isArray(route.use)) {
-            route.use = [route.use];
-          }
-
-          // route definition
-          route.controller = controller;
-          route.action = action;
-
-          /* istanbul ignore else */
-          if (route.resource && !_resources[route.resource]) {
-            _resources[route.resource] = _mappings(route.controller);
-          }
-
-          delete route.handler;
-
-          // plain old routes
-          _routes.push(route);
-
-          // group all routes per-verb
-          _matches[route.verb].push(route);
-        });
-
-        // build mapping per-verb
-        Object.keys(_matches).forEach(verb => {
-          _matches[verb] = ctx.router.map(_matches[verb]);
-        });
-      });
-
-      ctx.mount('router', conn => {
-        const _method = conn.req.method.toUpperCase();
-
-        // resolve matched routes to a single one
-        debug('#%s Trying to resolve any route matching %s %s', conn.pid, conn.req.method, conn.req.url);
-
-        /* istanbul ignore else */
-        if (!_matches[_method]) {
-          debug('#%s Error. There are no routes matching for this verb', conn.pid);
-
-          throw util.ctx.error(405);
-        }
-
-        // speed up static routes
-        const _handler = _matches[_method](conn.req.url, 1);
-
-        /* istanbul ignore else */
-        if (!_handler) {
-          throw util.ctx.error(404);
-        }
-
-        if (_handler.callback) {
-          console.log(_handler.callback);
-        }
-      });
+      // match and execute
+      ctx.mount('router', conn => invoke.call(_matches, conn, options));
     },
   });
 };

@@ -5,6 +5,87 @@ const debug = require('debug')('grown:conn');
 const statusCodes = require('http').STATUS_CODES;
 
 module.exports = $ => {
+  function finish(ctx, body) {
+    /* istanbul ignore else */
+    if (this.res.finished) {
+      throw new Error('Already finished');
+    }
+
+    this.res.statusCode = this.status_code;
+    this.res.statusMessage = statusCodes[this.status_code];
+
+    ctx._type = ctx._type || 'application/octet-stream';
+
+    /* istanbul ignore else */
+    if (body && typeof body.pipe === 'function') {
+      debug('#%s Done. Reponse is an stream. Sending as %s', this.pid, ctx._type);
+
+      this.res.setHeader('Content-Type', ctx._type);
+      this.res.writeHead(this.res.statusCode);
+
+      body.pipe(this.res);
+
+      return;
+    }
+
+    /* istanbul ignore else */
+    if (body !== null && Buffer.isBuffer(body)) {
+      debug('#%s Response is a buffer. Sending as %s', this.pid, ctx._type);
+
+      this.res.setHeader('Content-Type', ctx._type);
+      this.res.setHeader('Content-Length', body.length);
+    } else if (body !== null && typeof body === 'object') {
+      debug('#%s Response is an object. Sending as application/json', this.pid);
+
+      body = JSON.stringify(body);
+      ctx._type = 'application/json';
+    }
+
+    this.res.setHeader('Content-Type', `${ctx._type}; charset=${ctx._charset}`);
+    this.res.setHeader('Content-Length', Buffer.byteLength(body || ''));
+
+    // normalize response
+    this.res.writeHead(this.res.statusCode);
+    this.res.write(body || '');
+    this.res.end();
+  }
+
+  function done(ctx, code, message) {
+    ctx._counter += 1;
+
+    /* istanbul ignore else */
+    if (this.res && this.res.finished) {
+      /* istanbul ignore else */
+      if (ctx._counter > 1) {
+        throw new Error('Already finished');
+      }
+      return;
+    }
+
+    let _code = code;
+
+    /* istanbul ignore else */
+    if (typeof code === 'string' || code instanceof Buffer) {
+      message = code;
+      _code = 200;
+    }
+
+    if (code instanceof Error) {
+      message = code.message || code.toString();
+      _code = 500;
+    }
+
+    // normalize output
+    ctx._body = typeof _code === 'string' ? _code : message || ctx._body;
+
+    // normalize response
+    ctx._status = typeof _code === 'number' ? _code : ctx._status;
+
+    return Promise.resolve()
+      .then(() => ctx._body)
+      .then(_body => this.send(_body));
+  }
+
   return $.module('Conn', {
     init() {
       const scope = {
@@ -87,84 +168,11 @@ module.exports = $ => {
           },
 
           send(body) {
-            /* istanbul ignore else */
-            if (this.res.finished) {
-              throw new Error('Already finished');
-            }
-
-            this.res.statusCode = this.status_code;
-            this.res.statusMessage = statusCodes[this.status_code];
-
-            scope._type = scope._type || 'application/octet-stream';
-
-            /* istanbul ignore else */
-            if (body && typeof body.pipe === 'function') {
-              debug('#%s Done. scope _body is an stream. Sending as %s', this.pid, scope._type);
-
-              this.res.setHeader('Content-Type', scope._type);
-              this.res.writeHead(this.res.statusCode);
-
-              body.pipe(this.res);
-
-              return;
-            }
-
-            /* istanbul ignore else */
-            if (body !== null && Buffer.isBuffer(body)) {
-              debug('#%s scope _body is a buffer. Sending as %s', this.pid, scope._type);
-
-              this.res.setHeader('Content-Type', scope._type);
-              this.res.setHeader('Content-Length', body.length);
-            } else if (body !== null && typeof body === 'object') {
-              debug('#%s scope _body is an object. Sending as application/json', this.pid);
-
-              body = JSON.stringify(body);
-              scope._type = 'application/json';
-            }
-
-            this.res.setHeader('Content-Type', `${scope._type}; charset=${scope._charset}`);
-            this.res.setHeader('Content-Length', Buffer.byteLength(body || ''));
-
-            // normalize response
-            this.res.writeHead(this.res.statusCode);
-            this.res.write(body || '');
-            this.res.end();
+            return finish.call(this, scope, body);
           },
 
           end(code, message) {
-            scope._counter += 1;
-
-            /* istanbul ignore else */
-            if (this.res && this.res.finished) {
-              /* istanbul ignore else */
-              if (scope._counter > 1) {
-                throw new Error('Already finished');
-              }
-              return;
-            }
-
-            let _code = code;
-
-            /* istanbul ignore else */
-            if (typeof code === 'string' || code instanceof Buffer) {
-              message = code;
-              _code = 200;
-            }
-
-            if (code instanceof Error) {
-              message = code.message || code.toString();
-              _code = 500;
-            }
-
-            // normalize output
-            scope._body = typeof _code === 'string' ? _code : message || scope._body;
-
-            // normalize response
-            scope._status = typeof _code === 'number' ? _code : scope._status;
-
-            return Promise.resolve()
-              .then(() => scope._body)
-              .then(_body => this.send(_body));
+            return done.call(this, scope, code, message);
           },
         },
       };

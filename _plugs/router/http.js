@@ -7,7 +7,7 @@ module.exports = ($, util) => {
 
       if (this.router) {
         this.router[method.toLowerCase()](path, {
-          callback: !Array.isArray(cb)
+          pipeline: !Array.isArray(cb)
             ? [cb]
             : cb,
         });
