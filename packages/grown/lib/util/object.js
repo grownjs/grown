@@ -1,7 +1,9 @@
 'use strict';
 
 function flattenArgs() {
-  let args = Array.prototype.slice.call(arguments);
+  let args = Object.prototype.toString.call(arguments[0]) === '[object Arguments]'
+    ? Array.prototype.slice.call(arguments[0])
+    : Array.prototype.slice.call(arguments);
 
   const out = [];
 

@@ -4,36 +4,39 @@ module.exports = $ => {
   const MockReq = require('mock-req');
 
   return $.module('Test.Mock.Req', {
-    install(ctx) {
-      ctx.mount('req', conn => {
-        const _body = conn.req && conn.req.body;
+    init() {
+      const _body = this._req && this._req.body;
+      const _req = this._req;
 
-        if (conn.req) {
-          delete conn.req.body;
-        }
+      delete this._req;
 
-        conn.req = new MockReq(conn.req);
+      const req = new MockReq(_req);
 
+      try {
         if (_body) {
-          return new Promise((resolve, reject) =>
-            process.nextTick(() => {
-              try {
-                if (_body && (Buffer.isBuffer(_body) || typeof _body === 'string')) {
-                  conn.req.write(_body);
-                  conn.req.end();
-                }
+          if (req.method === 'GET' || req.method === 'HEAD' || req.method === 'DELETE') {
+            throw new Error(`${req.method} requests does not need body, given ${JSON.stringify(_body)}`);
+          }
 
-                if (_body && typeof _body.pipe === 'function') {
-                  _body.pipe(conn.req);
-                }
+          if (_body && (Buffer.isBuffer(_body) || typeof _body === 'string')) {
+            req.write(_body);
+          }
 
-                resolve();
-              } catch (e) {
-                reject(e);
-              }
-            }));
+          if (_body && typeof _body.pipe === 'function') {
+            _body.pipe(req);
+          }
         }
-      });
+      } catch (e) {
+        e.summary = `Invalid request, given '${JSON.stringify(_req)}'`;
+
+        throw e;
+      }
+
+      return {
+        props: {
+          req,
+        },
+      };
     },
   });
 };

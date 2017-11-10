@@ -37,7 +37,7 @@ module.exports = function $mount(name, handler, callback) {
     };
   }
 
-  debug('Mounting <%s> handler', cb.name);
+  debug('#%s Mounting <%s> handler', process.pid, cb.name);
 
   this._pipeline.push(cb);
 };

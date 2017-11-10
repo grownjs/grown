@@ -30,7 +30,7 @@ server.plug([
   IS_LIVE
     ? null
     : [Grown.Test.Request, Grown.Test.Mock.Res],
-  // Grown.Conn,
+  Grown.Conn,
   Grown.Router,
   Grown.Router.HTTP,
   {

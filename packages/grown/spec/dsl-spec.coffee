@@ -67,19 +67,20 @@ describe 'Grown', ->
       it 'should normalize the request body', (done) ->
         opts =
           body: '"OSOM"'
+          method: 'POST'
           headers:
             'content-type': 'application/json'
 
-        @g.plug Grown.Test.Mock.Req
-
         @g.request opts, (err, conn) ->
-          expect(conn.pid).not.toBeUndefined()
           expect(conn.req.headers['content-length']).toEqual '6'
-          done()
+          expect(conn.pid).not.toBeUndefined()
+
+          conn.req.on 'data', (chunk) ->
+            expect(chunk.toString()).toEqual '"OSOM"'
+            done()
 
     describe 'Mock.Req', ->
       it 'provides a mocked request', (done) ->
-        @g.plug Grown.Test.Mock.Req
         @g.run().then (conn) ->
           expect(conn.req).not.toBeUndefined()
           expect(conn.req.url).toEqual ''
@@ -90,8 +91,6 @@ describe 'Grown', ->
 
     describe 'Mock.Res', ->
       it 'provides a mocked response', (done) ->
-        @g.plug Grown.Test.Mock.Res
-
         @g.mount (conn) ->
           conn.res.write 'OSOM'
 
@@ -100,14 +99,6 @@ describe 'Grown', ->
           done()
         .catch (e) ->
           console.log 'E_RES', e.stack
-          done()
-
-    describe 'Mock', ->
-      it 'will plug both middlewares', (done) ->
-        @g.plug Grown.Test.Mock
-        @g.run().then (conn) ->
-          expect(conn.req).not.toBeUndefined()
-          expect(conn.res).not.toBeUndefined()
           done()
 
     describe 'Event emitter', ->

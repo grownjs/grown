@@ -4,41 +4,46 @@ module.exports = $ => {
   const MockRes = require('mock-res');
 
   return $.module('Test.Mock.Res', {
-    install(ctx) {
-      ctx.mount('res', conn => {
-        conn.res = new MockRes();
-        conn.res.cookies = {};
-        conn.res.clearCookie = k => { delete conn.res.cookies[k]; };
-        conn.res.cookie = (k, v, o) => { conn.res.cookies[k] = { value: v, opts: o || {} }; };
+    init() {
+      const res = new MockRes();
 
-        const _setHeader = conn.res.setHeader;
+      res.cookies = {};
+      res.clearCookie = k => { delete res.cookies[k]; };
+      res.cookie = (k, v, o) => { res.cookies[k] = { value: v, opts: o || {} }; };
 
-        conn.res.setHeader = (k, v) => {
-          if (k === 'set-cookie') {
-            v.forEach(x => {
-              const parts = x.split(';')[0].split('=');
+      const _setHeader = res.setHeader;
 
-              conn.res.cookies[parts[0]] = parts[1];
-            });
-          }
+      res.setHeader = (k, v) => {
+        if (k === 'set-cookie') {
+          v.forEach(x => {
+            const parts = x.split(';')[0].split('=');
 
-          _setHeader.call(conn.res, k, v);
-        };
+            res.cookies[parts[0]] = parts[1];
+          });
+        }
 
-        Object.defineProperty(conn.res, 'body', {
-          get: () => conn.res._getString(),
-        });
+        _setHeader.call(res, k, v);
+      };
 
-        Object.defineProperty(conn.res, 'json', {
-          get: () => {
-            try {
-              return conn.res._getJSON();
-            } catch (e) {
-              return null;
-            }
-          },
-        });
+      Object.defineProperty(res, 'body', {
+        get: () => res._getString(),
       });
+
+      Object.defineProperty(res, 'json', {
+        get: () => {
+          try {
+            return res._getJSON();
+          } catch (e) {
+            return null;
+          }
+        },
+      });
+
+      return {
+        props: {
+          res,
+        },
+      };
     },
   });
 };

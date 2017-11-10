@@ -1,5 +1,7 @@
 'use strict';
 
+const debug = require('debug')('grown');
+
 const $new = require('object-new');
 
 const _pkg = require('./package.json');
@@ -17,6 +19,8 @@ const Grown = $('Grown', options => {
   if (!(options && options.env && options.cwd)) {
     throw new Error('Missing environment config');
   }
+
+  debug('#%s Grown v%s - %s', process.pid, _pkg.version, options.env);
 
   const scope = {};
 
@@ -44,9 +48,12 @@ const Grown = $('Grown', options => {
     },
     methods: {
       run(context, callback) {
-        const conn = $(util.extendValues({}, context, {
-          extensions: scope._extensions,
-        }));
+        const conn = $({
+          init: (context || {}).init,
+          props: (context || {}).props,
+          methods: (context || {}).methods,
+          extensions: scope._extensions.concat((context || {}).extensions || []),
+        });
 
         return scope._callback(conn, scope._options)
           .then(() => typeof callback === 'function' && callback(null, conn))
@@ -54,24 +61,15 @@ const Grown = $('Grown', options => {
           .then(() => conn);
       },
 
-      plug(object) {
-        const plugins = (!Array.isArray(object) && object)
-          ? [object]
-          : object;
-
-        (plugins || []).reduce((prev, cur) => {
-          /* istanbul ignore else */
-          if (cur) {
-            if (Array.isArray(cur)) {
-              Array.prototype.push.apply(prev, cur.filter(x => x));
-            } else {
-              prev.push(cur);
-            }
-          }
-
-          return prev;
-        }, []).forEach(p => {
+      plug() {
+        util.flattenArgs(arguments).forEach(p => {
           try {
+            if (typeof p === 'function') {
+              debug('#%s Install <%s>', process.pid, p.name);
+            } else {
+              debug('#%s Install <{ %s }>', process.pid, Object.keys(p).join(', '));
+            }
+
             Object.keys(p).forEach(k => {
               switch (k) {
                 case 'before_send':
