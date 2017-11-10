@@ -3,7 +3,9 @@
 module.exports = ($, util) => {
   function on(method) {
     return function route(path, cb) {
-      util.is(['function', 'array'], cb);
+      if (!(typeof cb === 'function' || Array.isArray(cb))) {
+        throw new Error(`Expecting a function or array, given '${cb}'`);
+      }
 
       const _cbs = !Array.isArray(cb)
         ? [cb]
@@ -14,7 +16,7 @@ module.exports = ($, util) => {
           pipeline: _cbs,
         });
       } else {
-        const _call = util.ctx.pipelineFactory(path, util.ctx.buildPipeline(path, _cbs));
+        const _call = util.buildPipeline(path, util.buildMiddleware(_cbs, path));
 
         this.mount(path, (conn, options) => {
           if (conn.req.method === method) {

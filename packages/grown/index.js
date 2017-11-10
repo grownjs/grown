@@ -1,15 +1,12 @@
 'use strict';
 
-const debug = require('debug')('grown');
-
 const $new = require('object-new');
 
-const util = require('../legacy/lib/util');
+const _pkg = require('./package.json');
 
-const _pkg = require('../legacy/package.json');
-
-const _mount = require('../legacy/lib/api/mount_');
-const _listen = require('../legacy/lib/api/listen_');
+const util = require('./lib/util');
+const _mount = require('./lib/mount');
+const _listen = require('./lib/listen');
 
 function $(id, props, extensions) {
   return $new(id, props, $, extensions);
@@ -30,9 +27,9 @@ const Grown = $('Grown', options => {
   scope._extensions = [];
   scope._pipeline = [];
 
-  scope._events = util.ctx.buildPubsub();
-  scope._options = util.ctx.optionsFactory(options);
-  scope._invoke = util.ctx.pipelineFactory('^', scope._pipeline, util.ctx.done.bind(scope));
+  scope._events = util.buildPubsub();
+  scope._options = util.buildSettings(options);
+  scope._callback = util.buildPipeline('^', scope._pipeline, util.doneCallback.bind(scope));
 
   return $({
     init() {
@@ -47,11 +44,11 @@ const Grown = $('Grown', options => {
     },
     methods: {
       run(context, callback) {
-        const conn = $(util.extend({}, context, {
+        const conn = $(util.extendValues({}, context, {
           extensions: scope._extensions,
         }));
 
-        return scope._invoke(conn, scope._options)
+        return scope._callback(conn, scope._options)
           .then(() => typeof callback === 'function' && callback(null, conn))
           .catch(e => typeof callback === 'function' && callback(e, conn))
           .then(() => conn);
@@ -63,11 +60,6 @@ const Grown = $('Grown', options => {
           : object;
 
         (plugins || []).reduce((prev, cur) => {
-          /* istanbul ignore else */
-          if (typeof cur === 'undefined') {
-            throw new Error(`Invalid extension, given '${cur}'`);
-          }
-
           /* istanbul ignore else */
           if (cur) {
             if (Array.isArray(cur)) {

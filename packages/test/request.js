@@ -76,9 +76,11 @@ module.exports = ($, util) => {
         options = undefined;
       }
 
-      options = fix(url, method, options);
+      if (typeof callback !== 'function') {
+        throw new Error(`Expecting a function, given '${callback}'`);
+      }
 
-      util.is('function', callback);
+      options = fix(url, method, options);
 
       pid += 1;
 
