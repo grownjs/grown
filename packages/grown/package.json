@@ -6,8 +6,8 @@
   "license": "MIT",
   "main": "index.js",
   "scripts": {
-    "dev": "jasmine-node spec --coffee --verbose --autoTest --captureExceptions --watchFolders src",
-    "lint": "eslint bin lib spec examples",
+    "dev": "jasmine-node spec --coffee --verbose --autoTest --captureExceptions --watchFolders lib",
+    "lint": "eslint lib spec",
     "spec": "jasmine-node spec --coffee --noStackTrace --captureExceptions",
     "cover": "istanbul cover --root lib --x '**/spec/**' -- jasmine-node --coffee spec",
     "cover:up": "codecov --file=coverage/lcov.info --disable=gcov -e TRAVIS_NODE_VERSION",

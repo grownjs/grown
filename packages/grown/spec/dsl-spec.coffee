@@ -37,7 +37,7 @@ describe 'Grown', ->
 
       ex = new Grown.Example()
 
-      expect(ex._.ucwords('a b c')).toEqual 'A b c'
+      expect(ex._.flattenArgs(1, [2], [[3]])).toEqual [1, 2, 3]
       expect(Object.keys(ex)).toEqual []
 
   describe 'Test', ->
