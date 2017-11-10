@@ -23,6 +23,7 @@ function extendValues(out) {
 
   Array.prototype.slice.call(arguments, 1)
     .forEach(source => {
+      /* istanbul ignore else */
       if (Object.prototype.toString.call(source) === '[object Object]') {
         Object.keys(source).forEach(key => {
           if (Object.prototype.toString.call(source[key]) === '[object Object]') {
@@ -46,6 +47,7 @@ function getProp(source, key, defvalue) {
     while (keys.length) {
       key = keys.shift();
 
+      /* istanbul ignore else */
       if (!key) {
         break;
       }
@@ -56,10 +58,12 @@ function getProp(source, key, defvalue) {
     // do nothing
   }
 
+  /* istanbul ignore else */
   if (typeof obj === 'undefined' && typeof defvalue === 'undefined') {
     throw new Error(`Missing property for: ${key}`);
   }
 
+  /* istanbul ignore else */
   if (typeof obj === 'undefined' && defvalue instanceof Error) {
     throw defvalue;
   }
@@ -78,10 +82,12 @@ function setProp(target, key, value) {
     do {
       key = keys.shift();
 
+      /* istanbul ignore else */
       if (!keys.length) {
         break;
       }
 
+      /* istanbul ignore else */
       if (!obj[key]) {
         obj[key] = {};
       }

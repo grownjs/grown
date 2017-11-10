@@ -7,11 +7,13 @@ const url = require('url');
 const $server = require('./server');
 
 module.exports = function $listen(location, params, cb) {
+  /* istanbul ignore else */
   if (typeof location === 'function') {
     cb = location;
     location = undefined;
   }
 
+  /* istanbul ignore else */
   if (typeof params === 'function') {
     const _params = cb;
 
