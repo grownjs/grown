@@ -105,7 +105,7 @@ module.exports = (value, name) => {
   }
 
   if (Array.isArray(value)) {
-    return util.flattenArray(value)
+    return util.flattenArgs(value)
       .map((cb, i) => _buildMiddleware(cb, `${name}.${cb.name || i}`));
   }
 

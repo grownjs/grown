@@ -1,17 +1,21 @@
 'use strict';
 
-function flattenArray(array, result) {
-  result = result || [];
+function flattenArgs() {
+  let args = Array.prototype.slice.call(arguments);
 
-  for (let i = 0; i < array.length; i += 1) {
-    if (Array.isArray(array[i])) {
-      flattenArray(array[i], result);
+  const out = [];
+
+  while (args.length) {
+    const item = args.shift();
+
+    if (item instanceof Array) {
+      args = item.concat(args);
     } else {
-      result.push(array[i]);
+      out.push(item);
     }
   }
 
-  return result;
+  return out;
 }
 
 function extendValues(out) {
@@ -128,7 +132,7 @@ function resolveValues(obj, filter) {
 module.exports = {
   resolveValues,
   extendValues,
-  flattenArray,
+  flattenArgs,
   getProp,
   setProp,
 };
