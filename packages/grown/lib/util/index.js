@@ -1,5 +1,7 @@
 'use strict';
 
+const util = require('util');
+
 const objectUtil = require('./object');
 const contextUtil = require('./context');
 
@@ -12,11 +14,5 @@ module.exports = {
 };
 
 // merge all helpers
-[
-  objectUtil,
-  contextUtil,
-].forEach(helpers => {
-  Object.keys(helpers).forEach(k => {
-    module.exports[k] = helpers[k];
-  });
-});
+util._extend(module.exports, objectUtil);
+util._extend(module.exports, contextUtil);

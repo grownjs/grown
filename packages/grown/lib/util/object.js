@@ -14,51 +14,23 @@ function flattenArray(array, result) {
   return result;
 }
 
-function mergeValues(target, obj) {
-  Object.keys(obj).forEach(key => {
-    const oldVal = obj[key];
-    const newVal = target[key];
+function extendValues(out) {
+  out = out || {};
 
-    if ((typeof newVal === 'object' || typeof newVal === 'function')
-      && (typeof oldVal === 'object' || typeof oldVal === 'function')) {
-      target[key] = mergeValues(newVal, oldVal);
-    } else if (Array.isArray(newVal)) {
-      target[key] = Array.prototype.concat.call([], newVal, oldVal);
-    } else {
-      target[key] = oldVal;
-    }
-  });
+  Array.prototype.slice.call(arguments, 1)
+    .forEach(source => {
+      if (Object.prototype.toString.call(source) === '[object Object]') {
+        Object.keys(source).forEach(key => {
+          if (Object.prototype.toString.call(source[key]) === '[object Object]') {
+            out[key] = extendValues(out[key], source[key]);
+          } else {
+            out[key] = source[key];
+          }
+        });
+      }
+    });
 
-  return target;
-}
-
-function extendValues(target) {
-  let values = Array.prototype.slice.call(arguments, 1);
-  let merge = false;
-
-  if (Array.isArray(arguments[0])) {
-    values = arguments[0];
-    target = {};
-    merge = true;
-  }
-
-  values.forEach(source => {
-    /* istanbul ignore else */
-    if (source && typeof source === 'object') {
-      Object.keys(source).forEach(key => {
-        /* istanbul ignore else */
-        if (!merge && typeof target[key] === 'undefined') {
-          target[key] = source[key];
-        }
-
-        if (merge) {
-          target[key] = mergeValues(target[key] || {}, source[key]);
-        }
-      });
-    }
-  });
-
-  return target;
+  return out;
 }
 
 function getProp(source, key, defvalue) {
@@ -155,9 +127,8 @@ function resolveValues(obj, filter) {
 
 module.exports = {
   resolveValues,
-  flattenArray,
   extendValues,
-  mergeValues,
+  flattenArray,
   getProp,
   setProp,
 };
