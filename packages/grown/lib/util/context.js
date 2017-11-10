@@ -2,6 +2,8 @@
 
 const debug = require('debug')('grown:context');
 
+const STATUS_CODES = require('http').STATUS_CODES;
+
 const cleanStack = require('clean-stack');
 
 const util = require('./object');
@@ -31,6 +33,16 @@ function buildSettings(data) {
       ? value
       : defvalue;
   };
+}
+
+function buildError(code, description) {
+  const message = STATUS_CODES[code];
+  const errObj = new Error(description || message);
+
+  errObj.statusMessage = message;
+  errObj.statusCode = code;
+
+  return errObj;
 }
 
 function buildPubsub() {
@@ -205,6 +217,7 @@ function doneCallback(err, conn, options) {
 module.exports = {
   buildSettings,
   buildPubsub,
+  buildError,
   endCallback,
   doneCallback,
 };

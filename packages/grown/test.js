@@ -31,7 +31,7 @@ server.plug([
     ? null
     : [Grown.Test.Request, Grown.Test.Mock.Res],
   // Grown.Conn,
-  // Grown.Router,
+  Grown.Router,
   Grown.Router.HTTP,
   {
     before_send(ctx) {

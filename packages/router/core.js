@@ -36,7 +36,7 @@ module.exports = ($, util) => {
 
       /* istanbul ignore else */
       if (route.pipeline) {
-        route.pipeline = util.ctx.buildPipeline(route.as, route.pipeline);
+        route.pipeline = util.buildMiddleware(route.pipeline, route.as);
       }
 
       // plain old routes
@@ -62,7 +62,7 @@ module.exports = ($, util) => {
     if (!this[_method]) {
       debug('#%s Error. There are no routes matching for this verb', conn.pid);
 
-      throw util.ctx.error(405);
+      throw util.buildError(405);
     }
 
     // speed up static routes
@@ -72,7 +72,7 @@ module.exports = ($, util) => {
     if (_handler) {
       /* istanbul ignore else */
       if (typeof _handler.callback !== 'function' && _handler.pipeline) {
-        _handler.callback = util.ctx.pipelineFactory(_handler.path, _handler.pipeline);
+        _handler.callback = util.buildPipeline(_handler.path, _handler.pipeline);
       }
 
       /* istanbul ignore else */
@@ -83,7 +83,7 @@ module.exports = ($, util) => {
       return _handler.callback(conn, options);
     }
 
-    throw util.ctx.error(404);
+    throw util.buildError(404);
   }
 
   return $.module('Router', {
