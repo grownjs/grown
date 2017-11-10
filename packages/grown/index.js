@@ -65,7 +65,7 @@ const Grown = $('Grown', options => {
         util.flattenArgs(arguments).forEach(p => {
           try {
             if (typeof p === 'function') {
-              debug('#%s Install <%s>', process.pid, p.name);
+              debug('#%s Install <%s>', process.pid, p.class || p.name);
             } else {
               debug('#%s Install <{ %s }>', process.pid, Object.keys(p).join(', '));
             }

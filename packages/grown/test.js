@@ -29,7 +29,7 @@ Grown.module('Example', {
 server.plug([
   IS_LIVE
     ? null
-    : [Grown.Test.Request, Grown.Test.Mock.Res],
+    : [Grown.Test],
   Grown.Conn,
   Grown.Router,
   Grown.Router.HTTP,
