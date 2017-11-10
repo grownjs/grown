@@ -4,19 +4,15 @@ module.exports = ($, util) => {
   function on(method) {
     return function route(path, cb) {
       if (!(typeof cb === 'function' || Array.isArray(cb))) {
-        throw new Error(`Expecting a function or array, given '${cb}'`);
+        throw new Error(`Expecting a function or array, given '${JSON.stringify(cb)}'`);
       }
-
-      const _cbs = !Array.isArray(cb)
-        ? [cb]
-        : cb;
 
       if (this.router) {
         this.router[method.toLowerCase()](path, {
-          pipeline: _cbs,
+          pipeline: util.flattenArgs(cb),
         });
       } else {
-        const _call = util.buildPipeline(path, util.buildMiddleware(_cbs, path));
+        const _call = util.buildPipeline(path, util.flattenArgs(cb).map(util.buildMiddleware));
 
         this.mount(path, (conn, options) => {
           if (conn.req.method === method) {

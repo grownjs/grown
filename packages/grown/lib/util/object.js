@@ -17,7 +17,7 @@ function flattenArgs() {
     }
   }
 
-  return out;
+  return out.filter(x => x);
 }
 
 function extendValues(out) {
@@ -108,7 +108,7 @@ function resolveValues(obj, filter) {
 
   /* istanbul ignore else */
   if (!obj || Array.isArray(obj) || typeof obj.pipe === 'function' || typeof obj !== 'object') {
-    throw new Error(`Unsupported object to resolve, given: ${obj}`);
+    throw new Error(`Unsupported object to resolve, given '${JSON.stringify(obj)}'`);
   }
 
   Object.keys(obj).forEach(key => {

@@ -67,7 +67,7 @@ module.exports = function $listen(location, params, cb) {
     }
   };
 
-  debug('Initializing listener for %s', _server.location.host);
+  debug('#%s Initializing listener for %s', process.pid, _server.location.host);
 
   return new Promise((resolve, reject) => {
     const _listen = () => this._events.emit('listen', _server);
@@ -85,7 +85,7 @@ module.exports = function $listen(location, params, cb) {
       }
 
       _listen()
-        .then(() => debug('Done. Starting application'))
+        .then(() => debug('#%s Done. Starting application', process.pid))
         .then(() => resolve(_server))
         .then(() => cb && cb(_server))
         .then(() => _done())
@@ -96,16 +96,16 @@ module.exports = function $listen(location, params, cb) {
       if (!this._servers[_server.port]) {
         this._servers[_server.port] = $server.call(this, _server, params, done);
       } else {
-        debug('Server at port %s already initialized', _server.port);
+        debug('#%s Server at port %s already initialized', process.pid, _server.port);
         done();
       }
     } catch (e) {
-      debug('Server was errored: %s', e.message);
+      debug('#%s Server was errored: %s', process.pid, e.message);
       done(e);
       return;
     }
 
-    debug('Server registered at %s', _server.location.host);
+    debug('#%s Server registered at %s', process.pid, _server.location.host);
 
     this._hosts[_server.location.host] = _server;
   });

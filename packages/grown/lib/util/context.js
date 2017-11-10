@@ -104,7 +104,7 @@ function buildPubsub() {
   };
 }
 
-function buildError(e, cwd) {
+function cleanError(e, cwd) {
   let _stack = cleanStack(e.stack || '')
     .replace(/^.+(es6-promise|bluebird|internal|grown).+$/gm)
     .replace(RE_ERR_MESSAGE, '')
@@ -129,7 +129,7 @@ function buildError(e, cwd) {
       .join('\n'),
     call: e.pipeline,
     name: e.name || 'Error',
-    code: e.statusCode || 500,
+    code: e.statusCode || 501,
   };
 }
 
@@ -141,7 +141,7 @@ function endCallback(err, conn, options) {
         return Promise.resolve()
           .then(() => {
             if (err) {
-              const failure = buildError(err, options('cwd'));
+              const failure = cleanError(err, options('cwd'));
 
               conn.put_status(failure.code);
               conn.resp_body = failure.message;
@@ -159,7 +159,7 @@ function endCallback(err, conn, options) {
         try {
           /* istanbul ignore else */
           if (err) {
-            const failure = buildError(err, options('cwd'));
+            const failure = cleanError(err, options('cwd'));
 
             conn.res.statusCode = failure.code;
             conn.res.write(failure.message);
@@ -218,6 +218,7 @@ module.exports = {
   buildSettings,
   buildPubsub,
   buildError,
+  cleanError,
   endCallback,
   doneCallback,
 };

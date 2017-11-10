@@ -30,8 +30,8 @@ server.plug([
   IS_LIVE
     ? null
     : [Grown.Test],
-  Grown.Conn,
-  Grown.Router,
+  // Grown.Conn,
+  // Grown.Router,
   Grown.Router.HTTP,
   {
     before_send(ctx) {
@@ -76,9 +76,9 @@ if (IS_LIVE) {
 } else {
   server.request('/mix', (e, ctx) => {
     console.log(ctx.res.body);
-  });
-
-  Grown.Test.Request.request.call(server, '/x', (e, ctx) => {
+  }).then(() => Grown.Test.Request.request.call(server, '/x', (e, ctx) => {
     console.log(ctx.res.body);
+  })).catch(e => {
+    console.log(e);
   });
 }

@@ -86,18 +86,18 @@ function _run(task, state, options) {
 
 module.exports = function _pipelineFactory(label, pipeline, _callback) {
   /* istanbul ignore else */
-  if (!label) {
-    throw new Error(`Label for pipelines are required, given '${label}'`);
+  if (!label || typeof label !== 'string') {
+    throw new Error(`Label for pipelines are required, given '${JSON.stringify(label)}'`);
   }
 
   /* istanbul ignore else */
   if (!Array.isArray(pipeline)) {
-    throw new Error(`The pipeline must be an array, given '${pipeline}'`);
+    throw new Error(`The pipeline must be an array, given '${JSON.stringify(pipeline)}'`);
   }
 
   /* istanbul ignore else */
   if (_callback && typeof _callback !== 'function') {
-    throw new Error(`The callback must be a function, given '${_callback}'`);
+    throw new Error(`The callback must be a function, given '${JSON.stringify(_callback)}'`);
   }
 
   return function $pipeline(state, options) {

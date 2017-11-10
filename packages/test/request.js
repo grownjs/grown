@@ -77,7 +77,7 @@ module.exports = ($, util) => {
       }
 
       if (typeof callback !== 'function') {
-        throw new Error(`Expecting a function, given '${callback}'`);
+        throw new Error(`Expecting a function, given '${JSON.stringify(callback)}'`);
       }
 
       options = fix(url, method, options);

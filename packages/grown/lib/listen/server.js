@@ -5,7 +5,7 @@ const debug = require('debug')('grown:listen');
 const $host = require('./host');
 
 module.exports = function $server(ctx, options, callback) {
-  debug('Initializing ctx for %s', ctx.location.protocol);
+  debug('#%s Initializing <%s> protocol', process.pid, ctx.location.protocol);
 
   const protocolName = ctx.location.protocol.replace(':', '');
   const cb = $host.bind(this, this._protocols[protocolName]);
@@ -19,7 +19,7 @@ module.exports = function $server(ctx, options, callback) {
       _protocol = this._protocols[protocolName].createServer(cb);
     }
   } catch (e) {
-    throw new Error(`Protocol '${protocolName}' failed. ${e.message}`);
+    throw new Error(`Protocol '${protocolName}' failed. ${e.stack}`);
   }
 
   /* istanbul ignore else */
@@ -28,7 +28,7 @@ module.exports = function $server(ctx, options, callback) {
   }
 
   _protocol.listen(ctx.port, '0.0.0.0', function _onListen() {
-    debug('Server was started and listening at port', ctx.port);
+    debug('#%s Server was started and listening at port', process.pid, ctx.port);
 
     callback.call(this);
   });

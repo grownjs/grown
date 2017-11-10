@@ -1,7 +1,5 @@
 'use strict';
 
-const util = require('../util/object');
-
 function _expressMiddleware(callback) {
   return conn => {
     /* istanbul ignore else */
@@ -31,12 +29,12 @@ function _expressMiddleware(callback) {
   };
 }
 
-function _buildMiddleware(Factory, _name) {
+module.exports = (Factory, _name) => {
   const _suffix = _name ? ` (${_name})` : '';
 
   /* istanbul ignore else */
-  if (!Factory) {
-    throw new Error(`Expecting a valid callable, given '${Factory}'${_suffix}`);
+  if (!Factory || Array.isArray(Factory)) {
+    throw new Error(`Expecting a valid callable, given '${JSON.stringify(Factory)}'${_suffix}`);
   }
 
   /* istanbul ignore else */
@@ -97,17 +95,4 @@ function _buildMiddleware(Factory, _name) {
     call: Factory,
     type: 'function',
   };
-}
-
-module.exports = (value, name) => {
-  if (!(typeof value === 'function' || Array.isArray(value))) {
-    throw new Error(`Expecting a function or array, given '${value}'`);
-  }
-
-  if (Array.isArray(value)) {
-    return util.flattenArgs(value)
-      .map((cb, i) => _buildMiddleware(cb, `${name}.${cb.name || i}`));
-  }
-
-  return _buildMiddleware(value, name);
 };

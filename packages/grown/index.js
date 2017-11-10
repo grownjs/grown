@@ -37,28 +37,30 @@ const Grown = $('Grown', options => {
 
   return $({
     init() {
-      return {
-        methods: {
-          on: scope._events.on.bind(this),
-          off: scope._events.off.bind(this),
-          once: scope._events.once.bind(this),
-          emit: scope._events.emit.bind(this),
-        },
-      };
+      this.on = scope._events.on;
+      this.off = scope._events.off;
+      this.once = scope._events.once;
+      this.emit = scope._events.emit;
+
+      this.once('listen', () => this.emit('start'));
     },
     methods: {
       run(context, callback) {
-        const conn = $({
-          init: (context || {}).init,
-          props: (context || {}).props,
-          methods: (context || {}).methods,
-          extensions: scope._extensions.concat((context || {}).extensions || []),
-        });
+        return Promise.resolve()
+          .then(() => this.emit('start'))
+          .then(() => {
+            const conn = $({
+              init: (context || {}).init,
+              props: (context || {}).props,
+              methods: (context || {}).methods,
+              extensions: scope._extensions.concat((context || {}).extensions || []),
+            });
 
-        return scope._callback(conn, scope._options)
-          .then(() => typeof callback === 'function' && callback(null, conn))
-          .catch(e => typeof callback === 'function' && callback(e, conn))
-          .then(() => conn);
+            return scope._callback(conn, scope._options)
+              .then(() => typeof callback === 'function' && callback(null, conn))
+              .catch(e => typeof callback === 'function' && callback(e, conn))
+              .then(() => conn);
+          });
       },
 
       plug() {
@@ -91,7 +93,7 @@ const Grown = $('Grown', options => {
               }
             });
           } catch (e) {
-            throw new Error(`${p.name} definition failed. ${e.message}`);
+            throw new Error(`${(p && p.name) || p} definition failed. ${e.stack}`);
           }
 
           /* istanbul ignore else */
