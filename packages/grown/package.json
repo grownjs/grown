@@ -23,6 +23,6 @@
   },
   "dependencies": {
     "clean-stack": "^1.3.0",
-    "object-new": "^0.1.4"
+    "object-new": "^0.1.5"
   }
 }
