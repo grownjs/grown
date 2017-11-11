@@ -51,8 +51,10 @@ const Grown = $('Grown', options => {
           .then(() => this.emit('start'))
           .then(() => {
             const conn = $({
+              name: (context || {}).name,
               init: (context || {}).init,
               props: (context || {}).props,
+              mixins: (context || {}).mixins,
               methods: (context || {}).methods,
               extensions: scope._extensions.concat((context || {}).extensions || []),
             });

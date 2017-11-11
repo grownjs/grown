@@ -89,6 +89,7 @@ module.exports = ($, util) => {
       pid += 1;
 
       return this.run({
+        name: 'Conn',
         init() {
           this._req = options;
           this.pid = `${process.pid}.${pid}`;

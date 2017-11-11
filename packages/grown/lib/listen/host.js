@@ -39,11 +39,13 @@ module.exports = function $host(_protocol, req, res) {
 
   /* istanbul ignore else */
   if (!_server) {
-    debug('Wait. Missing connection object for %s (%s)', hostname, port);
+    debug('#%s Wait. Missing connection for %s (%s)', PID, hostname, port);
 
     try {
       // fallback
-      _server = this._hosts[Object.keys(this._hosts)[0]];
+      _server = this._hosts[hostname] = this._hosts[Object.keys(this._hosts)[0]];
+
+      debug('#%s Using first available host from <{ %s }>', PID, Object.keys(this._hosts).join(', '));
     } catch (e) {
       res.status = 500;
       res.end(`Bad input: ${hostname} (${port})`);
@@ -62,6 +64,7 @@ module.exports = function $host(_protocol, req, res) {
 
   // built-in connection
   this._callback($new({
+    name: 'Conn',
     props: {
       req: () => req,
       res: () => res,
