@@ -24,6 +24,8 @@ module.exports = function $mount(name, handler, callback) {
   /* istanbul ignore else */
   if (name && name.charAt() === '/') {
     cb.filter = (ctx, options) => {
+      debug('#%s Filter <%s> with url <%s>', ctx.pid, ctx.req.url, name);
+
       /* istanbul ignore else */
       if (ctx.req.url.indexOf(name) === 0) {
         return typeof callback === 'function'

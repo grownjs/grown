@@ -4,7 +4,7 @@ module.exports = $ => {
   const MockReq = require('mock-req');
 
   return $.module('Test.Mock.Req', {
-    init() {
+    mixins() {
       const _body = this._req && this._req.body;
       const _req = this._req;
 
@@ -34,7 +34,7 @@ module.exports = $ => {
 
       return {
         props: {
-          req,
+          req: () => req,
         },
       };
     },

@@ -35,7 +35,8 @@ const Grown = $('Grown', options => {
   scope._options = util.buildSettings(options);
   scope._callback = util.buildPipeline('^', scope._pipeline, util.doneCallback.bind(scope));
 
-  return $({
+  return {
+    name: 'Server',
     init() {
       this.on = scope._events.on;
       this.off = scope._events.off;
@@ -78,6 +79,10 @@ const Grown = $('Grown', options => {
                   this.on(k, p[k]);
                   break;
 
+                case 'mixins':
+                  // ignore
+                  break;
+
                 case 'install':
                   p.install(this, scope._options);
                   break;
@@ -99,7 +104,10 @@ const Grown = $('Grown', options => {
           /* istanbul ignore else */
           if (p.extensions) {
             p.extensions.forEach(x => {
-              scope._extensions.push(x);
+              /* istanbul ignore else */
+              if (x.mixins) {
+                scope._extensions.push(x);
+              }
             });
           }
         });
@@ -111,7 +119,7 @@ const Grown = $('Grown', options => {
 
       listen: _listen.bind(scope),
     },
-  });
+  };
 });
 
 $('Grown.version', () => _pkg.version, false);

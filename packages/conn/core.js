@@ -96,7 +96,7 @@ module.exports = $ => {
   }
 
   return $.module('Conn', {
-    init() {
+    mixins() {
       /* istanbul ignore else */
       if (!this.res) {
         throw new Error('Response is missing from connection');

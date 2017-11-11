@@ -1,5 +1,7 @@
 'use strict';
 
+const debug = require('debug')('grown:test');
+
 const path = require('path');
 const fs = require('fs');
 
@@ -79,6 +81,8 @@ module.exports = ($, util) => {
       if (typeof callback !== 'function') {
         throw new Error(`Expecting a function, given '${JSON.stringify(callback)}'`);
       }
+
+      debug('#%s Request %s %s', process.pid, (method || 'GET').toUpperCase(), url);
 
       options = fix(url, method, options);
 
