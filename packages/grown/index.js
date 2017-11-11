@@ -81,6 +81,7 @@ const Grown = $('Grown', options => {
                   this.on(k, p[k]);
                   break;
 
+                case 'extensions':
                 case 'mixins':
                   // ignore
                   break;

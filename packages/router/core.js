@@ -79,7 +79,7 @@ module.exports = ($, util) => {
   }
 
   return $.module('Router', {
-    init() {
+    mixins() {
       /* istanbul ignore else */
       if (!this.req) {
         throw new Error('Request is missing from connection');
