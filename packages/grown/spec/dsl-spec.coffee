@@ -23,8 +23,9 @@ describe 'Grown', ->
       expect(Grown.Dummy).toBeUndefined()
 
       Grown.module 'Dummy',
-        props:
-          value: 42
+        mixins:
+          props:
+            value: 42
 
       expect(Grown.Dummy.new().value).toEqual 42
 
