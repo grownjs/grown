@@ -11,6 +11,6 @@
   "license": "ISC",
   "dependencies": {
     "debug": "^3.1.0",
-    "route-mappings": "^0.5.3"
+    "route-mappings": "^0.5.4"
   }
 }

@@ -37,7 +37,7 @@ server.plug([
   Grown.Router.Routes({
     router(map) {
       return map()
-        .get('/', 'Example');
+        .get('/y', ctx => ctx.res.write('Y\n'));
     },
   }),
   // Grown.Router.Pipeline,
@@ -86,6 +86,8 @@ if (IS_LIVE) {
   server.request('/mix', (e, ctx) => {
     console.log(ctx.res.body);
   }).then(() => Grown.Test.Request.request.call(server, '/x', (e, ctx) => {
+    console.log(ctx.res.body);
+  })).then(() => Grown.Test.Request.request.call(server, '/y', (e, ctx) => {
     console.log(ctx.res.body);
   })).catch(e => {
     console.log(e.stack);

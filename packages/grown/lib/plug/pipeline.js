@@ -153,7 +153,7 @@ module.exports = function _pipelineFactory(label, pipeline, _callback) {
         try {
           value = _run(cb, state, options);
         } catch (e) {
-          debug('#%s Pipeline <%s> errored on <%s>: %s', state.pid, label, cb.name, e.message);
+          debug('#%s Pipeline <%s> errored on <%s> (%s)', state.pid, label, cb.name, e.message);
 
           e.summary = `Pipeline ${cb.name}${cb.call ? `.${cb.call[1]}` : ''} was errored.`;
 

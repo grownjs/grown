@@ -92,7 +92,9 @@ module.exports = ($, util) => {
         name: 'Conn',
         init() {
           this._req = options;
-          this.pid = `${process.pid}.${pid}`;
+        },
+        props: {
+          pid: () => `${process.pid}.${pid}`,
         },
       }, callback);
     },
