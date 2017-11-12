@@ -43,9 +43,9 @@ module.exports = function $host(_protocol, req, res) {
 
     try {
       // fallback
-      _server = this._hosts[hostname] = this._hosts[Object.keys(this._hosts)[0]];
+      _server = this._hosts[Object.keys(this._hosts)[0]];
 
-      debug('#%s Using first available host from <{ %s }>', PID, Object.keys(this._hosts).join(', '));
+      debug('#%s Using first available connection from <{ %s }>', PID, Object.keys(this._hosts).join(', '));
     } catch (e) {
       res.status = 500;
       res.end(`Bad input: ${hostname} (${port})`);
