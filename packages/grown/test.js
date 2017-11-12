@@ -31,8 +31,17 @@ server.plug([
     ? null
     : [Grown.Test],
   // Grown.Conn,
-  // Grown.Router,
+  Grown.Router.Base,
   Grown.Router.HTTP,
+  // Grown.Router.Views,
+  Grown.Router.Routes({
+    router(map) {
+      return map()
+        .get('/', 'Example');
+    },
+  }),
+  // Grown.Router.Pipeline,
+  // Grown.Router.Middleware,
   {
     before_send(ctx) {
       ctx.res.write('\nBEFORE_SEND');
@@ -79,6 +88,6 @@ if (IS_LIVE) {
   }).then(() => Grown.Test.Request.request.call(server, '/x', (e, ctx) => {
     console.log(ctx.res.body);
   })).catch(e => {
-    console.log(e);
+    console.log(e.stack);
   });
 }

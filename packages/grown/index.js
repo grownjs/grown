@@ -93,9 +93,13 @@ const Grown = $('Grown', options => {
                 default:
                   /* istanbul ignore else */
                   if (k[0] !== k[0].toUpperCase()) {
-                    $new.readOnlyProperty(this, k, p[k], {
-                      isMethod: false,
-                    });
+                    if (this[k] && typeof p[k] === 'function') {
+                      p[k].call(this, () => this[k], scope._options);
+                    } else {
+                      $new.readOnlyProperty(this, k, p[k], {
+                        isMethod: false,
+                      });
+                    }
                   }
                   break;
               }

@@ -29,11 +29,6 @@ module.exports = ($, util) => {
 
       delete route.handler;
 
-      /* istanbul ignore else */
-      if (route.pipeline) {
-        route.pipeline = util.buildMiddleware(route.pipeline, route.as);
-      }
-
       // group all routes per-verb
       this[route.verb].push(route);
     });
@@ -64,7 +59,9 @@ module.exports = ($, util) => {
     if (_handler) {
       /* istanbul ignore else */
       if (typeof _handler.callback !== 'function' && _handler.pipeline) {
-        _handler.callback = util.buildPipeline(_handler.path, _handler.pipeline);
+        /* istanbul ignore else */
+        _handler.callback = util.buildPipeline(_handler.path,
+          _handler.pipeline.map(x => util.buildMiddleware(x, _handler.as)));
       }
 
       /* istanbul ignore else */
@@ -78,13 +75,7 @@ module.exports = ($, util) => {
     throw util.buildError(404);
   }
 
-  return $.module('Router', {
-    mixins() {
-      /* istanbul ignore else */
-      if (!this.req) {
-        throw new Error('Request is missing from connection');
-      }
-    },
+  return $.module('Router.Base', {
     install(ctx, options) {
       const routeMappings = require('route-mappings');
 

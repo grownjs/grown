@@ -97,11 +97,6 @@ module.exports = $ => {
 
   return $.module('Conn', {
     mixins() {
-      /* istanbul ignore else */
-      if (!this.res) {
-        throw new Error('Response is missing from connection');
-      }
-
       const scope = {
         _type: 'text/html',
         _body: null,
