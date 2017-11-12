@@ -76,19 +76,20 @@ module.exports = ($, util) => {
   }
 
   return $.module('Router.Base', {
-    install(ctx, options) {
+    install(ctx) {
       const routeMappings = require('route-mappings');
 
       ctx.router = routeMappings();
 
-      const _matches = {};
+      this._routes = {};
 
       // compile fast-routes
       ctx.once('start', () =>
-        group.call(_matches, ctx));
-
+        group.call(this._routes, ctx));
+    },
+    call(conn, options) {
       // match and execute
-      ctx.mount(`${this.class}.dispatch`, conn => invoke.call(_matches, conn, options));
+      return invoke.call(this._routes, conn, options);
     },
   });
 };

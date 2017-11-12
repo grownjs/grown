@@ -28,8 +28,8 @@ const Grown = $('Grown', options => {
   scope._servers = {};
   scope._protocols = {};
 
-  scope._extensions = [];
   scope._pipeline = [];
+  scope._extensions = [];
 
   scope._events = util.buildPubsub();
   scope._options = util.buildSettings(options);
@@ -84,6 +84,14 @@ const Grown = $('Grown', options => {
                 case 'extensions':
                 case 'mixins':
                   // ignore
+                  break;
+
+                case 'call':
+                  scope._pipeline.push({
+                    name: p.class || p.name || '?',
+                    type: 'method',
+                    call: [p, k],
+                  });
                   break;
 
                 case 'install':

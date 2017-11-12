@@ -1,35 +1,59 @@
 'use strict';
 
 module.exports = ($, util) => {
-  function on(method) {
+  function on(method, callback) {
     return function route(path, cb) {
       if (!(typeof cb === 'function' || Array.isArray(cb))) {
         throw new Error(`Expecting a function or array, given '${JSON.stringify(cb)}'`);
       }
 
       if (this.router) {
-        this.router[method.toLowerCase()](path, {
-          pipeline: util.flattenArgs(cb),
-        });
+        if (typeof this.router.namespace === 'function') {
+          this.router[method.toLowerCase()](path, {
+            pipeline: util.flattenArgs(cb),
+          });
+        } else {
+          throw new Error(`Expecting a valid router, given '${this.router}'`);
+        }
       } else {
-        const _call = util.buildPipeline(path, util.flattenArgs(cb).map(util.buildMiddleware));
-
-        this.mount(path, (conn, options) => {
-          if (conn.req.method === method) {
-            return _call(conn, options);
-          }
-        });
+        callback(path, method, util.buildPipeline(path, util.flattenArgs(cb).map(util.buildMiddleware)));
       }
 
       return this;
     };
   }
 
+  function add(path, method, pipeline) {
+    if (!this._routes[method]) {
+      this._routes[method] = {};
+    }
+
+    this._routes[method][path] = pipeline;
+  }
+
   return $.module('Router.HTTP', {
-    get: on('GET'),
-    put: on('PUT'),
-    post: on('POST'),
-    patch: on('PATCH'),
-    delete: on('DELETE'),
+    install(ctx) {
+      this._routes = {};
+
+      ctx.get = on('GET', add.bind(this));
+      ctx.put = on('PUT', add.bind(this));
+      ctx.post = on('POST', add.bind(this));
+      ctx.patch = on('PATCH', add.bind(this));
+      ctx.delete = on('DELETE', add.bind(this));
+    },
+    call(conn, options) {
+      if (!this.router) {
+        const routes = this._routes[conn.req.method];
+        const pipeline = routes && routes[conn.req.url.split('?')[0]];
+
+        if (routes && pipeline) {
+          return pipeline(conn, options);
+        }
+
+        throw util.buildError(routes
+          ? 404
+          : 403);
+      }
+    },
   });
 };

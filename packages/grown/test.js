@@ -1,14 +1,21 @@
 'use strict';
 
-require('debug').enable('*');
-
+const IS_DEBUG = process.argv.slice(2).indexOf('--debug') > -1;
 const IS_LIVE = process.argv.slice(2).indexOf('--live') > -1;
+
+if (IS_DEBUG) {
+  require('debug').enable('*');
+}
 
 const Grown = require('.');
 
 Grown.use(require('./../router'));
 Grown.use(require('./../test'));
 Grown.use(require('./../conn'));
+
+if (IS_DEBUG) {
+  console.log('Grown instance', require('util').inspect(Grown));
+}
 
 const server = new Grown({
   env: process.env.NODE_ENV || 'development',
@@ -48,6 +55,10 @@ server.plug([
     },
   },
 ]);
+
+if (IS_DEBUG) {
+  console.log('Server instance', server);
+}
 
 server.mount((ctx, options) =>
   ctx.next(() => {
