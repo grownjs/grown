@@ -28,11 +28,11 @@ server.plug([
 ]);
 
 server.get('/static', ctx => ctx.res.write('STATIC'));
-server.get('/prefix/*_', ctx => ctx.res.write(`_: ${ctx.req.params}`));
-server.get('/:x', ctx => ctx.res.write(`X: ${ctx.req.params}`));
-server.get('/:_x/:y', ctx => ctx.res.write(`Y: ${ctx.req.params}`));
-server.get('/:x/:y/:z', ctx => ctx.res.write(`Z: ${ctx.req.params}`));
-server.get('/*any', ctx => ctx.res.write(`ANY: ${ctx.req.params}`));
+server.get('/prefix/*_', ctx => ctx.res.write(`_: ${JSON.stringify(ctx.req.params)}`));
+server.get('/:x', ctx => ctx.res.write(`X: ${JSON.stringify(ctx.req.params)}`));
+server.get('/:_x/:y', ctx => ctx.res.write(`Y: ${JSON.stringify(ctx.req.params)}`));
+server.get('/:x/:y/:z', ctx => ctx.res.write(`Z: ${JSON.stringify(ctx.req.params)}`));
+server.get('/*any', ctx => ctx.res.write(`ANY: ${JSON.stringify(ctx.req.params)}`));
 
 const path = (process.argv.slice(2)[0] || '').charAt() === '/'
   ? process.argv.slice(2)[0]
