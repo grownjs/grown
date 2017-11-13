@@ -60,11 +60,15 @@ const Grown = $('Grown', options => {
             });
 
             return Promise.resolve()
-              .then(() => this.emit('request', conn, scope._options))
+              .then(() => {
+                this.emit('request', conn, scope._options);
+              })
               .then(() => scope._callback(conn, scope._options))
               .then(() => typeof callback === 'function' && callback(null, conn))
               .catch(e => typeof callback === 'function' && callback(e, conn))
-              .catch(e => this._events.emit('failure', e, conn, this._options))
+              .catch(e => {
+                this._events.emit('failure', e, conn, this._options);
+              })
               .then(() => conn);
           });
       },
