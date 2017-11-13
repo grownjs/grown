@@ -57,46 +57,50 @@ module.exports = ($, util) => {
   }
 
   return $.module('Test.Request', {
-    request(url, method, options, callback) {
-      if (typeof url === 'function') {
-        callback = url;
-        url = undefined;
-      }
+    install: ctx => ({
+      methods: {
+        request(url, method, options, callback) {
+          if (typeof url === 'function') {
+            callback = url;
+            url = undefined;
+          }
 
-      if (typeof url === 'object') {
-        options = url;
-        url = undefined;
-      }
+          if (typeof url === 'object') {
+            options = url;
+            url = undefined;
+          }
 
-      if (typeof method === 'function') {
-        callback = method;
-        method = undefined;
-      }
+          if (typeof method === 'function') {
+            callback = method;
+            method = undefined;
+          }
 
-      if (typeof options === 'function') {
-        callback = options;
-        options = undefined;
-      }
+          if (typeof options === 'function') {
+            callback = options;
+            options = undefined;
+          }
 
-      if (typeof callback !== 'function') {
-        throw new Error(`Expecting a function, given '${JSON.stringify(callback)}'`);
-      }
+          if (typeof callback !== 'function') {
+            throw new Error(`Expecting a function, given '${JSON.stringify(callback)}'`);
+          }
 
-      debug('#%s Request %s %s', process.pid, (method || 'GET').toUpperCase(), url);
+          debug('#%s Request %s %s', process.pid, (method || 'GET').toUpperCase(), url);
 
-      options = fix(url, method, options);
+          options = fix(url, method, options);
 
-      pid += 1;
+          pid += 1;
 
-      return this.run({
-        name: 'Conn',
-        init() {
-          this._req = options;
+          return ctx.run({
+            name: 'Conn',
+            init() {
+              this._req = options;
+            },
+            props: {
+              pid: () => `${process.pid}.${pid}`,
+            },
+          }, callback);
         },
-        props: {
-          pid: () => `${process.pid}.${pid}`,
-        },
-      }, callback);
-    },
+      },
+    }),
   });
 };
