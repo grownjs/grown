@@ -94,8 +94,14 @@ module.exports = ($, util) => {
         group.call(this._routes, ctx));
     },
     call(conn, options) {
-      // match and execute
-      return invoke.call(this._routes, conn, options);
+      try {
+        // match and execute
+        return invoke.call(this._routes, conn, options);
+      } catch (e) {
+        if (!options('router.fallthrough')) {
+          throw e;
+        }
+      }
     },
   });
 };

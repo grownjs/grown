@@ -86,9 +86,11 @@ module.exports = ($, util) => {
           return pipeline(conn, options);
         }
 
-        throw util.buildError(map
-          ? 404
-          : 403);
+        if (!options('router.fallthrough')) {
+          throw util.buildError(map
+            ? 404
+            : 403);
+        }
       }
     },
   });

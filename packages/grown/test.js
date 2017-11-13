@@ -20,11 +20,14 @@ if (IS_DEBUG) {
 const server = new Grown({
   env: process.env.NODE_ENV || 'development',
   cwd: process.cwd(),
+  router: {
+    fallthrough: true,
+  },
 });
 
 server.plug([
   Grown.Test,
-  Grown.Router.HTTP,
+  Grown.Router,
 ]);
 
 server.get('/static', ctx => ctx.res.write('STATIC'));
