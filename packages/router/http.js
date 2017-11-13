@@ -55,13 +55,15 @@ module.exports = ($, util) => {
         this._routes = {};
       }
 
-      util.mergeMethodsInto.call(ctx, ctx, {
-        get: on('GET', add.bind(this)),
-        put: on('PUT', add.bind(this)),
-        post: on('POST', add.bind(this)),
-        patch: on('PATCH', add.bind(this)),
-        delete: on('DELETE', add.bind(this)),
-      });
+      return {
+        methods: {
+          get: on('GET', add.bind(this)),
+          put: on('PUT', add.bind(this)),
+          post: on('POST', add.bind(this)),
+          patch: on('PATCH', add.bind(this)),
+          delete: on('DELETE', add.bind(this)),
+        },
+      };
     },
     call(conn, options) {
       if (this._routes) {
