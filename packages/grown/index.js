@@ -38,7 +38,7 @@ const Grown = $('Grown', options => {
   return {
     name: 'Server',
     init() {
-      util.mergeMethodsInto(this, scope._events);
+      util.mergeMethodsInto.call(this, this, scope._events);
       this.once('listen', () => this.emit('start'));
     },
     methods: {
