@@ -22,3 +22,6 @@ util._extend(module.exports, {
 Object.keys($new).forEach(key => {
   module.exports[key] = $new[key];
 });
+
+// common utils
+module.exports.inspect = util.inspect;
