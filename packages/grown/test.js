@@ -1,7 +1,7 @@
 'use strict';
 
 const IS_DEBUG = process.argv.slice(2).indexOf('--debug') > -1;
-// const IS_LIVE = process.argv.slice(2).indexOf('--live') > -1;
+const IS_LIVE = process.argv.slice(2).indexOf('--live') > -1;
 
 if (IS_DEBUG) {
   require('debug').enable('*');
@@ -20,27 +20,48 @@ if (IS_DEBUG) {
 const server = new Grown({
   env: process.env.NODE_ENV || 'development',
   cwd: process.cwd(),
-  router: {
-    fallthrough: true,
-  },
 });
 
 server.plug([
-  Grown.Test,
-  Grown.Router,
-]);
+  !IS_LIVE && Grown.Test,
+  Grown.Router.Mappings({
+    // fallthrough: true,
+  }),
+  Grown.module('RequestTime', {
+    before_send(e, ctx) {
+      const diff = (new Date()) - this._start;
 
-server.get('/static', ctx => ctx.res.write('STATIC'));
-server.get('/prefix/*_', ctx => ctx.res.write(`_: ${JSON.stringify(ctx.req.params)}`));
-server.get('/:x', ctx => ctx.res.write(`X: ${JSON.stringify(ctx.req.params)}`));
-server.get('/:_x/:y', ctx => ctx.res.write(`Y: ${JSON.stringify(ctx.req.params)}`));
-server.get('/:x/:y/:z', ctx => ctx.res.write(`Z: ${JSON.stringify(ctx.req.params)}`));
-server.get('/*any', ctx => ctx.res.write(`ANY: ${JSON.stringify(ctx.req.params)}`));
+      ctx.res.write(`\nTime: ${diff / 1000}ms.`);
+    },
+    install(ctx) {
+      ctx.on('request', () => {
+        this._start = new Date();
+      });
+    },
+  }),
+]);
 
 const path = (process.argv.slice(2)[0] || '').charAt() === '/'
   ? process.argv.slice(2)[0]
   : '/';
 
-server.request(path, (err, conn) => {
-  console.log(conn.res.body);
+if (!IS_LIVE) {
+  server.request(path, (err, conn) => {
+    console.log(conn.res.body);
+    console.log('---');
+    console.log('END');
+  });
+} else {
+  server.listen(8080);
+}
+
+server.on('failure', (e, conn) => {
+  conn.res.write(e.stack);
+  conn.res.end();
 });
+
+server.on('start', () => {
+  console.log('Go!');
+  console.log('---');
+});
+

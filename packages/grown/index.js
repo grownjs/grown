@@ -10,7 +10,7 @@ const util = require('./lib/util');
 const _mount = require('./lib/mount');
 const _listen = require('./lib/listen');
 
-const _protected = ['before_send', 'install', 'call'];
+const _protected = ['before_send', 'install', 'pipe'];
 
 function $(id, props, extensions) {
   return $new(id, props, $, extensions);
@@ -41,12 +41,14 @@ const Grown = $('Grown', options => {
     name: 'Server',
     init() {
       util.mergeMethodsInto.call(this, this, scope._events);
+
+      this.once('begin', () => this.emit('start'));
       this.once('listen', () => this.emit('start'));
     },
     methods: {
       run(context, callback) {
         return Promise.resolve()
-          .then(() => this.emit('start'))
+          .then(() => this.emit('begin'))
           .then(() => {
             const conn = $({
               name: (context || {}).name,
@@ -57,9 +59,12 @@ const Grown = $('Grown', options => {
               extensions: scope._extensions.concat((context || {}).extensions || []),
             });
 
-            return scope._callback(conn, scope._options)
+            return Promise.resolve()
+              .then(() => this.emit('request', conn, scope._options))
+              .then(() => scope._callback(conn, scope._options))
               .then(() => typeof callback === 'function' && callback(null, conn))
               .catch(e => typeof callback === 'function' && callback(e, conn))
+              .catch(e => this._events.emit('failure', e, conn, this._options))
               .then(() => conn);
           });
       },
@@ -75,7 +80,7 @@ const Grown = $('Grown', options => {
 
             /* istanbul ignore else */
             if (typeof p.before_send === 'function') {
-              this.on('before_send', p.before_send);
+              this.on('before_send', p.before_send.bind(p));
             }
 
             /* istanbul ignore else */

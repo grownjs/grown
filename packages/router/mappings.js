@@ -126,7 +126,7 @@ module.exports = ($, util) => {
         return invoke.call(this._routes, conn, options);
       } catch (e) {
         /* istanbul ignore else */
-        if (!this.falltrough) {
+        if (!this.fallthrough) {
           throw e;
         }
       }

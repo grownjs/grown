@@ -63,7 +63,7 @@ module.exports = function $host(_protocol, req, res) {
   });
 
   // built-in connection
-  this._callback($new({
+  const conn = $new({
     name: 'Conn',
     props: {
       req: () => req,
@@ -83,5 +83,10 @@ module.exports = function $host(_protocol, req, res) {
       script_name: path.resolve(process.argv[1]),
     },
     extensions: this._extensions,
-  }), this._options);
+  });
+
+  Promise.resolve()
+    .then(() => this._events.emit('request', conn, this._options))
+    .then(() => this._callback(conn, this._options))
+    .catch(e => this._events.emit('failure', e, conn, this._options));
 };

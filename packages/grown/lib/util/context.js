@@ -172,7 +172,7 @@ function endCallback(err, conn, options) {
     .then(() => {
       /* istanbul ignore else */
       if (!((conn.res && conn.res.finished) || conn.halted)) {
-        return this._events.emit('before_send', conn, options);
+        return this._events.emit('before_send', err, conn, options);
       }
     })
     .then(() => {
