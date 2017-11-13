@@ -79,7 +79,7 @@ module.exports = ($, util) => {
     install(ctx) {
       const routeMappings = require('route-mappings');
 
-      ctx.router = routeMappings();
+      util.readOnlyProperty(ctx, 'router', routeMappings());
 
       this._routes = {};
 

@@ -38,11 +38,7 @@ const Grown = $('Grown', options => {
   return {
     name: 'Server',
     init() {
-      this.on = scope._events.on;
-      this.off = scope._events.off;
-      this.once = scope._events.once;
-      this.emit = scope._events.emit;
-
+      util.mergeMethodsInto(this, scope._events);
       this.once('listen', () => this.emit('start'));
     },
     methods: {
@@ -104,7 +100,7 @@ const Grown = $('Grown', options => {
                     if (this[k]) {
                       util.invokeArgs(this, p, k);
                     } else {
-                      $new.readOnlyProperty(this, k, p[k], {
+                      util.readOnlyProperty(this, k, p[k], {
                         isMethod: false,
                       });
                     }

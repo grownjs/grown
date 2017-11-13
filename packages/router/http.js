@@ -35,11 +35,13 @@ module.exports = ($, util) => {
     install(ctx) {
       this._routes = {};
 
-      ctx.get = on('GET', add.bind(this));
-      ctx.put = on('PUT', add.bind(this));
-      ctx.post = on('POST', add.bind(this));
-      ctx.patch = on('PATCH', add.bind(this));
-      ctx.delete = on('DELETE', add.bind(this));
+      util.mergeMethodsInto.call(ctx, ctx, {
+        get: on('GET', add.bind(this)),
+        put: on('PUT', add.bind(this)),
+        post: on('POST', add.bind(this)),
+        patch: on('PATCH', add.bind(this)),
+        delete: on('DELETE', add.bind(this)),
+      });
     },
     call(conn, options) {
       if (!this.router) {
