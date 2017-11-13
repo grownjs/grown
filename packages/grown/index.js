@@ -101,8 +101,8 @@ const Grown = $('Grown', options => {
                 default:
                   /* istanbul ignore else */
                   if (k[0] !== k[0].toUpperCase()) {
-                    if (this[k] && typeof p[k] === 'function') {
-                      p[k].call(this, () => this[k], scope._options);
+                    if (this[k]) {
+                      util.invokeArgs(this, p, k);
                     } else {
                       $new.readOnlyProperty(this, k, p[k], {
                         isMethod: false,
@@ -113,7 +113,11 @@ const Grown = $('Grown', options => {
               }
             });
           } catch (e) {
-            throw new Error(`${(p && p.name) || p} definition failed. ${e.stack}`);
+            if (p.class || p.name) {
+              throw new Error(`${p.class || p.name} definition failed. ${e.stack}`);
+            } else {
+              throw new Error(`Definition failed, given '{${Object.keys(p).join(', ')}}'. ${e.stack}`);
+            }
           }
 
           /* istanbul ignore else */

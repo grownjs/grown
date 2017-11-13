@@ -41,23 +41,45 @@ server.plug([
   Grown.Router.Base,
   Grown.Router.HTTP,
   // Grown.Router.Views,
-  Grown.Router.Routes({
-    router(map) {
-      return map()
-        .get('/y', ctx => ctx.res.write('Y\n'));
-    },
-  }),
+  Grown.Router.Routes,
   // Grown.Router.Pipeline,
   // Grown.Router.Middleware,
   {
     before_send(ctx) {
       ctx.res.write('\nBEFORE_SEND');
     },
+    // invoke expressions...
+    router: [
+      // direct calls to target
+      (_, router) => {
+        router.get('/y', ctx => ctx.res.write('Y\n'));
+      },
+      // invoke methods by props
+      {
+        // arrays are required to sent as arguments
+        get: [['/z', ctx => ctx.res.write('Z\n')]],
+      },
+      {
+        // calls should be nested to guarantee multiple executions
+        get: [
+          ['/a', ctx => ctx.res.write('A\n')],
+          ['/b', ctx => ctx.res.write('B\n')],
+        ],
+      },
+      {
+        // methods calls con be made too
+        post: (_, route) => {
+          route('/m', ctx => ctx.res.write('M\n'));
+          route('/n', ctx => ctx.res.write('N\n'));
+        },
+      },
+    ],
   },
 ]);
 
 if (IS_DEBUG) {
   console.log('Server instance', server);
+  console.log('Defined routes', server.router.routes);
 }
 
 server.mount((ctx, options) =>
