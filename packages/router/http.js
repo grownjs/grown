@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = ($, util) => {
-  function on(method, callback) {
+  function on(method, fallback) {
     return function route(path, cb) {
       if (!(typeof cb === 'function' || Array.isArray(cb))) {
         throw new Error(`Expecting a function or array, given '${JSON.stringify(cb)}'`);
@@ -16,7 +16,7 @@ module.exports = ($, util) => {
           throw new Error(`Expecting a valid router, given '${this.router}'`);
         }
       } else {
-        callback(path, method, util.buildPipeline(path, util.flattenArgs(cb).map(util.buildMiddleware)));
+        fallback(path, method, util.buildPipeline(path, util.flattenArgs(cb).map(util.buildMiddleware)));
       }
 
       return this;
@@ -51,7 +51,9 @@ module.exports = ($, util) => {
 
   return $.module('Router.HTTP', {
     install(ctx) {
-      this._routes = {};
+      if (!ctx.router) {
+        this._routes = {};
+      }
 
       util.mergeMethodsInto.call(ctx, ctx, {
         get: on('GET', add.bind(this)),
@@ -62,7 +64,7 @@ module.exports = ($, util) => {
       });
     },
     call(conn, options) {
-      if (!this.router) {
+      if (this._routes) {
         const map = this._routes[conn.req.method];
         const path = conn.req.url.split('?')[0];
 

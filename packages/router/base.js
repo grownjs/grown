@@ -69,6 +69,12 @@ module.exports = ($, util) => {
         throw new Error(`No callback found for ${_handler.path}`);
       }
 
+      conn.req.params = conn.req.params || {};
+
+      _handler.matcher.keys.forEach((key, i) => {
+        conn.req.params[key] = _handler.matcher.values[i];
+      });
+
       return _handler.callback(conn, options);
     }
 
