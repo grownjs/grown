@@ -81,7 +81,7 @@ module.exports = ($, util) => {
     throw util.buildError(404);
   }
 
-  return $.module('Router.Base', {
+  return $.module('Router.Mappings', {
     install(ctx) {
       const routeMappings = require('route-mappings');
 
