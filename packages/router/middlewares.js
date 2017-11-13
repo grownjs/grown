@@ -1,6 +1,6 @@
 'use strict';
 
 module.exports = $ => {
-  return $.module('Router.Middleware', {
+  return $.module('Router.Middlewares', {
   });
 };

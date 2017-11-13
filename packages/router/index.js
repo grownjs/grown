@@ -1,18 +1,16 @@
 'use strict';
 
 module.exports = ($, util) => {
-  const HTTP = require('./http')($, util);
-  const Views = require('./views')($, util);
+  const Middlewares = require('./middlewares')($, util);
   const Mappings = require('./mappings')($, util);
-  const Middleware = require('./middleware')($, util);
+  const Views = require('./views')($, util);
 
   return $.module('Router', {
     install(ctx) {
       ctx.plug([
-        HTTP,
-        Views,
+        Middlewares,
         Mappings,
-        Middleware,
+        Views,
       ]);
     },
   });
