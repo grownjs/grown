@@ -25,10 +25,28 @@ module.exports = ($, util) => {
 
   function add(path, method, pipeline) {
     if (!this._routes[method]) {
-      this._routes[method] = {};
+      this._routes[method] = {
+        all: [],
+        index: {},
+      };
     }
 
-    this._routes[method][path] = pipeline;
+    if (path.indexOf(':') === -1 && path.indexOf('*') === -1) {
+      this._routes[method].index[path] = pipeline;
+    } else {
+      const regex = new RegExp(`^${path
+        .replace(/\*[a-z]\w*/g, '(.*?)')
+        .replace(/\*_\w*/g, '(?:.*?)')
+        .replace(/:_\w*/g, '(?:[^/]+?)')
+        .replace(/:\w+/g, '([^/]+?)')
+      }$`);
+
+      this._routes[method].all.push({
+        path,
+        regex,
+        pipeline,
+      });
+    }
   }
 
   return $.module('Router.HTTP', {
@@ -45,14 +63,28 @@ module.exports = ($, util) => {
     },
     call(conn, options) {
       if (!this.router) {
-        const routes = this._routes[conn.req.method];
-        const pipeline = routes && routes[conn.req.url.split('?')[0]];
+        const map = this._routes[conn.req.method];
+        const path = conn.req.url.split('?')[0];
 
-        if (routes && pipeline) {
+        let pipeline = map && map.index[path];
+
+        if (!pipeline && map) {
+          for (let i = 0; i < map.all.length; i += 1) {
+            const matches = path.match(map.all[i].regex);
+
+            if (matches) {
+              conn.req.params = matches.slice(1);
+              pipeline = map.all[i].pipeline;
+              break;
+            }
+          }
+        }
+
+        if (pipeline) {
           return pipeline(conn, options);
         }
 
-        throw util.buildError(routes
+        throw util.buildError(map
           ? 404
           : 403);
       }
