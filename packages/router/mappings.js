@@ -77,7 +77,6 @@ module.exports = ($, util) => {
     if (_handler) {
       /* istanbul ignore else */
       if (typeof _handler.callback !== 'function' && _handler.pipeline) {
-        /* istanbul ignore else */
         _handler.callback = util.buildPipeline(_handler.path,
           _handler.pipeline.map(x => util.buildMiddleware(x, _handler.as)));
       }
@@ -121,12 +120,13 @@ module.exports = ($, util) => {
         },
       };
     },
-    call(conn, options) {
+    pipe(conn, options) {
       try {
         // match and execute
         return invoke.call(this._routes, conn, options);
       } catch (e) {
-        if (!options('router.fallthrough')) {
+        /* istanbul ignore else */
+        if (!this.falltrough) {
           throw e;
         }
       }
