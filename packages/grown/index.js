@@ -79,17 +79,17 @@ const Grown = $('Grown', options => {
             }
 
             /* istanbul ignore else */
-            if (typeof p.call === 'function') {
+            if (typeof p.pipe === 'function') {
               scope._pipeline.push({
                 name: p.class || p.name || '!?',
-                call: [p, 'call'],
-                type: 'method',
+                call: p.pipe.bind(p),
+                type: 'function',
               });
             }
 
             /* istanbul ignore else */
             if (typeof p.install === 'function') {
-              const def = p.install(this, scope._options);
+              const def = p.install.call(p, this, scope._options);
 
               /* istanbul ignore else */
               if (Object.prototype.toString.call(def) === '[object Object]') {
