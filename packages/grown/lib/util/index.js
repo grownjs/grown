@@ -2,6 +2,8 @@
 
 const util = require('util');
 
+const $new = require('object-new');
+
 const objectUtil = require('./object');
 const contextUtil = require('./context');
 
@@ -14,4 +16,9 @@ util._extend(module.exports, contextUtil);
 util._extend(module.exports, {
   buildPipeline,
   buildMiddleware,
+});
+
+// merge definition helpers
+Object.keys($new).forEach(key => {
+  module.exports[key] = $new[key];
 });
