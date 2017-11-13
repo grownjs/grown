@@ -91,8 +91,8 @@ const Grown = $('Grown', options => {
             if (typeof p.pipe === 'function') {
               scope._pipeline.push({
                 name: p.class || p.name || '!?',
-                call: p.pipe.bind(p),
-                type: 'function',
+                call: [p, 'pipe'],
+                type: 'method',
               });
             }
 

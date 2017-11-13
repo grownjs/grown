@@ -23,6 +23,7 @@ module.exports = ($, util) => {
 
   function group(ctx) {
     const _mappings = ctx.router.mappings;
+    const _routes = {};
 
     // resolve routing for controllers lookup
     ctx.router.routes.forEach(route => {
@@ -32,8 +33,8 @@ module.exports = ($, util) => {
       const controller = _handler.join('.');
 
       /* istanbul ignore else */
-      if (!this[route.verb]) {
-        this[route.verb] = [];
+      if (!_routes[route.verb]) {
+        _routes[route.verb] = [];
       }
 
       /* istanbul ignore else */
@@ -48,13 +49,15 @@ module.exports = ($, util) => {
       delete route.handler;
 
       // group all routes per-verb
-      this[route.verb].push(route);
+      _routes[route.verb].push(route);
     });
 
     // build mapping per-verb
-    Object.keys(this).forEach(verb => {
-      this[verb] = ctx.router.map(this[verb]);
+    Object.keys(_routes).forEach(verb => {
+      _routes[verb] = ctx.router.map(_routes[verb]);
     });
+
+    return _routes;
   }
 
   function invoke(conn, options) {
@@ -64,14 +67,14 @@ module.exports = ($, util) => {
     debug('#%s Trying to resolve any route matching %s %s', conn.pid, conn.req.method, conn.req.url);
 
     /* istanbul ignore else */
-    if (!this[_method]) {
+    if (!this._routes[_method]) {
       debug('#%s Error. There are no routes matching for this verb', conn.pid);
 
       throw util.buildError(405);
     }
 
     // speed up static routes
-    const _handler = this[_method](conn.req.url, 1);
+    const _handler = this._routes[_method](conn.req.url, 1);
 
     /* istanbul ignore else */
     if (_handler) {
@@ -104,11 +107,10 @@ module.exports = ($, util) => {
 
       util.readOnlyProperty(ctx, 'router', routeMappings());
 
-      this._routes = {};
-
-      // compile fast-routes
-      ctx.once('start', () =>
-        group.call(this._routes, ctx));
+      ctx.once('start', () => {
+        // compile fast-routes
+        this._routes = group(ctx);
+      });
 
       return {
         methods: {
@@ -123,7 +125,7 @@ module.exports = ($, util) => {
     pipe(conn, options) {
       try {
         // match and execute
-        return invoke.call(this._routes, conn, options);
+        return invoke.call(this, conn, options);
       } catch (e) {
         /* istanbul ignore else */
         if (!this.fallthrough) {

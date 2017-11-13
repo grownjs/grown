@@ -22,24 +22,26 @@ const server = new Grown({
   cwd: process.cwd(),
 });
 
+Grown.module('Request.ElapsedTime', {
+  before_send(e, ctx) {
+    const diff = (new Date()) - this._start;
+
+    ctx.res.write(`\nTime: ${diff / 1000}ms.`);
+  },
+  install(ctx) {
+    ctx.on('request', () => {
+      this._start = new Date();
+    });
+  },
+});
+
 server.plug([
   !IS_LIVE && Grown.Test,
-  Grown.Router.Mappings({
-    // fallthrough: true,
-  }),
-  Grown.module('RequestTime', {
-    before_send(e, ctx) {
-      const diff = (new Date()) - this._start;
-
-      ctx.res.write(`\nTime: ${diff / 1000}ms.`);
-    },
-    install(ctx) {
-      ctx.on('request', () => {
-        this._start = new Date();
-      });
-    },
-  }),
+  Grown.Router.Mappings,
+  Grown.Request.ElapsedTime,
 ]);
+
+server.get('/', ctx => ctx.res.write('OK'));
 
 const path = (process.argv.slice(2)[0] || '').charAt() === '/'
   ? process.argv.slice(2)[0]
