@@ -10,6 +10,8 @@ const util = require('./lib/util');
 const _mount = require('./lib/mount');
 const _listen = require('./lib/listen');
 
+const _protected = ['before_send', 'install', 'call'];
+
 function $(id, props, extensions) {
   return $new(id, props, $, extensions);
 }
@@ -71,41 +73,46 @@ const Grown = $('Grown', options => {
               debug('#%s Install <{ %s }>', process.pid, Object.keys(p).join(', '));
             }
 
+            /* istanbul ignore else */
+            if (typeof p.before_send === 'function') {
+              this.on('before_send', p.before_send);
+            }
+
+            /* istanbul ignore else */
+            if (typeof p.call === 'function') {
+              scope._pipeline.push({
+                name: p.class || p.name || '!?',
+                call: [p, 'call'],
+                type: 'method',
+              });
+            }
+
+            /* istanbul ignore else */
+            if (typeof p.install === 'function') {
+              const def = p.install(this, scope._options);
+
+              /* istanbul ignore else */
+              if (Object.prototype.toString.call(def) === '[object Object]') {
+                util.mergeDefinitionsInto.call(p, this, def, p.class || p.name || '!?');
+              }
+
+              return;
+            }
+
             Object.keys(p).forEach(k => {
-              switch (k) {
-                case 'before_send':
-                  this.on(k, p[k]);
-                  break;
+              /* istanbul ignore else */
+              if (_protected.indexOf(k) > -1) {
+                return;
+              }
 
-                case 'extensions':
-                case 'mixins':
-                  // ignore
-                  break;
+              /* istanbul ignore else */
+              if (k[0] !== k[0].toUpperCase()) {
+                /* istanbul ignore else */
+                if (!this[k]) {
+                  throw new Error(`Unexpected call to ${k}, given '${util.inspect(p[k])}'`);
+                }
 
-                case 'call':
-                  scope._pipeline.push({
-                    name: p.class || p.name || '?',
-                    type: 'method',
-                    call: [p, k],
-                  });
-                  break;
-
-                case 'install':
-                  p.install(this, scope._options);
-                  break;
-
-                default:
-                  /* istanbul ignore else */
-                  if (k[0] !== k[0].toUpperCase()) {
-                    if (this[k]) {
-                      util.invokeArgs(this, p, k);
-                    } else {
-                      util.readOnlyProperty(this, k, p[k], {
-                        isMethod: false,
-                      });
-                    }
-                  }
-                  break;
+                util.invokeArgs(this, p, k);
               }
             });
           } catch (e) {
