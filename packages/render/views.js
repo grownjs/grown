@@ -149,7 +149,7 @@ function _render(fn, data) {
 }
 
 module.exports = ($, util) => {
-  function render(view, cached, options) {
+  function _partial(view, cached, options) {
     const _ids = !Array.isArray(view.src) && view.src
       ? [view.src]
       : view.src;
@@ -244,49 +244,31 @@ module.exports = ($, util) => {
     buildHTML,
     buildAttr,
     buildCSS,
+    _partial,
     _render,
-    render,
 
     // default options
+    _cache: {},
     folders: [],
 
     // setup extensions
     install(ctx, options) {
-      const env = options('env');
-
-      const _folders = [];
-      const _views = {};
-
-      if (this.folders) {
-        util.flattenArgs(this.folders)
-          .forEach(cwd => {
-            _folders.push(cwd);
-          });
-      }
-
-      this.__render = function render(src, data) {
-        return this.render(this.buildPartial(src, data), _views, {
-          fallthrough: this.fallthrough,
-          directories: _folders,
-          environment: env,
-        });
+      const defaults = {
+        directories: util.flattenArgs(this.folders),
+        fallthrough: this.fallthrough,
+        environment: options('env'),
       };
 
-      return {
-        methods: {
-          render: this._render,
-        },
-      };
+      this.render = (src, data) =>
+        this._partial(this.buildPartial(src, data), this._cache, defaults);
+
+      return this.mixins();
     },
 
-    mixins(ctx) {
-      const self = this;
-
+    mixins() {
       return {
         methods: {
-          render(src, data) {
-            return self.__render(src, data);
-          },
+          render: this.render,
         },
       };
     },
