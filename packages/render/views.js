@@ -148,10 +148,6 @@ function _render(fn, data) {
     : fn(data);
 }
 
-function _write(buffer) {
-  this.res.write(buffer);
-}
-
 module.exports = ($, util) => {
   function _partial(view, cached, options) {
     const _ids = !Array.isArray(view.src) && view.src
@@ -196,8 +192,8 @@ module.exports = ($, util) => {
 
         /* istanbul ignore else */
         if (!view.data.render) {
-          view.data.render = (tpl, state) =>
-            render.call(this, { src: tpl, data: state || {} }, cached, options);
+          util.hiddenProperty(view.data, 'render', (tpl, state) =>
+            render.call(this, { src: tpl, data: state || {} }, cached, options));
         }
 
         /* istanbul ignore else */
@@ -250,7 +246,6 @@ module.exports = ($, util) => {
     buildCSS,
     _partial,
     _render,
-    _write,
 
     // default options
     _cache: {},
@@ -280,7 +275,15 @@ module.exports = ($, util) => {
       return {
         methods: {
           render(src, data) {
-            self._write.call(this, self.render(src, data));
+            if (!self._write) {
+              this.res.write(self.render(src, data));
+            } else {
+              self._write(this, {
+                view: src,
+                locals: data || {},
+                contents: self.render(src, data),
+              });
+            }
           },
         },
       };
