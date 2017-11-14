@@ -57,7 +57,7 @@ module.exports = ($, util) => {
   }
 
   return $.module('Test.Request', {
-    install: ctx => ({
+    install: (ctx, _options) => ({
       methods: {
         request(url, method, options, callback) {
           if (typeof url === 'function') {
@@ -98,7 +98,11 @@ module.exports = ($, util) => {
             props: {
               pid: () => `${process.pid}.${pid}`,
             },
-          }, callback);
+          }, callback)
+          .catch(e => callback(e))
+          .catch(e => {
+            ctx.emit('failure', e, null, _options);
+          });
         },
       },
     }),
