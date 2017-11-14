@@ -5,9 +5,13 @@ module.exports = ($, util) => {
     const _layout = template.locals.layout || this.template;
 
     if (template.locals.layout !== false && (_layout !== template.view)) {
-      conn.res.write(conn.view(_layout, {
+      const markup = conn.view(_layout, {
         contents: template.contents,
-      }));
+      }).trim();
+
+      conn.res.write(markup.indexOf('<html') === 0
+        ? `<!doctype html>\n${markup}`
+        : markup);
     } else {
       conn.res.write(template.contents);
     }
