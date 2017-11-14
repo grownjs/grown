@@ -24,7 +24,7 @@ function findFile(src, paths, throws) {
   }
 
   if (throws !== false) {
-    throw new Error(`Expecting '${src}' to be a valid filepath, it does not exists`);
+    throw new Error(`Given file '${src}' does not exists`);
   }
 }
 
