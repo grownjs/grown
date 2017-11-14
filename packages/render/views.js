@@ -148,6 +148,10 @@ function _render(fn, data) {
     : fn(data);
 }
 
+function _write(buffer) {
+  this.res.write(buffer);
+}
+
 module.exports = ($, util) => {
   function _partial(view, cached, options) {
     const _ids = !Array.isArray(view.src) && view.src
@@ -246,6 +250,7 @@ module.exports = ($, util) => {
     buildCSS,
     _partial,
     _render,
+    _write,
 
     // default options
     _cache: {},
@@ -270,12 +275,12 @@ module.exports = ($, util) => {
     },
 
     mixins() {
-      const _self = this;
+      const self = this;
 
       return {
         methods: {
           render(src, data) {
-            this.res.write(_self.render(src, data));
+            self._write.call(this, self.render(src, data));
           },
         },
       };
