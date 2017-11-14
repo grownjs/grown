@@ -269,7 +269,7 @@ module.exports = ($, util) => {
       };
     },
 
-    mixins() {
+    mixins(ctx) {
       const self = this;
 
       return {
