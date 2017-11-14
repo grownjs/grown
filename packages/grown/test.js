@@ -10,6 +10,7 @@ if (IS_DEBUG) {
 const Grown = require('.');
 
 Grown.use(require('./../router'));
+Grown.use(require('./../render'));
 Grown.use(require('./../test'));
 Grown.use(require('./../conn'));
 
@@ -37,6 +38,10 @@ Grown.module('Request.ElapsedTime', {
 
 server.plug([
   !IS_LIVE && Grown.Test,
+  Grown.Render.Views({
+    folders: [__dirname],
+  }),
+  Grown.Render.Layout,
   Grown.Router.Mappings,
   Grown.Request.ElapsedTime,
 ]);
