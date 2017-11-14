@@ -101,7 +101,7 @@ const Grown = $('Grown', options => {
               p.extensions.forEach(x => {
                 /* istanbul ignore else */
                 if (x.mixins) {
-                  scope._extensions.push(x);
+                  scope._extensions.push(p);
                 }
               });
             }
