@@ -67,7 +67,7 @@ function buildAttr(key, value) {
     }
   } else if (value !== null) {
     return ` ${key}="${key === 'style'
-      ? buildCSS(value)
+      ? this.buildCSS(value)
       : value}"`;
   }
 }
@@ -75,7 +75,7 @@ function buildAttr(key, value) {
 function buildHTML(vnode, depth) {
   /* istanbul ignore else */
   if (Array.isArray(vnode)) {
-    return vnode.map(x => buildHTML(x, depth)).map(x => x.trim()).join('\n');
+    return vnode.map(x => this.buildHTML(x, depth));
   }
 
   /* istanbul ignore else */
@@ -84,7 +84,7 @@ function buildHTML(vnode, depth) {
   }
 
   const _attrs = Object.keys(vnode.data)
-    .map(key => buildAttr(key, vnode.data[key]))
+    .map(key => this.buildAttr(key, vnode.data[key]))
     .filter(x => x)
     .join('');
 
@@ -97,7 +97,7 @@ function buildHTML(vnode, depth) {
       /* istanbul ignore else */
       if (child) {
         if (child.tag) {
-          _buffer += buildHTML(child, (depth || 1) + 1);
+          _buffer += this.buildHTML(child, (depth || 1) + 1);
         } else {
           _buffer += child.toString();
         }
@@ -134,7 +134,7 @@ function buildPartial(view, data) {
   };
 }
 
-function executeTpl(fn, data) {
+function _render(fn, data) {
   // es6-modules interop
   fn = (fn.__esModule && fn.default) || fn;
 
@@ -144,7 +144,7 @@ function executeTpl(fn, data) {
   }
 
   return fn.length === 2
-    ? buildHTML(fn(data, buildvNode))
+    ? this.buildHTML(fn(data, this.buildvNode))
     : fn(data);
 }
 
@@ -188,12 +188,12 @@ module.exports = ($, util) => {
         /* istanbul ignore else */
         if (!view.data.render) {
           view.data.render = (tpl, state) =>
-            render({ src: tpl, data: state || {} }, cached, options);
+            render.call(this, { src: tpl, data: state || {} }, cached, options);
         }
 
         /* istanbul ignore else */
         if (_fn) {
-          return executeTpl(_fn, view.data);
+          return this._render(_fn, view.data);
         }
 
         /* istanbul ignore else */
@@ -211,7 +211,7 @@ module.exports = ($, util) => {
             }
           }
 
-          return executeTpl(require(cached[_id].file), view.data);
+          return this._render(require(cached[_id].file), view.data);
         }
       } catch (e) {
         e.summary = `Failed rendering '${_ids.join(', ')}' template`;
@@ -236,7 +236,11 @@ module.exports = ($, util) => {
     buildHTML,
     buildAttr,
     buildCSS,
+    _render,
     render,
+
+    // default options
+    folders: [],
 
     // setup extensions
     install(ctx, options) {
@@ -255,11 +259,22 @@ module.exports = ($, util) => {
       return {
         methods: {
           render(src, data) {
-            return render(buildPartial(src, data), _views, {
+            return this.render(this.buildPartial(src, data), _views, {
               fallthrough: this.fallthrough,
               directories: _folders,
               environment: env,
             });
+          },
+        },
+      };
+    },
+
+    mixins() {
+      console.log(this, arguments);
+      return {
+        methods: {
+          render(src, data) {
+            console.log(this, '?');
           },
         },
       };
