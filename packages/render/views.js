@@ -262,13 +262,21 @@ module.exports = ($, util) => {
       this.render = (src, data) =>
         this._partial(this.buildPartial(src, data), this._cache, defaults);
 
-      return this.mixins();
-    },
-
-    mixins() {
       return {
         methods: {
           render: this.render,
+        },
+      };
+    },
+
+    mixins() {
+      const _self = this;
+
+      return {
+        methods: {
+          render(src, data) {
+            this.res.write(_self.render(src, data));
+          },
         },
       };
     },
