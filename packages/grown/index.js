@@ -10,7 +10,7 @@ const util = require('./lib/util');
 const _mount = require('./lib/mount');
 const _listen = require('./lib/listen');
 
-const _protected = ['before_send', 'install', 'pipe'];
+const _protected = ['before_send', 'install', 'mixins', 'pipe'];
 
 function $(id, props, extensions) {
   return $new(id, props, $, extensions);
@@ -114,16 +114,14 @@ const Grown = $('Grown', options => {
               if (Object.prototype.toString.call(def) === '[object Object]') {
                 util.mergeDefinitionsInto.call(p, this, def);
               }
+            }
 
+            /* istanbul ignore else */
+            if (_protected.some(k => p[k])) {
               return;
             }
 
             Object.keys(p).forEach(k => {
-              /* istanbul ignore else */
-              if (_protected.indexOf(k) > -1) {
-                return;
-              }
-
               /* istanbul ignore else */
               if (k[0] !== k[0].toUpperCase()) {
                 /* istanbul ignore else */
