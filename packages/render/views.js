@@ -9,7 +9,7 @@ const RE_PREFIX = /^\.|#/;
 const RE_SELECTOR = /([.#]?[^\s#.]+)/;
 const RE_UPPERCASE = /[A-Z]/;
 
-const SELF_CLOSE = ['br', 'img', 'link', 'meta', '!doctype'];
+const SELF_CLOSE_ELEMENTS = ['br', 'img', 'link', 'meta'];
 
 const _util = require('util');
 
@@ -92,7 +92,7 @@ function buildHTML(vnode, depth) {
 
   const _suffix = `\n${new Array(depth || 1).join('  ')}`;
 
-  if (SELF_CLOSE.indexOf(vnode.tag) == -1) {
+  if (this.SELF_CLOSE_ELEMENTS.indexOf(vnode.tag) == -1) {
     vnode.children.forEach(child => {
       /* istanbul ignore else */
       if (child) {
@@ -230,6 +230,9 @@ module.exports = ($, util) => {
   }
 
   return $.module('Render.Views', {
+    // some constants
+    SELF_CLOSE_ELEMENTS,
+
     // export render utils
     buildPartial,
     buildvNode,
