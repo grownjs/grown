@@ -67,7 +67,7 @@ const Grown = $('Grown', options => {
               .then(() => typeof callback === 'function' && callback(null, conn))
               .catch(e => typeof callback === 'function' && callback(e, conn))
               .catch(e => {
-                this._events.emit('failure', e, conn, this._options);
+                this.emit('failure', e, conn, this._options);
               })
               .then(() => conn);
           });
@@ -93,6 +93,16 @@ const Grown = $('Grown', options => {
                 name: p.class || p.name || '!?',
                 call: [p, 'pipe'],
                 type: 'method',
+              });
+            }
+
+            /* istanbul ignore else */
+            if (p.extensions) {
+              p.extensions.forEach(x => {
+                /* istanbul ignore else */
+                if (x.mixins) {
+                  scope._extensions.push(x);
+                }
               });
             }
 
@@ -130,16 +140,6 @@ const Grown = $('Grown', options => {
             } else {
               throw new Error(`${e.stack}\nGiven '{${Object.keys(p).join(', ')}}'`);
             }
-          }
-
-          /* istanbul ignore else */
-          if (p.extensions) {
-            p.extensions.forEach(x => {
-              /* istanbul ignore else */
-              if (x.mixins) {
-                scope._extensions.push(x);
-              }
-            });
           }
         });
 
