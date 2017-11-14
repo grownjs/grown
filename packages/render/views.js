@@ -156,6 +156,11 @@ module.exports = ($, util) => {
 
     options = options || {};
 
+    /* istanbul ignore else */
+    if (!Array.isArray(_ids)) {
+      throw new Error(`Expecting valid views, given '${util.inspect(view)}'`);
+    }
+
     for (let i = 0; i < _ids.length; i += 1) {
       const _id = _ids[i];
 
@@ -259,25 +264,28 @@ module.exports = ($, util) => {
           });
       }
 
+      this.__render = function render(src, data) {
+        return this.render(this.buildPartial(src, data), _views, {
+          fallthrough: this.fallthrough,
+          directories: _folders,
+          environment: env,
+        });
+      };
+
       return {
         methods: {
-          render(src, data) {
-            return this.render(this.buildPartial(src, data), _views, {
-              fallthrough: this.fallthrough,
-              directories: _folders,
-              environment: env,
-            });
-          },
+          render: this._render,
         },
       };
     },
 
-    mixins() {
-      console.log(this, arguments);
+    mixins(ctx) {
+      const self = this;
+
       return {
         methods: {
           render(src, data) {
-            console.log(this, '?');
+            return self.__render(src, data);
           },
         },
       };
