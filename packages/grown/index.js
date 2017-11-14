@@ -102,7 +102,7 @@ const Grown = $('Grown', options => {
 
               /* istanbul ignore else */
               if (Object.prototype.toString.call(def) === '[object Object]') {
-                util.mergeDefinitionsInto.call(p, this, def, p.class || p.name || '!?');
+                util.mergeDefinitionsInto.call(p, this, def);
               }
 
               return;
@@ -128,7 +128,7 @@ const Grown = $('Grown', options => {
             if (p.class || p.name) {
               throw new Error(`${p.class || p.name} definition failed. ${e.stack}`);
             } else {
-              throw new Error(`Definition failed, given '{${Object.keys(p).join(', ')}}'. ${e.stack}`);
+              throw new Error(`${e.stack}\nGiven '{${Object.keys(p).join(', ')}}'`);
             }
           }
 
