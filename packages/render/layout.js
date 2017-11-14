@@ -1,11 +1,11 @@
 'use strict';
 
 module.exports = ($, util) => {
-  function _write(ctx, conn, template) {
+  function _write(conn, template) {
     const _layout = template.locals.layout || this.template;
 
     if (template.locals.layout !== false && (_layout !== template.view)) {
-      conn.res.write(ctx.render(_layout, {
+      conn.res.write(conn.view(_layout, {
         contents: template.contents,
       }));
     } else {
@@ -22,12 +22,9 @@ module.exports = ($, util) => {
 
     // setup extensions
     install() {
-      const self = this;
-
       $.module('Render.Views', {
-        _write(conn, template) {
-          self._write(this, conn, template);
-        },
+        _write: (conn, template) =>
+          this._write(conn, template),
       });
     },
 
@@ -35,7 +32,7 @@ module.exports = ($, util) => {
       if (ctx.class && !ctx.render) {
         return {
           _write: (conn, template) =>
-            this._write(ctx, conn, template),
+            this._write(conn, template),
         };
       }
     },

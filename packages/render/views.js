@@ -274,14 +274,17 @@ module.exports = ($, util) => {
 
       return {
         methods: {
+          view(src, data) {
+            return self.render(src, data);
+          },
           render(src, data) {
             if (!self._write) {
-              this.res.write(self.render(src, data));
+              this.res.write(this.view(src, data));
             } else {
               self._write(this, {
                 view: src,
                 locals: data || {},
-                contents: self.render(src, data),
+                contents: this.view(src, data),
               });
             }
           },
