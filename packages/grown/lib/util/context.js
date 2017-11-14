@@ -4,20 +4,8 @@ const debug = require('debug')('grown:context');
 
 const STATUS_CODES = require('http').STATUS_CODES;
 
-const cleanStack = require('clean-stack');
-
 const util = require('./object');
-
-const RE_ERR_MESSAGE = /.*Error:.+?\n/;
-const RE_NODE_MODULES = /\/.+?node_modules\//g;
-const RE_NO_SPACES = / +at /g;
-const RE_SRC_FILE = /^\S+\s\(.+?:\d+:\d+\)/;
-
-const RE_NATIVES = new RegExp(`^.+(${
-  Object.keys(process.binding('natives'))
-    .concat('bootstrap_node', 'node')
-    .join('|')
-})\\.js.+$`, 'gm');
+const proc = require('./process');
 
 function buildSettings(data) {
   return (key, defvalue) => {
@@ -104,35 +92,6 @@ function buildPubsub() {
   };
 }
 
-function cleanError(e, cwd) {
-  let _stack = cleanStack(e.stack || '')
-    .replace(/^.+(es6-promise|bluebird|internal|grown).+$/gm)
-    .replace(RE_ERR_MESSAGE, '')
-    .replace(RE_NATIVES, '');
-
-  /* istanbul ignore else */
-  if (_stack) {
-    _stack = _stack.replace(RE_NO_SPACES, '');
-    _stack = _stack.replace(RE_NODE_MODULES, '~');
-
-    while (_stack.indexOf(cwd) > -1) {
-      _stack = _stack.replace(cwd, '.');
-    }
-  }
-
-  return {
-    message: e.message || e.toString(),
-    summary: e.description || e.summary,
-    errors: e.errors || [],
-    stack: _stack.split('\n')
-      .filter(line => RE_SRC_FILE.test(line))
-      .join('\n'),
-    call: e.pipeline,
-    name: e.name || 'Error',
-    code: e.statusCode || 501,
-  };
-}
-
 function endCallback(err, conn, options) {
   return Promise.resolve()
     .then(() => {
@@ -141,7 +100,7 @@ function endCallback(err, conn, options) {
         return Promise.resolve()
           .then(() => {
             if (err) {
-              const failure = cleanError(err, options('cwd'));
+              const failure = proc.cleanError(err, options('cwd'));
 
               conn.put_status(failure.code);
               conn.resp_body = failure.message;
@@ -159,7 +118,7 @@ function endCallback(err, conn, options) {
         try {
           /* istanbul ignore else */
           if (err) {
-            const failure = cleanError(err, options('cwd'));
+            const failure = proc.cleanError(err, options('cwd'));
 
             conn.res.statusCode = failure.code;
             conn.res.write(failure.message);
@@ -218,7 +177,6 @@ module.exports = {
   buildSettings,
   buildPubsub,
   buildError,
-  cleanError,
   endCallback,
   doneCallback,
 };
