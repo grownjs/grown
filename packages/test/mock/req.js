@@ -4,11 +4,11 @@ module.exports = $ => {
   const MockReq = require('mock-req');
 
   return $.module('Test.Mock.Req', {
-    mixins() {
-      const _body = this._req && this._req.body;
-      const _req = this._req;
+    mixins(ctx) {
+      const _body = ctx._req && ctx._req.body;
+      const _req = ctx._req;
 
-      delete this._req;
+      delete ctx._req;
 
       const req = new MockReq(_req);
 
