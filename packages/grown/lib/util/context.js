@@ -141,7 +141,7 @@ function endCallback(err, conn, options) {
       }
 
       /* istanbul ignore else */
-      if (conn.res) {
+      if (conn.res && !conn.res.finished) {
         conn.res.end();
       }
     })
