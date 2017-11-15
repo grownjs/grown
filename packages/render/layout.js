@@ -5,15 +5,13 @@ module.exports = ($, util) => {
     const _layout = template.locals.layout || this.template;
 
     if (template.locals.layout !== false && (_layout !== template.view)) {
-      const markup = conn.view(_layout, {
+      const markup = (conn.view(_layout, {
         contents: template.contents,
-      }).trim();
+      }) || '').trim();
 
-      conn.res.write(markup.indexOf('<html') === 0
+      template.contents = markup.indexOf('<html') === 0
         ? `<!doctype html>\n${markup}`
-        : markup);
-    } else {
-      conn.res.write(template.contents);
+        : markup;
     }
   }
 
@@ -26,18 +24,11 @@ module.exports = ($, util) => {
 
     // setup extensions
     install() {
-      $.module('Render.Views', {
-        _write: (conn, template) =>
-          this._write(conn, template),
-      });
-    },
-
-    mixins(ctx) {
-      if (ctx.class && !ctx.render) {
-        return {
-          _write: (conn, template) =>
+      if (this.class === 'Grown.Render.Layout') {
+        $.module('Render.Views', {
+          _sendLayout: (conn, template) =>
             this._write(conn, template),
-        };
+        });
       }
     },
   });

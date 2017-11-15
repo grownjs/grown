@@ -278,15 +278,23 @@ module.exports = ($, util) => {
             return self.render(src, data);
           },
           render(src, data) {
-            if (!self._write) {
-              this.res.write(this.view(src, data));
-            } else {
-              self._write(this, {
-                view: src,
-                locals: data || {},
-                contents: this.view(src, data),
-              });
+            const tpl = {
+              view: src,
+              locals: data || {},
+              contents: this.view(src, data),
+            };
+
+            Object.keys(self).forEach(key => {
+              if (key.indexOf('_send') === 0) {
+                self[key](this, tpl);
+              }
+            })
+
+            if (self._write) {
+              self._write(this, tpl);
             }
+
+            this.res.write(tpl.contents);
           },
         },
       };
