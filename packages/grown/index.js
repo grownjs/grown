@@ -108,12 +108,12 @@ const Grown = $('Grown', options => {
 
             /* istanbul ignore else */
             if (typeof p.install === 'function') {
-              const def = p.install.call(p, this, scope._options);
-
-              /* istanbul ignore else */
-              if (Object.prototype.toString.call(def) === '[object Object]') {
-                util.mergeDefinitionsInto.call(p, this, def);
-              }
+              util.flattenArgs(p.install.call(p, this, scope._options)).forEach(def => {
+                /* istanbul ignore else */
+                if (Object.prototype.toString.call(def) === '[object Object]') {
+                  util.mergeDefinitionsInto.call(p, this, def);
+                }
+              });
             }
 
             /* istanbul ignore else */
