@@ -14,6 +14,8 @@ Grown.use(require('./../render'));
 Grown.use(require('./../test'));
 Grown.use(require('./../conn'));
 
+require('./dsl')(Grown);
+
 Grown.module('Conn.Mock', {
   props: {
     version: require('./package.json').version,
