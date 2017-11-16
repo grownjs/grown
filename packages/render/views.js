@@ -288,7 +288,8 @@ module.exports = ($, util) => {
               self._write(this, tpl);
             }
 
-            this.res.write(tpl.contents);
+            // try conn's end() if it's present
+            (this.end || this.res.write)(tpl.contents);
           },
         },
       };
