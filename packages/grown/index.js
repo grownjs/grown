@@ -10,7 +10,7 @@ const util = require('./lib/util');
 const _mount = require('./lib/mount');
 const _listen = require('./lib/listen');
 
-const _protected = ['before_send', 'install', 'mixins', 'pipe'];
+const _protected = ['before_send', 'install', 'mixins', 'call'];
 
 function $(id, props, extensions) {
   return $new(id, props, $, extensions);
@@ -37,6 +37,13 @@ const Grown = $('Grown', options => {
   scope._options = util.buildSettings(options);
   scope._callback = util.buildPipeline('^', scope._pipeline, util.doneCallback.bind(scope));
 
+  // wrapper for requests
+  $('Grown.Conn.Req', {
+    props: {
+      pid: () => process.pid,
+    },
+  });
+
   return {
     name: 'Server',
     init() {
@@ -46,18 +53,13 @@ const Grown = $('Grown', options => {
       this.once('listen', () => this.emit('start'));
     },
     methods: {
-      run(context, callback) {
+      run(request, callback) {
         return Promise.resolve()
           .then(() => this.emit('begin'))
           .then(() => {
-            const conn = $({
-              name: (context || {}).name,
-              init: (context || {}).init,
-              props: (context || {}).props,
-              mixins: (context || {}).mixins,
-              methods: (context || {}).methods,
-              extensions: scope._extensions.concat((context || {}).extensions || []),
-            });
+            const conn = Grown.Conn.Req({
+              init: () => scope._extensions,
+            }).new(request);
 
             return Promise.resolve()
               .then(() => {
@@ -88,20 +90,25 @@ const Grown = $('Grown', options => {
             }
 
             /* istanbul ignore else */
-            if (typeof p.pipe === 'function') {
+            if (typeof p.call === 'function') {
               scope._pipeline.push({
                 name: p.class || p.name || '!?',
-                call: [p, 'pipe'],
+                call: [p, 'call'],
                 type: 'method',
               });
+            }
+
+            /* istanbul ignore else */
+            if (typeof p.mixins === 'function') {
+              scope._extensions.push(p.mixins.bind(p));
             }
 
             /* istanbul ignore else */
             if (p.extensions) {
               p.extensions.forEach(x => {
                 /* istanbul ignore else */
-                if (x.mixins) {
-                  scope._extensions.push(p);
+                if (typeof x.mixins === 'function') {
+                  scope._extensions.push(x.mixins.bind(p));
                 }
               });
             }

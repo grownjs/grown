@@ -269,7 +269,7 @@ module.exports = ($, util) => {
       };
     },
 
-    mixins(ctx) {
+    mixins() {
       const self = this;
 
       return {
@@ -283,12 +283,6 @@ module.exports = ($, util) => {
               locals: data || {},
               contents: this.view(src, data),
             };
-
-            Object.keys(self).forEach(key => {
-              if (key.indexOf('_send') === 0) {
-                self[key](this, tpl);
-              }
-            })
 
             if (self._write) {
               self._write(this, tpl);

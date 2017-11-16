@@ -21,15 +21,5 @@ module.exports = ($, util) => {
 
     // default options
     template: '',
-
-    // setup extensions
-    install() {
-      if (this.class === 'Grown.Render.Layout') {
-        $.module('Render.Views', {
-          _sendLayout: (conn, template) =>
-            this._write(conn, template),
-        });
-      }
-    },
   });
 };

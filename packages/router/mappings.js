@@ -122,7 +122,8 @@ module.exports = ($, util) => {
         },
       };
     },
-    pipe(conn, options) {
+
+    call(conn, options) {
       try {
         // match and execute
         return invoke.call(this, conn, options);

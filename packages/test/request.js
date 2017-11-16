@@ -6,8 +6,6 @@ const path = require('path');
 const fs = require('fs');
 
 module.exports = ($, util) => {
-  let pid = -1;
-
   function fixRequest(url, method, options) {
     options = options || {};
     options.url = url || options.url || '/';
@@ -92,21 +90,11 @@ module.exports = ($, util) => {
 
             options = this.fixRequest(url, method, options);
 
-            pid += 1;
-
-            return ctx.run({
-              name: 'Conn',
-              init() {
-                this._req = options;
-              },
-              props: {
-                pid: () => `${process.pid}.${pid}`,
-              },
-            }, callback)
-            .catch(e => callback(e))
-            .catch(e => {
-              ctx.emit('failure', e, null, _options);
-            });
+            return ctx.run(options, callback)
+              .catch(e => callback(e))
+              .catch(e => {
+                ctx.emit('failure', e, null, _options);
+              });
           },
         },
       };

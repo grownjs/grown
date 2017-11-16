@@ -64,7 +64,7 @@ module.exports = function $host(_protocol, req, res) {
 
   // built-in connection
   const conn = $new({
-    name: 'Conn',
+    name: `Conn#${PID}`,
     props: {
       req: () => req,
       res: () => res,
@@ -82,7 +82,7 @@ module.exports = function $host(_protocol, req, res) {
       // main script location
       script_name: path.resolve(process.argv[1]),
     },
-    extensions: this._extensions,
+    init: () => this._extensions,
   });
 
   Promise.resolve()

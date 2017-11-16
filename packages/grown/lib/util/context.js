@@ -170,7 +170,10 @@ function doneCallback(err, conn, options) {
       return _finish(null, conn, options);
     })
     .then(() => debug('#%s Finished.', conn.pid))
-    .catch(e => _finish(e, conn, options));
+    .catch(e => _finish(e, conn, options))
+    .then(() => {
+      this._events.emit('finished', err, conn, options);
+    });
 }
 
 module.exports = {

@@ -1,15 +1,14 @@
 'use strict';
 
-module.exports = $ => {
+module.exports = ($, util) => {
   const MockReq = require('mock-req');
 
-  function makeReq(ctx) {
-    const _body = ctx._req && ctx._req.body;
-    const _req = ctx._req;
+  function makeReq(options) {
+    const _body = options.body;
 
-    delete ctx._req;
+    delete options.body;
 
-    const req = new MockReq(_req);
+    const req = new MockReq(options);
 
     try {
       if (_body) {
@@ -26,7 +25,7 @@ module.exports = $ => {
         }
       }
     } catch (e) {
-      e.summary = `Invalid request, given '${JSON.stringify(_req)}'`;
+      e.summary = `Invalid request, given '${util.inspect(options)}'`;
 
       throw e;
     }
@@ -38,8 +37,8 @@ module.exports = $ => {
     // export helpers
     makeReq,
 
-    mixins(ctx) {
-      const req = this.makeReq(ctx);
+    mixins(options) {
+      const req = this.makeReq(options);
 
       return {
         props: {

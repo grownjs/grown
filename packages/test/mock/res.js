@@ -45,7 +45,7 @@ module.exports = $ => {
     // export helpers
     makeRes,
 
-    mixins(ctx) {
+    mixins() {
       const res = this.makeRes();
 
       return {
