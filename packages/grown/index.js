@@ -10,15 +10,19 @@ const util = require('./lib/util');
 const _mount = require('./lib/mount');
 const _listen = require('./lib/listen');
 
-const _protected = ['before_send', 'install', 'mixins', 'call'];
-
 function $(id, props, extensions) {
   return $new(id, props, $, extensions);
 }
 
 function fix(mixins) {
+  /* istanbul ignore else */
   if (typeof mixins === 'function' && !mixins.class) {
     return mixins.bind(this);
+  }
+
+  /* istanbul ignore else */
+  if (Array.isArray(mixins)) {
+    return mixins.map(mix => fix.call(this, mix));
   }
 
   return mixins;

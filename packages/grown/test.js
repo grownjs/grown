@@ -80,17 +80,21 @@ Grown.module('Render.Layout', {
 });
 
 Grown.module('Render.Views', {
-  include: [
-    // Grown.Request.ElapsedTime,
-    // Grown.Render.Layout,
-  ],
   folders: [__dirname],
 });
 
-const BaseApp = Grown.module('Application', {
+Grown.module('Application', {
   include: [
+    IS_LIVE && {
+      mixins: [
+        Grown.Conn.Mock,
+      ],
+    },
+    Grown.Request.ElapsedTime,
+    Grown.Conn,
     Grown.Render.Views,
     Grown.Router.Mappings,
+    Grown.Render.Layout,
     !IS_LIVE && [
       Grown.Test.Request,
       Grown.Test.Mock.Req,
@@ -99,28 +103,7 @@ const BaseApp = Grown.module('Application', {
   ],
 });
 
-const AppWithLayout = BaseApp({
-  include: [
-    Grown.Render.Layout,
-  ],
-});
-
-const anyAppWithTime = Grown.module('anyAppWithTime', {
-  include: [
-    Grown.Conn,
-    Grown.Request.ElapsedTime,
-    Math.random() > 0.5 ? BaseApp : AppWithLayout,
-  ],
-});
-
-server.plug([
-  IS_LIVE && {
-    mixins: [
-      Grown.Conn.Mock,
-    ],
-  },
-  anyAppWithTime,
-]);
+server.plug(Grown.Application);
 
 server.get('/x', ctx => {
   ctx.put_resp_content_type('text/html');
