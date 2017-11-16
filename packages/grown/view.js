@@ -1,17 +1,1 @@
-module.exports = (state, h) =>
-  [h('!doctype', { html: true }), h('html', null,
-    h('head', null,
-      h('title', null, 'Hello world!')),
-    h('body', null,
-      h('h1', null, 'This works!'),
-      h('br'),
-      h('img', { src: '//placehold.it/200' }),
-      h('fieldset', null,
-        h('legend', null, 'Group:'),
-        h('p', null,
-          h('span', null, 'Example')),
-        h('ul', null,
-          h('li', null, 1),
-          h('li', null, 2),
-          h('li', null, 3),
-          h('li', null, 4)))))];
+module.exports = state => `<p>{ ${Object.keys(state).join(', ')} }</p>`;
