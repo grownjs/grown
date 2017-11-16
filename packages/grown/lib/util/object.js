@@ -1,41 +1,5 @@
 'use strict';
 
-const util = require('util');
-
-function invokeArgs(ctx, source, property) {
-  const target = ctx[property];
-
-  function reduce(value) {
-    if (Object.prototype.toString.call(value) === '[object Object]') {
-      Object.keys(value).forEach(key => {
-        if (typeof value[key] === 'function') {
-          value[key](ctx, target[key]);
-        } else if (Array.isArray(value[key])) {
-          value[key].forEach(args => {
-            if (!Array.isArray(args)) {
-              throw new Error(`Expecting a valid array, given '${util.inspect(args)}'`);
-            }
-
-            target[key].apply(target, args);
-          });
-        } else {
-          target[key].call(target, value[key]);
-        }
-      });
-    } else if (typeof value === 'function') {
-      value(ctx, target);
-    } else if (Array.isArray(value)) {
-      value.forEach(reduce);
-    } else if (typeof target === 'function') {
-      target(value);
-    } else {
-      throw new Error(`Unexpected value, given '${util.inspect(value)}'`);
-    }
-  }
-
-  reduce(source[property]);
-}
-
 function flattenArgs() {
   let args = Object.prototype.toString.call(arguments[0]) === '[object Arguments]'
     ? Array.prototype.slice.call(arguments[0])
@@ -177,7 +141,6 @@ module.exports = {
   resolveValues,
   extendValues,
   flattenArgs,
-  invokeArgs,
   getProp,
   setProp,
 };

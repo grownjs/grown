@@ -16,6 +16,14 @@ function $(id, props, extensions) {
   return $new(id, props, $, extensions);
 }
 
+function fix(mixins) {
+  if (typeof mixins === 'function' && !mixins.class) {
+    return mixins.bind(this);
+  }
+
+  return mixins;
+}
+
 const Grown = $('Grown', options => {
   /* istanbul ignore else */
   if (!(options && options.env && options.cwd)) {
@@ -92,16 +100,16 @@ const Grown = $('Grown', options => {
             }
 
             /* istanbul ignore else */
-            if (typeof p.mixins === 'function') {
-              scope._extensions.push(p.mixins.bind(p));
+            if (p.mixins) {
+              scope._extensions.push(fix.call(p, p.mixins));
             }
 
             /* istanbul ignore else */
             if (p.extensions) {
               p.extensions.forEach(x => {
                 /* istanbul ignore else */
-                if (typeof x.mixins === 'function') {
-                  scope._extensions.push(x.mixins.bind(p));
+                if (x.mixins) {
+                  scope._extensions.push(fix.call(p, x.mixins));
                 }
               });
             }
@@ -115,23 +123,6 @@ const Grown = $('Grown', options => {
                 }
               });
             }
-
-            /* istanbul ignore else */
-            if (_protected.some(k => p[k])) {
-              return;
-            }
-
-            Object.keys(p).forEach(k => {
-              /* istanbul ignore else */
-              if (k[0] !== k[0].toUpperCase()) {
-                /* istanbul ignore else */
-                if (!this[k]) {
-                  throw new Error(`Unexpected call to ${k}, given '${util.inspect(p[k])}'`);
-                }
-
-                util.invokeArgs(this, p, k);
-              }
-            });
           } catch (e) {
             if (p.class || p.name) {
               throw new Error(`${p.class || p.name} definition failed.\n${e.stack}`);
