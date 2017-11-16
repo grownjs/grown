@@ -1,1 +1,2 @@
-module.exports = state => `<p>{ ${Object.keys(state).join(', ')} }</p>`;
+module.exports = (state, h) =>
+  h('p', null, `{ ${Object.keys(state).join(', ')} `);

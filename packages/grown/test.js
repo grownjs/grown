@@ -80,10 +80,6 @@ Grown.module('Render.Layout', {
 });
 
 Grown.module('Render.Views', {
-  include: [
-    Grown.Request.ElapsedTime,
-    Grown.Render.Layout,
-  ],
   folders: [__dirname],
 });
 
@@ -96,14 +92,22 @@ Grown.module('Application', {
     },
     Grown.Conn,
     Grown.Router.Mappings,
-    Grown.Render.Views,
-    !IS_LIVE && [
-      Grown.Test.Request,
-      Grown.Test.Mock.Req,
-      Grown.Test.Mock.Res,
-    ],
+    Grown.Render.Views({
+      include: [
+        Grown.Request.ElapsedTime,
+        Grown.Render.Layout,
+      ],
+    }),
+    !IS_LIVE && Grown.Test.Request({
+      include: [
+        Grown.Test.Mock.Req,
+        Grown.Test.Mock.Res,
+      ],
+    }),
   ],
 });
+
+Grown.Application.SELF_CLOSING_ELEMENTS.push('input');
 
 server.plug(Grown.Application);
 
