@@ -61,7 +61,7 @@ Grown.module('Request.ElapsedTime', {
   },
 
   install(ctx) {
-    if (this.class === 'Grown.Request.ElapsedTime' && !this._render) {
+    if (this.class === 'Grown.Request.ElapsedTime' || !this._render) {
       throw new Error('Include this module first');
     }
 
@@ -80,6 +80,10 @@ Grown.module('Render.Layout', {
 });
 
 Grown.module('Render.Views', {
+  include: [
+    Grown.Request.ElapsedTime,
+    Grown.Render.Layout,
+  ],
   folders: [__dirname],
 });
 
@@ -90,11 +94,9 @@ Grown.module('Application', {
         Grown.Conn.Mock,
       ],
     },
-    Grown.Request.ElapsedTime,
     Grown.Conn,
-    Grown.Render.Views,
     Grown.Router.Mappings,
-    Grown.Render.Layout,
+    Grown.Render.Views,
     !IS_LIVE && [
       Grown.Test.Request,
       Grown.Test.Mock.Req,
@@ -106,7 +108,6 @@ Grown.module('Application', {
 server.plug(Grown.Application);
 
 server.get('/x', ctx => {
-  ctx.put_resp_content_type('text/html');
   ctx.render('view', ctx);
 });
 

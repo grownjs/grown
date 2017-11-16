@@ -21,5 +21,13 @@ module.exports = ($, util) => {
 
     // default options
     template: '',
+
+    install() {
+      console.log('LAYOUT', this.class);
+
+      if (this.class === 'Grown.Render.Layout' || !this._render) {
+        throw new Error('Include this module first');
+      }
+    }
   });
 };

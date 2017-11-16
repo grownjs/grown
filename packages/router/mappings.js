@@ -103,6 +103,8 @@ module.exports = ($, util) => {
 
   return $.module('Router.Mappings', {
     install(ctx) {
+      console.log('MAPPINGS', this.class);
+
       const routeMappings = require('route-mappings');
 
       util.readOnlyProperty(ctx, 'router', routeMappings());

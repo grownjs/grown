@@ -253,6 +253,8 @@ module.exports = ($, util) => {
 
     // setup extensions
     install(ctx, options) {
+      console.log('VIEWS', this.class);
+
       const defaults = {
         directories: util.flattenArgs(this.folders),
         fallthrough: this.fallthrough,
@@ -261,6 +263,7 @@ module.exports = ($, util) => {
 
       this.render = (src, data) =>
         this._partial(this.buildPartial(src, data), this._cache, defaults);
+
 
       return {
         methods: {
@@ -288,8 +291,11 @@ module.exports = ($, util) => {
               self._write(this, tpl);
             }
 
-            // try conn's end() if it's present
-            (this.end || this.res.write)(tpl.contents);
+            if (typeof this.end === 'function') {
+              this.end(tpl.contents);
+            } else {
+              this.res.write(tpl.contents);
+            }
           },
         },
       };
