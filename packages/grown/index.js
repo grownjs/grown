@@ -37,13 +37,6 @@ const Grown = $('Grown', options => {
   scope._options = util.buildSettings(options);
   scope._callback = util.buildPipeline('^', scope._pipeline, util.doneCallback.bind(scope));
 
-  // wrapper for requests
-  $('Grown.Conn.Req', {
-    props: {
-      pid: () => process.pid,
-    },
-  });
-
   return {
     name: 'Server',
     init() {
@@ -57,7 +50,7 @@ const Grown = $('Grown', options => {
         return Promise.resolve()
           .then(() => this.emit('begin'))
           .then(() => {
-            const conn = Grown.Conn.Req({
+            const conn = $('Grown.Conn.Mock')({
               init: () => scope._extensions,
             }).new(request);
 
