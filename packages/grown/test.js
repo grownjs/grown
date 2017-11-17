@@ -86,7 +86,6 @@ Grown.module('Render.Views', {
 });
 
 Grown.module('Application', {
-  SELF_CLOSING_ELEMENTS: ['input'],
   include: [
     IS_LIVE && {
       mixins: [
@@ -113,7 +112,24 @@ Grown.module('Application', {
 server.plug(Grown.Application);
 
 server.get('/x', ctx => {
-  ctx.render('view', ctx);
+  ctx.append('head', '<!-- plain HTML -->');
+
+  ctx.append('head', {
+    // vnode-like
+    meta: 'x',
+    content: 'x',
+    httpEquiv: true,
+  });
+
+  ctx.append('body', (state, h) => h('pre', null, 'OSOM'));
+
+  ctx.navigation((state, h) => h('h1', null, state.title || 'Home'), {
+    href: '/',
+  });
+
+  ctx.render('view', {
+    title: 'OSOM!',
+  });
 });
 
 server.get('/w', ctx => ctx.res.write('OK'));
