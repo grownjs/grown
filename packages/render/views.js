@@ -2,14 +2,22 @@
 
 const debug = require('debug')('grown:render');
 
-const path = require('path');
 const fs = require('fs');
 
 const RE_PREFIX = /^\.|#/;
 const RE_SELECTOR = /([.#]?[^\s#.]+)/;
 const RE_UPPERCASE = /[A-Z]/;
 
-const SELF_CLOSING_ELEMENTS = ['br', 'img', 'link', 'meta'];
+const NO_PADDING_ELEMENTS = [
+  'textarea', 'pre', 'code', 'var', 'tt', 'dfn', 'kbd', 'a',
+  'samp', 'bdo', 'sup', 'sub', 'strong', 'abbr', 'em', 'b', 'i', 'q',
+  'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'big', 'small', 'acronym', 'cite', 'span',
+];
+
+const SELF_CLOSING_ELEMENTS = [
+  'area', 'base', 'br', 'col', 'command', 'embed', 'hr', 'img', 'input',
+  'keygen', 'link', 'menuitem', 'meta', 'param', 'source', 'track', 'wbr',
+];
 
 const _util = require('util');
 
@@ -43,8 +51,10 @@ function buildvNode(tag, data) {
   });
 
   // cleanup classes
-  data.class = _classes
-    .filter(x => x).join(' ') || null;
+  if (_classes.length) {
+    data.class = _classes
+      .filter(x => x).join(' ') || undefined;
+  }
 
   return {
     tag,
@@ -72,18 +82,18 @@ function buildAttr(key, value) {
   }
 }
 
-function buildHTML(vnode, depth) {
+function buildHTML(vnode, depth, context) {
   /* istanbul ignore else */
   if (Array.isArray(vnode)) {
-    return vnode.map(x => this.buildHTML(x, depth));
+    return vnode.map(x => this.buildHTML(x, depth, context));
   }
 
   /* istanbul ignore else */
-  if (typeof vnode !== 'object' || !(vnode.tag && vnode.data && vnode.children)) {
+  if (typeof vnode !== 'object' || !vnode.tag) {
     throw new Error(`Expecting a vnode, given '${_util.inspect(vnode)}'`);
   }
 
-  const _attrs = Object.keys(vnode.data)
+  const _attrs = Object.keys(vnode.data || {})
     .map(key => this.buildAttr(key, vnode.data[key]))
     .filter(x => x)
     .join('');
@@ -93,22 +103,28 @@ function buildHTML(vnode, depth) {
   const _suffix = `\n${new Array(depth || 1).join('  ')}`;
 
   /* istanbul ignore else */
-  if (vnode.children) {
+  if (vnode.children.length) {
     /* istanbul ignore else */
-    if (this.SELF_CLOSING_ELEMENTS.indexOf(vnode.tag) > -1) {
+    if (SELF_CLOSING_ELEMENTS.indexOf(vnode.tag) > -1) {
       throw new Error(`Unexpected children for ${vnode.tag}, given '${_util.inspect(vnode.children)}'`);
     }
 
     vnode.children.forEach(child => {
       /* istanbul ignore else */
       if (child) {
-        if (child.tag) {
-          _buffer += this.buildHTML(child, (depth || 1) + 1);
+        if (typeof child === 'function') {
+          _buffer += this.buildHTML(child(context, this.buildvNode));
+        } else if (child.tag) {
+          _buffer += this.buildHTML(child, (depth || 1) + 1, context);
         } else {
           _buffer += child.toString();
         }
       }
     });
+
+    if (NO_PADDING_ELEMENTS.indexOf(vnode.tag) > -1) {
+      return `<${vnode.tag}${_attrs}>${_buffer}</${vnode.tag}>`;
+    }
 
     const _prefix = `\n${new Array((depth || 1) + 1).join('  ')}`;
 
@@ -241,9 +257,6 @@ module.exports = ($, util) => {
   }
 
   return $.module('Render.Views', {
-    // some constants
-    SELF_CLOSING_ELEMENTS,
-
     // export render utils
     buildPartial,
     buildvNode,
@@ -271,7 +284,7 @@ module.exports = ($, util) => {
         try {
           return this._partial(this.buildPartial(src, data), this._cache, defaults);
         } catch (e) {
-          throw new Error(`Failed to render '${src}' template.\n${e.message}`);
+          throw new Error(`Failed to render '${src}' template\n${e.message}`);
         }
       };
 
@@ -297,6 +310,7 @@ module.exports = ($, util) => {
               contents: this.view(src, data),
             };
 
+            /* istanbul ignore else */
             if (self._write) {
               self._write(this, tpl);
             }
