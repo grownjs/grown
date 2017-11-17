@@ -86,6 +86,7 @@ Grown.module('Render.Views', {
 });
 
 Grown.module('Application', {
+  SELF_CLOSING_ELEMENTS: ['input'],
   include: [
     IS_LIVE && {
       mixins: [
@@ -108,8 +109,6 @@ Grown.module('Application', {
     }),
   ],
 });
-
-Grown.Application.SELF_CLOSING_ELEMENTS.push('input');
 
 server.plug(Grown.Application);
 

@@ -96,7 +96,7 @@ function buildHTML(vnode, depth) {
   if (vnode.children) {
     /* istanbul ignore else */
     if (this.SELF_CLOSING_ELEMENTS.indexOf(vnode.tag) > -1) {
-      throw new Error(`Unexpected children for ${vnode.tag}, given ${_util.inspect(vnode.children)}`);
+      throw new Error(`Unexpected children for ${vnode.tag}, given '${_util.inspect(vnode.children)}'`);
     }
 
     vnode.children.forEach(child => {
@@ -174,11 +174,11 @@ module.exports = ($, util) => {
         let _fn;
 
         if (typeof _id === 'function') {
-          debug('Rendering function <%s>%s', _id.name || '?', view.block ? ` as ${view.block}` : '');
+          debug('Rendering function <%s>%s', _id.name || '?');
 
           _fn = _id;
         } else {
-          debug('Rendering view <%s>%s', _id, view.block ? ` as ${view.block}` : '');
+          debug('Rendering partial <%s>%s', _id);
 
           /* istanbul ignore else */
           if (!cached[_id]) {
@@ -199,7 +199,7 @@ module.exports = ($, util) => {
         /* istanbul ignore else */
         if (!view.data.render) {
           util.hiddenProperty(view.data, 'render', (tpl, state) =>
-            render.call(this, { src: tpl, data: state || {} }, cached, options));
+            this.render({ src: tpl, data: state || {} }, cached, options));
         }
 
         /* istanbul ignore else */
@@ -232,8 +232,8 @@ module.exports = ($, util) => {
     }
 
     /* istanbul ignore else */
-    if (!fallthrough) {
-      throw new Error(`Failed to render '${src}'`);
+    if (!this.fallthrough) {
+      throw new Error(`Failed to render '${util.inspect(_ids)}'`);
     }
 
     // fallback
@@ -267,9 +267,13 @@ module.exports = ($, util) => {
         environment: options('env'),
       };
 
-      this.render = (src, data) =>
-        this._partial(this.buildPartial(src, data), this._cache, defaults);
-
+      this.render = (src, data) => {
+        try {
+          return this._partial(this.buildPartial(src, data), this._cache, defaults);
+        } catch (e) {
+          throw new Error(`Failed to render '${src}' template.\n${e.message}`);
+        }
+      };
 
       return {
         methods: {

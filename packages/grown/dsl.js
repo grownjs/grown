@@ -25,13 +25,13 @@ module.exports = Grown => {
   console.log(Grown.Application.AdminController);
   console.log(Grown.Application.AdminController.new());
 
-  Grown.module('Application.Model');
+  Grown.module('Application.Models');
 
-  const User = Grown.Application.Model('User');
+  const User = Grown.Application.Models('User');
 
   // later...
   // FIXME: how to "include" foreign impls? e.g. Sequelize models?
-  Grown.Application.Model('User', {
+  Grown.Application.Models('User', {
     foo: 'bar',
     props: {
       baz: 'buzz',

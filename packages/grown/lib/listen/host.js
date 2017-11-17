@@ -64,7 +64,7 @@ module.exports = function $host(_protocol, req, res) {
 
   // built-in connection
   const conn = $new({
-    name: `Conn#${PID}`,
+    name: `Grown.Conn#${PID}`,
     props: {
       req: () => req,
       res: () => res,
