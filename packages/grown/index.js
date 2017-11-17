@@ -129,7 +129,7 @@ const Grown = $('Grown', options => {
             }
           } catch (e) {
             if (p.class || p.name) {
-              throw new Error(`${p.class || p.name} definition failed.\n${e.stack}`);
+              throw new Error(`${p.class || p.name} definition failed\n${e.stack}`);
             } else {
               throw new Error(`${e.stack}\nGiven '{${Object.keys(p).join(', ')}}'`);
             }
