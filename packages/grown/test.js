@@ -16,7 +16,7 @@ Grown.use(require('./../conn'));
 
 require('./dsl')(Grown);
 
-Grown.module('Conn.Mock', {
+Grown.module('Conn.Builder', {
   props: {
     version: require('./package.json').version,
   },
@@ -89,11 +89,6 @@ Grown.module('Render.Views', {
 
 Grown.module('Application', {
   include: [
-    IS_LIVE && {
-      mixins: [
-        Grown.Conn.Mock,
-      ],
-    },
     Grown.Conn,
     Grown.Router.Mappings,
     Grown.Render.Views({
@@ -133,6 +128,10 @@ server.get('/x', ctx => {
     title: 'OSOM!',
   });
 });
+
+server.get('/session', { to: 'Session#check' });
+server.post('/session', { to: 'Session#create' });
+server.delete('/session', { to: 'Session#destroy' });
 
 server.get('/w', ctx => ctx.res.write('OK'));
 server.get('/d', ctx => ctx.res.write(require('util').inspect(ctx)));

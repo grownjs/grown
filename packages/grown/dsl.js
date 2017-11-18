@@ -40,4 +40,12 @@ module.exports = Grown => {
 
   console.log(User);
   console.log(User.new());
+
+  Grown.module('Application.SessionController', {
+    methods: {
+      check() {
+        console.log('OSOM!');
+      },
+    },
+  });
 };
