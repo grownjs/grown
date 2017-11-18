@@ -119,10 +119,10 @@ const Grown = $('Grown', options => {
             }
 
             /* istanbul ignore else */
-            if (typeof p.call === 'function') {
+            if (typeof p.pipe === 'function') {
               scope._pipeline.push({
                 name: p.class || p.name || '!?',
-                call: [p, 'call'],
+                call: [p, 'pipe'],
                 type: 'method',
               });
             }

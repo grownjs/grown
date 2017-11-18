@@ -91,22 +91,35 @@ module.exports = ($, util) => {
       /* istanbul ignore else */
       if (!_handler.callback) {
         /* istanbul ignore else */
-        if (!_handler._controller) {
-          _handler._controller = util.getProp(this,
+        if (!_handler._instance) {
+          _handler._definition = util.getProp(this,
             `${_handler.controller}Controller`,
-            new Error(`Missing ${_handler.controller}Controller definition`)).new();
+            new Error(`Missing ${_handler.controller}Controller definition`));
+
+          _handler._instance = _handler._definition.new();
         }
 
         /* istanbul ignore else */
-        if (!(_handler._controller && _handler._controller[_handler.action])) {
+        if (!(_handler._instance && _handler._instance[_handler.action])) {
           throw new Error(`No callback found for ${_handler.verb} ${_handler.path}`);
         }
 
-        _handler.callback = util.buildPipeline(_handler.path, [{
-          call: [_handler._controller, _handler.action],
+        const _pipeline = [{
+          call: [_handler._instance, _handler.action],
           name: _handler.as,
           type: 'method',
-        }]);
+        }];
+
+        /* istanbul ignore else */
+        if (typeof _handler._definition.pipe === 'function') {
+          _pipeline.unshift({
+            call: [_handler._definition, 'pipe'],
+            name: `${_handler.name}.pipe`,
+            type: 'method',
+          });
+        }
+
+        _handler.callback = util.buildPipeline(_handler.path, _pipeline);
       }
 
       conn.req.params = conn.req.params || {};
@@ -145,7 +158,7 @@ module.exports = ($, util) => {
       };
     },
 
-    call(conn, options) {
+    pipe(conn, options) {
       try {
         // match and execute
         return invoke.call(this, conn, options);

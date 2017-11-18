@@ -172,11 +172,7 @@ module.exports = ($, util) => {
             return this;
           },
 
-          is_status(code) {
-            return self._response.status === code;
-          },
-
-          put_status(code) {
+          set_status(code) {
             /* istanbul ignore else */
             if (!(code && statusCodes[code])) {
               throw new Error(`Invalid put_status: ${code}`);

@@ -106,7 +106,10 @@ Grown.module('Application', {
   ],
 });
 
-server.plug(Grown.Application);
+server.plug([
+  Grown.Application,
+  Grown.module('Example'),
+]);
 
 server.get('/x', ctx => {
   ctx.append('head', '<!-- plain HTML -->');

@@ -2,44 +2,23 @@
 
 module.exports = Grown => {
   Grown.module('Application.BaseController', {
-    title: 'Untitled',
-  });
-
-  const HomeController = Grown.Application.BaseController({
-    title: 'Titled',
-  });
-
-  console.log(HomeController);
-  console.log(HomeController.new());
-
-  Grown.module('Application.AdminController', {
-    title: 'Administration',
-    include: Grown.Application.BaseController,
-  });
-
-  console.log(Grown.Application.AdminController);
-  console.log(Grown.Application.AdminController.new());
-
-  Grown.module('Application.Models');
-
-  const User = Grown.Application.Models('User');
-
-  // later...
-  // FIXME: how to "include" foreign impls? e.g. Sequelize models?
-  Grown.Application.Models('User', {
-    foo: 'bar',
-    props: {
-      baz: 'buzz',
+    pipe(ctx) {
+      ctx.navigation('Home', {
+        href: '/',
+      });
     },
   });
 
-  console.log(User);
-  console.log(User.new());
-
   Grown.module('Application.SessionController', {
+    include: [
+      Grown.Application.BaseController,
+    ],
+    pipe() {
+      console.log('DO SOMETHING ELSE');
+    },
     methods: {
-      check() {
-        console.log('OSOM!');
+      check(ctx) {
+        ctx.render('view');
       },
     },
   });
