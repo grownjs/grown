@@ -7,11 +7,6 @@ module.exports = Grown => {
 
   const HomeController = Grown.Application.BaseController({
     title: 'Titled',
-    methods: {
-      index(ctx) {
-        ctx.render('welcome');
-      },
-    },
   });
 
   console.log(HomeController);

@@ -124,9 +124,7 @@ server.get('/x', ctx => {
     href: '/',
   });
 
-  ctx.render('view', {
-    title: 'OSOM!',
-  });
+  ctx.render('view');
 });
 
 server.get('/session', { to: 'Session#check' });
