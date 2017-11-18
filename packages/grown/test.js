@@ -59,7 +59,9 @@ Grown.module('Request.ElapsedTime', {
       return;
     }
 
-    ctx.res.write(this.timeDiff());
+    if (ctx.res) {
+      ctx.res.write(this.timeDiff());
+    }
   },
 
   install(ctx) {

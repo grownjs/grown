@@ -49,6 +49,29 @@ const Grown = $('Grown', options => {
   scope._options = util.buildSettings(options);
   scope._callback = util.buildPipeline('^', scope._pipeline, util.doneCallback.bind(scope));
 
+  // skip npm-cli keys
+  const _environment = {};
+
+  Object.keys(process.env).forEach(key => {
+    if (key.indexOf('npm_') === -1) {
+      _environment[key] = process.env[key];
+    }
+  });
+
+  // built-in connection
+  scope._connection = (request, _extensions) => {
+    return $('Grown.Conn')({
+      name: `Grown.Conn#${process.pid}`,
+      props: {
+        env: () => _environment,
+      },
+      init: () => [
+        _extensions,
+        scope._extensions,
+      ],
+    }).new(request);
+  };
+
   return {
     name: 'Server',
     init() {
@@ -62,12 +85,7 @@ const Grown = $('Grown', options => {
         return Promise.resolve()
           .then(() => this.emit('begin'))
           .then(() => {
-            const conn = $('Grown.Conn.Mock')({
-              props: {
-                pid: () => process.pid,
-              },
-              init: () => scope._extensions,
-            }).new(request);
+            const conn = scope._connection(request);
 
             return Promise.resolve()
               .then(() => {
@@ -75,9 +93,13 @@ const Grown = $('Grown', options => {
               })
               .then(() => scope._callback(conn, scope._options))
               .then(() => typeof callback === 'function' && callback(null, conn))
-              .catch(e => typeof callback === 'function' && callback(e, conn))
               .catch(e => {
-                this.emit('failure', e, conn, this._options);
+                this.emit('failure', e, conn, scope._options);
+
+                /* istanbul ignore else */
+                if (typeof callback === 'function') {
+                  return callback(e, conn);
+                }
               })
               .then(() => conn);
           });

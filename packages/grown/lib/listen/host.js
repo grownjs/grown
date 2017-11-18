@@ -2,11 +2,6 @@
 
 const debug = require('debug')('grown:listen');
 
-const $new = require('object-new');
-const path = require('path');
-
-const util = require('../util/object');
-
 let pid = 0;
 
 module.exports = function $host(_protocol, req, res) {
@@ -53,36 +48,13 @@ module.exports = function $host(_protocol, req, res) {
     }
   }
 
-  // skip npm-cli keys
-  const _environment = {};
-
-  Object.keys(process.env).forEach(key => {
-    if (key.indexOf('npm_') === -1) {
-      _environment[key] = process.env[key];
-    }
-  });
-
-  // built-in connection
-  const conn = $new({
-    name: `Grown.Conn#${PID}`,
+  const conn = this._connection(null, {
     props: {
+      server: () => _server,
+      pid: () => PID,
       req: () => req,
       res: () => res,
-      pid: () => PID,
-
-      // current environment
-      env: () => util.extendValues({}, _environment),
-
-      // placeholder
-      next: null,
-
-      // host info
-      server: _server,
-
-      // main script location
-      script_name: path.resolve(process.argv[1]),
     },
-    init: () => this._extensions,
   });
 
   Promise.resolve()
