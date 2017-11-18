@@ -60,7 +60,7 @@ const Grown = $('Grown', options => {
 
   // built-in connection
   scope._connection = (request, _extensions) => {
-    return $('Grown.Conn')({
+    return $('Grown.Conn.Builder')({
       name: `Grown.Conn#${process.pid}`,
       props: {
         env: () => _environment,
@@ -73,7 +73,6 @@ const Grown = $('Grown', options => {
   };
 
   return {
-    name: 'Server',
     init() {
       util.mergeMethodsInto.call(this, this, scope._events);
 
