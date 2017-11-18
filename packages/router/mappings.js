@@ -5,14 +5,18 @@ const debug = require('debug')('grown:router');
 module.exports = ($, util) => {
   function on(ctx, method) {
     return function route(path, cb) {
-      if (!(typeof cb === 'function' || Array.isArray(cb))) {
-        throw new Error(`Expecting a function or array, given '${JSON.stringify(cb)}'`);
+      const opts = {};
+
+      if (typeof cb === 'function' || Array.isArray(cb)) {
+        opts.pipeline = util.flattenArgs(Array.prototype.slice.call(arguments, 1));
+      } else if (typeof cb === 'string') {
+        opts.to = cb;
+      } else {
+        util.extendValues(opts, cb);
       }
 
       if (typeof ctx.router.namespace === 'function') {
-        ctx.router[method.toLowerCase()](path, {
-          pipeline: util.flattenArgs(cb),
-        });
+        ctx.router[method.toLowerCase()](path, opts);
       } else {
         throw new Error(`Expecting a valid router, given '${ctx.router}'`);
       }
@@ -86,7 +90,23 @@ module.exports = ($, util) => {
 
       /* istanbul ignore else */
       if (!_handler.callback) {
-        throw new Error(`No callback found for ${_handler.path}`);
+        /* istanbul ignore else */
+        if (!_handler._controller) {
+          _handler._controller = util.getProp(this,
+            `${_handler.controller}Controller`,
+            new Error(`Missing ${_handler.controller}Controller definition`)).new();
+        }
+
+        /* istanbul ignore else */
+        if (!(_handler._controller && _handler._controller[_handler.action])) {
+          throw new Error(`No callback found for ${_handler.verb} ${_handler.path}`);
+        }
+
+        _handler.callback = util.buildPipeline(_handler.path, [{
+          call: [_handler._controller, _handler.action],
+          name: _handler.as,
+          type: 'method',
+        }]);
       }
 
       conn.req.params = conn.req.params || {};
