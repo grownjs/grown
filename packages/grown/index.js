@@ -63,6 +63,9 @@ const Grown = $('Grown', options => {
           .then(() => this.emit('begin'))
           .then(() => {
             const conn = $('Grown.Conn.Mock')({
+              props: {
+                pid: () => process.pid,
+              },
               init: () => scope._extensions,
             }).new(request);
 
