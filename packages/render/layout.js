@@ -77,7 +77,7 @@ module.exports = ($, util) => {
       })) || '').trim();
 
       template.contents = markup.indexOf('<html') === 0
-        ? `<!doctype html>\n${markup}`
+        ? `<!DOCTYPE html>\n${markup}`
         : markup;
 
       const before = {
@@ -117,8 +117,12 @@ module.exports = ($, util) => {
       if (this.class === 'Grown.Render.Layout' || !this._render) {
         throw new Error('Include this module first');
       }
+    },
 
-      this._slots = {
+    mixins() {
+      const self = this;
+
+      self._slots = {
         navigation: [],
         before: {
           head: [],
@@ -129,10 +133,6 @@ module.exports = ($, util) => {
           body: [],
         },
       };
-    },
-
-    mixins() {
-      const self = this;
 
       return {
         methods: {
