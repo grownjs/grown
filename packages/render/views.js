@@ -103,7 +103,7 @@ function buildHTML(vnode, depth, context) {
   const _suffix = `\n${new Array(depth || 1).join('  ')}`;
 
   /* istanbul ignore else */
-  if (vnode.children.length) {
+  if (vnode.children && vnode.children.length) {
     /* istanbul ignore else */
     if (SELF_CLOSING_ELEMENTS.indexOf(vnode.tag) > -1) {
       throw new Error(`Unexpected children for ${vnode.tag}, given '${_util.inspect(vnode.children)}'`);
