@@ -6,7 +6,7 @@ const fs = require('fs');
 function findFile(src, paths, throws) {
   /* istanbul ignore else */
   if (fs.existsSync(src)) {
-    return src;
+    return path.resolve(src);
   }
 
   for (let i = 0, c = paths.length; i < c; i += 1) {
@@ -14,12 +14,12 @@ function findFile(src, paths, throws) {
 
     /* istanbul ignore else */
     if (fs.existsSync(`${file}.js`)) {
-      return `${file}.js`;
+      return path.resolve(`${file}.js`);
     }
 
     /* istanbul ignore else */
     if (fs.existsSync(file)) {
-      return file;
+      return path.resolve(file);
     }
   }
 
