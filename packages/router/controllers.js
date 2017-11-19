@@ -2,8 +2,6 @@
 
 module.exports = ($, util) => {
   function _drawRoutes(ctx, routes) {
-    const _folders = util.flattenArgs(this.controller_folders);
-
     routes.forEach(route => {
       /* istanbul ignore else */
       if (!route.pipeline) {
@@ -22,16 +20,10 @@ module.exports = ($, util) => {
         route.action = action;
 
         if (!this._controllers[controller]) {
-          // FIXME: load from filesystem?
-          const _controller = util.findFile(`${controller.replace(/\./g, '/')}.js`, _folders, false);
-
-          /* istanbul ignore else */
-          if (!_controller) {
-            throw new Error(`${controller} controller not found in ${util.inspect(_folders)}`);
-          }
-
           try {
-            const Ctrl = require(_controller)($);
+            const Ctrl = util.getProp($, this.namespace
+              ? `${this.namespace}.${controller}Controller`
+              : `${controller}Controller`);
 
             this._controllers[controller] = {
               instance: new Ctrl(),
@@ -56,11 +48,11 @@ module.exports = ($, util) => {
 
             route.pipeline.push({
               call: [this._controllers[controller].instance, action],
-              name: route.handler.join('.'),
+              name: controller,
               type: 'method',
             });
           } catch (e) {
-            throw new Error(`${controller} controller failed.\n${e.stack}`);
+            throw new Error(`${controller} controller failed\n${e.stack}`);
           }
         }
 
@@ -72,6 +64,8 @@ module.exports = ($, util) => {
   return $.module('Router.Controllers', {
     _drawRoutes,
     _controllers: {},
+
+    namespace: '',
 
     before_routes: _drawRoutes,
   });
