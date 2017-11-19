@@ -268,14 +268,14 @@ module.exports = ($, util) => {
     _cache: {},
 
     // default options
-    folders: [],
+    view_folders: [],
 
     // setup extensions
     install(ctx, options) {
       console.log('VIEWS', this.class);
 
       const defaults = {
-        directories: util.flattenArgs(this.folders),
+        directories: util.flattenArgs(this.view_folders),
         fallthrough: this.fallthrough,
         environment: options('env'),
       };
