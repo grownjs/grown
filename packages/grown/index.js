@@ -134,13 +134,9 @@ const Grown = $('Grown', options => {
               });
             }
 
-            /* istanbul ignore else */
-            if (p.mixins && (!p.extensions || p.extensions.length === 0)) {
+            if (p.mixins) {
               scope._extensions.push(fix.call(p, p.mixins));
-            }
-
-            /* istanbul ignore else */
-            if (p.extensions) {
+            } else if (p.extensions) {
               p.extensions.forEach(x => {
                 /* istanbul ignore else */
                 if (x.mixins) {
