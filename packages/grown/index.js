@@ -91,7 +91,7 @@ const Grown = $('Grown', options => {
         return Promise.resolve()
           .then(() => this.emit('begin'))
           .then(() => {
-            const conn = scope._connection(request);
+            const conn = scope._connection(request || {});
 
             return Promise.resolve()
               .then(() => {
@@ -135,7 +135,7 @@ const Grown = $('Grown', options => {
             }
 
             /* istanbul ignore else */
-            if (p.mixins) {
+            if (p.mixins && (!p.extensions || p.extensions.length === 0)) {
               scope._extensions.push(fix.call(p, p.mixins));
             }
 
