@@ -75,10 +75,6 @@ Grown.module('Request.ElapsedTime', {
   },
 });
 
-Grown.module('Router.Controller', {
-  controller_folders: [__dirname],
-});
-
 Grown.module('Router.Mappings', {
   // fallthrough: true,
 });
@@ -95,7 +91,7 @@ server.plug([
   Grown.Conn({
     include: [
       Grown.Router.Controllers({
-        namespace: 'Application',
+        controller_lookup: 'Application.%sController',
       }),
       Grown.Router.Mappings,
     ],
@@ -133,9 +129,9 @@ server.get('/x', ctx => {
   ctx.render('view', Grown.Application);
 });
 
-server.get('/session', { to: 'Session#check' });
-server.post('/session', { to: 'Session#create' });
-server.delete('/session', { to: 'Session#destroy' });
+server.get('/session', 'Session#check');
+server.post('/session', 'Session#create');
+server.delete('/session', 'Session#destroy');
 
 server.get('/w', ctx => ctx.res.write('OK'));
 server.get('/d', ctx => ctx.res.write(require('util').inspect(ctx)));

@@ -21,9 +21,10 @@ module.exports = ($, util) => {
 
         if (!this._controllers[controller]) {
           try {
-            const Ctrl = util.getProp($, this.namespace
-              ? `${this.namespace}.${controller}Controller`
-              : `${controller}Controller`);
+            const _controller = this.controller_lookup.replace('%s', controller);
+
+            const Ctrl = util.getProp($, _controller,
+              new Error(`${_controller} is not defined`));
 
             this._controllers[controller] = {
               instance: new Ctrl(),
@@ -65,7 +66,7 @@ module.exports = ($, util) => {
     _drawRoutes,
     _controllers: {},
 
-    namespace: '',
+    controller_lookup: '%s',
 
     before_routes: _drawRoutes,
   });

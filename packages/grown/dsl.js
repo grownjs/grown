@@ -16,19 +16,11 @@ module.exports = Grown => {
   });
 
   Grown.module('Application.SessionController', {
-    methods: {
-      _check() {
-        throw new Error('Not implemented');
-      },
-    },
-  });
-
-  Grown.module('Application.SessionController', {
     extend: [
       Grown.Application.BaseController,
     ],
     methods: {
-      _check(ctx) {
+      check(ctx) {
         ctx.render('view', {
           check: false,
         });
