@@ -11,14 +11,14 @@ module.exports = ($, util) => {
       throw new Error('Already finished');
     }
 
-    ctx.res.statusCode = this.status_code;
-    ctx.res.statusMessage = statusCodes[this.status_code];
+    ctx.res.statusCode = this._response.status;
+    ctx.res.statusMessage = statusCodes[this._response.status];
 
     this._response.type = this._response.type || 'application/octet-stream';
 
     /* istanbul ignore else */
     if (body && typeof body.pipe === 'function') {
-      debug('#%s Done. Reponse is an stream. Sending as %s', this.pid, this._response.type);
+      debug('#%s Done. Reponse is an stream. Sending as %s', ctx.pid, this._response.type);
 
       /* istanbul ignore else */
       if (!ctx.res._header) {
@@ -26,14 +26,14 @@ module.exports = ($, util) => {
         ctx.res.writeHead(ctx.res.statusCode);
       }
 
-      body.pipe(this.res);
+      body.pipe(ctx.res);
 
       return;
     }
 
     /* istanbul ignore else */
     if (body !== null && Buffer.isBuffer(body)) {
-      debug('#%s Response is a buffer. Sending as %s', this.pid, this._response.type);
+      debug('#%s Response is a buffer. Sending as %s', ctx.pid, this._response.type);
 
       /* istanbul ignore else */
       if (!ctx.res._header) {
@@ -41,7 +41,7 @@ module.exports = ($, util) => {
         ctx.res.setHeader('Content-Length', body.length);
       }
     } else if (body !== null && typeof body === 'object') {
-      debug('#%s Response is an object. Sending as application/json', this.pid);
+      debug('#%s Response is an object. Sending as application/json', ctx.pid);
 
       body = JSON.stringify(body);
       this._response.type = 'application/json';
@@ -67,13 +67,13 @@ module.exports = ($, util) => {
 
     /* istanbul ignore else */
     if (typeof code === 'string' || code instanceof Buffer) {
+      _code = this._response.status || 200;
       message = code;
-      _code = 200;
     }
 
     if (code instanceof Error) {
       message = code.message || code.toString();
-      _code = 500;
+      _code = code.statusCode || 500;
     }
 
     // normalize output
