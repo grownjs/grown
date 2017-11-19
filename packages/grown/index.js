@@ -65,10 +65,17 @@ const Grown = $('Grown', options => {
       props: {
         env: () => _environment,
       },
-      init: () => [
-        _extensions,
-        scope._extensions,
-      ],
+      init() {
+        return [
+          !this.pid && {
+            props: {
+              pid: () => process.pid,
+            },
+          },
+          _extensions,
+          scope._extensions,
+        ];
+      },
     }).new(request);
   };
 
