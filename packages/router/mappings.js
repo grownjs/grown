@@ -3,12 +3,14 @@
 const debug = require('debug')('grown:router');
 
 module.exports = ($, util) => {
-  function on(ctx, method) {
+  function _fixMethod(ctx, method) {
     return function route(path, cb) {
       const opts = {};
 
       if (typeof cb === 'function' || Array.isArray(cb)) {
-        opts.pipeline = util.flattenArgs(Array.prototype.slice.call(arguments, 1));
+        opts.pipeline = util
+          .flattenArgs(Array.prototype.slice.call(arguments, 1))
+          .map(x => util.buildMiddleware(x, path));
       } else if (typeof cb === 'string') {
         opts.to = cb;
       } else {
@@ -25,46 +27,7 @@ module.exports = ($, util) => {
     };
   }
 
-  function group(ctx) {
-    const _mappings = ctx.router.mappings;
-    const _routes = {};
-
-    // resolve routing for controllers lookup
-    ctx.router.routes.forEach(route => {
-      const _handler = route.handler.slice();
-
-      const action = _handler.length > 1 ? _handler.pop() : 'index';
-      const controller = _handler.join('.');
-
-      /* istanbul ignore else */
-      if (!_routes[route.verb]) {
-        _routes[route.verb] = [];
-      }
-
-      /* istanbul ignore else */
-      if (route.use && !Array.isArray(route.use)) {
-        route.use = [route.use];
-      }
-
-      // route definition
-      route.controller = controller;
-      route.action = action;
-
-      delete route.handler;
-
-      // group all routes per-verb
-      _routes[route.verb].push(route);
-    });
-
-    // build mapping per-verb
-    Object.keys(_routes).forEach(verb => {
-      _routes[verb] = ctx.router.map(_routes[verb]);
-    });
-
-    return _routes;
-  }
-
-  function invoke(conn, options) {
+  function _dispatchRoutes(conn, options) {
     const _method = conn.req.method;
 
     // resolve matched routes to a single one
@@ -83,43 +46,13 @@ module.exports = ($, util) => {
     /* istanbul ignore else */
     if (_handler) {
       /* istanbul ignore else */
-      if (typeof _handler.callback !== 'function' && _handler.pipeline) {
-        _handler.callback = util.buildPipeline(_handler.path,
-          _handler.pipeline.map(x => util.buildMiddleware(x, _handler.as)));
+      if (!_handler.pipeline) {
+        throw new Error(`Missing pipeline, given '${util.inspect(_handler)}'`);
       }
 
       /* istanbul ignore else */
-      if (!_handler.callback) {
-        /* istanbul ignore else */
-        if (!_handler._instance) {
-          _handler._definition = util.getProp(this,
-            `${_handler.controller}Controller`,
-            new Error(`Missing ${_handler.controller}Controller definition`));
-
-          _handler._instance = _handler._definition.new();
-        }
-
-        /* istanbul ignore else */
-        if (!(_handler._instance && _handler._instance[_handler.action])) {
-          throw new Error(`No callback found for ${_handler.verb} ${_handler.path}`);
-        }
-
-        const _pipeline = [{
-          call: [_handler._instance, _handler.action],
-          name: _handler.as,
-          type: 'method',
-        }];
-
-        /* istanbul ignore else */
-        if (typeof _handler._definition.pipe === 'function') {
-          _pipeline.unshift({
-            call: [_handler._definition, 'pipe'],
-            name: `${_handler.name}.pipe`,
-            type: 'method',
-          });
-        }
-
-        _handler.callback = util.buildPipeline(_handler.path, _pipeline);
+      if (typeof _handler.callback !== 'function') {
+        _handler.callback = util.buildPipeline(_handler.path, _handler.pipeline);
       }
 
       conn.req.params = conn.req.params || {};
@@ -134,26 +67,57 @@ module.exports = ($, util) => {
     throw util.buildError(404);
   }
 
+  function _groupRoutes(ctx) {
+    const _routes = ctx.router.routes;
+    const _mappings = {};
+
+    /* istanbul ignore else */
+    if (this.before_routes) {
+      this.before_routes(ctx, _routes);
+    }
+
+    // resolve routing for controllers lookup
+    _routes.forEach(route => {
+      /* istanbul ignore else */
+      if (!_mappings[route.verb]) {
+        _mappings[route.verb] = [];
+      }
+
+      // group all routes per-verb
+      _mappings[route.verb].push(route);
+    });
+
+    // build mapping per-verb
+    Object.keys(_mappings).forEach(verb => {
+      _mappings[verb] = ctx.router.map(_mappings[verb]);
+    });
+
+    return _mappings;
+  }
+
   return $.module('Router.Mappings', {
-    install(ctx) {
+    _dispatchRoutes,
+    _groupRoutes,
+
+    install(ctx, options) {
       console.log('MAPPINGS', this.class);
 
       const routeMappings = require('route-mappings');
 
       util.readOnlyProperty(ctx, 'router', routeMappings());
 
+      // compile fast-routes
       ctx.once('start', () => {
-        // compile fast-routes
-        this._routes = group(ctx);
+        this._routes = this._groupRoutes(ctx);
       });
 
       return {
         methods: {
-          get: on(ctx, 'GET'),
-          put: on(ctx, 'PUT'),
-          post: on(ctx, 'POST'),
-          patch: on(ctx, 'PATCH'),
-          delete: on(ctx, 'DELETE'),
+          get: _fixMethod(ctx, 'GET'),
+          put: _fixMethod(ctx, 'PUT'),
+          post: _fixMethod(ctx, 'POST'),
+          patch: _fixMethod(ctx, 'PATCH'),
+          delete: _fixMethod(ctx, 'DELETE'),
         },
       };
     },
@@ -161,7 +125,7 @@ module.exports = ($, util) => {
     pipe(conn, options) {
       try {
         // match and execute
-        return invoke.call(this, conn, options);
+        return this._dispatchRoutes(conn, options);
       } catch (e) {
         /* istanbul ignore else */
         if (!this.fallthrough) {
