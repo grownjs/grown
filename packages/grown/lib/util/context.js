@@ -100,10 +100,7 @@ function endCallback(err, conn, options) {
         return Promise.resolve()
           .then(() => {
             if (err) {
-              const failure = proc.cleanError(err, options('cwd'));
-
-              conn.set_status(failure.code);
-              conn.resp_body = failure.message;
+              conn.end(proc.cleanError(err, options('cwd')));
             }
           })
           .catch(e => {

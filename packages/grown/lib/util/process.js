@@ -71,17 +71,16 @@ function cleanError(e, cwd) {
     }
   }
 
-  return {
-    message: e.message || e.toString(),
-    summary: e.description || e.summary,
-    errors: e.errors || [],
-    stack: _stack.split('\n')
-      .filter(line => RE_SRC_FILE.test(line))
-      .join('\n'),
-    call: e.pipeline,
-    name: e.name || 'Error',
-    code: e.statusCode || 501,
-  };
+  e.stack = _stack.split('\n')
+    .filter(line => RE_SRC_FILE.test(line))
+    .join('\n');
+
+  e.errors = e.errors || [];
+  e.call = e.pipeline;
+  e.name = e.name || 'Error';
+  e.code = e.statusCode || 500;
+
+  return e;
 }
 
 module.exports = {
