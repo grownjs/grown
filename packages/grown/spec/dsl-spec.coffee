@@ -23,9 +23,8 @@ describe 'Grown', ->
       expect(Grown.Dummy).toBeUndefined()
 
       Grown.module 'Dummy',
-        mixins:
-          props:
-            value: 42
+        props:
+          value: 42
 
       expect(Grown.Dummy.new().value).toEqual 42
 
@@ -52,7 +51,7 @@ describe 'Grown', ->
 
     describe '#plug -> #mount -> #listen -> #request', ->
       it 'runs over the current instance', (done) ->
-        g = @g.plug Grown.Dummy
+        g = @g.plug mixins: Grown.Dummy
 
         expect(g).toBe @g
 
