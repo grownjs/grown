@@ -21,7 +21,7 @@ const SELF_CLOSING_ELEMENTS = [
 
 const _util = require('util');
 
-function buildvNode(tag, data) {
+function _buildvNode(tag, data) {
   data = data || {};
 
   const _classes = data.class && !Array.isArray(data.class)
@@ -63,13 +63,13 @@ function buildvNode(tag, data) {
   };
 }
 
-function buildCSS(style) {
+function _buildCSS(style) {
   return Object.keys(style).map(prop =>
     `${prop.replace(RE_UPPERCASE, '-$&').toLowerCase()}:${style[prop]}`)
     .join(';');
 }
 
-function buildAttr(key, value) {
+function _buildAttr(key, value) {
   if (typeof value === 'boolean') {
     /* istanbul ignore else */
     if (value) {
@@ -77,15 +77,15 @@ function buildAttr(key, value) {
     }
   } else if (value !== null) {
     return ` ${key}="${key === 'style'
-      ? this.buildCSS(value)
+      ? this._buildCSS(value)
       : value}"`;
   }
 }
 
-function buildHTML(vnode, depth, context) {
+function _buildHTML(vnode, depth, context) {
   /* istanbul ignore else */
   if (Array.isArray(vnode)) {
-    return vnode.map(x => this.buildHTML(x, depth, context));
+    return vnode.map(x => this._buildHTML(x, depth, context));
   }
 
   /* istanbul ignore else */
@@ -94,7 +94,7 @@ function buildHTML(vnode, depth, context) {
   }
 
   const _attrs = Object.keys(vnode.data || {})
-    .map(key => this.buildAttr(key, vnode.data[key]))
+    .map(key => this._buildAttr(key, vnode.data[key]))
     .filter(x => x)
     .join('');
 
@@ -113,9 +113,9 @@ function buildHTML(vnode, depth, context) {
       /* istanbul ignore else */
       if (child) {
         if (typeof child === 'function') {
-          _buffer += this.buildHTML(child(context, this.buildvNode));
+          _buffer += this._buildHTML(child(context, this._buildvNode));
         } else if (child.tag) {
-          _buffer += this.buildHTML(child, (depth || 1) + 1, context);
+          _buffer += this._buildHTML(child, (depth || 1) + 1, context);
         } else {
           _buffer += child.toString();
         }
@@ -134,7 +134,7 @@ function buildHTML(vnode, depth, context) {
   return `<${vnode.tag}${_attrs}${vnode.tag.charAt() !== '!' ? '/' : ''}>${_suffix}`;
 }
 
-function buildPartial(view, data) {
+function _buildPartial(view, data) {
   /* istanbul ignore else */
   if (typeof view !== 'object') {
     view = { src: view, data };
@@ -166,7 +166,7 @@ function _render(fn, data) {
   }
 
   return fn.length === 2
-    ? this.buildHTML(fn(data, this.buildvNode))
+    ? this._buildHTML(fn(data, this._buildvNode))
     : fn(data);
 }
 
@@ -258,16 +258,16 @@ module.exports = ($, util) => {
 
   return $.module('Render.Views', {
     // export render utils
-    buildPartial,
-    buildvNode,
-    buildHTML,
-    buildAttr,
-    buildCSS,
+    _buildPartial,
+    _buildvNode,
+    _buildHTML,
+    _buildAttr,
+    _buildCSS,
     _partial,
     _render,
+    _cache: {},
 
     // default options
-    _cache: {},
     folders: [],
 
     // setup extensions
@@ -282,7 +282,7 @@ module.exports = ($, util) => {
 
       this.render = (src, data) => {
         try {
-          return this._partial(this.buildPartial(src, data), this._cache, defaults);
+          return this._partial(this._buildPartial(src, data), this._cache, defaults);
         } catch (e) {
           throw new Error(`Failed to render '${src}' template\n${e.message}`);
         }
@@ -311,8 +311,8 @@ module.exports = ($, util) => {
             };
 
             /* istanbul ignore else */
-            if (self._write) {
-              self._write(this, tpl);
+            if (self.onRender) {
+              self.onRender(this, tpl);
             }
 
             if (typeof this.end === 'function') {

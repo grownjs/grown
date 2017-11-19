@@ -4,7 +4,7 @@ const RE_MATCH_HEAD = /<head([^<>]*)>/;
 const RE_MATCH_BODY = /<body([^<>]*)>/;
 
 module.exports = ($, util) => {
-  function buildSlot(opts, state) {
+  function _renderSlot(opts, state) {
     /* istanbul ignore else */
     if (typeof opts === 'string') {
       return opts;
@@ -12,24 +12,24 @@ module.exports = ($, util) => {
 
     /* istanbul ignore else */
     if (typeof opts === 'function') {
-      return this.buildSlot(opts(state, this.buildvNode), state);
+      return this._renderSlot(opts(state, this._buildvNode), state);
     }
 
     /* istanbul ignore else */
     if (Array.isArray(opts)) {
-      return opts.map(x => this.buildSlot(x, state)).join('\n');
+      return opts.map(x => this._renderSlot(x, state)).join('\n');
     }
 
     /* istanbul ignore else */
     if (opts.tag) {
-      return this.buildHTML(opts, 0, state);
+      return this._buildHTML(opts, 0, state);
     }
 
     /* istanbul ignore else */
     if (opts.meta) {
       /* istanbul ignore else */
       if (opts.httpEquiv) {
-        return this.buildHTML({
+        return this._buildHTML({
           tag: 'meta',
           data: {
             'http-equiv': opts.meta,
@@ -38,7 +38,7 @@ module.exports = ($, util) => {
         });
       }
 
-      return this.buildHTML({
+      return this._buildHTML({
         tag: 'meta',
         data: {
           name: opts.meta,
@@ -50,13 +50,13 @@ module.exports = ($, util) => {
     throw new Error(`Unexpected slot, given '${util.inspect(opts)}'`);
   }
 
-  function _write(conn, template) {
-    const _layout = template.locals.layout || this.template;
+  function onRender(conn, options) {
+    const _layout = options.locals.layout || this.template;
 
     /* istanbul ignore else */
-    if (template.locals.layout !== false && (_layout !== template.view)) {
-      const markup = (conn.view(_layout, util.extendValues({}, template.locals, {
-        navigation: this.buildHTML({
+    if (options.locals.layout !== false && (_layout !== options.view)) {
+      const markup = (this.render(_layout, util.extendValues({}, options.locals, {
+        navigation: this._buildHTML({
           tag: 'nav',
           data: {
             role: 'navigation',
@@ -72,40 +72,40 @@ module.exports = ($, util) => {
 
               return prev;
             }, []),
-        }, 0, template.locals),
-        contents: template.contents,
+        }, 0, options.locals),
+        contents: options.contents,
       })) || '').trim();
 
-      template.contents = markup.indexOf('<html') === 0
+      options.contents = markup.indexOf('<html') === 0
         ? `<!DOCTYPE html>\n${markup}`
         : markup;
 
       const before = {
-        body: this.buildSlot(this._slots.before.body, template.locals),
-        head: this.buildSlot(this._slots.before.head, template.locals),
+        body: this._renderSlot(this._slots.before.body, options.locals),
+        head: this._renderSlot(this._slots.before.head, options.locals),
       };
 
       const after = {
-        body: this.buildSlot(this._slots.after.body, template.locals),
-        head: this.buildSlot(this._slots.after.head, template.locals),
+        body: this._renderSlot(this._slots.after.body, options.locals),
+        head: this._renderSlot(this._slots.after.head, options.locals),
       };
 
-      if (template.contents.indexOf('</head>') === -1) {
-        template.contents = template.contents.replace('<body', () => `<head>${before.head}${after.head}</head><body`);
+      if (options.contents.indexOf('</head>') === -1) {
+        options.contents = options.contents.replace('<body', () => `<head>${before.head}${after.head}</head><body`);
       } else {
-        template.contents = template.contents.replace(RE_MATCH_HEAD, (_, attrs) => `<head${attrs}>${before.head}`);
-        template.contents = template.contents.replace('</head>', () => `${after.head}</head>`);
+        options.contents = options.contents.replace(RE_MATCH_HEAD, (_, attrs) => `<head${attrs}>${before.head}`);
+        options.contents = options.contents.replace('</head>', () => `${after.head}</head>`);
       }
 
-      template.contents = template.contents.replace(RE_MATCH_BODY, (_, attrs) => `<body${attrs}>${before.body}`);
-      template.contents = template.contents.replace('</body>', () => `${after.body}</body>`);
+      options.contents = options.contents.replace(RE_MATCH_BODY, (_, attrs) => `<body${attrs}>${before.body}`);
+      options.contents = options.contents.replace('</body>', () => `${after.body}</body>`);
     }
   }
 
   return $.module('Render.Layout', {
     // render utils
-    buildSlot,
-    _write,
+    _renderSlot,
+    onRender,
 
     // default options
     template: '',

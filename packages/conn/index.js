@@ -5,7 +5,7 @@ const debug = require('debug')('grown:conn');
 const statusCodes = require('http').STATUS_CODES;
 
 module.exports = ($, util) => {
-  function _finish(ctx, body) {
+  function _finishRequest(ctx, body) {
     /* istanbul ignore else */
     if (ctx.res.finished) {
       throw new Error('Already finished');
@@ -57,7 +57,7 @@ module.exports = ($, util) => {
     ctx.res.write(body || '');
   }
 
-  function _done(ctx, code, message) {
+  function _endRequest(ctx, code, message) {
     /* istanbul ignore else */
     if ((ctx.res && ctx.res.finished) || ctx.halted) {
       throw new Error('Already finished');
@@ -85,14 +85,13 @@ module.exports = ($, util) => {
     ctx.send(this._response.body);
   }
 
-  function _write(conn, options) {
-    util.extendValues(options.locals, this._response.state);
-  }
-
   return $.module('Conn', {
-    _finish,
-    _write,
-    _done,
+    _finishRequest,
+    _endRequest,
+
+    onRender(conn, options) {
+      util.extendValues(options.locals, this._response.state);
+    },
 
     mixins() {
       this._response = {
@@ -165,7 +164,7 @@ module.exports = ($, util) => {
           set_status(code) {
             /* istanbul ignore else */
             if (!(code && statusCodes[code])) {
-              throw new Error(`Invalid put_status: ${code}`);
+              throw new Error(`Invalid set_status: ${code}`);
             }
 
             debug('#%s Set status %s', this.pid, code);
@@ -176,11 +175,11 @@ module.exports = ($, util) => {
           },
 
           send(body) {
-            return self._finish(this, body);
+            return self._finishRequest(this, body);
           },
 
           end(code, message) {
-            return self._done(this, code, message);
+            return self._endRequest(this, code, message);
           },
         },
       };

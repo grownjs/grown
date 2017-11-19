@@ -102,7 +102,7 @@ function endCallback(err, conn, options) {
             if (err) {
               const failure = proc.cleanError(err, options('cwd'));
 
-              conn.put_status(failure.code);
+              conn.set_status(failure.code);
               conn.resp_body = failure.message;
             }
           })

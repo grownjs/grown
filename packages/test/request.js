@@ -6,7 +6,7 @@ const path = require('path');
 const fs = require('fs');
 
 module.exports = ($, util) => {
-  function fixRequest(url, method, options) {
+  function _fixRequest(url, method, options) {
     options = options || {};
     options.url = url || options.url || '/';
     options.method = (method || options.method || 'get').toUpperCase();
@@ -56,7 +56,7 @@ module.exports = ($, util) => {
 
   return $.module('Test.Request', {
     // export heleprs
-    fixRequest,
+    _fixRequest,
 
     install(ctx, _options) {
       return {
@@ -88,7 +88,7 @@ module.exports = ($, util) => {
 
             debug('#%s Request %s %s', process.pid, (method || 'GET').toUpperCase(), url);
 
-            options = this.fixRequest(url, method, options);
+            options = this._fixRequest(url, method, options);
 
             return ctx.run(options, callback)
               .catch(e => callback(e))

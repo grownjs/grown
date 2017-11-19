@@ -3,7 +3,7 @@
 module.exports = $ => {
   const MockRes = require('mock-res');
 
-  function makeRes() {
+  function _mockResponse() {
     const res = new MockRes();
 
     res.cookies = {};
@@ -43,10 +43,10 @@ module.exports = $ => {
 
   return $.module('Test.Mock.Res', {
     // export helpers
-    makeRes,
+    _mockResponse,
 
     mixins() {
-      const res = this.makeRes();
+      const res = this._mockResponse();
 
       return {
         props: {

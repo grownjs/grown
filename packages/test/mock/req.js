@@ -3,7 +3,7 @@
 module.exports = ($, util) => {
   const MockReq = require('mock-req');
 
-  function makeReq(options) {
+  function _mockRequest(options) {
     const _body = options.body;
 
     delete options.body;
@@ -35,10 +35,10 @@ module.exports = ($, util) => {
 
   return $.module('Test.Mock.Req', {
     // export helpers
-    makeReq,
+    _mockRequest,
 
     mixins(options) {
-      const req = this.makeReq(options);
+      const req = this._mockRequest(options);
 
       return {
         props: {
