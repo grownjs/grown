@@ -5,8 +5,9 @@ module.exports = ($, util) => {
   const Mock = require('./mock')($, util);
 
   return $.module('Test', {
-    install(ctx) {
-      ctx.plug([Request, Mock]);
-    },
+    include: [
+      Request,
+      Mock,
+    ],
   });
 };

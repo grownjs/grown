@@ -101,12 +101,7 @@ server.plug([
       Grown.Render.Layout,
     ],
   }),
-  !IS_LIVE && Grown.Test.Request({
-    include: [
-      Grown.Test.Mock.Req,
-      Grown.Test.Mock.Res,
-    ],
-  }),
+  !IS_LIVE && Grown.Test,
 ]);
 
 server.get('/x', ctx => {
