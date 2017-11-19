@@ -54,21 +54,13 @@ module.exports = ($, util) => {
       ctx.res.writeHead(ctx.res.statusCode);
     }
 
-    // normalize response
     ctx.res.write(body || '');
-    ctx.res.end();
   }
 
   function _done(ctx, code, message) {
-    this._response.counter += 1;
-
     /* istanbul ignore else */
-    if (this.res && ctx.res.finished) {
-      /* istanbul ignore else */
-      if (this._response.counter > 1) {
-        throw new Error('Already finished');
-      }
-      return;
+    if ((ctx.res && ctx.res.finished) || ctx.halted) {
+      throw new Error('Already finished');
     }
 
     let _code = code;
@@ -90,8 +82,7 @@ module.exports = ($, util) => {
     // normalize response
     this._response.status = typeof _code === 'number' ? _code : this._response.status;
 
-    return Promise.resolve(this._response.body)
-      .then(_body => ctx.send(_body));
+    ctx.send(this._response.body);
   }
 
   function _write(conn, options) {
@@ -110,7 +101,6 @@ module.exports = ($, util) => {
         body: null,
         status: null,
         charset: 'utf8',
-        counter: -1,
       };
 
       const self = this;
