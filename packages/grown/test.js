@@ -42,29 +42,29 @@ Grown.module('Request', {
 Grown.module('Request.ElapsedTime', {
   _write(conn, template) {
     if (template.contents.indexOf('{elapsed}') === -1) {
-      template.contents += this.timeDiff();
+      template.contents += `Time: ${this.timeDiff()}ms.`;
     } else {
       template.contents = template.contents.replace(/\{elapsed\}/g, this.timeDiff());
     }
   },
 
   timeDiff() {
-    const diff = (new Date()) - this._start;
-
-    return `Time: ${diff / 1000}ms.`;
+    return ((new Date()) - this._start) / 1000;
   },
 
   before_send(e, ctx) {
-    if (ctx.render) {
-      return;
-    }
-
     if (ctx.res) {
-      ctx.res.write(this.timeDiff());
+      ctx.res.setHeader('X-Response-Time', this.timeDiff());
+
+      if (!ctx.render) {
+        ctx.res.write(this.timeDiff());
+      }
     }
   },
 
   install(ctx) {
+    console.log('ELAPSED TIME', this.class);
+
     if (this.class === 'Grown.Request.ElapsedTime' || !this._render) {
       throw new Error('Include this module first');
     }
@@ -107,8 +107,8 @@ Grown.module('Application', {
 });
 
 server.plug([
-  Grown.Application,
-  Grown.module('Example'),
+  Grown.Application({
+  }),
 ]);
 
 server.get('/x', ctx => {
@@ -154,21 +154,6 @@ if (!IS_LIVE) {
 } else {
   server.listen(8080);
 }
-
-server.on('before_send', err => {
-  if (err) {
-    console.log(err.stack || err);
-  }
-});
-
-server.on('failure', (err, conn) => {
-  if (conn && conn.res) {
-    conn.res.write(err.stack);
-    conn.res.end();
-  } else {
-    throw err;
-  }
-});
 
 server.on('start', () => {
   console.log('Go!');
