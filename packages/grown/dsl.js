@@ -2,24 +2,35 @@
 
 module.exports = Grown => {
   Grown.module('Application.BaseController', {
+    title: 'Home',
     pipe(ctx) {
-      ctx.navigation('Home', {
+      ctx.navigation(this.title, {
         href: '/',
       });
+    },
+    methods: {
+      check() {
+        throw new Error('Not implemented');
+      },
     },
   });
 
   Grown.module('Application.SessionController', {
-    include: [
+    methods: {
+      _check() {
+        throw new Error('Not implemented');
+      },
+    },
+  });
+
+  Grown.module('Application.SessionController', {
+    extend: [
       Grown.Application.BaseController,
     ],
-    pipe() {
-      console.log('DO SOMETHING ELSE');
-    },
     methods: {
-      check(ctx) {
+      _check(ctx) {
         ctx.render('view', {
-          CHECK: true,
+          check: false,
         });
       },
     },

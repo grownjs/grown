@@ -94,7 +94,9 @@ Grown.module('Render.Views', {
 server.plug([
   Grown.Conn({
     include: [
-      Grown.Router.Controllers,
+      Grown.Router.Controllers({
+        namespace: 'Application',
+      }),
       Grown.Router.Mappings,
     ],
   }),
