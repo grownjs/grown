@@ -40,24 +40,24 @@ Grown.module('Request', {
 });
 
 Grown.module('Request.ElapsedTime', {
-  _write(conn, template) {
-    if (template.contents.indexOf('{elapsed}') === -1) {
-      template.contents += `Time: ${this.timeDiff()}ms.`;
-    } else {
-      template.contents = template.contents.replace(/\{elapsed\}/g, this.timeDiff());
-    }
+  _elapsedTime() {
+    return ((new Date()) - this._startTime) / 1000;
   },
 
-  timeDiff() {
-    return ((new Date()) - this._start) / 1000;
+  before_render(ctx, template) {
+    if (template.contents.indexOf('{elapsed}') === -1) {
+      template.contents += `Time: ${this._elapsedTime()}ms.`;
+    } else {
+      template.contents = template.contents.replace(/\{elapsed\}/g, this._elapsedTime());
+    }
   },
 
   before_send(e, ctx) {
     if (ctx.res) {
-      ctx.res.setHeader('X-Response-Time', this.timeDiff());
+      ctx.res.setHeader('X-Response-Time', this._elapsedTime());
 
       if (!ctx.render) {
-        ctx.res.write(this.timeDiff());
+        ctx.res.write(this._elapsedTime());
       }
     }
   },
@@ -70,9 +70,13 @@ Grown.module('Request.ElapsedTime', {
     }
 
     ctx.on('request', () => {
-      this._start = new Date();
+      this._startTime = new Date();
     });
   },
+});
+
+Grown.module('Router.Controller', {
+  controller_folders: [__dirname],
 });
 
 Grown.module('Router.Mappings', {
@@ -84,33 +88,29 @@ Grown.module('Render.Layout', {
 });
 
 Grown.module('Render.Views', {
-  folders: [__dirname],
-});
-
-Grown.module('Application', {
-  include: [
-    Grown.Conn,
-    Grown.Router.Mappings,
-    Grown.Render.Views({
-      include: [
-        Grown.Request.ElapsedTime,
-        Grown.Render.Layout,
-      ],
-    }),
-    !IS_LIVE && Grown.Test.Request({
-      include: [
-        Grown.Test.Mock.Req,
-        Grown.Test.Mock.Res,
-      ],
-    }),
-  ],
+  view_folders: [__dirname],
 });
 
 server.plug([
-  Grown.Application,
+  Grown.Conn({
+    include: [
+      Grown.Router.Controllers,
+      Grown.Router.Mappings,
+    ],
+  }),
+  Grown.Render.Views({
+    include: [
+      Grown.Request.ElapsedTime,
+      Grown.Render.Layout,
+    ],
+  }),
+  !IS_LIVE && Grown.Test.Request({
+    include: [
+      Grown.Test.Mock.Req,
+      Grown.Test.Mock.Res,
+    ],
+  }),
 ]);
-
-console.log(Grown.Application);
 
 server.get('/x', ctx => {
   ctx.append('head', '<!-- plain HTML -->');
@@ -128,7 +128,7 @@ server.get('/x', ctx => {
     href: '/',
   });
 
-  ctx.render('view');
+  ctx.render('view', Grown.Application);
 });
 
 server.get('/session', { to: 'Session#check' });
@@ -141,6 +141,12 @@ server.get('/d', ctx => ctx.res.write(require('util').inspect(ctx)));
 const path = (process.argv.slice(2)[0] || '').charAt() === '/'
   ? process.argv.slice(2)[0]
   : '/';
+
+server.on('before_send', err => {
+  if (err) {
+    console.log(err);
+  }
+});
 
 if (!IS_LIVE) {
   server.request(path, (err, conn) => {

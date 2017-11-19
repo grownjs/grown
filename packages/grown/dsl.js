@@ -18,7 +18,9 @@ module.exports = Grown => {
     },
     methods: {
       check(ctx) {
-        ctx.render('view');
+        ctx.render('view', {
+          CHECK: true,
+        });
       },
     },
   });

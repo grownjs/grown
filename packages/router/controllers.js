@@ -69,7 +69,7 @@ module.exports = ($, util) => {
     })
   }
 
-  return $.module('Router.Controller', {
+  return $.module('Router.Controllers', {
     _drawRoutes,
     _controllers: {},
 
