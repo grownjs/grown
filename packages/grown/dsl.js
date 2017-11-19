@@ -4,7 +4,7 @@ module.exports = Grown => {
   Grown.module('Application.BaseController', {
     title: 'Home',
     pipe(ctx) {
-      ctx.navigation(this.title, {
+      ctx.navigation((state, h) => h('span', null, `${this.title} - ${ctx.version}`), {
         href: '/',
       });
     },
@@ -25,6 +25,20 @@ module.exports = Grown => {
           check: false,
         });
       },
+    },
+  });
+
+  Grown.module('Router.Mappings', {
+    before_routes(ctx, routes) {
+      routes.forEach(r => {
+        if (r.pipeline) {
+          r.pipeline.unshift({
+            type: 'function',
+            name: 'set_util_context',
+            call: () => { console.log(420); },
+          });
+        }
+      });
     },
   });
 };

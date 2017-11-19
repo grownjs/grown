@@ -22,7 +22,7 @@ describe 'Grown', ->
     it 'can access its module definition', ->
       expect(Grown.Dummy).toBeUndefined()
 
-      Grown.module 'Dummy',
+      Grown 'Dummy',
         props:
           value: 42
 

@@ -13,8 +13,7 @@ Grown.use(require('./../router'));
 Grown.use(require('./../render'));
 Grown.use(require('./../test'));
 Grown.use(require('./../conn'));
-
-require('./dsl')(Grown);
+Grown.use(require('./dsl'));
 
 Grown.module('Conn.Builder', {
   props: {
