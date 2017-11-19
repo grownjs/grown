@@ -89,8 +89,8 @@ module.exports = ($, util) => {
     _finishRequest,
     _endRequest,
 
-    onRender(conn, options) {
-      util.extendValues(options.locals, this._response.state);
+    before_render(ctx, template) {
+      util.extendValues(template.locals, this._response.state);
     },
 
     mixins() {

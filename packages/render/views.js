@@ -311,8 +311,8 @@ module.exports = ($, util) => {
             };
 
             /* istanbul ignore else */
-            if (self.onRender) {
-              self.onRender(this, tpl);
+            if (self.before_render) {
+              self.before_render(this, tpl);
             }
 
             if (typeof this.end === 'function') {

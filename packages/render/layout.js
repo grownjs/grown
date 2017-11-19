@@ -50,12 +50,12 @@ module.exports = ($, util) => {
     throw new Error(`Unexpected slot, given '${util.inspect(opts)}'`);
   }
 
-  function onRender(conn, options) {
-    const _layout = options.locals.layout || this.template;
+  function _onRender(ctx, template) {
+    const _layout = template.locals.layout || this.template;
 
     /* istanbul ignore else */
-    if (options.locals.layout !== false && (_layout !== options.view)) {
-      const markup = (this.render(_layout, util.extendValues({}, options.locals, {
+    if (template.locals.layout !== false && (_layout !== template.view)) {
+      const markup = (this.render(_layout, util.extendValues({}, template.locals, {
         navigation: this._buildHTML({
           tag: 'nav',
           data: {
@@ -72,43 +72,44 @@ module.exports = ($, util) => {
 
               return prev;
             }, []),
-        }, 0, options.locals),
-        contents: options.contents,
+        }, 0, template.locals),
+        contents: template.contents,
       })) || '').trim();
 
-      options.contents = markup.indexOf('<html') === 0
+      template.contents = markup.indexOf('<html') === 0
         ? `<!DOCTYPE html>\n${markup}`
         : markup;
 
       const before = {
-        body: this._renderSlot(this._slots.before.body, options.locals),
-        head: this._renderSlot(this._slots.before.head, options.locals),
+        body: this._renderSlot(this._slots.before.body, template.locals),
+        head: this._renderSlot(this._slots.before.head, template.locals),
       };
 
       const after = {
-        body: this._renderSlot(this._slots.after.body, options.locals),
-        head: this._renderSlot(this._slots.after.head, options.locals),
+        body: this._renderSlot(this._slots.after.body, template.locals),
+        head: this._renderSlot(this._slots.after.head, template.locals),
       };
 
-      if (options.contents.indexOf('</head>') === -1) {
-        options.contents = options.contents.replace('<body', () => `<head>${before.head}${after.head}</head><body`);
+      if (template.contents.indexOf('</head>') === -1) {
+        template.contents = template.contents.replace('<body', () => `<head>${before.head}${after.head}</head><body`);
       } else {
-        options.contents = options.contents.replace(RE_MATCH_HEAD, (_, attrs) => `<head${attrs}>${before.head}`);
-        options.contents = options.contents.replace('</head>', () => `${after.head}</head>`);
+        template.contents = template.contents.replace(RE_MATCH_HEAD, (_, attrs) => `<head${attrs}>${before.head}`);
+        template.contents = template.contents.replace('</head>', () => `${after.head}</head>`);
       }
 
-      options.contents = options.contents.replace(RE_MATCH_BODY, (_, attrs) => `<body${attrs}>${before.body}`);
-      options.contents = options.contents.replace('</body>', () => `${after.body}</body>`);
+      template.contents = template.contents.replace(RE_MATCH_BODY, (_, attrs) => `<body${attrs}>${before.body}`);
+      template.contents = template.contents.replace('</body>', () => `${after.body}</body>`);
     }
   }
 
   return $.module('Render.Layout', {
-    // render utils
     _renderSlot,
-    onRender,
 
     // default options
     template: '',
+
+    // render hooks
+    before_render: _onRender,
 
     install() {
       console.log('LAYOUT', this.class);
