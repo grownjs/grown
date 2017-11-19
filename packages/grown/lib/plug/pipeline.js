@@ -117,6 +117,32 @@ module.exports = function _pipelineFactory(label, pipeline, _callback) {
 
     let cb;
 
+    /* istanbul ignore else */
+    if (!state.next) {
+      // allow continuation
+      Object.defineProperty(state, 'next', {
+        configurable: false,
+        enumerable: false,
+        get() {
+          return _resume => {
+            /* istanbul ignore else */
+            if (!_pipeline.length) {
+              return _when(Promise.resolve(state), _resume);
+            }
+
+            const _dispatch = _pipelineFactory(cb.name, _pipeline.slice());
+
+            _pipeline = [];
+
+            return _when(_dispatch(state, options), _resume);
+          };
+        },
+        set() {
+          throw new Error("Property 'next' is read-only");
+        },
+      });
+    }
+
     function next(end) {
       cb = _pipeline.shift();
 
@@ -136,26 +162,12 @@ module.exports = function _pipelineFactory(label, pipeline, _callback) {
           return;
         }
 
-        // allow continuation
-        state.next = _resume => {
-          /* istanbul ignore else */
-          if (!_pipeline.length) {
-            return _when(Promise.resolve(state), _resume);
-          }
-
-          const _dispatch = _pipelineFactory(cb.name, _pipeline.slice());
-
-          _pipeline = [];
-
-          return _when(_dispatch(state, options), _resume);
-        };
-
         try {
           value = _run(cb, state, options);
         } catch (e) {
           debug('#%s Pipeline <%s> errored on <%s> (%s)', state.pid, label, cb.name, e.stack);
 
-          e.summary = `Pipeline ${cb.name}${cb.call ? `.${cb.call[1]}` : ''} was errored.`;
+          e.summary = `Pipeline ${cb.name}${cb.call[1] ? `#${cb.call[1]}` : ''} was failed.`;
 
           end(e);
           return;
@@ -188,7 +200,7 @@ module.exports = function _pipelineFactory(label, pipeline, _callback) {
 
           err.pipeline = [stack, broken, _pipeline.map(p => p.name)];
 
-          debug('#%s Wait. Pipeline <%s> [%s] was errored', state.pid, label, err.pipeline[1]);
+          debug('#%s Wait. Pipeline <%s> [%s] was failed', state.pid, label, err.pipeline[1]);
         }
 
         /* istanbul ignore else */
