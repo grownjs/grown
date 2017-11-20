@@ -46,12 +46,24 @@ Grown.module('Render.Views', {
   ],
   view_folders: [__dirname],
 });
-Grown.module('Static', {
-  static_folders: [
-    __dirname,
+
+// Grown.module('Static', {
+//   static_folders: [
+//     __dirname,
+//     {
+//       at: '/modules',
+//       from: `${__dirname}/node_modules`,
+//     },
+//   ],
+// });
+
+Grown.module('Bundler', {
+  bundle_folders: [
     {
-      at: '/modules',
-      from: `${__dirname}/node_modules`,
+      at: '/',
+      from: __dirname,
+      assets: '',
+      content: '',
     },
   ],
 });
