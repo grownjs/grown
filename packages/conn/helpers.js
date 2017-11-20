@@ -25,7 +25,7 @@ module.exports = ($, util) => {
     ].join('');
   }
 
-  return $.module('Conn.Util', {
+  return $.module('Conn.Helpers', {
     _fixURL,
 
     mixins() {

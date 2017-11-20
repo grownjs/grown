@@ -87,7 +87,7 @@ module.exports = ($, util) => {
     ctx.send(ctx.resp_body);
   }
 
-  return $.module('Conn.Res', {
+  return $.module('Conn.Response', {
     _finishRequest,
     _endRequest,
 

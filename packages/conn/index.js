@@ -1,13 +1,15 @@
 'use strict';
 
 module.exports = ($, util) => {
-  const Res = require('./res')($, util);
-  const Util = require('./util')($, util);
+  const RequestTime = require('./request-time')($, util);
+  const Response = require('./response')($, util);
+  const Helpers = require('./helpers')($, util);
 
   return $.module('Conn', {
     include: [
-      Res,
-      Util,
+      RequestTime,
+      Response,
+      Helpers,
     ],
   });
 };

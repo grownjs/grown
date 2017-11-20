@@ -30,42 +30,6 @@ const server = new Grown({
   cwd: process.cwd(),
 });
 
-Grown.module('Request', {
-  install(ctx) {
-    ctx.plug([
-      Grown.Request.ElapsedTime,
-    ]);
-  },
-});
-
-Grown.module('Request.ElapsedTime', {
-  _elapsedTime() {
-    return ((new Date()) - this._startTime) / 1000;
-  },
-
-  before_render(ctx, template) {
-    if (template.contents.indexOf('{elapsed}') === -1) {
-      template.contents += `Time: ${this._elapsedTime()}ms.`;
-    } else {
-      template.contents = template.contents.replace(/\{elapsed\}/g, this._elapsedTime());
-    }
-  },
-
-  before_send(e, ctx) {
-    if (ctx.end) {
-      ctx.put_resp_header('X-Response-Time', this._elapsedTime());
-    } else if (ctx.res) {
-      ctx.res.setHeader('X-Response-Time', this._elapsedTime());
-    }
-  },
-
-  install(ctx) {
-    ctx.on('request', () => {
-      this._startTime = new Date();
-    });
-  },
-});
-
 Grown.module('Router.Mappings', {
   // fallthrough: true,
 });
@@ -86,12 +50,12 @@ Grown.module('Router.Controllers', {
 });
 
 server.plug([
-  Grown.Request.ElapsedTime,
-  Grown.Router.Controllers,
-  Grown.Router.Mappings,
-  Grown.Render.Views,
+  !IS_LIVE
+    && Grown.Test,
   Grown.Conn,
-  !IS_LIVE && Grown.Test,
+  Grown.Render.Views,
+  Grown.Router.Mappings,
+  Grown.Router.Controllers,
 ]);
 
 server.get('/x', ctx => {
