@@ -103,7 +103,7 @@ module.exports = ($, util) => {
     install(ctx, options) {
       const routeMappings = require('route-mappings');
 
-      util.readOnlyProperty(ctx, 'router', routeMappings());
+      const _router = routeMappings();
 
       // compile fast-routes
       ctx.once('start', () => this._groupRoutes(ctx, options));
@@ -121,6 +121,9 @@ module.exports = ($, util) => {
       });
 
       return {
+        props: {
+          router: () => _router,
+        },
         methods: {
           get: this._fixMethod(ctx, 'GET'),
           put: this._fixMethod(ctx, 'PUT'),
