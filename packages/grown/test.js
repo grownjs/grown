@@ -9,10 +9,10 @@ if (IS_DEBUG) {
 
 const Grown = require('.');
 
-Grown.use(require('./../router'));
-Grown.use(require('./../render'));
-Grown.use(require('./../test'));
-Grown.use(require('./../conn'));
+Grown.use(require('@grown/router'));
+Grown.use(require('@grown/render'));
+Grown.use(require('@grown/test'));
+Grown.use(require('@grown/conn'));
 Grown.use(require('./dsl'));
 
 Grown.module('Conn.Builder', {
