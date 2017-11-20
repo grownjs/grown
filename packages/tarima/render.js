@@ -9,25 +9,45 @@ const RE_IS_ASSET = /\.\w+$/;
 
 module.exports = ($, util) => {
   function _sendHeaders(ctx, conn) {
-    if (ctx.src.indexOf('.js') > -1) {
-      conn.res.setHeader('Content-Type', 'application/javascript');
-    } else if (ctx.src.indexOf('.css') > -1) {
-      conn.res.setHeader('Content-Type', 'text/css');
-    } else {
-      conn.res.setHeader('Content-Type', 'text/html');
+    conn.halted = true;
+
+    /* istanbul ignore else */
+    if (conn.res) {
+      if (ctx.src.indexOf('.js') > -1) {
+        conn.res.setHeader('Content-Type', 'application/javascript');
+      } else if (ctx.src.indexOf('.css') > -1) {
+        conn.res.setHeader('Content-Type', 'text/css');
+      } else {
+        conn.res.setHeader('Content-Type', 'text/html');
+      }
     }
   }
 
   function _sendView(ctx, conn, options) {
     return this.bundle(ctx.entry || path.join(ctx.cwd, ctx.opts.assets, ctx.src), ctx.data)
       .then(partial => {
-        debug('#%s Wait. Sending raw asset', conn.pid);
-
         this._sendHeaders(ctx, conn);
 
-        conn.res.setHeader('Content-Length', partial.result.length);
-        conn.res.write(partial.result);
-        conn.res.end();
+        if (!partial.render) {
+          debug('#%s Wait. Sending raw asset', conn.pid);
+
+          if (typeof conn.end === 'function') {
+            return conn.end(partial.result);
+          } else {
+            conn.res.write(partial.result);
+            conn.res.end();
+          }
+        } else if (typeof conn.render === 'function') {
+          debug('#%s Wait. Rendering asset through views', conn.pid);
+
+          return conn.render(partial.render, conn.state);
+        } else if (conn.res) {
+          debug('#%s Wait. Sending raw asset', conn.pid);
+
+          conn.res.setHeader('Content-Length', partial.result.length);
+          conn.res.write(partial.result);
+          conn.res.end();
+        }
       })
       .catch(e => {
         /* istanbul ignore else */
@@ -47,24 +67,16 @@ module.exports = ($, util) => {
       .then(partial => {
         this._sendHeaders(ctx, conn);
 
-        if (!partial.render) {
-          debug('#%s Wait. Sending raw bundle', conn.pid);
+        debug('#%s Wait. Rendering bundle', conn.pid);
 
-          conn.res.write(partial.result);
-          conn.res.end();
-        } else if (typeof conn.render === 'function') {
-          debug('#%s Wait. Rendering bundle through views', conn.pid);
-
-          console.log('RENDER', partial, conn.state);
-          // conn.render(partial.render, conn.state);
-        } else {
-          debug('#%s Wait. Rendering bundle directly', conn.pid);
-
+        /* istanbul ignore else */
+        if (conn.res) {
           conn.res.write(partial.render(conn.state));
           conn.res.end();
         }
       })
       .catch(e => {
+        /* istanbul ignore else */
         if (!ctx.opts.fallthrough) {
           throw e;
         }
@@ -143,7 +155,7 @@ module.exports = ($, util) => {
       const _keys = Object.keys(_groups)
         .sort((a, b) => b.length - a.length);
 
-      ctx.mount((conn, options) => {
+      ctx.mount('Tarima#pipe', (conn, options) => {
         /* istanbul ignore else */
         if (conn.is_xhr || conn.is_json || conn.req.method !== 'GET') {
           return;
