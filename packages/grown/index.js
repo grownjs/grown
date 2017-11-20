@@ -122,19 +122,11 @@ const Grown = $('Grown', options => {
               debug('#%s Install <{ %s }>', process.pid, Object.keys(p).join(', '));
             }
 
-            /* istanbul ignore else */
-            if (typeof p.before_send === 'function') {
-              this.on('before_send', p.before_send.bind(p));
-            }
-
-            /* istanbul ignore else */
-            if (typeof p.pipe === 'function') {
-              scope._pipeline.push({
-                name: p.class || p.name || '!?',
-                call: [p, 'pipe'],
-                type: 'method',
-              });
-            }
+            Object.keys(p).forEach(k => {
+              if (k.indexOf('before_') === 0) {
+                this.on(k, p[k].bind(p));
+              }
+            });
 
             if (p.mixins) {
               scope._extensions.push(fix.call(p, p.mixins));
