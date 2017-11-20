@@ -8,5 +8,8 @@
     "debug": "^3.1.0",
     "mock-req": "^0.2.0",
     "mock-res": "^0.5.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
