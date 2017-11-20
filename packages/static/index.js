@@ -16,7 +16,7 @@ module.exports = ($, util) => {
           }
 
           const _opts = util.extendValues({
-            fallthrough: opts.fallthrough,
+            fallthrough: opts.fallthrough || this.fallthrough,
             acceptRanges: opts.acceptRanges,
             cacheControl: opts.cacheControl,
             dotfiles: opts.dotfiles,
