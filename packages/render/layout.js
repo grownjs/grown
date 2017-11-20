@@ -56,23 +56,6 @@ module.exports = ($, util) => {
     /* istanbul ignore else */
     if (template.locals.layout !== false && (_layout !== template.view)) {
       const markup = (this.render(_layout, util.extendValues({}, template.locals, {
-        navigation: this._buildHTML({
-          tag: 'nav',
-          data: {
-            role: 'navigation',
-          },
-          children: this._slots.navigation
-            .reduce((prev, cur, i) => {
-              prev.push(cur);
-
-              /* istanbul ignore else */
-              if (i !== this._slots.navigation.length - 1) {
-                prev.push('<span>/</span>');
-              }
-
-              return prev;
-            }, []),
-        }, 0, template.locals),
         contents: template.contents,
       })) || '').trim();
 
@@ -81,13 +64,13 @@ module.exports = ($, util) => {
         : markup;
 
       const before = {
-        body: this._renderSlot(this._slots.before.body, template.locals),
-        head: this._renderSlot(this._slots.before.head, template.locals),
+        body: this._renderSlot(ctx.slots.before.body, template.locals),
+        head: this._renderSlot(ctx.slots.before.head, template.locals),
       };
 
       const after = {
-        body: this._renderSlot(this._slots.after.body, template.locals),
-        head: this._renderSlot(this._slots.after.head, template.locals),
+        body: this._renderSlot(ctx.slots.after.body, template.locals),
+        head: this._renderSlot(ctx.slots.after.head, template.locals),
       };
 
       if (template.contents.indexOf('</head>') === -1) {
@@ -121,10 +104,7 @@ module.exports = ($, util) => {
     },
 
     mixins() {
-      const self = this;
-
-      self._slots = {
-        navigation: [],
+      const _slots = {
         before: {
           head: [],
           body: [],
@@ -136,25 +116,18 @@ module.exports = ($, util) => {
       };
 
       return {
+        props: {
+          slots: () => _slots,
+        },
         methods: {
-          navigation(text, opts) {
-            self._slots.navigation.push({
-              tag: 'a',
-              data: opts,
-              children: [text],
-            });
-
-            return this;
-          },
-
           prepend(to, opts) {
-            self._slots.before[to].unshift(opts);
+            _slots.before[to].unshift(opts);
 
             return this;
           },
 
           append(to, opts) {
-            self._slots.after[to].push(opts);
+            _slots.after[to].push(opts);
 
             return this;
           },

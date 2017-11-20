@@ -5,11 +5,9 @@ module.exports = ($, util) => {
   const Layout = require('./layout')($, util);
 
   return $.module('Render', {
-    install(ctx) {
-      ctx.plug([
-        Views,
-        Layout,
-      ]);
-    },
+    include: [
+      Views,
+      Layout,
+    ],
   });
 };
