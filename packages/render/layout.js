@@ -64,13 +64,13 @@ module.exports = ($, util) => {
         : markup;
 
       const before = {
-        body: this._renderSlot(ctx.slots.before.body, template.locals),
-        head: this._renderSlot(ctx.slots.before.head, template.locals),
+        body: this._renderSlot(ctx.partials.before.body, template.locals),
+        head: this._renderSlot(ctx.partials.before.head, template.locals),
       };
 
       const after = {
-        body: this._renderSlot(ctx.slots.after.body, template.locals),
-        head: this._renderSlot(ctx.slots.after.head, template.locals),
+        body: this._renderSlot(ctx.partials.after.body, template.locals),
+        head: this._renderSlot(ctx.partials.after.head, template.locals),
       };
 
       if (template.contents.indexOf('</head>') === -1) {
@@ -104,7 +104,7 @@ module.exports = ($, util) => {
     },
 
     mixins() {
-      const _slots = {
+      const _partials = {
         before: {
           head: [],
           body: [],
@@ -117,17 +117,17 @@ module.exports = ($, util) => {
 
       return {
         props: {
-          slots: () => _slots,
+          partials: () => _partials,
         },
         methods: {
           prepend(to, opts) {
-            _slots.before[to].unshift(opts);
+            _partials.before[to].unshift(opts);
 
             return this;
           },
 
           append(to, opts) {
-            _slots.after[to].push(opts);
+            _partials.after[to].push(opts);
 
             return this;
           },
