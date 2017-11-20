@@ -165,9 +165,9 @@ module.exports = function _pipelineFactory(label, pipeline, _callback) {
         try {
           value = _run(cb, state, options);
         } catch (e) {
-          debug('#%s Pipeline <%s> errored on <%s> (%s)', state.pid, label, cb.name, e.stack);
+          debug('#%s Pipeline <%s> errored on <%s> (%s)', state.pid, label, cb.name, e.message);
 
-          e.summary = `Pipeline ${cb.name}${cb.call[1] ? `#${cb.call[1]}` : ''} was failed.`;
+          e.summary = `Pipeline ${cb.name}${cb.call[1] ? `#${cb.call[1]}` : ''} was halted`;
 
           end(e);
           return;
@@ -200,7 +200,7 @@ module.exports = function _pipelineFactory(label, pipeline, _callback) {
 
           err.pipeline = [stack, broken, _pipeline.map(p => p.name)];
 
-          debug('#%s Wait. Pipeline <%s> [%s] was failed', state.pid, label, err.pipeline[1]);
+          debug('#%s Wait. Pipeline <%s> [%s] was halted', state.pid, label, err.pipeline[1]);
         }
 
         /* istanbul ignore else */
