@@ -55,7 +55,7 @@ module.exports = ($, util) => {
 
     /* istanbul ignore else */
     if (template.locals.layout !== false && (_layout !== template.view)) {
-      const markup = (this.render(_layout, util.extendValues({}, template.locals, {
+      const markup = (this.partial(_layout, util.extendValues({}, template.locals, {
         contents: template.contents,
       })) || '').trim();
 
