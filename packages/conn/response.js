@@ -109,9 +109,6 @@ module.exports = ($, util) => {
 
       return {
         props: {
-          // pipeline status
-          halted: () => _response.body !== null && _response.status !== null,
-
           // response body
           has_body: () => _response.body !== null,
           has_status: () => _response.status !== null,

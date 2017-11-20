@@ -73,6 +73,12 @@ const Grown = $('Grown', options => {
       init() {
         _pid += 1;
 
+        util.readOnlyProperty(this, 'halted', () => {
+          return (this.res && this.res.finished) || (this.has_body && this.has_status);
+        }, {
+          hiddenProperty: true,
+        });
+
         return [
           _extensions,
           scope._extensions,
