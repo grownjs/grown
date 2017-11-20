@@ -17,8 +17,8 @@ module.exports = function $mount(name, handler, callback) {
     : 'mount');
 
   /* istanbul ignore else */
-  if (name && (cb.name === '?' || cb.name === '*')) {
-    cb.name = `${name}${cb.name}`;
+  if (name && name.charAt() !== '/') {
+    cb.name = `${cb.name}${name}`;
   }
 
   /* istanbul ignore else */
