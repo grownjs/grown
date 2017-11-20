@@ -278,7 +278,9 @@ module.exports = ($, util) => {
         environment: options('env'),
       };
 
-      this.render = (src, data) => {
+      const self = this;
+
+      this.partial = (src, data) => {
         try {
           return this._partial(this._buildPartial(src, data), this._cache, defaults);
         } catch (e) {
@@ -286,9 +288,23 @@ module.exports = ($, util) => {
         }
       };
 
+      this.render = function $render(src, data) {
+        const tpl = {
+          view: src,
+          locals: data || {},
+          contents: self.partial(src, data),
+        };
+
+        return ctx.emit('before_render', this, tpl)
+          .then(() => {
+            return tpl.contents;
+          });
+      };
+
       return {
         methods: {
           render: this.render,
+          partial: this.partial,
         },
       };
     },
@@ -298,26 +314,18 @@ module.exports = ($, util) => {
 
       return {
         methods: {
-          view(src, data) {
-            return self.render(src, data);
-          },
           render(src, data) {
-            const tpl = {
-              view: src,
-              locals: data || {},
-              contents: this.view(src, data),
-            };
-
-            /* istanbul ignore else */
-            if (self.before_render) {
-              self.before_render(this, tpl);
-            }
-
-            if (typeof this.end === 'function') {
-              this.end(tpl.contents);
-            } else {
-              this.res.write(tpl.contents);
-            }
+            return self.render.call(this, src, data)
+              .then(body => {
+                if (typeof this.end === 'function') {
+                  this.end(body);
+                } else {
+                  this.res.write(body);
+                }
+              });
+          },
+          partial(src, data) {
+            return self.partial(src, data);
           },
         },
       };
