@@ -95,8 +95,6 @@ module.exports = ($, util) => {
     before_render: _onRender,
 
     install() {
-      console.log('LAYOUT', this.class);
-
       /* istanbul ignore else */
       if (this.class === 'Grown.Render.Layout' || !this._render) {
         throw new Error('Include this module first');

@@ -100,8 +100,6 @@ module.exports = ($, util) => {
     _groupRoutes,
 
     install(ctx, options) {
-      console.log('MAPPINGS', this.class);
-
       const routeMappings = require('route-mappings');
 
       util.readOnlyProperty(ctx, 'router', routeMappings());
