@@ -5,11 +5,9 @@ module.exports = ($, util) => {
   const Mappings = require('./mappings')($, util);
 
   return $.module('Router', {
-    install(ctx) {
-      ctx.plug([
-        Controllers,
-        Mappings,
-      ]);
-    },
+    include: [
+      Controllers,
+      Mappings,
+    ],
   });
 };
