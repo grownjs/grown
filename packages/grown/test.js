@@ -52,12 +52,10 @@ Grown.module('Request.ElapsedTime', {
   },
 
   before_send(e, ctx) {
-    if (ctx.res) {
+    if (ctx.end) {
+      ctx.put_resp_header('X-Response-Time', this._elapsedTime());
+    } else if (ctx.res) {
       ctx.res.setHeader('X-Response-Time', this._elapsedTime());
-
-      if (!ctx.render) {
-        ctx.res.write(this._elapsedTime());
-      }
     }
   },
 
@@ -116,11 +114,16 @@ server.get('/x', ctx => {
 
   ctx.append('body', (state, h) => h('pre', null, 'OSOM'));
 
-  ctx.navigation((state, h) => h('h1', null, state.title || 'Home'), {
-    href: '/',
-  });
-
   ctx.render('view', Grown.Application);
+});
+
+server.get('/y', ctx => {
+  return new Promise(ok => {
+    setTimeout(() => {
+      ctx.res.write('WUT');
+      ok();
+    }, 10000);
+  });
 });
 
 server.get('/session', 'Session#check');

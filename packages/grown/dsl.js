@@ -3,11 +3,6 @@
 module.exports = Grown => {
   Grown.module('Application.BaseController', {
     title: 'Home',
-    pipe(ctx) {
-      ctx.navigation((state, h) => h('span', null, `${this.title} - ${ctx.version}`), {
-        href: '/',
-      });
-    },
     methods: {
       check() {
         throw new Error('Not implemented');
@@ -29,7 +24,7 @@ module.exports = Grown => {
   });
 
   Grown.module('Router.Mappings', {
-    before_routes(ctx, routes) {
+    _before_routes(ctx, routes) {
       routes.forEach(r => {
         if (r.pipeline) {
           r.pipeline.unshift({
