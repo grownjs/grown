@@ -12,7 +12,7 @@ const Grown = require('.');
 Grown.use(require('@grown/router'));
 Grown.use(require('@grown/render'));
 Grown.use(require('@grown/test'));
-Grown.use(require('@grown/conn'));
+// Grown.use(require('@grown/conn'));
 Grown.use(require('./dsl'));
 
 Grown.module('Conn.Builder', {

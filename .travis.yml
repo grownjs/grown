@@ -1,0 +1,15 @@
+dist: trusty
+language: node_js
+branches:
+  only:
+    - next
+node_js:
+  - 4
+  - 6
+  - 8
+env:
+  - PACKAGE=grown
+script:
+  - lerna run test --scope $PACKAGE
+notifications:
+  email: false
