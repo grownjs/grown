@@ -5,6 +5,7 @@ const debug = require('debug')('grown:conn');
 const statusCodes = require('http').STATUS_CODES;
 const mime = require('mime');
 const send = require('send');
+const path = require('path');
 
 module.exports = ($, util) => {
   function _finishRequest(ctx, body) {
