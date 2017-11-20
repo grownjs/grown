@@ -132,7 +132,7 @@ function endCallback(err, conn, options) {
           .catch(e => {
             debug('#%s Fatal. %s', conn.pid, e.stack);
 
-            this._events.emit('failure', e, null, options);
+            this._events.emit('failure', e, options);
           });
       }
     })

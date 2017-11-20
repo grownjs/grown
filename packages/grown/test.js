@@ -60,12 +60,6 @@ Grown.module('Request.ElapsedTime', {
   },
 
   install(ctx) {
-    console.log('ELAPSED TIME', this.class);
-
-    if (this.class === 'Grown.Request.ElapsedTime' || !this._render) {
-      throw new Error('Include this module first');
-    }
-
     ctx.on('request', () => {
       this._startTime = new Date();
     });
@@ -81,24 +75,22 @@ Grown.module('Render.Layout', {
 });
 
 Grown.module('Render.Views', {
+  include: [
+    Grown.Render.Layout,
+  ],
   view_folders: [__dirname],
 });
 
+Grown.module('Router.Controllers', {
+  controller_lookup: 'Application.%sController',
+});
+
 server.plug([
-  Grown.Conn({
-    include: [
-      Grown.Router.Controllers({
-        controller_lookup: 'Application.%sController',
-      }),
-      Grown.Router.Mappings,
-    ],
-  }),
-  Grown.Render.Views({
-    include: [
-      Grown.Request.ElapsedTime,
-      Grown.Render.Layout,
-    ],
-  }),
+  Grown.Request.ElapsedTime,
+  Grown.Router.Controllers,
+  Grown.Router.Mappings,
+  Grown.Render.Views,
+  Grown.Conn,
   !IS_LIVE && Grown.Test,
 ]);
 
@@ -139,8 +131,12 @@ const path = (process.argv.slice(2)[0] || '').charAt() === '/'
 
 server.on('before_send', err => {
   if (err) {
-    console.log(err);
+    console.log(err.stack);
   }
+});
+
+server.on('failure', err => {
+  console.log(err.stack);
 });
 
 if (!IS_LIVE) {

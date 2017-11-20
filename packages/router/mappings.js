@@ -67,12 +67,15 @@ module.exports = ($, util) => {
     throw util.buildError(404);
   }
 
-  function _groupRoutes(ctx) {
+  function _groupRoutes(ctx, options) {
     this._routes = Object.create(null);
 
     const _routes = ctx.router.routes;
 
     return ctx.emit('before_routes', ctx, _routes)
+      .catch(e => {
+        ctx.emit('failure', e, options);
+      })
       .then(() => {
         // resolve routing for controllers lookup
         _routes.forEach(route => {
@@ -97,13 +100,13 @@ module.exports = ($, util) => {
     _groupRoutes,
     _fixMethod,
 
-    install(ctx) {
+    install(ctx, options) {
       const routeMappings = require('route-mappings');
 
       util.readOnlyProperty(ctx, 'router', routeMappings());
 
       // compile fast-routes
-      ctx.once('start', () => this._groupRoutes(ctx));
+      ctx.once('start', () => this._groupRoutes(ctx, options));
 
       ctx.mount((conn, options) => {
         try {

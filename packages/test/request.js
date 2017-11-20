@@ -90,11 +90,7 @@ module.exports = ($, util) => {
 
             options = this._fixRequest(url, method, options);
 
-            return ctx.run(options, callback)
-              .catch(e => callback(e))
-              .catch(e => {
-                ctx.emit('failure', e, null, _options);
-              });
+            return ctx.run(options, callback);
           },
         },
       };

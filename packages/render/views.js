@@ -296,6 +296,9 @@ module.exports = ($, util) => {
         };
 
         return ctx.emit('before_render', this, tpl)
+          .catch(e => {
+            ctx.emit('failure', e, options);
+          })
           .then(() => {
             return tpl.contents;
           });

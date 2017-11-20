@@ -102,7 +102,7 @@ const Grown = $('Grown', options => {
               .then(() => scope._callback(conn, scope._options))
               .then(() => typeof callback === 'function' && callback(null, conn))
               .catch(e => {
-                this.emit('failure', e, conn, scope._options);
+                this.emit('failure', e, scope._options);
 
                 /* istanbul ignore else */
                 if (typeof callback === 'function') {

@@ -95,9 +95,8 @@ module.exports = ($, util) => {
     before_render: _onRender,
 
     install() {
-      /* istanbul ignore else */
-      if (this.class === 'Grown.Render.Layout' || !this._render) {
-        throw new Error('Include this module first');
+      if (!this._buildvNode) {
+        throw new Error('Layout depends on Views, please include within');
       }
     },
 

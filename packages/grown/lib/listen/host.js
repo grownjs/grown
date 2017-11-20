@@ -56,6 +56,6 @@ module.exports = function $host(_protocol, req, res) {
     })
     .then(() => this._callback(conn, this._options))
     .catch(e => {
-      this._events.emit('failure', e, conn, this._options);
+      this._events.emit('failure', e, this._options);
     });
 };
