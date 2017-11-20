@@ -108,7 +108,7 @@ module.exports = ($, util) => {
       // compile fast-routes
       ctx.once('start', () => this._groupRoutes(ctx, options));
 
-      ctx.mount((conn, options) => {
+      ctx.mount('Router#pipe', (conn, options) => {
         try {
           // match and execute
           return this._dispatchRoutes(conn, options);
