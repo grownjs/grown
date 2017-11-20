@@ -9,7 +9,7 @@ if (IS_DEBUG) {
 
 const Grown = require('.');
 
-Grown.use(require('@grown/bundler'));
+Grown.use(require('@grown/tarima'));
 Grown.use(require('@grown/static'));
 Grown.use(require('@grown/router'));
 Grown.use(require('@grown/render'));
@@ -57,8 +57,8 @@ Grown.module('Render.Views', {
 //   ],
 // });
 
-Grown.module('Bundler', {
-  bundle_folders: [
+Grown.module('Tarima', {
+  src_folders: [
     {
       at: '/assets',
       from: __dirname,
@@ -77,7 +77,7 @@ server.plug([
     && Grown.Test,
   Grown.Conn,
   Grown.Static,
-  Grown.Bundler,
+  Grown.Tarima,
   Grown.Render.Views,
   Grown.Router.Mappings,
   Grown.Router.Controllers,

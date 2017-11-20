@@ -47,7 +47,7 @@ module.exports = ($, util) => {
       });
     }
 
-    throw new Error(`Unexpected slot, given '${util.inspect(opts)}'`);
+    throw new Error(`Unexpected view-slot, given '${util.inspect(opts)}'`);
   }
 
   function _onRender(ctx, template) {
@@ -96,7 +96,7 @@ module.exports = ($, util) => {
 
     install() {
       if (!this._buildvNode) {
-        throw new Error('Layout depends on Views, please include within');
+        throw new Error('Render.Layout depends on Render.Views, please include within');
       }
     },
 

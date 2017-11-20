@@ -19,7 +19,7 @@
     "@grown/router": "^0.0.0",
     "@grown/render": "^0.0.0",
     "@grown/static": "^0.0.0",
-    "@grown/bundler": "^0.0.0",
+    "@grown/tarima": "^0.0.0",
     "codecov": "^3.0.0",
     "eslint": "^4.10.0",
     "eslint-config-airbnb-base": "^12.1.0",
