@@ -9,6 +9,8 @@ if (IS_DEBUG) {
 
 const Grown = require('.');
 
+Grown.use(require('@grown/bundler'));
+Grown.use(require('@grown/static'));
 Grown.use(require('@grown/router'));
 Grown.use(require('@grown/render'));
 Grown.use(require('@grown/test'));
@@ -44,6 +46,15 @@ Grown.module('Render.Views', {
   ],
   view_folders: [__dirname],
 });
+Grown.module('Static', {
+  static_folders: [
+    __dirname,
+    {
+      at: '/modules',
+      from: `${__dirname}/node_modules`,
+    },
+  ],
+});
 
 Grown.module('Router.Controllers', {
   controller_lookup: 'Application.%sController',
@@ -53,6 +64,8 @@ server.plug([
   !IS_LIVE
     && Grown.Test,
   Grown.Conn,
+  Grown.Static,
+  Grown.Bundler,
   Grown.Render.Views,
   Grown.Router.Mappings,
   Grown.Router.Controllers,
