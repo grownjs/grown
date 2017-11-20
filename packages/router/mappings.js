@@ -68,68 +68,64 @@ module.exports = ($, util) => {
   }
 
   function _groupRoutes(ctx) {
+    this._routes = Object.create(null);
+
     const _routes = ctx.router.routes;
-    const _mappings = {};
 
-    /* istanbul ignore else */
-    if (this.before_routes) {
-      this.before_routes(ctx, _routes);
-    }
+    return ctx.emit('before_routes', ctx, _routes)
+      .then(() => {
+        // resolve routing for controllers lookup
+        _routes.forEach(route => {
+          /* istanbul ignore else */
+          if (!this._routes[route.verb]) {
+            this._routes[route.verb] = [];
+          }
 
-    // resolve routing for controllers lookup
-    _routes.forEach(route => {
-      /* istanbul ignore else */
-      if (!_mappings[route.verb]) {
-        _mappings[route.verb] = [];
-      }
+          // group all routes per-verb
+          this._routes[route.verb].push(route);
+        });
 
-      // group all routes per-verb
-      _mappings[route.verb].push(route);
-    });
-
-    // build mapping per-verb
-    Object.keys(_mappings).forEach(verb => {
-      _mappings[verb] = ctx.router.map(_mappings[verb]);
-    });
-
-    return _mappings;
+        // build mapping per-verb
+        Object.keys(this._routes).forEach(verb => {
+          this._routes[verb] = ctx.router.map(this._routes[verb]);
+        });
+      });
   }
 
   return $.module('Router.Mappings', {
     _dispatchRoutes,
     _groupRoutes,
+    _fixMethod,
 
-    install(ctx, options) {
+    install(ctx) {
       const routeMappings = require('route-mappings');
 
       util.readOnlyProperty(ctx, 'router', routeMappings());
 
       // compile fast-routes
-      ctx.once('start', () => {
-        this._routes = this._groupRoutes(ctx);
+      ctx.once('start', () => this._groupRoutes(ctx));
+
+      ctx.mount((conn, options) => {
+        try {
+          // match and execute
+          return this._dispatchRoutes(conn, options);
+        } catch (e) {
+          /* istanbul ignore else */
+          if (!this.fallthrough) {
+            throw e;
+          }
+        }
       });
 
       return {
         methods: {
-          get: _fixMethod(ctx, 'GET'),
-          put: _fixMethod(ctx, 'PUT'),
-          post: _fixMethod(ctx, 'POST'),
-          patch: _fixMethod(ctx, 'PATCH'),
-          delete: _fixMethod(ctx, 'DELETE'),
+          get: this._fixMethod(ctx, 'GET'),
+          put: this._fixMethod(ctx, 'PUT'),
+          post: this._fixMethod(ctx, 'POST'),
+          patch: this._fixMethod(ctx, 'PATCH'),
+          delete: this._fixMethod(ctx, 'DELETE'),
         },
       };
-    },
-
-    pipe(conn, options) {
-      try {
-        // match and execute
-        return this._dispatchRoutes(conn, options);
-      } catch (e) {
-        /* istanbul ignore else */
-        if (!this.fallthrough) {
-          throw e;
-        }
-      }
     },
   });
 };
