@@ -1,5 +1,5 @@
 {
-  "name": "grown",
+  "name": "@grown/grown",
   "version": "0.0.0",
   "description": "Experimental DSL for web applications",
   "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
