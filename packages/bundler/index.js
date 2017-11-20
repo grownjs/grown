@@ -276,15 +276,11 @@ module.exports = ($, util) => {
             util.extendValues(opts, cwd);
           }
 
-          const _opts = util.extendValues({
+          const _opts = util.extendValues({}, this.bundle_options, {
             fallthrough: opts.fallthrough || this.fallthrough,
-            assets: typeof opts.assets !== 'undefined'
-              ? opts.assets
-              : 'assets',
-            content: typeof opts.content !== 'undefined'
-              ? opts.content
-              : 'content',
-          }, this.bundle_options);
+            assets: opts.assets,
+            content: opts.content,
+          });
 
           _groups[opts.at || '/'] = _groups[opts.at || '/'] || [];
           _groups[opts.at || '/'].push({

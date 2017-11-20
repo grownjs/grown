@@ -60,7 +60,7 @@ Grown.module('Render.Views', {
 Grown.module('Bundler', {
   bundle_folders: [
     {
-      at: '/',
+      at: '/assets',
       from: __dirname,
       assets: '',
       content: '',

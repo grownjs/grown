@@ -15,7 +15,7 @@ module.exports = ($, util) => {
             util.extendValues(opts, cwd);
           }
 
-          const _opts = util.extendValues({
+          const _opts = util.extendValues({}, this.static_options, {
             fallthrough: opts.fallthrough || this.fallthrough,
             acceptRanges: opts.acceptRanges,
             cacheControl: opts.cacheControl,
@@ -28,7 +28,7 @@ module.exports = ($, util) => {
             maxAge: opts.maxAge,
             redirect: opts.redirect,
             setHeaders: opts.setHeaders,
-          }, this.static_options);
+          });
 
           if (typeof opts.at === 'string' && opts.at.charAt() === '/') {
             ctx.mount(opts.at, serveStatic(opts.from, _opts), opts.filter);
