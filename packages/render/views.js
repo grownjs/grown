@@ -190,11 +190,11 @@ module.exports = ($, util) => {
         let _fn;
 
         if (typeof _id === 'function') {
-          debug('Rendering function <%s>%s', _id.name || '?');
+          debug('#%s Rendering function <%s>%s', process.pid, _id.name || '?');
 
           _fn = _id;
         } else {
-          debug('Rendering partial <%s>%s', _id);
+          debug('#%s Rendering partial <%s>%s', process.pid, _id);
 
           /* istanbul ignore else */
           if (!cached[_id]) {

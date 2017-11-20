@@ -10,6 +10,8 @@ const util = require('./lib/util');
 const _mount = require('./lib/mount');
 const _listen = require('./lib/listen');
 
+let _pid = 0;
+
 function $(id, props, extensions) {
   return $new(id, props, $, extensions);
 }
@@ -60,18 +62,18 @@ const Grown = $('Grown', options => {
 
   // built-in connection
   scope._connection = (request, _extensions) => {
+    const PID = `${process.pid}.${_pid}`;
+
     return $('Grown.Conn.Builder')({
-      name: `Grown.Conn#${Math.random().toString(36).substr(2)}`,
+      name: `Grown.Conn#${PID}`,
       props: {
+        pid: () => PID,
         env: () => _environment,
       },
       init() {
+        _pid += 1;
+
         return [
-          !this.pid && {
-            props: {
-              pid: () => process.pid,
-            },
-          },
           _extensions,
           scope._extensions,
         ];

@@ -2,20 +2,14 @@
 
 const debug = require('debug')('grown:listen');
 
-let pid = 0;
-
 module.exports = function $host(_protocol, req, res) {
-  const PID = `${process.pid}.${pid}`;
-
-  pid += 1;
-
   // normalize
   const host = req.headers.host ? req.headers.host : '';
   const port = host.split(':')[1] || _protocol.globalAgent.defaultPort;
   const hostname = port ? host : `${host}:${_protocol.globalAgent.defaultPort}`;
 
   debug('#%s (%s) %s %s',
-    PID,
+    process.pid,
     hostname,
     req.method.toUpperCase(),
     req.url.split('?')[0]);
@@ -34,13 +28,13 @@ module.exports = function $host(_protocol, req, res) {
 
   /* istanbul ignore else */
   if (!_server) {
-    debug('#%s Wait. Missing connection for %s (%s)', PID, hostname, port);
+    debug('#%s Wait. Missing connection for %s (%s)', process.pid, hostname, port);
 
     try {
       // fallback
       _server = this._hosts[Object.keys(this._hosts)[0]];
 
-      debug('#%s Using first available connection from <{ %s }>', PID, Object.keys(this._hosts).join(', '));
+      debug('#%s Using first available connection from <{ %s }>', process.pid, Object.keys(this._hosts).join(', '));
     } catch (e) {
       res.status = 500;
       res.end(`Bad input: ${hostname} (${port})`);
@@ -51,7 +45,6 @@ module.exports = function $host(_protocol, req, res) {
   const conn = this._connection(null, {
     props: {
       server: () => _server,
-      pid: () => PID,
       req: () => req,
       res: () => res,
     },
