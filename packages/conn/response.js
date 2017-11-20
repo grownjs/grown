@@ -14,6 +14,8 @@ module.exports = ($, util) => {
       throw new Error('Already finished');
     }
 
+    ctx.halted = true;
+
     ctx.res.statusCode = ctx.status_code;
     ctx.res.statusMessage = statusCodes[ctx.res.statusCode];
 

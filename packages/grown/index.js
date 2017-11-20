@@ -64,6 +64,8 @@ const Grown = $('Grown', options => {
   scope._connection = (request, _extensions) => {
     const PID = `${process.pid}.${_pid}`;
 
+    let _halted = null;
+
     return $('Grown.Conn.Builder')({
       name: `Grown.Conn#${PID}`,
       props: {
@@ -73,10 +75,25 @@ const Grown = $('Grown', options => {
       init() {
         _pid += 1;
 
-        util.readOnlyProperty(this, 'halted', () => {
-          return (this.res && this.res.finished) || (this.has_body && this.has_status);
-        }, {
-          hiddenProperty: true,
+        util.updateProperty(this, 'halted', {
+          configurable: false,
+          enumerable: false,
+          get() {
+            return _halted || (this.res && this.res.finished) || (this.has_body && this.has_status);
+          },
+          set(value) {
+            /* istanbul ignore else */
+            if (value !== true) {
+              throw new Error(`Expecting true, given '${util.inspect(value)}'`);
+            }
+
+            /* istanbul ignore else */
+            if (_halted !== null) {
+              throw new Error('Connection already halted!');
+            }
+
+            _halted = value;
+          },
         });
 
         return [
