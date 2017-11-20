@@ -61,7 +61,7 @@ const Grown = $('Grown', options => {
   // built-in connection
   scope._connection = (request, _extensions) => {
     return $('Grown.Conn.Builder')({
-      name: `Grown.Conn#${process.pid}`,
+      name: `Grown.Conn#${Math.random().toString(36).substr(2)}`,
       props: {
         env: () => _environment,
       },

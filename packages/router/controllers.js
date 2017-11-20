@@ -42,14 +42,14 @@ module.exports = ($, util) => {
             if (typeof this._controllers[controller].definition.pipe === 'function') {
               route.pipeline.unshift({
                 call: [this._controllers[controller].definition, 'pipe'],
-                name: this._controllers[controller].definition.name,
+                name: `${controller}#pipe`,
                 type: 'method',
               });
             }
 
             route.pipeline.push({
               call: [this._controllers[controller].instance, action],
-              name: controller,
+              name: `${controller}#${action}`,
               type: 'method',
             });
           } catch (e) {
