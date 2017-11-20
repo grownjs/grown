@@ -1,10 +1,14 @@
 'use strict';
 
+const path = require('path');
+
 module.exports = ($, util) => {
   const serveStatic = require('serve-static');
 
   return $.module('Static', {
-    install(ctx) {
+    install(ctx, options) {
+      const _cwd = options('cwd');
+
       util.flattenArgs(this.static_folders)
         .forEach(cwd => {
           const opts = {};
@@ -31,9 +35,9 @@ module.exports = ($, util) => {
           });
 
           if (typeof opts.at === 'string' && opts.at.charAt() === '/') {
-            ctx.mount(opts.at, serveStatic(opts.from, _opts), opts.filter);
+            ctx.mount(`[at:${opts.at}]`, serveStatic(opts.from, _opts), opts.filter);
           } else {
-            ctx.mount(serveStatic(opts.from, _opts), opts.filter);
+            ctx.mount(`[from:${path.relative(_cwd, opts.from) || '.'}]`, serveStatic(opts.from, _opts), opts.filter);
           }
         });
     },
