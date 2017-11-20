@@ -37,7 +37,7 @@ module.exports = ($, util) => {
             conn.res.write(partial.result);
             conn.res.end();
           }
-        } else if (typeof conn.render === 'function') {
+        } else if (typeof conn.render === 'function' && typeof partial.render === 'function') {
           debug('#%s Wait. Rendering asset through views', conn.pid);
 
           return conn.render(partial.render, conn.state);
@@ -71,7 +71,9 @@ module.exports = ($, util) => {
 
         /* istanbul ignore else */
         if (conn.res) {
-          conn.res.write(partial.render(conn.state));
+          conn.res.write(typeof partial.render === 'function'
+            ? partial.render(conn.state)
+            : partial.result);
           conn.res.end();
         }
       })
