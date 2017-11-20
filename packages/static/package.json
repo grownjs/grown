@@ -1,11 +1,14 @@
 {
   "name": "@grown/static",
-  "version": "0.0.0",
+  "version": "0.1.0-alpha.3ef62c65",
   "main": "index.js",
   "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
   "license": "MIT",
   "dependencies": {
     "debug": "^3.1.0",
     "serve-static": "^1.13.1"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

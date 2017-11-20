@@ -1,6 +1,6 @@
 {
   "name": "@grown/conn",
-  "version": "0.0.0",
+  "version": "0.1.0-alpha.3ef62c65",
   "main": "index.js",
   "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
   "license": "MIT",
@@ -10,5 +10,8 @@
     "mime": "^2.0.3",
     "send": "^0.16.1",
     "type-is": "^1.6.15"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
