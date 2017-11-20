@@ -28,6 +28,9 @@ module.exports = function $mount(name, handler, callback) {
 
       /* istanbul ignore else */
       if (ctx.req.url.indexOf(name) === 0) {
+        ctx.req.originalUrl = ctx.req.url;
+        ctx.req.url = ctx.req.url.substr(name.length);
+
         return typeof callback === 'function'
           ? callback(ctx, options)
           : null;
