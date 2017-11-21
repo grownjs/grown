@@ -26,10 +26,10 @@ module.exports = ($, util) => {
 
       const definition = {
         $schema: this.$schema,
-        classMethods: {},
-        getterMethods: {},
-        setterMethods: {},
-        instanceMethods: {},
+        classMethods: this.classMethods || {},
+        getterMethods: this.getterMethods || {},
+        setterMethods: this.setterMethods || {},
+        instanceMethods: this.instanceMethods || {},
       };
 
       Object.keys(this).forEach(key => {
