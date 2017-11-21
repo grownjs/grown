@@ -1,5 +1,26 @@
 'use strict';
 
+const HOOK_METHODS = [
+  'beforeValidate', 'afterValidate', 'validationFailed',
+  'beforeCreate', 'afterCreate',
+  'beforeDestroy', 'afterDestroy',
+  'beforeRestore', 'afterRestore',
+  'beforeUpdate', 'afterUpdate',
+  'beforeSave', 'afterSave',
+  'beforeUpsert', 'afterUpsert',
+  'beforeBulkCreate', 'afterBulkCreate',
+  'beforeBulkDestroy', 'afterBulkDestroy',
+  'beforeBulkRestore', 'afterBulkRestore',
+  'beforeBulkUpdate', 'afterBulkUpdate',
+  'beforeFind', 'beforeFindAfterExpandIncludeAll', 'beforeFindAfterOptions', 'afterFind',
+  'beforeCount',
+  'beforeDefine', 'afterDefine',
+  'beforeInit', 'afterInit',
+  'beforeConnect', 'afterConnect',
+  'beforeSync', 'afterSync',
+  'beforeBulkSync', 'afterBulkSync',
+];
+
 module.exports = ($, util) => {
   const JSONSchemaSequelizer = require('json-schema-sequelizer');
 
@@ -26,6 +47,7 @@ module.exports = ($, util) => {
 
       const definition = {
         $schema: this.$schema,
+        hooks: this.hooks || {},
         classMethods: this.classMethods || {},
         getterMethods: this.getterMethods || {},
         setterMethods: this.setterMethods || {},
@@ -33,8 +55,13 @@ module.exports = ($, util) => {
       };
 
       Object.keys(this).forEach(key => {
+        /* istanbul ignore else */
         if (key !== 'connect' && typeof this[key] === 'function') {
-          definition.classMethods[key] = this[key];
+          if (HOOK_METHODS.indexOf(key) === -1) {
+            definition.classMethods[key] = this[key];
+          } else {
+            definition.hooks[key] = this[key];
+          }
         }
       });
 
