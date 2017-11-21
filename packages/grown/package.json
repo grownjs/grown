@@ -19,6 +19,7 @@
     "@grown/router": "^0.1.0-alpha.3ef62c65",
     "@grown/static": "^0.1.0-alpha.3ef62c65",
     "@grown/tarima": "^0.1.0-alpha.3ef62c65",
+    "@grown/model": "^0.1.0-alpha.3ef62c65",
     "@grown/test": "^0.1.0-alpha.3ef62c65",
     "codecov": "^3.0.0",
     "eslint": "^4.10.0",
