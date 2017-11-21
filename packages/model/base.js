@@ -3,14 +3,16 @@
 module.exports = ($, util) => {
   const JSONSchemaSequelizer = require('json-schema-sequelizer');
 
-  const _connections = Object.create(null);
-
   return $.module('Model.Base', {
+    _dbs: {},
+    _model: null,
+
     connect(name) {
       let options = {};
 
       if (typeof name === 'object') {
         options = name || {};
+        name = null;
       } else {
         options = this.connection || {};
       }
@@ -18,18 +20,49 @@ module.exports = ($, util) => {
       name = name || this.database || 'default';
 
       /* istanbul ignore else */
-      if (!_connections[name]) {
-        _connections[name] = new JSONSchemaSequelizer(options);
+      if (!this._dbs[name]) {
+        this._dbs[name] = new JSONSchemaSequelizer(options);
       }
 
-      _connections[name].add({
+      const definition = {
         $schema: this.$schema,
+        classMethods: {},
+        getterMethods: {},
+        setterMethods: {},
+        instanceMethods: {},
+      };
+
+      Object.keys(this).forEach(key => {
+        if (key !== 'connect' && typeof this[key] === 'function') {
+          definition.classMethods[key] = this[key];
+        }
       });
 
-      return _connections[name].connect()
-        .then(conn => {
-          util.readOnlyProperty(this, 'model', () =>
-            conn.models[this.$schema.id]);
+      Object.keys(this.props || {}).forEach(key => {
+        const d = util.getDescriptor(this.props, key);
+
+        if (d.get) {
+          definition.getterMethods[key] = d.get;
+        }
+
+        if (d.set) {
+          definition.setterMethods[key] = d.set;
+        }
+
+        if (d.value) {
+          definition.getterMethods[key] = () => d.value;
+        }
+      });
+
+      Object.keys(this.methods || {}).forEach(key => {
+        definition.instanceMethods[key] = this.methods[key];
+      });
+
+      return Promise.resolve()
+        .then(() => this._dbs[name].add(definition))
+        .then(() => this._dbs[name].connect())
+        .then(() => {
+          this._model = this._dbs[name].models[this.$schema.id];
 
           return this;
         });
