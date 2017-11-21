@@ -1,6 +1,6 @@
 'use strict';
 
 module.exports = ($, util) => {
-  return $.module('Models.Loader', {
+  return $.module('Model.Loader', {
   });
 };

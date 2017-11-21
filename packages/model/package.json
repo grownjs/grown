@@ -5,7 +5,11 @@
   "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "debug": "^3.1.0"
+    "debug": "^3.1.0",
+    "json-schema-sequelizer": "^0.10.2"
+  },
+  "devDependencies": {
+    "sqlite3": "^3.1.13"
   },
   "publishConfig": {
     "access": "public"
