@@ -9,6 +9,8 @@ node_js:
   - 8
 env:
   - PACKAGE=@grown/grown
+before_script:
+  - lerna bootstrap
 script:
   - lerna run test --scope $PACKAGE
 notifications:
