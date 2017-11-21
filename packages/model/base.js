@@ -88,11 +88,7 @@ module.exports = ($, util) => {
       return Promise.resolve()
         .then(() => this._dbs[name].add(definition))
         .then(() => this._dbs[name].connect())
-        .then(() => {
-          this._model = this._dbs[name].models[this.$schema.id];
-
-          return this;
-        });
+        .then(() => this._dbs[name].models[this.$schema.id]);
     },
   });
 };
