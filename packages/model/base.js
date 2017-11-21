@@ -67,14 +67,17 @@ module.exports = ($, util) => {
       Object.keys(this.props || {}).forEach(key => {
         const d = util.getDescriptor(this.props, key);
 
+        /* istanbul ignore else */
         if (d.get) {
           definition.getterMethods[key] = d.get;
         }
 
+        /* istanbul ignore else */
         if (d.set) {
           definition.setterMethods[key] = d.set;
         }
 
+        /* istanbul ignore else */
         if (d.value) {
           definition.getterMethods[key] = () => d.value;
         }
