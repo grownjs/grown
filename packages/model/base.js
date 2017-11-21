@@ -26,7 +26,6 @@ module.exports = ($, util) => {
 
   return $.module('Model.Base', {
     _dbs: {},
-    _model: null,
 
     connect(name) {
       let options = {};
