@@ -25,12 +25,10 @@ module.exports = ($, util) => {
     ].join('');
   }
 
-  return $.module('Conn.Helpers', {
+  return $.module('Conn.Request', {
     _fixURL,
 
     mixins() {
-      const self = this;
-
       function _accepts(req) {
         if (!_accepts.fn) {
           _accepts.fn = accepts(req);
@@ -49,10 +47,6 @@ module.exports = ($, util) => {
 
       return {
         props: {
-          resp_headers() {
-            return this.res.getHeaders();
-          },
-
           req_headers() {
             return this.req.headers;
           },
@@ -72,11 +66,11 @@ module.exports = ($, util) => {
 
           // current connection
           host() {
-            return (req.headers.host && req.headers.host.split(':')[0]) || process.env.HOST || '0.0.0.0';
+            return (this.req.headers.host && this.req.headers.host.split(':')[0]) || process.env.HOST || '0.0.0.0';
           },
 
           port() {
-            return (req.headers.host && req.headers.host.split(':')[1]) || process.env.PORT || '8080';
+            return (this.req.headers.host && this.req.headers.host.split(':')[1]) || process.env.PORT || '8080';
           },
 
           remote_ip() {
@@ -85,7 +79,7 @@ module.exports = ($, util) => {
           },
 
           method() {
-            return req.method;
+            return this.req.method;
           },
 
           params() {
@@ -152,7 +146,7 @@ module.exports = ($, util) => {
             }
 
             /* istanbul ignore else */
-            if (typeof req.headers[name] === 'undefined') {
+            if (typeof this.req.headers[name] === 'undefined') {
               return defvalue;
             }
 
@@ -180,81 +174,8 @@ module.exports = ($, util) => {
 
             return this;
           },
-
-          // response headers
-          get_resp_header(name) {
-            return this.res.getHeader(name);
-          },
-
-          put_resp_header(name, value) {
-            /* istanbul ignore else */
-            if (!name || typeof name !== 'string') {
-              throw new Error(`Invalid resp_header: '${name}' => '${value}'`);
-            }
-
-            this.res.setHeader(name, value);
-
-            return this;
-          },
-
-          merge_resp_headers(headers) {
-            /* istanbul ignore else */
-            if (!(headers && (typeof headers === 'object' && !Array.isArray(headers)))) {
-              throw new Error(`Invalid resp_headers: '${headers}'`);
-            }
-
-            Object.keys(headers).forEach(key => {
-              this.put_resp_header(key, headers[key]);
-            });
-
-            return this;
-          },
-
-          delete_resp_header(name) {
-            /* istanbul ignore else */
-            if (!(name && typeof name === 'string')) {
-              throw new Error(`Invalid resp_header: '${name}'`);
-            }
-
-            this.res.removeHeader(name);
-
-            return this;
-          },
-
-          redirect(location, timeout, body) {
-            /* istanbul ignore else */
-            if (!(location && typeof location === 'string')) {
-              throw new Error(`Invalid location: '${location}`);
-            }
-
-            /* istanbul ignore else */
-            if (timeout) {
-              const meta = `<meta http-equiv="refresh" content="${timeout};url=${location}">${body || ''}`;
-
-              return this.end(302, meta);
-            }
-
-            debug('#%s Done. Redirection was found', this.pid);
-
-            return this.put_resp_header('Location', self._fixURL(location)).end(302);
-          },
-
-          raise(code, message) {
-            throw util.buildError(code || 500, message);
-          },
-
-          json(value) {
-            /* istanbul ignore else */
-            if (!value || typeof value !== 'object') {
-              throw new Error(`Invalid JSON value: ${value}`);
-            }
-
-            return this.end(value);
-          },
         },
       };
     },
   });
 };
-
-

@@ -1,6 +1,6 @@
 'use strict';
 
-const debug = require('debug')('grown:conn');
+const debug = require('debug')('grown:conn-response');
 
 const statusCodes = require('http').STATUS_CODES;
 const mime = require('mime');
@@ -182,6 +182,77 @@ module.exports = ($, util) => {
           },
         },
         methods: {
+          resp_headers() {
+            return this.res.getHeaders();
+          },
+
+          // response headers
+          get_resp_header(name) {
+            return this.res.getHeader(name);
+          },
+
+          put_resp_header(name, value) {
+            /* istanbul ignore else */
+            if (!name || typeof name !== 'string') {
+              throw new Error(`Invalid resp_header: '${name}' => '${value}'`);
+            }
+
+            this.res.setHeader(name, value);
+
+            return this;
+          },
+
+          merge_resp_headers(headers) {
+            /* istanbul ignore else */
+            if (!(headers && (typeof headers === 'object' && !Array.isArray(headers)))) {
+              throw new Error(`Invalid resp_headers: '${headers}'`);
+            }
+
+            Object.keys(headers).forEach(key => {
+              this.put_resp_header(key, headers[key]);
+            });
+
+            return this;
+          },
+
+          delete_resp_header(name) {
+            /* istanbul ignore else */
+            if (!(name && typeof name === 'string')) {
+              throw new Error(`Invalid resp_header: '${name}'`);
+            }
+
+            this.res.removeHeader(name);
+
+            return this;
+          },
+
+          redirect(location, timeout, body) {
+            /* istanbul ignore else */
+            if (!(location && typeof location === 'string')) {
+              throw new Error(`Invalid location: '${location}`);
+            }
+
+            /* istanbul ignore else */
+            if (timeout) {
+              const meta = `<meta http-equiv="refresh" content="${timeout};url=${location}">${body || ''}`;
+
+              return this.end(302, meta);
+            }
+
+            debug('#%s Done. Redirection was found', this.pid);
+
+            return this.put_resp_header('Location', self._fixURL(location)).end(302);
+          },
+
+          json(value) {
+            /* istanbul ignore else */
+            if (!value || typeof value !== 'object') {
+              throw new Error(`Invalid JSON value: ${value}`);
+            }
+
+            return this.end(value);
+          },
+
           send_file(entry, mimeType) {
             /* istanbul ignore else */
             if (typeof entry === 'object') {
@@ -196,7 +267,7 @@ module.exports = ($, util) => {
 
             const pathname = encodeURI(path.basename(entry));
 
-            const file = send(req, pathname, {
+            const file = send(this.req, pathname, {
               root: path.dirname(entry),
             });
 
@@ -210,7 +281,7 @@ module.exports = ($, util) => {
             return new Promise((resolve, reject) => {
               file.on('error', reject);
               file.on('end', resolve);
-              file.pipe(res);
+              file.pipe(this.res);
             });
           },
 

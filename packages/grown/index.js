@@ -101,6 +101,11 @@ const Grown = $('Grown', options => {
           scope._extensions,
         ];
       },
+      methods: {
+        raise(code, message) {
+          throw util.buildError(code || 500, message);
+        },
+      },
     }).new(request);
   };
 
