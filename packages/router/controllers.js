@@ -21,7 +21,9 @@ module.exports = ($, util) => {
 
         if (!this._controllers[controller]) {
           try {
-            const _controller = this.controller_lookup.replace('%s', controller);
+            const _controller = this.controller_lookup
+              ? this.controller_lookup.replace('%s', controller)
+              : `${controller}Controller`;
 
             const Ctrl = util.getProp($, _controller,
               new Error(`${_controller} is not defined`));
@@ -65,8 +67,6 @@ module.exports = ($, util) => {
   return $.module('Router.Controllers', {
     _drawRoutes,
     _controllers: {},
-
-    controller_lookup: '%s',
 
     before_routes: _drawRoutes,
   });
