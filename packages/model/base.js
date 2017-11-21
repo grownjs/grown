@@ -27,7 +27,7 @@ module.exports = ($, util) => {
   return $.module('Model.Base', {
     _dbs: {},
 
-    connect(name) {
+    connect(name, references) {
       let options = {};
 
       if (typeof name === 'object') {
@@ -41,7 +41,7 @@ module.exports = ($, util) => {
 
       /* istanbul ignore else */
       if (!this._dbs[name]) {
-        this._dbs[name] = new JSONSchemaSequelizer(options);
+        this._dbs[name] = new JSONSchemaSequelizer(options, references, this.schemas_folder);
       }
 
       const definition = {
@@ -88,8 +88,8 @@ module.exports = ($, util) => {
       });
 
       return Promise.resolve()
-        .then(() => this._dbs[name].add(definition))
         .then(() => this._dbs[name].connect())
+        .then(() => this._dbs[name].add(definition))
         .then(() => this._dbs[name].models[this.$schema.id]);
     },
   });
