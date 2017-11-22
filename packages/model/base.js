@@ -29,25 +29,25 @@ module.exports = ($, util) => {
 
   return $.module('Model.Base', {
     connect(options, refs, cwd) {
-      options = options || {};
+      const _opts = {};
+
+      // merge defaults first
+      util.extendValues(_opts, this.connection);
 
       let name;
 
-      if (typeof options === 'string') {
-        name = options;
-        options = {};
-      } else {
-        util.extendValues(options, this.connection);
-
-        name = options.identifier;
+      /* istanbul ignore else */
+      if (Object.prototype.toString.call(options) === '[object Object]') {
+        util.extendValues(_opts, options);
       }
-
-      name = name || this.database || 'default';
 
       /* istanbul ignore else */
-      if (!_dbs[name]) {
-        _dbs[name] = new JSONSchemaSequelizer(options, refs, cwd);
+      if (typeof options === 'string') {
+        name = options;
+        options = null;
       }
+
+      name = name || this.database || _opts.identifier || 'default';
 
       const definition = {
         $schema: this.$schema,
@@ -91,6 +91,11 @@ module.exports = ($, util) => {
       Object.keys(this.methods || {}).forEach(key => {
         definition.instanceMethods[key] = this.methods[key];
       });
+
+      /* istanbul ignore else */
+      if (!_dbs[name]) {
+        _dbs[name] = new JSONSchemaSequelizer(_opts, refs, cwd);
+      }
 
       // define first
       _dbs[name].add(definition);
