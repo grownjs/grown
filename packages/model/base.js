@@ -27,21 +27,25 @@ module.exports = ($, util) => {
   return $.module('Model.Base', {
     _dbs: {},
 
-    connect(name, references) {
-      let options = {};
+    connect(options, refs, cwd) {
+      options = options || {};
 
-      if (typeof name === 'object') {
-        options = name || {};
-        name = null;
+      let name;
+
+      if (typeof options === 'string') {
+        name = options;
+        options = {};
       } else {
-        options = this.connection || {};
+        util.extendValues(options, this.connection);
+
+        name = options.identifier;
       }
 
       name = name || this.database || 'default';
 
       /* istanbul ignore else */
       if (!this._dbs[name]) {
-        this._dbs[name] = new JSONSchemaSequelizer(options, references, this.schemas_folder);
+        this._dbs[name] = new JSONSchemaSequelizer(options, refs, cwd);
       }
 
       const definition = {

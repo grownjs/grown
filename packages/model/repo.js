@@ -3,7 +3,7 @@
 module.exports = ($, util) => {
   const Base = require('./base')($, util);
 
-  function _getModel(name, refs) {
+  function _getModel(name, refs, cwd) {
     /* istanbul ignore else */
     if (!this[name]) {
       throw new Error(`Model '${name}' is not defined`);
@@ -17,17 +17,16 @@ module.exports = ($, util) => {
         include: [this[name]],
       });
 
-      return Model.connect(opts, refs);
+      return Model.connect(opts, refs, cwd);
     }
 
-    return this[name].connect(opts, refs);
+    return this[name].connect(opts, refs, cwd);
   }
 
   return $.module('Model.Repo', {
     _getModel,
 
     connect(cb) {
-      const _refs = {};
       const _tasks = [];
 
       return Promise.resolve()
@@ -40,9 +39,7 @@ module.exports = ($, util) => {
                 this[key].$schema.id = key;
               }
 
-              _refs[this[key].$schema.id] = this[key].$schema;
-
-              _tasks.push(() => this._getModel(key, _refs).then(m => {
+              _tasks.push(() => this._getModel(key).then(m => {
                 this[key] = m;
               }));
             }
