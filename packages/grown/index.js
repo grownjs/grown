@@ -10,6 +10,8 @@ const util = require('./lib/util');
 const _mount = require('./lib/mount');
 const _listen = require('./lib/listen');
 
+require('dotenv').config();
+
 let _pid = 0;
 
 function $(id, props, extensions) {
