@@ -28,9 +28,8 @@ function extendValues(out) {
       /* istanbul ignore else */
       if (Object.prototype.toString.call(source) === '[object Object]') {
         Object.keys(source).forEach(key => {
-          if (Object.prototype.toString.call(source[key]) === '[object Object]') {
-            out[key] = extendValues(out[key], source[key]);
-          } else {
+          /* istanbul ignore else */
+          if (typeof out[key] === 'undefined') {
             out[key] = source[key];
           }
         });
