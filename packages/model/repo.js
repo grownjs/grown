@@ -41,13 +41,14 @@ module.exports = ($, util) => {
                 this[key].$schema.id = key;
               }
 
-              _tasks.push(() => this._getModel(key, _refs, _cwd).then(m => {
-                this[key] = m;
-              }));
+              _tasks.push(this._getModel(key, _refs, _cwd)
+                .then(model => {
+                  this[model.name] = model;
+                }));
             }
           });
         })
-        .then(() => Promise.all(_tasks.map(x => x())))
+        .then(() => Promise.all(_tasks))
         .then(() => typeof cb === 'function' && cb(null, this))
         .catch(e => typeof cb === 'function' && cb(e, this))
         .then(() => this);

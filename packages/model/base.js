@@ -24,9 +24,10 @@ const HOOK_METHODS = [
 module.exports = ($, util) => {
   const JSONSchemaSequelizer = require('json-schema-sequelizer');
 
-  return $.module('Model.Base', {
-    _dbs: {},
+  // shared connections
+  const _dbs = {};
 
+  return $.module('Model.Base', {
     connect(options, refs, cwd) {
       options = options || {};
 
@@ -44,8 +45,8 @@ module.exports = ($, util) => {
       name = name || this.database || 'default';
 
       /* istanbul ignore else */
-      if (!this._dbs[name]) {
-        this._dbs[name] = new JSONSchemaSequelizer(options, refs, cwd);
+      if (!_dbs[name]) {
+        _dbs[name] = new JSONSchemaSequelizer(options, refs, cwd);
       }
 
       const definition = {
@@ -91,10 +92,12 @@ module.exports = ($, util) => {
         definition.instanceMethods[key] = this.methods[key];
       });
 
+      // define first
+      _dbs[name].add(definition);
+
       return Promise.resolve()
-        .then(() => this._dbs[name].add(definition))
-        .then(() => this._dbs[name].connect())
-        .then(() => this._dbs[name].models[this.$schema.id]);
+        .then(() => _dbs[name].connect())
+        .then(() => _dbs[name].models[this.$schema.id]);
     },
   });
 };
