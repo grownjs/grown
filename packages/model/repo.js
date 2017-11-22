@@ -1,7 +1,22 @@
 'use strict';
 
 module.exports = ($, util) => {
+  const JSONSchemaSequelizer = require('json-schema-sequelizer');
+
   const Base = require('./base')($, util);
+
+  function _getModels() {
+    const _models = [];
+
+    Object.keys(this).forEach(key => {
+      /* istanbul ignore else */
+      if (typeof this[key] === 'function' && this[key].sequelize) {
+        _models.push(this[key]);
+      }
+    });
+
+    return _models;
+  }
 
   function _getModel(name, refs, cwd) {
     /* istanbul ignore else */
@@ -25,8 +40,17 @@ module.exports = ($, util) => {
 
   return $.module('Model.Repo', {
     _getModel,
+    _getModels,
 
-    connect(cb) {
+    sync(opts) {
+      return JSONSchemaSequelizer.sync(this._getModels(), opts);
+    },
+
+    clear(opts) {
+      return JSONSchemaSequelizer.clear(this._getModels(), opts);
+    },
+
+    connect() {
       const _cwd = this.schemas_directory;
       const _refs = this.schemas;
       const _tasks = [];
@@ -49,16 +73,11 @@ module.exports = ($, util) => {
           });
         })
         .then(() => Promise.all(_tasks))
-        .then(() => typeof cb === 'function' && cb(null, this))
-        .catch(e => {
-          /* istanbul ignore else */
-          if (typeof cb === 'function') {
-            return cb(e, this);
-          }
-
-          throw e;
-        })
         .then(() => this);
+    },
+
+    disconnect() {
+      return Promise.all(this._getModels().map(m => m.sequelize.close()));
     },
   });
 };
