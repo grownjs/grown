@@ -39,15 +39,15 @@ module.exports = ($, util) => {
   }
 
   return $.module('Model.Repo', {
-    _getModel,
     _getModels,
+    _getModel,
 
     sync(opts) {
-      return JSONSchemaSequelizer.sync(this._getModels(), opts);
+      return JSONSchemaSequelizer.sync(this._getModels(), opts).then(() => this);
     },
 
     clear(opts) {
-      return JSONSchemaSequelizer.clear(this._getModels(), opts);
+      return JSONSchemaSequelizer.clear(this._getModels(), opts).then(() => this);
     },
 
     connect() {
@@ -77,7 +77,7 @@ module.exports = ($, util) => {
     },
 
     disconnect() {
-      return Promise.all(this._getModels().map(m => m.sequelize.close()));
+      return Promise.all(this._getModels().map(m => m.sequelize.close())).then(() => this);
     },
   });
 };
