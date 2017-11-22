@@ -9,7 +9,7 @@ module.exports = ($, util) => {
       throw new Error(`Model '${name}' is not defined`);
     }
 
-    const opts = this.database || this.connection;
+    const _opts = this.connection || {};
 
     /* istanbul ignore else */
     if (!this[name].connect) {
@@ -17,10 +17,10 @@ module.exports = ($, util) => {
         include: [this[name]],
       });
 
-      return Model.connect(opts, refs, cwd);
+      return Model.connect(_opts, refs, cwd);
     }
 
-    return this[name].connect(opts, refs, cwd);
+    return this[name].connect(_opts, refs, cwd);
   }
 
   return $.module('Model.Repo', {
@@ -50,7 +50,14 @@ module.exports = ($, util) => {
         })
         .then(() => Promise.all(_tasks))
         .then(() => typeof cb === 'function' && cb(null, this))
-        .catch(e => typeof cb === 'function' && cb(e, this))
+        .catch(e => {
+          /* istanbul ignore else */
+          if (typeof cb === 'function') {
+            return cb(e, this);
+          }
+
+          throw e;
+        })
         .then(() => this);
     },
   });
