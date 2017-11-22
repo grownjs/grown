@@ -27,6 +27,8 @@ module.exports = ($, util) => {
     _getModel,
 
     connect(cb) {
+      const _cwd = this.schemas_directory;
+      const _refs = this.schemas;
       const _tasks = [];
 
       return Promise.resolve()
@@ -39,7 +41,7 @@ module.exports = ($, util) => {
                 this[key].$schema.id = key;
               }
 
-              _tasks.push(() => this._getModel(key).then(m => {
+              _tasks.push(() => this._getModel(key, _refs, _cwd).then(m => {
                 this[key] = m;
               }));
             }
