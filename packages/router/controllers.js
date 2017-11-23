@@ -12,7 +12,12 @@ module.exports = ($, util) => {
 
         /* istanbul ignore else */
         if (route.use && !Array.isArray(route.use)) {
-          route.use = [route.use];
+          route.use = util.flattenArgs(route.use);
+        }
+
+        /* istanbul ignore else */
+        if (!route.pipeline) {
+          return;
         }
 
         // route definition
@@ -61,7 +66,7 @@ module.exports = ($, util) => {
 
         delete route.handler;
       }
-    })
+    });
   }
 
   return $.module('Router.Controllers', {
