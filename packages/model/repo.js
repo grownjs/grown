@@ -1,9 +1,9 @@
 'use strict';
 
-module.exports = ($, util) => {
-  const JSONSchemaSequelizer = require('json-schema-sequelizer');
+const JSONSchemaSequelizer = require('json-schema-sequelizer');
 
-  const Base = require('./base')($, util);
+module.exports = (Grown, util) => {
+  const Base = require('./base')(Grown, util);
 
   function _getModels() {
     const _models = [];
@@ -38,7 +38,7 @@ module.exports = ($, util) => {
     return this[name].connect(_opts, refs, cwd);
   }
 
-  return $.module('Model.Repo', {
+  return Grown.module('Model.Repo', {
     _getModels,
     _getModel,
 
