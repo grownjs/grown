@@ -9,12 +9,12 @@ const path = require('path');
 
 module.exports = (Grown, util) => {
   function _finishRequest(ctx, body) {
-    /* istanbul ignore else */
-    if (ctx.res.finished) {
-      throw new Error('Already finished');
-    }
-
     return ctx.halt(() => {
+      /* istanbul ignore else */
+      if (ctx.res.finished) {
+        throw new Error('Already finished');
+      }
+
       ctx.res.statusCode = ctx.status_code;
       ctx.res.statusMessage = statusCodes[ctx.res.statusCode];
 
@@ -250,7 +250,7 @@ module.exports = (Grown, util) => {
               throw new Error(`Invalid JSON value: ${value}`);
             }
 
-            return this.end(value);
+            return this.send(value);
           },
 
           send_file(entry, mimeType) {
