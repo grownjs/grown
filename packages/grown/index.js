@@ -14,10 +14,6 @@ require('dotenv').config();
 
 let _pid = 0;
 
-function $(id, props, extensions) {
-  return $new(id, props, $, extensions);
-}
-
 function fix(mixins) {
   /* istanbul ignore else */
   if (typeof mixins === 'function' && !mixins.class) {
@@ -32,7 +28,7 @@ function fix(mixins) {
   return mixins;
 }
 
-const Grown = $('Grown', options => {
+function grownFactory($, options) {
   /* istanbul ignore else */
   if (!(options && options.env && options.cwd)) {
     throw new Error('Missing environment config');
@@ -200,14 +196,23 @@ const Grown = $('Grown', options => {
       listen: _listen.bind(scope),
     },
   };
-});
+}
 
-$('Grown.version', () => _pkg.version, false);
+module.exports = () => {
+  // private container
+  function $(id, props, extensions) {
+    return $new(id, props, $, extensions);
+  }
 
-$('Grown.module', (id, def) =>
-  $(`Grown.${id}`, def), false);
+  const Grown = $('Grown', grownFactory.bind(null, $));
 
-$('Grown.use', cb =>
-  cb(Grown, util), false);
+  $('Grown.version', () => _pkg.version, false);
 
-module.exports = Grown;
+  $('Grown.module', (id, def) =>
+    $(`Grown.${id}`, def), false);
+
+  $('Grown.use', cb =>
+    cb(Grown, util), false);
+
+  return Grown;
+};
