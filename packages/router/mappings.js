@@ -3,30 +3,6 @@
 const debug = require('debug')('grown:router');
 
 module.exports = ($, util) => {
-  function _fixMethod(ctx, method) {
-    return function route(path, cb) {
-      const opts = {};
-
-      if (typeof cb === 'function' || Array.isArray(cb)) {
-        opts.pipeline = util
-          .flattenArgs(Array.prototype.slice.call(arguments, 1))
-          .map(x => util.buildMiddleware(x, path));
-      } else if (typeof cb === 'string') {
-        opts.to = cb;
-      } else {
-        util.extendValues(opts, cb);
-      }
-
-      if (typeof ctx.router.namespace === 'function') {
-        ctx.router[method.toLowerCase()](path, opts);
-      } else {
-        throw new Error(`Expecting a valid router, given '${ctx.router}'`);
-      }
-
-      return ctx;
-    };
-  }
-
   function _dispatchRoutes(conn, options) {
     const _method = conn.req.method;
 
@@ -57,6 +33,16 @@ module.exports = ($, util) => {
 
       conn.req.params = conn.req.params || {};
 
+      // current handler info
+      conn.req.handler = {
+        resource: _handler.resource || false,
+        handler: _handler.handler.slice(),
+        verb: _handler.verb,
+        path: _handler.path,
+        url: _handler.url,
+        as: _handler.as,
+      };
+
       _handler.matcher.keys.forEach((key, i) => {
         conn.req.params[key] = _handler.matcher.values[i];
       });
@@ -84,6 +70,11 @@ module.exports = ($, util) => {
             this._routes[route.verb] = [];
           }
 
+          // normalize given pipeline
+          route.pipeline = util
+            .flattenArgs(route.pipeline)
+            .map(x => util.buildMiddleware(x, route.path));
+
           // group all routes per-verb
           this._routes[route.verb].push(route);
         });
@@ -98,7 +89,6 @@ module.exports = ($, util) => {
   return $.module('Router.Mappings', {
     _dispatchRoutes,
     _groupRoutes,
-    _fixMethod,
 
     install(ctx, options) {
       const routeMappings = require('route-mappings');
@@ -108,10 +98,10 @@ module.exports = ($, util) => {
       // compile fast-routes
       ctx.once('start', () => this._groupRoutes(ctx, options));
 
-      ctx.mount('Router#pipe', (conn, options) => {
+      ctx.mount('Router.Mappings#pipe', (conn, _options) => {
         try {
           // match and execute
-          return this._dispatchRoutes(conn, options);
+          return this._dispatchRoutes(conn, _options);
         } catch (e) {
           /* istanbul ignore else */
           if (!this.fallthrough) {
@@ -124,13 +114,7 @@ module.exports = ($, util) => {
         props: {
           router: () => _router,
         },
-        methods: {
-          get: this._fixMethod(ctx, 'GET'),
-          put: this._fixMethod(ctx, 'PUT'),
-          post: this._fixMethod(ctx, 'POST'),
-          patch: this._fixMethod(ctx, 'PATCH'),
-          delete: this._fixMethod(ctx, 'DELETE'),
-        },
+        methods: _router,
       };
     },
   });
