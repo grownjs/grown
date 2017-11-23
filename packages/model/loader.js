@@ -1,27 +1,14 @@
 'use strict';
 
-const glob = require('glob');
-const path = require('path');
+const JSONSchemaSequelizer = require('json-schema-sequelizer');
 
-module.exports = ($, util) => {
-  const JSONSchemaSequelizer = require('json-schema-sequelizer');
-
-  return $.module('Model.Loader', {
+module.exports = (Grown, util) => {
+  return Grown.module('Model.Loader', {
     scan(cwd, _refs) {
-      const db = new JSONSchemaSequelizer(null, [], cwd)
-        .scan((def, model, _sequelize) => {
-          const Model = def($, util.extendValues({}, util, {
-            Sequelize: _sequelize,
-          }));
-
-          Object.keys(def).forEach(key => {
-            util.readOnlyProperty(Model, key, def[key]);
-          });
-
-          return Model;
-        });
-
-      const _models = util.extendValues({}, db.refs);
+      const _models = JSONSchemaSequelizer.scan(cwd, (def, model, _sequelize) =>
+        def(Grown, util.extendValues({}, util, {
+          Sequelize: _sequelize,
+        })));
 
       this.extensions.push(_models);
 
@@ -34,17 +21,8 @@ module.exports = ($, util) => {
     },
 
     refs(cwd) {
-      const _schemas = [];
-
-      glob.sync('**/*.json', { cwd }).forEach(json => {
-        /* istanbul ignore else */
-        if (json.indexOf('schema.json') === -1) {
-          _schemas.push(require(path.join(cwd, json)));
-        }
-      });
-
       this.extensions.push({
-        schemas: _schemas,
+        schemas: JSONSchemaSequelizer.refs(cwd),
       });
 
       return this;
