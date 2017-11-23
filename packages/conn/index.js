@@ -1,11 +1,11 @@
 'use strict';
 
-module.exports = ($, util) => {
-  const RequestTime = require('./request-time')($, util);
-  const Response = require('./response')($, util);
-  const Request = require('./request')($, util);
+module.exports = (Grown, util) => {
+  const RequestTime = require('./request-time')(Grown, util);
+  const Response = require('./response')(Grown, util);
+  const Request = require('./request')(Grown, util);
 
-  return $.module('Conn', {
+  return Grown.module('Conn', {
     include: [
       RequestTime,
       Response,

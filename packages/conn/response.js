@@ -7,7 +7,7 @@ const mime = require('mime');
 const send = require('send');
 const path = require('path');
 
-module.exports = ($, util) => {
+module.exports = (Grown, util) => {
   function _finishRequest(ctx, body) {
     /* istanbul ignore else */
     if (ctx.res.finished) {
@@ -89,7 +89,7 @@ module.exports = ($, util) => {
     ctx.send(ctx.resp_body);
   }
 
-  return $.module('Conn.Response', {
+  return Grown.module('Conn.Response', {
     _finishRequest,
     _endRequest,
 

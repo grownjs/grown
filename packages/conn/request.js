@@ -5,7 +5,7 @@ const url = require('url');
 const typeIs = require('type-is');
 const accepts = require('accepts');
 
-module.exports = ($, util) => {
+module.exports = (Grown, util) => {
   function _fixURL(location) {
     const _uri = url.parse(location);
 
@@ -25,7 +25,7 @@ module.exports = ($, util) => {
     ].join('');
   }
 
-  return $.module('Conn.Request', {
+  return Grown.module('Conn.Request', {
     _fixURL,
 
     mixins() {

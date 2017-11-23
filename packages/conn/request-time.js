@@ -1,7 +1,7 @@
 'use strict';
 
-module.exports = $ => {
-  return $.module('Conn.RequestTime', {
+module.exports = Grown => {
+  return Grown.module('Conn.RequestTime', {
     _elapsedTime() {
       return ((new Date()) - this._startTime) / 1000;
     },
