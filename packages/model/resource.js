@@ -5,24 +5,27 @@ const debug = require('debug')('grown:model-resource');
 const JSONSchemaSequelizer = require('json-schema-sequelizer');
 
 module.exports = (Grown, util) => {
-  function _runHandler(conn, options) {
-    const Model = util.getProp(Grown, conn.req.handler.resource,
-      new Error(`Resource missing, given '${conn.req.handler.resource}'`));
-
-    debug('#%s %s model found in %s',
-      conn.pid,
-      Model.name,
-      Model.database);
-
+  function _buildResource(Model) {
     const refs = Grown.Model.DB[Model.database].$refs;
     const config = {};
     const resource = JSONSchemaSequelizer.resource(refs, Model, config);
 
-    return conn.json(resource);
+    return resource;
+  }
+
+  function _findModel(resource) {
+    return util.getProp(Grown, resource,
+      new Error(`Resource missing, given '${resource}'`));
   }
 
   return Grown.module('Model.Resource', {
-    _runHandler,
+    _buildResource,
+    _findModel,
+
+    dispatch(resource) {
+      return conn =>
+        conn.json(this._buildResource(this._findModel(resource)));
+    },
 
     install(ctx) {
       ctx.mount('Model.Resource#pipe', (conn, _options) => {
@@ -34,7 +37,14 @@ module.exports = (Grown, util) => {
           return;
         }
 
-        return this._runHandler(conn, _options);
+        const Model = this._findModel(conn.req.handler.resource);
+
+        debug('#%s %s model found in %s',
+          conn.pid,
+          Model.name,
+          Model.database);
+
+        return conn.json(this._buildResource(Model, _options));
       });
     },
   });
