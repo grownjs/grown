@@ -14,51 +14,51 @@ module.exports = (Grown, util) => {
       throw new Error('Already finished');
     }
 
-    ctx.halt();
+    return ctx.halt(() => {
+      ctx.res.statusCode = ctx.status_code;
+      ctx.res.statusMessage = statusCodes[ctx.res.statusCode];
 
-    ctx.res.statusCode = ctx.status_code;
-    ctx.res.statusMessage = statusCodes[ctx.res.statusCode];
+      /* istanbul ignore else */
+      if (body && typeof body.pipe === 'function') {
+        debug('#%s Done. Reponse is an stream. Sending as %s', ctx.pid, ctx.content_type);
 
-    /* istanbul ignore else */
-    if (body && typeof body.pipe === 'function') {
-      debug('#%s Done. Reponse is an stream. Sending as %s', ctx.pid, ctx.content_type);
+        /* istanbul ignore else */
+        if (!ctx.res._header) {
+          ctx.res.setHeader('Content-Type', ctx.content_type);
+          ctx.res.writeHead(ctx.res.statusCode);
+        }
+
+        body.pipe(ctx.res);
+
+        return;
+      }
+
+      /* istanbul ignore else */
+      if (body !== null && Buffer.isBuffer(body)) {
+        debug('#%s Response is a buffer. Sending as %s', ctx.pid, ctx.content_type);
+
+        /* istanbul ignore else */
+        if (!ctx.res._header) {
+          ctx.res.setHeader('Content-Type', ctx.content_type);
+          ctx.res.setHeader('Content-Length', body.length);
+        }
+      } else if (body !== null && typeof body === 'object') {
+        debug('#%s Response is an object. Sending as application/json', ctx.pid);
+
+        body = JSON.stringify(body);
+        ctx.content_type = 'application/json';
+      }
 
       /* istanbul ignore else */
       if (!ctx.res._header) {
-        ctx.res.setHeader('Content-Type', ctx.content_type);
+        ctx.res.setHeader('Content-Type', `${ctx.content_type}; charset=${ctx.resp_charset}`);
+        ctx.res.setHeader('Content-Length', Buffer.byteLength(body || ''));
         ctx.res.writeHead(ctx.res.statusCode);
       }
 
-      body.pipe(ctx.res);
-
-      return;
-    }
-
-    /* istanbul ignore else */
-    if (body !== null && Buffer.isBuffer(body)) {
-      debug('#%s Response is a buffer. Sending as %s', ctx.pid, ctx.content_type);
-
-      /* istanbul ignore else */
-      if (!ctx.res._header) {
-        ctx.res.setHeader('Content-Type', ctx.content_type);
-        ctx.res.setHeader('Content-Length', body.length);
-      }
-    } else if (body !== null && typeof body === 'object') {
-      debug('#%s Response is an object. Sending as application/json', ctx.pid);
-
-      body = JSON.stringify(body);
-      ctx.content_type = 'application/json';
-    }
-
-    /* istanbul ignore else */
-    if (!ctx.res._header) {
-      ctx.res.setHeader('Content-Type', `${ctx.content_type}; charset=${ctx.resp_charset}`);
-      ctx.res.setHeader('Content-Length', Buffer.byteLength(body || ''));
-      ctx.res.writeHead(ctx.res.statusCode);
-    }
-
-    ctx.res.write(body || '');
-    ctx.res.end();
+      ctx.res.write(body || '');
+      ctx.res.end();
+    });
   }
 
   function _endRequest(ctx, code, message) {
@@ -86,7 +86,7 @@ module.exports = (Grown, util) => {
     // normalize response
     ctx.status_code = typeof _code === 'number' ? _code : ctx.status_code;
 
-    ctx.send(ctx.resp_body);
+    return ctx.send(ctx.resp_body);
   }
 
   return Grown.module('Conn.Response', {
