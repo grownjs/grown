@@ -73,40 +73,27 @@ const Grown = $('Grown', options => {
       props: {
         pid: () => PID,
         env: () => _environment,
+
+        // read-only
+        get halted() {
+          return _halted || (this.res && this.res.finished) || (this.has_body && this.has_status);
+        },
+      },
+      methods: {
+        halt() {
+          _halted = true;
+        },
+        raise(code, message) {
+          throw util.buildError(code || 500, message);
+        },
       },
       init() {
         _pid += 1;
-
-        util.updateProperty(this, 'halted', {
-          configurable: false,
-          enumerable: false,
-          get() {
-            return _halted || (this.res && this.res.finished) || (this.has_body && this.has_status);
-          },
-          set(value) {
-            /* istanbul ignore else */
-            if (value !== true) {
-              throw new Error(`Expecting true, given '${util.inspect(value)}'`);
-            }
-
-            /* istanbul ignore else */
-            if (_halted !== null) {
-              throw new Error('Connection already halted!');
-            }
-
-            _halted = value;
-          },
-        });
 
         return [
           _extensions,
           scope._extensions,
         ];
-      },
-      methods: {
-        raise(code, message) {
-          throw util.buildError(code || 500, message);
-        },
       },
     }).new(request);
   };
