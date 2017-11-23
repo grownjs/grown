@@ -80,8 +80,19 @@ const Grown = $('Grown', options => {
         },
       },
       methods: {
-        halt() {
+        halt(cb) {
+          /* istanbul ignore else */
+          if (_halted) {
+            throw new Error('Connection already halted!');
+          }
+
           _halted = true;
+
+          return scope._events.emit('before_send', null, this, scope._options)
+            .then(() => typeof cb === 'function' && cb(this, scope._options))
+            .catch(e => {
+              scope._events.emit('failure', e, scope._options);
+            });
         },
         raise(code, message) {
           throw util.buildError(code || 500, message);
