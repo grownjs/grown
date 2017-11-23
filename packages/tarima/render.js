@@ -9,46 +9,45 @@ const RE_IS_ASSET = /\.\w+$/;
 
 module.exports = ($, util) => {
   function _sendHeaders(ctx, conn) {
-    conn.halt();
-
-    /* istanbul ignore else */
-    if (conn.res) {
-      if (ctx.src.indexOf('.js') > -1) {
-        conn.res.setHeader('Content-Type', 'application/javascript');
-      } else if (ctx.src.indexOf('.css') > -1) {
-        conn.res.setHeader('Content-Type', 'text/css');
-      } else {
-        conn.res.setHeader('Content-Type', 'text/html');
+    return conn.halt(() => {
+      /* istanbul ignore else */
+      if (conn.res) {
+        if (ctx.src.indexOf('.js') > -1) {
+          conn.res.setHeader('Content-Type', 'application/javascript');
+        } else if (ctx.src.indexOf('.css') > -1) {
+          conn.res.setHeader('Content-Type', 'text/css');
+        } else {
+          conn.res.setHeader('Content-Type', 'text/html');
+        }
       }
-    }
+    });
   }
 
   function _sendView(ctx, conn, options) {
     return this.bundle(ctx.entry || path.join(ctx.cwd, ctx.opts.assets, ctx.src), ctx.data)
-      .then(partial => {
-        this._sendHeaders(ctx, conn);
+      .then(partial =>
+        this._sendHeaders(ctx, conn).then(() => {
+          if (!partial.render) {
+            debug('#%s Wait. Sending raw asset', conn.pid);
 
-        if (!partial.render) {
-          debug('#%s Wait. Sending raw asset', conn.pid);
+            if (typeof conn.end === 'function') {
+              return conn.end(partial.result);
+            }
 
-          if (typeof conn.end === 'function') {
-            return conn.end(partial.result);
+            conn.res.write(partial.result);
+            conn.res.end();
+          } else if (typeof conn.render === 'function' && typeof partial.render === 'function') {
+            debug('#%s Wait. Rendering asset through views', conn.pid);
+
+            return conn.render(partial.render, conn.state);
+          } else if (conn.res) {
+            debug('#%s Wait. Sending raw asset', conn.pid);
+
+            conn.res.setHeader('Content-Length', partial.result.length);
+            conn.res.write(partial.result);
+            conn.res.end();
           }
-
-          conn.res.write(partial.result);
-          conn.res.end();
-        } else if (typeof conn.render === 'function' && typeof partial.render === 'function') {
-          debug('#%s Wait. Rendering asset through views', conn.pid);
-
-          return conn.render(partial.render, conn.state);
-        } else if (conn.res) {
-          debug('#%s Wait. Sending raw asset', conn.pid);
-
-          conn.res.setHeader('Content-Length', partial.result.length);
-          conn.res.write(partial.result);
-          conn.res.end();
-        }
-      })
+        }))
       .catch(e => {
         /* istanbul ignore else */
         if (!ctx.opts.fallthrough) {
