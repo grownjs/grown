@@ -9,7 +9,7 @@ const RE_IS_ASSET = /\.\w+$/;
 
 module.exports = ($, util) => {
   function _sendHeaders(ctx, conn) {
-    conn.halted = true;
+    conn.halt();
 
     /* istanbul ignore else */
     if (conn.res) {
@@ -33,10 +33,10 @@ module.exports = ($, util) => {
 
           if (typeof conn.end === 'function') {
             return conn.end(partial.result);
-          } else {
-            conn.res.write(partial.result);
-            conn.res.end();
           }
+
+          conn.res.write(partial.result);
+          conn.res.end();
         } else if (typeof conn.render === 'function' && typeof partial.render === 'function') {
           debug('#%s Wait. Rendering asset through views', conn.pid);
 
@@ -157,7 +157,7 @@ module.exports = ($, util) => {
       const _keys = Object.keys(_groups)
         .sort((a, b) => b.length - a.length);
 
-      ctx.mount('Tarima#pipe', (conn, options) => {
+      ctx.mount('Tarima.Render#pipe', (conn, options) => {
         /* istanbul ignore else */
         if (conn.is_xhr || conn.is_json || conn.req.method !== 'GET') {
           return;
@@ -171,7 +171,6 @@ module.exports = ($, util) => {
               conn.req.url = conn.req.url.substr(_keys[i].length);
 
               return this._dispatchBundle(_groups[_keys[i]].slice(), conn, options);
-              break;
             }
           }
 
