@@ -92,6 +92,13 @@ const Grown = $('Grown', options => {
             .then(() => typeof cb === 'function' && cb(this, scope._options))
             .catch(e => {
               scope._events.emit('failure', e, scope._options);
+
+              debug('#%s Fatal. %s', this.pid, e.stack);
+
+              /* istanbul ignore else */
+              if (typeof cb === 'function') {
+                return cb(e, this, scope._options);
+              }
             });
         },
         raise(code, message) {
