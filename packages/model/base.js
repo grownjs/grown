@@ -1,5 +1,7 @@
 'use strict';
 
+const JSONSchemaSequelizer = require('json-schema-sequelizer');
+
 const HOOK_METHODS = [
   'beforeValidate', 'afterValidate', 'validationFailed',
   'beforeCreate', 'afterCreate',
@@ -21,13 +23,11 @@ const HOOK_METHODS = [
   'beforeBulkSync', 'afterBulkSync',
 ];
 
-module.exports = ($, util) => {
-  const JSONSchemaSequelizer = require('json-schema-sequelizer');
-
+module.exports = (Grown, util) => {
   // shared connections
-  const _dbs = {};
+  const DB = {};
 
-  return $.module('Model.Base', {
+  return Grown.module('Model.Base', {
     connect(options, refs, cwd) {
       const _opts = {};
 
@@ -93,16 +93,16 @@ module.exports = ($, util) => {
       });
 
       /* istanbul ignore else */
-      if (!_dbs[name]) {
-        _dbs[name] = new JSONSchemaSequelizer(_opts, refs, cwd);
+      if (!DB[name]) {
+        DB[name] = new JSONSchemaSequelizer(_opts, refs, cwd);
       }
 
       // define first
-      _dbs[name].add(definition);
+      DB[name].add(definition);
 
       return Promise.resolve()
-        .then(() => _dbs[name].connect())
-        .then(() => _dbs[name].models[this.$schema.id]);
+        .then(() => DB[name].connect())
+        .then(() => DB[name].models[this.$schema.id]);
     },
   });
 };
