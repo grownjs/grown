@@ -5,12 +5,12 @@ const debug = require('debug')('grown:model-resource');
 const JSONSchemaSequelizer = require('json-schema-sequelizer');
 
 module.exports = (Grown, util) => {
-  function _buildResource(Model) {
+  function _buildResource(Model, conn, options) {
     const refs = Grown.Model.DB[Model.database].$refs;
     const config = {};
     const resource = JSONSchemaSequelizer.resource(refs, Model, config);
 
-    return resource;
+    return conn.json(resource);
   }
 
   function _findModel(resource) {
@@ -23,8 +23,8 @@ module.exports = (Grown, util) => {
     _findModel,
 
     dispatch(resource) {
-      return conn =>
-        conn.json(this._buildResource(this._findModel(resource)));
+      return (conn, options) =>
+        this._buildResource(this._findModel(resource), conn, options);
     },
 
     install(ctx) {
@@ -44,7 +44,7 @@ module.exports = (Grown, util) => {
           Model.name,
           Model.database);
 
-        return conn.json(this._buildResource(Model, _options));
+        return this._buildResource(Model, conn, _options);
       });
     },
   });
