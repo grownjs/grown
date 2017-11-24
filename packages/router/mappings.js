@@ -27,27 +27,24 @@ module.exports = ($, util) => {
       }
 
       /* istanbul ignore else */
-      if (typeof _handler.callback !== 'function') {
-        _handler.callback = util.buildPipeline(_handler.path, _handler.pipeline);
+      if (typeof _handler._callback !== 'function') {
+        _handler._callback = util.buildPipeline(_handler.path, _handler.pipeline);
       }
 
       conn.req.params = conn.req.params || {};
 
       // current handler info
-      conn.req.handler = {
-        resource: _handler.resource || false,
-        handler: _handler.handler.slice(),
-        verb: _handler.verb,
-        path: _handler.path,
-        url: _handler.url,
-        as: _handler.as,
-      };
+      conn.req.handler = util.extendValues({}, _handler);
+
+      delete conn.req.handler.matcher;
+      delete conn.req.handler.pipeline;
+      delete conn.req.handler._callback;
 
       _handler.matcher.keys.forEach((key, i) => {
         conn.req.params[key] = _handler.matcher.values[i];
       });
 
-      return _handler.callback(conn, options);
+      return _handler._callback(conn, options);
     }
 
     throw util.buildError(404);
