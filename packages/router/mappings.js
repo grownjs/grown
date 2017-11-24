@@ -2,6 +2,8 @@
 
 const debug = require('debug')('grown:router');
 
+const HIDDEN_PROPS = ['matcher', 'pipeline', '_callback'];
+
 module.exports = ($, util) => {
   function _dispatchRoutes(conn, options) {
     const _method = conn.req.method;
@@ -34,11 +36,7 @@ module.exports = ($, util) => {
       conn.req.params = conn.req.params || {};
 
       // current handler info
-      conn.req.handler = util.extendValues({}, _handler);
-
-      delete conn.req.handler.matcher;
-      delete conn.req.handler.pipeline;
-      delete conn.req.handler._callback;
+      conn.req.handler = util.omitProps(_handler, HIDDEN_PROPS);
 
       _handler.matcher.keys.forEach((key, i) => {
         conn.req.params[key] = _handler.matcher.values[i];

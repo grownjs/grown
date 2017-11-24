@@ -39,6 +39,19 @@ function extendValues(out) {
   return out;
 }
 
+function omitProps(source, keys) {
+  const target = {};
+
+  Object.keys(source).forEach(key => {
+    /* istanbul ignore else */
+    if (keys.indexOf(key) === -1) {
+      target[key] = source[key];
+    }
+  });
+
+  return target;
+}
+
 function getProp(source, key, defvalue) {
   const keys = key.split('.');
 
@@ -140,6 +153,7 @@ module.exports = {
   resolveValues,
   extendValues,
   flattenArgs,
+  omitProps,
   getProp,
   setProp,
 };
