@@ -147,7 +147,7 @@ module.exports = (Grown, util) => {
           set status_code(code) {
             /* istanbul ignore else */
             if (!(code && statusCodes[code])) {
-              throw new Error(`Invalid set_status: ${code}`);
+              throw new Error(`Invalid status_code: ${code}`);
             }
 
             debug('#%s Set status %s', this.pid, code);
