@@ -53,6 +53,8 @@ module.exports = ($, util) => {
 
     const _routes = ctx.router.routes;
 
+    this._mappings = ctx.router.mappings;
+
     return ctx.emit('before_routes', ctx, _routes)
       .catch(e => {
         ctx.emit('failure', e, options);
@@ -110,6 +112,14 @@ module.exports = ($, util) => {
           router: () => _router,
         },
         methods: _router,
+      };
+    },
+
+    mixins() {
+      return {
+        methods: {
+          routes: this._mappings,
+        },
       };
     },
   });
