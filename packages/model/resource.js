@@ -38,6 +38,7 @@ module.exports = (Grown, util) => {
       where: conn.req.params.where,
     };
 
+    /* istanbul ignore else */
     if (Model.primaryKeyAttribute) {
       config[Model.primaryKeyAttribute] = null;
     }
@@ -46,12 +47,40 @@ module.exports = (Grown, util) => {
 
     resource.options.isNew = conn.req.handler.action === 'new';
     resource.options.action = conn.req.handler.action;
-    resource.options.methods = {};
+    resource.options.actions = {};
+    resource.options.actions[Model.name] = {
+      index: {
+        verb: 'GET',
+        path: '/',
+      },
+    };
+
+    ['new', 'create', 'edit', 'show', 'update', 'destroy'].forEach(method => {
+      resource.options.actions[Model.name][method] = {
+        verb: 'GET',
+        path: '/',
+      };
+    });
+
+    conn.state.resource = resource.options;
 
     function end(location) {
       /* istanbul ignore else */
       if (location) {
         return conn.redirect(location);
+      }
+
+      /* istanbul ignore else */
+      if (!conn.is_json) {
+        const gist = '0a6693268093ceecd973aae49e55939e';
+        const hash = '2b092dfe6bb3b8669a7a095ceb0cc0143879d5d8';
+        const prefix = '//gist.githack.com/pateketrueke';
+
+        return conn.end(`
+          <link rel="stylesheet" href="${prefix}/${gist}/raw/${hash}/application.css"/>
+          <body><script type="application/json" data-component="jsonschema-form">${JSON.stringify(resource.options)}</script>
+          <script src="${prefix}/${gist}/raw/${hash}/application.js"></script></body>
+        `);
       }
     }
 
@@ -127,7 +156,7 @@ module.exports = (Grown, util) => {
         }
       })
       .then(result => {
-        debug('#%s %s loaded', this.pid, Model.name);
+        debug('#%s %s loaded', conn.pid, Model.name);
 
         resource.options.result = result;
 
