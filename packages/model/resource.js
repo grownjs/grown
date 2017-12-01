@@ -69,19 +69,6 @@ module.exports = (Grown, util) => {
       if (location) {
         return conn.redirect(location);
       }
-
-      /* istanbul ignore else */
-      if (!conn.is_json) {
-        const gist = '0a6693268093ceecd973aae49e55939e';
-        const hash = '2d9d98b29a2e7569e1744be09c31d95c37b3f44b';
-        const prefix = '//gist.githack.com/pateketrueke';
-
-        return conn.end(`
-          <link rel="stylesheet" href="${prefix}/${gist}/raw/${hash}/application.css"/>
-          <body><script type="application/json" data-component="jsonschema-form">${JSON.stringify(resource.options)}</script>
-          <script src="${prefix}/${gist}/raw/${hash}/application.js"></script></body>
-        `);
-      }
     }
 
     function err(e, location) {
