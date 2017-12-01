@@ -73,7 +73,7 @@ module.exports = (Grown, util) => {
       /* istanbul ignore else */
       if (!conn.is_json) {
         const gist = '0a6693268093ceecd973aae49e55939e';
-        const hash = '2b092dfe6bb3b8669a7a095ceb0cc0143879d5d8';
+        const hash = '2d9d98b29a2e7569e1744be09c31d95c37b3f44b';
         const prefix = '//gist.githack.com/pateketrueke';
 
         return conn.end(`
