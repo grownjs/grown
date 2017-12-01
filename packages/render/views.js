@@ -2,6 +2,7 @@
 
 const debug = require('debug')('grown:render');
 
+const path = require('path');
 const fs = require('fs');
 
 const RE_PREFIX = /^\.|#/;
