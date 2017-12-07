@@ -21,9 +21,7 @@ module.exports = (Grown, util) => {
 
       DB[name] = new JSONSchemaSequelizer(params.config, params.refs, params.cwd);
 
-      util.readOnlyProperty(this, name, () => DB[name], {
-        hiddenProperty: true,
-      });
+      util.readOnlyProperty(this, name, () => DB[name]);
 
       return DB;
     },
