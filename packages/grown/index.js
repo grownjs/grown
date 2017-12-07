@@ -2,6 +2,8 @@
 
 const debug = require('debug')('grown');
 
+const _env = require('dotenv');
+const wargs = require('wargs');
 const $new = require('object-new');
 
 const _pkg = require('./package.json');
@@ -14,7 +16,7 @@ require('dotenv').config();
 
 let _pid = 0;
 
-function fix(mixins) {
+function bind(mixins) {
   /* istanbul ignore else */
   if (typeof mixins === 'function' && !mixins.class) {
     return mixins.bind(this);
@@ -22,17 +24,18 @@ function fix(mixins) {
 
   /* istanbul ignore else */
   if (Array.isArray(mixins)) {
-    return mixins.map(mix => fix.call(this, mix));
+    return mixins.map(mix => bind.call(this, mix));
   }
 
   return mixins;
 }
 
 function grownFactory($, options) {
-  /* istanbul ignore else */
-  if (!(options && options.env && options.cwd)) {
-    throw new Error('Missing environment config');
-  }
+  options = options || {};
+
+  // shared defaults
+  options.cwd = $.Grown.cwd;
+  options.env = $.Grown.env;
 
   debug('#%s Grown v%s - %s', process.pid, _pkg.version, options.env);
 
@@ -53,6 +56,7 @@ function grownFactory($, options) {
   const _environment = {};
 
   Object.keys(process.env).forEach(key => {
+    /* istanbul ignore else */
     if (key.indexOf('npm_') === -1) {
       _environment[key] = process.env[key];
     }
@@ -160,12 +164,12 @@ function grownFactory($, options) {
             });
 
             if (p.mixins) {
-              scope._extensions.push(fix.call(p, p.mixins));
+              scope._extensions.push(bind.call(p, p.mixins));
             } else if (p.extensions) {
               p.extensions.forEach(x => {
                 /* istanbul ignore else */
                 if (x.mixins) {
-                  scope._extensions.push(fix.call(p, x.mixins));
+                  scope._extensions.push(bind.call(p, x.mixins));
                 }
               });
             }
@@ -198,7 +202,35 @@ function grownFactory($, options) {
   };
 }
 
-module.exports = () => {
+module.exports = (cwd, argv) => {
+  const _argv = wargs(argv || process.argv.slice(2), {
+    boolean: 'dq',
+    alias: {
+      d: 'debug',
+      q: 'quiet',
+      x: 'exec',
+      p: 'port',
+      h: 'host',
+      e: 'env',
+    },
+  });
+
+  // defaults
+  process.name = 'Grown';
+  process.env.NODE_ENV = _argv.flags.env || 'development';
+
+  /* istanbul ignore else */
+  if (process.env.CI && process.env.NODE_ENV === 'testing') {
+    process.env.NODE_ENV = 'ci';
+  }
+
+  delete _argv.flags.env;
+
+  /* istanbul ignore else */
+  if (_argv.flags.debug) {
+    require('debug').enable('*');
+  }
+
   // private container
   function $(id, props, extensions) {
     return $new(id, props, $, extensions);
@@ -207,12 +239,13 @@ module.exports = () => {
   const Grown = $('Grown', grownFactory.bind(null, $));
 
   $('Grown.version', () => _pkg.version, false);
+  $('Grown.module', (id, def) => $(`Grown.${id}`, def), false);
+  $('Grown.argv', () => _argv, false);
+  $('Grown.cwd', () => cwd || process.cwd(), false);
+  $('Grown.env', () => process.env.NODE_ENV || 'development', false);
+  $('Grown.use', cb => cb(Grown, util), false);
 
-  $('Grown.module', (id, def) =>
-    $(`Grown.${id}`, def), false);
-
-  $('Grown.use', cb =>
-    cb(Grown, util), false);
+  _env.config(Grown.cwd);
 
   return Grown;
 };

@@ -1,5 +1,6 @@
 'use strict';
 
+const vm = require('vm');
 const cleanStack = require('clean-stack');
 
 const RE_ERR_MESSAGE = /.*Error:.+?\n/;
@@ -12,6 +13,8 @@ const RE_NATIVES = new RegExp(`^.+(${
     .concat('bootstrap_node', 'node')
     .join('|')
 })\\.js.+$`, 'gm');
+
+const RE_INTERPOLATE = /`([^`]+)`/g;
 
 // https://stackoverflow.com/questions/9210542/node-js-require-cache-possible-to-invalidate/14801711#14801711
 function _searchCache(moduleName, callback) {
@@ -83,7 +86,16 @@ function cleanError(e, cwd) {
   return e;
 }
 
+function invoke(value, context, interpolate) {
+  if (!interpolate) {
+    return vm.runInNewContext(value, context);
+  }
+
+  return value.replace(RE_INTERPOLATE, ($0, $1) => vm.runInNewContext($1, context));
+}
+
 module.exports = {
   clearModules,
   cleanError,
+  invoke,
 };
