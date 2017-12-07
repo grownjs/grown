@@ -133,6 +133,7 @@ module.exports = (Grown, util) => {
     _initializeContext,
     _startREPL,
     _runCMD,
+    _logger,
 
     start() {
       const tasks = util.flattenArgs(arguments);
@@ -143,21 +144,31 @@ module.exports = (Grown, util) => {
 
       repl.setPrompt(_utils.style('{% cyan.pointer %}'));
 
-      const use = (Grown.argv.params.use || '').split(',');
+      const use = (Grown.argv.params.use || '')
+        .split(',')
+        .filter(x => x);
 
       tasks.forEach(task => {
         Object.keys(task).forEach(key => {
+          /* istanbul ignore else */
           if (use.indexOf(key) !== -1) {
             cbs.push(task[key]);
           }
         });
       });
 
+      if (!cbs.length && use.length) {
+        throw new Error(
+          use.length === 1
+            ? `Missing task '${use[0]}'`
+            : `Missing tasks ${use.join(', ')}`);
+      }
+
       _logger.getLogger()
         .info('{% gray Grown v%s (node %s) %}\n', Grown.version, process.version)
         .info('\r{% log Loading %s... %}', use.join(','));
 
-      return Promise.resolve()
+      Promise.resolve()
         .then(() => Promise.all(cbs.map(cb => cb && cb())))
         .then(() => {
           _logger.getLogger()
