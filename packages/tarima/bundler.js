@@ -8,9 +8,8 @@ const fs = require('fs');
 const RE_BUNDLE_EXTENSIONS = /\.(js|css)$/;
 const RE_ALLOWED_SOURCES = /^(\/?\w[\w-]*?)+(?:\.\w+)?$/;
 
-module.exports = ($, util) => {
+module.exports = (Grown, util) => {
   const tarima = require('tarima');
-  const vm = require('vm');
 
   const _temp = {};
 
@@ -120,7 +119,7 @@ module.exports = ($, util) => {
         };
 
         // safely evaluates the bundled source
-        vm.runInNewContext(output.source, _scope);
+        util.invoke(output.source, _scope);
 
         // merge imported data with exported definitions
         if (typeof _scope.module.exports === 'function') {
@@ -154,14 +153,14 @@ module.exports = ($, util) => {
     });
   }
 
-  return $.module('Tarima.Bundler', {
+  return Grown.module('Tarima.Bundler', {
     _bundleOptions,
     _bundleRender,
     _bundleCache,
     _bundleView,
 
-    install(ctx, options) {
-      const _cwd = options('cwd');
+    install() {
+      const _cwd = Grown.cwd;
 
       this.bundle = (src, data) => {
         /* istanbul ignore else */
@@ -173,9 +172,9 @@ module.exports = ($, util) => {
           .then(() => (
             RE_BUNDLE_EXTENSIONS.test(src)
               ? this._bundleCache(_cwd, src, () =>
-                  this._bundleRender(src, this._bundleOptions(_cwd, 'iife', data, this.bundle_options)))
+                this._bundleRender(src, this._bundleOptions(_cwd, 'iife', data, this.bundle_options)))
               : this._bundleCache(_cwd, src, () =>
-                  this._bundleView(src, this._bundleOptions(_cwd, 'cjs', data, this.bundle_options)))
+                this._bundleView(src, this._bundleOptions(_cwd, 'cjs', data, this.bundle_options)))
           ));
       };
 

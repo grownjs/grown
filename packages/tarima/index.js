@@ -1,10 +1,10 @@
 'use strict';
 
-module.exports = ($, util) => {
-  const Bundler = require('./bundler')($, util);
-  const Render = require('./render')($, util);
+module.exports = (Grown, util) => {
+  const Bundler = require('./bundler')(Grown, util);
+  const Render = require('./render')(Grown, util);
 
-  return $.module('Tarima', {
+  return Grown.module('Tarima', {
     include: [
       Bundler,
       Render,

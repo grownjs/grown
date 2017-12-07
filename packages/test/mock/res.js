@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = $ => {
+module.exports = Grown => {
   const MockRes = require('mock-res');
 
   function _mockResponse() {
@@ -41,7 +41,7 @@ module.exports = $ => {
     return res;
   }
 
-  return $.module('Test.Mock.Res', {
+  return Grown.module('Test.Mock.Res', {
     // export helpers
     _mockResponse,
 

@@ -1,10 +1,10 @@
 'use strict';
 
-module.exports = ($, util) => {
-  const Controllers = require('./controllers')($, util);
-  const Mappings = require('./mappings')($, util);
+module.exports = (Grown, util) => {
+  const Controllers = require('./controllers')(Grown, util);
+  const Mappings = require('./mappings')(Grown, util);
 
-  return $.module('Router', {
+  return Grown.module('Router', {
     include: [
       Controllers,
       Mappings,

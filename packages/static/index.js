@@ -2,12 +2,12 @@
 
 const path = require('path');
 
-module.exports = ($, util) => {
+module.exports = (Grown, util) => {
   const serveStatic = require('serve-static');
 
-  return $.module('Static', {
-    install(ctx, options) {
-      const _cwd = options('cwd');
+  return Grown.module('Static', {
+    install(ctx) {
+      const _cwd = Grown.cwd;
 
       util.flattenArgs(this.static_folders)
         .forEach(cwd => {

@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = ($, util) => {
+module.exports = (Grown, util) => {
   function _drawRoutes(ctx, routes) {
     routes.forEach(route => {
       /* istanbul ignore else */
@@ -30,7 +30,7 @@ module.exports = ($, util) => {
               ? this.controller_lookup.replace('%s', controller)
               : `${controller}Controller`;
 
-            const Ctrl = util.getProp($, _controller,
+            const Ctrl = util.getProp(Grown, _controller,
               new Error(`${_controller} is not defined`));
 
             this._controllers[controller] = {
@@ -69,7 +69,7 @@ module.exports = ($, util) => {
     });
   }
 
-  return $.module('Router.Controllers', {
+  return Grown.module('Router.Controllers', {
     _drawRoutes,
     _controllers: {},
 

@@ -1,10 +1,10 @@
 'use strict';
 
-module.exports = ($, util) => {
-  const Request = require('./request')($, util);
-  const Mock = require('./mock')($, util);
+module.exports = (Grown, util) => {
+  const Request = require('./request')(Grown, util);
+  const Mock = require('./mock')(Grown, util);
 
-  return $.module('Test', {
+  return Grown.module('Test', {
     include: [
       Request,
       Mock,

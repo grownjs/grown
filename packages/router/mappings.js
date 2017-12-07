@@ -4,7 +4,7 @@ const debug = require('debug')('grown:router');
 
 const HIDDEN_PROPS = ['matcher', 'pipeline', '_callback'];
 
-module.exports = ($, util) => {
+module.exports = (Grown, util) => {
   function _dispatchRoutes(conn, options) {
     const _method = conn.req.method;
 
@@ -83,7 +83,7 @@ module.exports = ($, util) => {
       });
   }
 
-  return $.module('Router.Mappings', {
+  return Grown.module('Router.Mappings', {
     _dispatchRoutes,
     _groupRoutes,
 

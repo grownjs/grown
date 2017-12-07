@@ -7,7 +7,7 @@ const path = require('path');
 const RE_IS_BUNDLE = /\.(js|css)$/;
 const RE_IS_ASSET = /\.\w+$/;
 
-module.exports = ($, util) => {
+module.exports = (Grown, util) => {
   function _sendHeaders(ctx, conn) {
     return conn.halt(() => {
       /* istanbul ignore else */
@@ -117,7 +117,7 @@ module.exports = ($, util) => {
       });
   }
 
-  return $.module('Tarima.Render', {
+  return Grown.module('Tarima.Render', {
     _dispatchBundle,
     _sendHeaders,
     _sendBundle,
