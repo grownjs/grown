@@ -143,10 +143,6 @@ module.exports = (Grown, util) => {
 
       repl.setPrompt(_utils.style('{% cyan.pointer %}'));
 
-      _logger.getLogger()
-        .info('{% gray Grown v%s (node %s) %}\n', Grown.version, process.version)
-        .info('\r{% log Loading... %}');
-
       const use = (Grown.argv.params.use || '').split(',');
 
       tasks.forEach(task => {
@@ -157,11 +153,15 @@ module.exports = (Grown, util) => {
         });
       });
 
+      _logger.getLogger()
+        .info('{% gray Grown v%s (node %s) %}\n', Grown.version, process.version)
+        .info('\r{% log Loading %s... %}', use.join(','));
+
       return Promise.resolve()
         .then(() => Promise.all(cbs.map(cb => cb && cb())))
         .then(() => {
           _logger.getLogger()
-            .info('\r{% ok NODE_ENV is %s %}\r\n', process.env.NODE_ENV)
+            .info('\r{% ok NODE_ENV is %s %}\r\n', Grown.env)
             .info('{% ok REPL is ready %}\n')
             .info('{% log Type %} {% bold .help %} {% gray to list all available commands %}\n');
 
