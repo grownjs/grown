@@ -14,6 +14,18 @@ const _listen = require('./lib/listen');
 
 require('dotenv').config();
 
+require('global-or-local')
+  .install([
+    '@grown/conn',
+    '@grown/model',
+    '@grown/render',
+    '@grown/router',
+    '@grown/static',
+    '@grown/tarima',
+    '@grown/test',
+    '@grown/repl',
+  ]);
+
 let _pid = 0;
 
 function bind(mixins) {
