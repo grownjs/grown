@@ -136,11 +136,21 @@ module.exports = (Grown, util) => {
     start() {
       const tasks = util.flattenArgs(arguments);
 
+      this.repl = this._startREPL();
+      this.repl.setPrompt(_utils.style('{% cyan.pointer %}'));
+
+      _logger.getLogger()
+        .info('{% gray Grown v%s (node %s) %}\n', Grown.version, process.version)
+        .info('\r{% log Loading... %}');
+
       return Promise.resolve()
         .then(() => Promise.all(tasks.map(cb => cb && cb())))
         .then(() => {
-          this.repl = this._startREPL();
-          this.repl.setPrompt(_utils.style('{% cyan.pointer %}'));
+          _logger.getLogger()
+            .info('\r{% ok NODE_ENV is %s %}\r\n', process.env.NODE_ENV)
+            .info('{% ok REPL is ready %}\n')
+            .info('{% log Type %} {% bold .help %} {% gray to list all available commands %}\n');
+
           this.repl.resume();
           this.repl.displayPrompt();
         });
