@@ -134,10 +134,16 @@ module.exports = (Grown, util) => {
     _runCMD,
 
     start() {
-      this.repl = this._startREPL();
-      this.repl.setPrompt(_utils.style('{% cyan.pointer %}'));
-      this.repl.resume();
-      this.repl.displayPrompt();
+      const tasks = util.flattenArgs(arguments);
+
+      return Promise.resolve()
+        .then(() => Promise.all(tasks.map(cb => cb && cb())))
+        .then(() => {
+          this.repl = this._startREPL();
+          this.repl.setPrompt(_utils.style('{% cyan.pointer %}'));
+          this.repl.resume();
+          this.repl.displayPrompt();
+        });
     },
   });
 };
