@@ -15,6 +15,12 @@ module.exports = (Grown, util) => {
 
   function _startREPL() {
     const logDir = path.join(Grown.cwd, 'logs');
+
+    /* istanbul ignore else */
+    if (!fs.existsSync(logDir)) {
+      fs.mkdirSync(logDir);
+    }
+
     const logFile = process.env.NODE_REPL_HISTORY
       || path.join(logDir, `REPL.${this.logName || 'default'}.log`);
 
@@ -22,11 +28,6 @@ module.exports = (Grown, util) => {
     let ws;
 
     try {
-      /* istanbul ignore else */
-      if (!fs.existsSync(logDir)) {
-        fs.mkdirSync(logDir);
-      }
-
       fd = fs.openSync(logFile, 'a');
       ws = fs.createWriteStream(logFile, { fd });
 
@@ -72,7 +73,7 @@ module.exports = (Grown, util) => {
     repl.rli.addListener('line', code => {
       if (code && code !== '.history') {
         /* istanbul ignore else */
-        if (ws) {
+        if (ws && repl.rli.history.indexOf(code, 1) === -1) {
           ws.write(`${code}\n`);
         }
       } else {
@@ -136,6 +137,7 @@ module.exports = (Grown, util) => {
     start() {
       const tasks = util.flattenArgs(arguments);
       const repl = this._startREPL();
+      const cbs = [];
 
       util.readOnlyProperty(this, 'repl', repl);
 
@@ -145,8 +147,18 @@ module.exports = (Grown, util) => {
         .info('{% gray Grown v%s (node %s) %}\n', Grown.version, process.version)
         .info('\r{% log Loading... %}');
 
+      const use = (Grown.argv.params.use || '').split(',');
+
+      tasks.forEach(task => {
+        Object.keys(task).forEach(key => {
+          if (use.indexOf(key) !== -1) {
+            cbs.push(task[key]);
+          }
+        });
+      });
+
       return Promise.resolve()
-        .then(() => Promise.all(tasks.map(cb => cb && cb())))
+        .then(() => Promise.all(cbs.map(cb => cb && cb())))
         .then(() => {
           _logger.getLogger()
             .info('\r{% ok NODE_ENV is %s %}\r\n', process.env.NODE_ENV)
