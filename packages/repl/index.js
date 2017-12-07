@@ -9,8 +9,8 @@ module.exports = (Grown, util) => {
 
   const REPL = require('repl');
 
-  function _initializeContext(context) {
-    util.readOnlyProperty(context, 'Grown', Grown);
+  function _initializeContext(target) {
+    util.readOnlyProperty(target, 'Grown', () => Grown);
   }
 
   function _startREPL() {
@@ -135,9 +135,11 @@ module.exports = (Grown, util) => {
 
     start() {
       const tasks = util.flattenArgs(arguments);
+      const repl = this._startREPL();
 
-      this.repl = this._startREPL();
-      this.repl.setPrompt(_utils.style('{% cyan.pointer %}'));
+      util.readOnlyProperty(this, 'repl', repl);
+
+      repl.setPrompt(_utils.style('{% cyan.pointer %}'));
 
       _logger.getLogger()
         .info('{% gray Grown v%s (node %s) %}\n', Grown.version, process.version)
@@ -151,8 +153,11 @@ module.exports = (Grown, util) => {
             .info('{% ok REPL is ready %}\n')
             .info('{% log Type %} {% bold .help %} {% gray to list all available commands %}\n');
 
-          this.repl.resume();
-          this.repl.displayPrompt();
+          repl.resume();
+          repl.displayPrompt();
+        })
+        .catch(e => {
+          _logger.getLogger().info('\r{% error %s %}\r\n', e.stack);
         });
     },
   });
