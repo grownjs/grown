@@ -144,9 +144,7 @@ module.exports = (Grown, util) => {
 
       repl.setPrompt(_utils.style('{% cyan.pointer %}'));
 
-      const use = (Grown.argv.params.use || '')
-        .split(',')
-        .filter(x => x);
+      const use = Grown.argv._.slice();
 
       tasks.forEach(task => {
         Object.keys(task).forEach(key => {
