@@ -125,6 +125,17 @@ function endCallback(err, conn, options) {
         }
       }
     })
+    .then(() => {
+      /* istanbul ignore else */
+      if (conn.res && !conn.res.finished) {
+        /* istanbul ignore else */
+        if (typeof conn.end === 'function') {
+          return conn.end();
+        }
+
+        conn.res.end();
+      }
+    })
     .catch(e => {
       debug('#%s Fatal. %s', conn.pid, e.stack);
 

@@ -88,7 +88,9 @@ function grownFactory($, options) {
 
         // read-only
         get halted() {
-          return _halted || (this.res && this.res.finished) || (this.has_body && this.has_status);
+          return _halted
+            || (this.res && this.res.finished)
+            || this.has_body || this.has_status;
         },
       },
       methods: {
