@@ -184,7 +184,7 @@ module.exports = (Grown, util) => {
 
         const Model = this._findModel(conn.req.handler.resource);
 
-        debug('#%s %s model found in %s',
+        debug('#%s %s model found in %s connection',
           conn.pid,
           Model.name,
           Model.database);
