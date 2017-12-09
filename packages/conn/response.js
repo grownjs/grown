@@ -81,10 +81,14 @@ module.exports = (Grown, util) => {
     }
 
     // normalize output
-    ctx.resp_body = typeof _code === 'string' ? _code : message || ctx.resp_body;
+    if (!ctx.has_body) {
+      ctx.resp_body = typeof _code === 'string' ? _code : message || ctx.resp_body;
+    }
 
     // normalize response
-    ctx.status_code = typeof _code === 'number' ? _code : ctx.status_code;
+    if (!ctx.has_status) {
+      ctx.status_code = typeof _code === 'number' ? _code : ctx.status_code;
+    }
 
     return ctx.send(ctx.resp_body);
   }
@@ -94,7 +98,7 @@ module.exports = (Grown, util) => {
       value = util.inspect(value);
     }
 
-    value = value.replace(/\s+/g, ' ');
+    value = value.replace(/\s+/g, ' ').trim();
 
     return value.length > 100
       ? `${value.substr(0, 100)}...`
