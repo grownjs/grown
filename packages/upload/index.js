@@ -9,7 +9,7 @@ module.exports = (Grown, util) => {
     debug('#%s Processing uploaded files', conn.pid);
 
     return new Promise((resolve, reject) => {
-      const form = new IncomingForm(util.extendValues({}, opts, defaults));
+      const form = new IncomingForm(opts || {});
 
       form.parse(conn.req, (err, data, files) => {
         if (err) {
