@@ -99,7 +99,7 @@ module.exports = (Grown, util) => {
     try {
       value = util.invoke(cmd, context);
     } catch (e) {
-      _logger.getLogger().info('\r{% error %s %}\r\n', e.message);
+      _logger.getLogger().info('\r{% error %s %}\r\n', e.toString());
       callback();
       return;
     }
@@ -117,12 +117,8 @@ module.exports = (Grown, util) => {
           callback(null, result);
         })
         .catch(e => {
-          /* istanbul ignore else */
-          if (e) {
-            _logger.getLogger().info('\r{% error %s %}\r\n', e.message);
-          }
-
-          callback(e || new Error(`Did not '${cmd}' failed?`));
+          _logger.getLogger().info('\r{% error %s %}\r\n', e.toString());
+          callback();
         });
     }
 
@@ -133,7 +129,6 @@ module.exports = (Grown, util) => {
     _initializeContext,
     _startREPL,
     _runCMD,
-    _logger,
 
     start() {
       const tasks = util.flattenArgs(arguments);
