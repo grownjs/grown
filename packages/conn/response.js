@@ -89,9 +89,22 @@ module.exports = (Grown, util) => {
     return ctx.send(ctx.resp_body);
   }
 
+  function _cutBody(value) {
+    if (typeof value !== 'string') {
+      value = util.inspect(value);
+    }
+
+    value = value.replace(/\s+/g, ' ');
+
+    return value.length > 100
+      ? `${value.substr(0, 100)}...`
+      : value;
+  }
+
   return Grown.module('Conn.Response', {
     _finishRequest,
     _endRequest,
+    _cutBody,
 
     before_render(ctx, template) {
       util.extendValues(template.locals, ctx.state);
@@ -150,12 +163,7 @@ module.exports = (Grown, util) => {
               throw new Error(`Invalid status_code: ${code}`);
             }
 
-            /* istanbul ignore else */
-            if (_response.status !== null) {
-              throw new Error('Response status_code already set');
-            }
-
-            debug('#%s Set status %s', this.pid, code);
+            debug('#%s Set status: %s', this.pid, code);
 
             _response.status = code;
 
@@ -173,9 +181,7 @@ module.exports = (Grown, util) => {
               throw new Error(`Invalid resp_body: ${value}`);
             }
 
-            debug('#%s %s body', this.pid, _response.body !== null
-              ? 'Update'
-              : 'Set');
+            debug('#%s Set body: %s', this.pid, _cutBody(value));
 
             _response.body = value;
           },
