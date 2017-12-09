@@ -1,6 +1,6 @@
 'use strict';
 
-const debug = require('debug')('grown:model-resource');
+const debug = require('debug')('grown:model:resource');
 
 const JSONSchemaSequelizer = require('json-schema-sequelizer');
 

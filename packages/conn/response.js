@@ -1,6 +1,6 @@
 'use strict';
 
-const debug = require('debug')('grown:conn-response');
+const debug = require('debug')('grown:conn:response');
 
 const statusCodes = require('http').STATUS_CODES;
 const mime = require('mime');
