@@ -63,7 +63,7 @@ module.exports = (Grown, util) => {
 
   function _endRequest(ctx, code, message) {
     /* istanbul ignore else */
-    if ((ctx.res && ctx.res.finished) || ctx.halted) {
+    if (ctx.res && ctx.res.finished) {
       throw new Error('Already finished');
     }
 
@@ -150,6 +150,11 @@ module.exports = (Grown, util) => {
               throw new Error(`Invalid status_code: ${code}`);
             }
 
+            /* istanbul ignore else */
+            if (_response.status !== null) {
+              throw new Error('Response status_code already set');
+            }
+
             debug('#%s Set status %s', this.pid, code);
 
             _response.status = code;
@@ -168,7 +173,9 @@ module.exports = (Grown, util) => {
               throw new Error(`Invalid resp_body: ${value}`);
             }
 
-            debug('#%s Set body', this.pid);
+            debug('#%s %s body', this.pid, _response.body !== null
+              ? 'Update'
+              : 'Set');
 
             _response.body = value;
           },
