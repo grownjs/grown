@@ -321,7 +321,7 @@ module.exports = ($, util) => {
             return self.render.call(this, src, data)
               .then(body => {
                 if (typeof this.end === 'function') {
-                  this.end(body);
+                  this.resp_body = body;
                 } else {
                   this.res.write(body);
                 }
