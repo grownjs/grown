@@ -16,6 +16,10 @@ require('dotenv').config();
 
 require('global-or-local')
   .install([
+    '@grown/session',
+    '@grown/parsers',
+    '@grown/upload',
+    '@grown/access',
     '@grown/conn',
     '@grown/model',
     '@grown/render',
