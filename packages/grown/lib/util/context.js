@@ -132,17 +132,10 @@ function endCallback(err, conn, options) {
         if (typeof conn.end === 'function') {
           return conn.end();
         }
-
-        conn.res.end();
       }
     })
     .catch(e => {
       debug('#%s Fatal. %s', conn.pid, e.stack);
-
-      /* istanbul ignore else */
-      if (conn.res) {
-        conn.res.end();
-      }
     });
 }
 
