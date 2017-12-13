@@ -2,6 +2,7 @@
 
 module.exports = (Grown, util) => {
   const Logger = require('log-pose');
+  const _utils = require('log-pose/lib/utils.js');
 
   // setup logger
   let _level = 'info';
@@ -21,7 +22,20 @@ module.exports = (Grown, util) => {
     .getLogger(12, process.stdout, process.stderr);
 
   return Grown.module('Logger', util.extendValues({
-    install() {
+    install(ctx) {
+      ctx.on('request', conn => {
+        conn._startTime = new Date();
+      });
+
+      ctx.on('finished', conn => {
+        const time = _utils.timeDiff(conn._startTime);
+        const code = conn.res.statusCode;
+        const method = conn.req.method;
+        const url = conn.req.url;
+
+        _logger.printf('{% green %s %} %s {% yellow %s %} {% gray - %s %}\r\n', method, url, code, time);
+      });
+
       return this.mixins();
     },
     mixins() {
