@@ -1,6 +1,6 @@
 'use strict';
 
-const debug = require('debug')('grown:tarima-render');
+const debug = require('debug')('grown:tarima:render');
 
 const path = require('path');
 
@@ -23,7 +23,7 @@ module.exports = (Grown, util) => {
     });
   }
 
-  function _sendView(ctx, conn, options) {
+  function _sendView(ctx, conn) {
     return this.bundle(ctx.entry || path.join(ctx.cwd, ctx.opts.assets, ctx.src), ctx.data)
       .then(partial =>
         this._sendHeaders(ctx, conn).then(() => {
@@ -57,11 +57,11 @@ module.exports = (Grown, util) => {
           throw e;
         }
 
-        debug('Skip. %s', e.message);
+        debug('#%s Skip. %s', conn.pid, e.message);
       });
   }
 
-  function _sendBundle(ctx, conn, options) {
+  function _sendBundle(ctx, conn) {
     return this.bundle(ctx.entry || path.join(ctx.cwd, ctx.opts.content, ctx.src), ctx.data)
       .then(partial => {
         this._sendHeaders(ctx, conn);
@@ -82,7 +82,7 @@ module.exports = (Grown, util) => {
           throw e;
         }
 
-        debug('Skip. %s', e.message);
+        debug('#%s Skip. %s', conn.pid, e.message);
       });
   }
 
@@ -93,7 +93,7 @@ module.exports = (Grown, util) => {
       .then(() => {
         x.src = conn.req.url.replace(/^\//, '') || 'index';
 
-        debug('Bundle lookup <%s>', x.src);
+        debug('#%s Bundle lookup <%s>', conn.pid, x.src);
 
         /* istanbul ignore else */
         if (RE_IS_BUNDLE.test(x.src)) {
@@ -141,9 +141,9 @@ module.exports = (Grown, util) => {
           }
 
           const _opts = util.extendValues({}, this.bundle_options, {
-            fallthrough: opts.fallthrough || this.fallthrough,
-            assets: opts.assets,
-            content: opts.content,
+            assets: typeof opts.assets !== 'undefined' ? opts.assets : 'assets',
+            content: typeof opts.content !== 'undefined' ? opts.content : 'content',
+            fallthrough: typeof opts.fallthrough !== 'undefined' ? opts.fallthrough : this.fallthrough,
           });
 
           _groups[opts.at || '/'] = _groups[opts.at || '/'] || [];
@@ -167,7 +167,7 @@ module.exports = (Grown, util) => {
           for (let i = 0; i < _keys.length; i += 1) {
             if (conn.req.url.indexOf(_keys[i]) === 0) {
               conn.req.originalUrl = conn.req.url;
-              conn.req.url = conn.req.url.substr(_keys[i].length);
+              conn.req.url = conn.req.url.substr(_keys[i].length) || '/';
 
               return this._dispatchBundle(_groups[_keys[i]].slice(), conn, options);
             }
@@ -176,7 +176,7 @@ module.exports = (Grown, util) => {
           throw util.buildError(404);
         } catch (e) {
           /* istanbul ignore else */
-          if (!this.fallthrough) {
+          if (this.fallthrough !== false) {
             throw e;
           }
         }

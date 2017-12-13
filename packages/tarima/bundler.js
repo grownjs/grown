@@ -1,6 +1,6 @@
 'use strict';
 
-const debug = require('debug')('grown:tarima-bundler');
+const debug = require('debug')('grown:tarima:bundler');
 
 const path = require('path');
 const fs = require('fs');

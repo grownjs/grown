@@ -109,7 +109,7 @@ function endCallback(err, conn, options) {
       }
 
       /* istanbul ignore else */
-      if (conn.res && !(conn.res.finished && conn.halted)) {
+      if (conn.res && !conn.halted) {
         conn.res.statusCode = 501;
 
         try {
@@ -119,6 +119,7 @@ function endCallback(err, conn, options) {
 
             conn.res.statusCode = failure.code;
             conn.res.write(failure.message);
+            conn.res.end();
           }
         } catch (e) {
           debug('#%s Fatal. %s', conn.pid, e.stack);

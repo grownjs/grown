@@ -248,7 +248,7 @@ module.exports = (Grown, util) => {
     }
 
     /* istanbul ignore else */
-    if (!this.fallthrough) {
+    if (this.fallthrough !== false) {
       throw new Error(`Failed to render '${util.inspect(_ids)}'`);
     }
 
