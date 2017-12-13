@@ -170,7 +170,7 @@ function _render(fn, data) {
     : fn(data);
 }
 
-module.exports = ($, util) => {
+module.exports = (Grown, util) => {
   function _partial(view, cached, options) {
     const _ids = !Array.isArray(view.src) && view.src
       ? [view.src]
@@ -256,7 +256,7 @@ module.exports = ($, util) => {
     return '';
   }
 
-  return $.module('Render.Views', {
+  return Grown.module('Render.Views', {
     // export render utils
     _buildPartial,
     _buildvNode,

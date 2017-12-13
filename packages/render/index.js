@@ -1,11 +1,11 @@
 'use strict';
 
-module.exports = ($, util) => {
-  const Views = require('./views')($, util);
-  const Layout = require('./layout')($, util);
-  const Actions = require('./actions')($, util);
+module.exports = (Grown, util) => {
+  const Views = require('./views')(Grown, util);
+  const Layout = require('./layout')(Grown, util);
+  const Actions = require('./actions')(Grown, util);
 
-  return $.module('Render', {
+  return Grown.module('Render', {
     include: [
       Views,
       Layout,

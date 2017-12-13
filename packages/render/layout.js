@@ -3,7 +3,7 @@
 const RE_MATCH_HEAD = /<head([^<>]*)>/;
 const RE_MATCH_BODY = /<body([^<>]*)>/;
 
-module.exports = ($, util) => {
+module.exports = (Grown, util) => {
   function _renderSlot(opts, state) {
     /* istanbul ignore else */
     if (typeof opts === 'string') {
@@ -85,7 +85,7 @@ module.exports = ($, util) => {
     }
   }
 
-  return $.module('Render.Layout', {
+  return Grown.module('Render.Layout', {
     _renderSlot,
 
     // default options

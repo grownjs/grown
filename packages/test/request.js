@@ -5,7 +5,7 @@ const debug = require('debug')('grown:test');
 const path = require('path');
 const fs = require('fs');
 
-module.exports = ($, util) => {
+module.exports = (Grown, util) => {
   function _fixRequest(url, method, options) {
     options = options || {};
     options.url = url || options.url || '/';
@@ -54,7 +54,7 @@ module.exports = ($, util) => {
     return options;
   }
 
-  return $.module('Test.Request', {
+  return Grown.module('Test.Request', {
     // export heleprs
     _fixRequest,
 
