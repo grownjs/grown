@@ -35,7 +35,7 @@ require('global-or-local')
     'sqlite3',
     'pg',
     'uws',
-  ], 'dev');
+  ]);
 
 const RE_UPPER = /^[A-Z][A-Z_]*$/;
 
@@ -235,8 +235,9 @@ function grownFactory($, options) {
 
 module.exports = (cwd, argv) => {
   const _argv = wargs(argv || process.argv.slice(2), {
-    boolean: 'd',
+    boolean: 'Vd',
     alias: {
+      V: 'verbose',
       d: 'debug',
       p: 'port',
       h: 'host',
