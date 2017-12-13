@@ -1,3 +1,4 @@
 .DS_Store
 *.log
 *.todo
+node_modules
