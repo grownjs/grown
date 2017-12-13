@@ -1,6 +1,6 @@
 #require('debug').enable '*'
 
-Grown = require('../index')
+Grown = require('../index')()
 
 Grown.use require('../../test')
 
@@ -8,11 +8,6 @@ describe 'Grown', ->
   it 'is a function', ->
     expect(typeof Grown).toEqual 'function'
     expect(typeof Grown.new).toEqual 'function'
-
-  it 'expects cwd and env', ->
-    expect(-> new Grown()).toThrow()
-    expect(-> new Grown({ foo: 'bar' })).toThrow()
-    expect(-> new Grown({ env: 1, cwd: 2 })).not.toThrow()
 
   describe '#version', ->
     it 'will be the package version', ->
