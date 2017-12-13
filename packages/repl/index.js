@@ -4,7 +4,7 @@ const path = require('path');
 const fs = require('fs');
 
 module.exports = (Grown, util) => {
-  const _logger = require('log-pose');
+  const Logger = require('log-pose');
   const _utils = require('log-pose/lib/utils.js');
 
   const REPL = require('repl');
@@ -49,7 +49,7 @@ module.exports = (Grown, util) => {
     repl.on('reset', this._initializeContext);
     this._initializeContext(repl.context);
 
-    _logger
+    Logger
       .setLevel('info')
       .setLogger(repl.outputStream);
 
@@ -85,7 +85,7 @@ module.exports = (Grown, util) => {
     repl.defineCommand('history', {
       help: 'Show the history',
       action() {
-        _logger.getLogger().write(repl.rli.history.slice().reverse().join('\n'));
+        Logger.getLogger().write(repl.rli.history.slice().reverse().join('\n'));
         repl.displayPrompt();
       },
     });
@@ -99,7 +99,7 @@ module.exports = (Grown, util) => {
     try {
       value = util.invoke(cmd, context);
     } catch (e) {
-      _logger.getLogger().info('\r{% error %s %}\r\n', e.toString());
+      Logger.getLogger().info('\r{% error %s %}\r\n', e.toString());
       callback();
       return;
     }
@@ -117,7 +117,7 @@ module.exports = (Grown, util) => {
           callback(null, result);
         })
         .catch(e => {
-          _logger.getLogger().info('\r{% error %s %}\r\n', e.toString());
+          Logger.getLogger().info('\r{% error %s %}\r\n', e.toString());
           callback();
         });
     }
@@ -137,7 +137,7 @@ module.exports = (Grown, util) => {
 
       util.readOnlyProperty(this, 'repl', repl);
 
-      repl.setPrompt(_utils.style('{% cyan.pointer %}'));
+      repl.setPrompt(_utils.style('{% gray.pointer %}'));
 
       const use = Grown.argv._.slice();
 
@@ -157,14 +157,20 @@ module.exports = (Grown, util) => {
             : `Missing tasks ${use.join(', ')}`);
       }
 
-      _logger.getLogger()
+      const logger = Logger.getLogger()
         .info('{% gray Grown v%s (node %s) %}\n', Grown.version, process.version)
         .info('\r{% log Loading %s... %}', use.join(','));
 
+      // FIXME: enable extensions?
+      const ctx = {
+        logger,
+        repl,
+      };
+
       Promise.resolve()
-        .then(() => Promise.all(cbs.map(cb => cb && cb())))
+        .then(() => Promise.all(cbs.map(cb => cb && cb.call(null, ctx, util))))
         .then(() => {
-          _logger.getLogger()
+          logger
             .info('\r{% ok NODE_ENV is %s %}\r\n', Grown.env)
             .info('{% ok REPL is ready %}\n')
             .info('{% log Type %} {% bold .help %} {% gray to list all available commands %}\n');
@@ -173,7 +179,7 @@ module.exports = (Grown, util) => {
           repl.displayPrompt();
         })
         .catch(e => {
-          _logger.getLogger().info('\r{% error %s %}\r\n', e.stack);
+          logger.info('\r{% error %s %}\r\n', e.stack);
         });
     },
   });
