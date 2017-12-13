@@ -24,11 +24,11 @@ module.exports = (Grown, util) => {
   }
 
   function _sendView(ctx, conn) {
-    return this.bundle(ctx.entry || path.join(ctx.cwd, ctx.opts.assets, ctx.src), ctx.data)
+    return this.bundle(ctx.entry || path.join(ctx.cwd, ctx.opts.content, ctx.src), ctx.data)
       .then(partial =>
         this._sendHeaders(ctx, conn).then(() => {
           if (!partial.render) {
-            debug('#%s Wait. Sending raw asset', conn.pid);
+            debug('#%s Wait. Sending raw content', conn.pid);
 
             if (typeof conn.end === 'function') {
               return conn.end(partial.result);
@@ -37,11 +37,11 @@ module.exports = (Grown, util) => {
             conn.res.write(partial.result);
             conn.res.end();
           } else if (typeof conn.render === 'function' && typeof partial.render === 'function') {
-            debug('#%s Wait. Rendering asset through views', conn.pid);
+            debug('#%s Wait. Rendering content through views', conn.pid);
 
             return conn.render(partial.render, conn.state);
           } else if (conn.res) {
-            debug('#%s Wait. Sending raw asset', conn.pid);
+            debug('#%s Wait. Sending raw content', conn.pid);
 
             conn.res.setHeader('Content-Length', partial.result.length);
             conn.res.write(partial.result);
@@ -50,7 +50,7 @@ module.exports = (Grown, util) => {
         }))
       .catch(e => {
         /* istanbul ignore else */
-        if (!ctx.opts.fallthrough) {
+        if (ctx.opts.fallthrough !== false) {
           e.statusCode = 404;
           e.message = `/* ${e.message.replace(ctx.cwd, '.')} */`;
 
@@ -62,11 +62,11 @@ module.exports = (Grown, util) => {
   }
 
   function _sendBundle(ctx, conn) {
-    return this.bundle(ctx.entry || path.join(ctx.cwd, ctx.opts.content, ctx.src), ctx.data)
+    return this.bundle(ctx.entry || path.join(ctx.cwd, ctx.opts.assets, ctx.src), ctx.data)
       .then(partial => {
         this._sendHeaders(ctx, conn);
 
-        debug('#%s Wait. Rendering bundle', conn.pid);
+        debug('#%s Wait. Rendering asset', conn.pid);
 
         /* istanbul ignore else */
         if (conn.res) {
@@ -78,7 +78,7 @@ module.exports = (Grown, util) => {
       })
       .catch(e => {
         /* istanbul ignore else */
-        if (!ctx.opts.fallthrough) {
+        if (ctx.opts.fallthrough !== false) {
           throw e;
         }
 
@@ -109,11 +109,11 @@ module.exports = (Grown, util) => {
       })
       .catch(e => {
         /* istanbul ignore else */
-        if (!set.length && !x.opts.fallthrough) {
+        if (!set.length && x.opts.fallthrough !== false) {
           throw e;
         }
 
-        return _dispatchBundle(set, conn, options);
+        return this._dispatchBundle(set, conn, options);
       });
   }
 
