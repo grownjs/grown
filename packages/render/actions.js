@@ -3,7 +3,7 @@
 module.exports = Grown => {
   return Grown.module('Render.Actions', {
     install(ctx) {
-      ctx.mount('Router.Mappings#pipe', conn => {
+      ctx.mount('Render.Actions#pipe', conn => {
         if (conn.req.handler.resource) {
           conn.render(`resource/${conn.req.handler.action || 'show'}`, conn.state);
         }
