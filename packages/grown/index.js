@@ -31,6 +31,8 @@ require('global-or-local')
     '@grown/repl',
   ]);
 
+const RE_UPPER = /^[A-Z][A-Z_]*$/;
+
 let _pid = 0;
 
 function bind(mixins) {
@@ -243,6 +245,13 @@ module.exports = (cwd, argv) => {
   process.env.PORT = _argv.flags.port || process.env.PORT || 8080;
 
   process.env.NODE_ENV = _argv.flags.env || 'development';
+
+  Object.keys(_argv.data).forEach(key => {
+    /* istanbul ignore else */
+    if (RE_UPPER.test(key)) {
+      process.env[key] = _argv.data[key];
+    }
+  });
 
   /* istanbul ignore else */
   if (process.env.CI && process.env.NODE_ENV === 'testing') {
