@@ -12,6 +12,7 @@ const util = require('./lib/util');
 const _mount = require('./lib/mount');
 const _listen = require('./lib/listen');
 
+require('source-map-support').install();
 require('dotenv').config();
 
 require('global-or-local')
@@ -78,50 +79,54 @@ function grownFactory($, options) {
     }
   });
 
+  $('Grown.Conn.Builder', {
+    methods: {
+      halt(cb) {
+        /* istanbul ignore else */
+        if (this.res && this.res._halted) {
+          throw new Error('Connection already halted!');
+        }
+
+        /* istanbul ignore else */
+        if (this.res) {
+          this.res._halted = true;
+        }
+
+        return scope._events.emit('before_send', null, this, scope._options)
+          .then(() => typeof cb === 'function' && cb(this, scope._options))
+          .catch(e => {
+            scope._events.emit('failure', e, scope._options);
+
+            debug('#%s Fatal. %s', this.pid, e.stack);
+
+            /* istanbul ignore else */
+            if (typeof cb === 'function') {
+              return cb(e, this, scope._options);
+            }
+          });
+      },
+      raise(code, message) {
+        throw util.buildError(code || 500, message);
+      },
+    },
+    props: {
+      env: () => _environment,
+
+      // read-only
+      get halted() {
+        return (this.res && this.res.finished) || this.has_body || this.has_status;
+      },
+    },
+  });
+
   // built-in connection
   scope._connection = (request, _extensions) => {
     const PID = `${process.pid}.${_pid}`;
-
-    let _halted = null;
 
     return $('Grown.Conn.Builder')({
       name: `Grown.Conn#${PID}`,
       props: {
         pid: () => PID,
-        env: () => _environment,
-
-        // read-only
-        get halted() {
-          return _halted
-            || (this.res && this.res.finished)
-            || this.has_body || this.has_status;
-        },
-      },
-      methods: {
-        halt(cb) {
-          /* istanbul ignore else */
-          if (_halted) {
-            throw new Error('Connection already halted!');
-          }
-
-          _halted = true;
-
-          return scope._events.emit('before_send', null, this, scope._options)
-            .then(() => typeof cb === 'function' && cb(this, scope._options))
-            .catch(e => {
-              scope._events.emit('failure', e, scope._options);
-
-              debug('#%s Fatal. %s', this.pid, e.stack);
-
-              /* istanbul ignore else */
-              if (typeof cb === 'function') {
-                return cb(e, this, scope._options);
-              }
-            });
-        },
-        raise(code, message) {
-          throw util.buildError(code || 500, message);
-        },
       },
       init() {
         _pid += 1;
