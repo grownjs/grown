@@ -110,8 +110,6 @@ function endCallback(err, conn, options) {
 
       /* istanbul ignore else */
       if (conn.res && !conn.halted) {
-        conn.res.statusCode = 501;
-
         try {
           /* istanbul ignore else */
           if (err) {
@@ -159,7 +157,7 @@ function doneCallback(err, conn, options) {
     .then(() => debug('#%s Finished.', conn.pid))
     .catch(e => _finish(e, conn, options))
     .then(() => {
-      this._events.emit('finished', err, conn, options);
+      this._events.emit('finished', conn, options);
     });
 }
 
