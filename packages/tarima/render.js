@@ -164,10 +164,12 @@ module.exports = (Grown, util) => {
 
         try {
           // match and execute
+          const x = conn.req.url;
+
           for (let i = 0; i < _keys.length; i += 1) {
-            if (conn.req.url.indexOf(_keys[i]) === 0) {
-              conn.req.originalUrl = conn.req.url;
-              conn.req.url = conn.req.url.substr(_keys[i].length) || '/';
+            if (x.indexOf(_keys[i]) === 0 && x.charAt(x.length - 1) !== '/') {
+              conn.req.originalUrl = x;
+              conn.req.url = `/${x.substr(_keys[i].length)}`;
 
               return this._dispatchBundle(_groups[_keys[i]].slice(), conn, options);
             }
