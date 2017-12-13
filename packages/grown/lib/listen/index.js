@@ -56,7 +56,7 @@ module.exports = function $listen(location, params, cb) {
   /* istanbul ignore else */
   if (!this._protocols[_protocolName]) {
     this._protocols[_protocolName] = _protocolName === 'uws'
-      ? require(_protocolName).http
+      ? require('./_uws')
       : require(_protocolName);
   }
 

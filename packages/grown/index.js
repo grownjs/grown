@@ -16,7 +16,8 @@ require('source-map-support').install();
 require('dotenv').config();
 
 require('global-or-local')
-  .install([
+  .dependencies([
+    // known-plugins
     '@grown/session',
     '@grown/parsers',
     '@grown/upload',
@@ -29,7 +30,12 @@ require('global-or-local')
     '@grown/tarima',
     '@grown/test',
     '@grown/repl',
-  ]);
+
+    // optionals
+    'sqlite3',
+    'pg',
+    'uws',
+  ], 'dev');
 
 const RE_UPPER = /^[A-Z][A-Z_]*$/;
 
