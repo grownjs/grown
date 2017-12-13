@@ -5,7 +5,7 @@
   "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "log-pose": "^0.3.1"
+    "log-pose": "^0.3.2"
   },
   "publishConfig": {
     "access": "public"
