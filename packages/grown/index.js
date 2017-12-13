@@ -227,11 +227,9 @@ function grownFactory($, options) {
 
 module.exports = (cwd, argv) => {
   const _argv = wargs(argv || process.argv.slice(2), {
-    boolean: 'dq',
+    boolean: 'd',
     alias: {
       d: 'debug',
-      q: 'quiet',
-      x: 'exec',
       p: 'port',
       h: 'host',
       e: 'env',
@@ -240,6 +238,10 @@ module.exports = (cwd, argv) => {
 
   // defaults
   process.name = 'Grown';
+
+  process.env.HOST = _argv.flags.host || process.env.HOST || '0.0.0.0';
+  process.env.PORT = _argv.flags.port || process.env.PORT || 8080;
+
   process.env.NODE_ENV = _argv.flags.env || 'development';
 
   /* istanbul ignore else */
