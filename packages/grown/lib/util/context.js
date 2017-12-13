@@ -133,6 +133,8 @@ function endCallback(err, conn, options) {
         if (typeof conn.end === 'function') {
           return conn.end();
         }
+
+        conn.res.end();
       }
     })
     .catch(e => {
