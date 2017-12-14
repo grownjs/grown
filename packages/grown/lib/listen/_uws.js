@@ -4,6 +4,8 @@ const STATUS_CODES = require('http').STATUS_CODES;
 
 const Transform = require('stream').Transform;
 
+const $new = require('object-new');
+
 const util = require('../util');
 const _util = require('util');
 
@@ -31,24 +33,18 @@ _util.inherits(ServerRequest, Transform);
 function ServerResponse(resp) {
   Transform.call(this);
 
+  this.finished = false;
   this.statusCode = 200;
   this.statusMessage = STATUS_CODES[this.statusCode];
 
-  this._buffer = [];
-  this._headers = {};
-  this.finished = false;
+  $new.hiddenProperty(this, '_buffer', []);
+  $new.hiddenProperty(this, '_headers', {});
+  $new.hiddenProperty(this, '_response', resp);
 
   this.on('finish', () => {
-    resp.write(`HTTP/1.1 ${this.statusCode} ${this.statusMessage}\r\n`);
-
-    Object.keys(this._headers).forEach(key => {
-      resp.write(`${key.replace(/\b([a-z])/g, $0 =>
-        $0.toUpperCase())}: ${this._headers[key]}\r\n`);
-    });
-
-    resp.write('\r\n');
-    resp.write(Buffer.concat(this._buffer));
-    resp.end();
+    resp.finished = true;
+    resp.statusCode = this.statusCode;
+    resp.end(Buffer.concat(this._buffer));
   });
 }
 
@@ -77,21 +73,21 @@ ServerResponse.prototype.writeHead = function writeHead(statusCode, reason, head
   /* istanbul ignore else */
   if (headers) {
     Object.keys(headers).forEach(key => {
-      this.setHeader(key, headers[key]);
+      this._response.setHeader(key, headers[key]);
     });
   }
 };
 
 ServerResponse.prototype.setHeader = function setHeader(name, value) {
-  this._headers[name.toLowerCase()] = value;
+  this._response.setHeader(name, value);
 };
 
 ServerResponse.prototype.getHeader = function getHeader(name) {
-  return this._headers[name.toLowerCase()];
+  return this._response.getHeader(name);
 };
 
 ServerResponse.prototype.removeHeader = function removeHeader(name) {
-  delete this._headers[name.toLowerCase()];
+  this._response.removeHeader(name);
 };
 
 ServerResponse.prototype.end = function end() {
@@ -112,7 +108,6 @@ module.exports = {
 
     uws = uws || require('uws');
 
-    // FIXME: this eventually will be implemented on uws
     return uws.http.createServer((req, res) => {
       try {
         req.headers = req.headers || {};
