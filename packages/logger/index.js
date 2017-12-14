@@ -30,7 +30,7 @@ module.exports = (Grown, util) => {
 
     before_render(ctx, template) {
       if (template.contents.indexOf('{elapsed}') === -1) {
-        template.contents += `<p>&mdash; ${this._elapsedTime(ctx)}ms.</p>`;
+        template.contents += `<p>&mdash; ${this._elapsedTime(ctx)}</p>`;
       } else {
         template.contents = template.contents.replace(/\{elapsed\}/g, this._elapsedTime(ctx));
       }
