@@ -4,8 +4,6 @@ const STATUS_CODES = require('http').STATUS_CODES;
 
 const Transform = require('stream').Transform;
 
-const $new = require('object-new');
-
 const util = require('../util');
 const _util = require('util');
 
@@ -37,19 +35,23 @@ function ServerResponse(resp) {
   this.statusCode = 200;
   this.statusMessage = STATUS_CODES[this.statusCode];
 
-  $new.hiddenProperty(this, '_buffer', []);
-  $new.hiddenProperty(this, '_headers', {});
-  $new.hiddenProperty(this, '_response', resp);
+  util.hiddenProperty(this, '_buffer', []);
+  util.hiddenProperty(this, '_headers', {});
+  util.hiddenProperty(this, '_response', resp);
 
   this.on('finish', () => {
-    const fixedHeaders = {};
+    const body = Buffer.concat(this._buffer);
+
+    this._headers['content-length'] = body.length.toString();
+
+    const head = {};
 
     Object.keys(this._headers).forEach(key => {
-      fixedHeaders[key.replace(/\b([a-z])/g, $0 => $0.toUpperCase())] = this._headers[key];
+      head[key.replace(/\b([a-z])/g, $0 => $0.toUpperCase())] = this._headers[key];
     });
 
-    resp.writeHead(this.statusCode, fixedHeaders);
-    resp.write(Buffer.concat(this._buffer));
+    resp.writeHead(this.statusCode, head);
+    resp.write(body);
     resp.end();
   });
 }
