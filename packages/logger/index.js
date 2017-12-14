@@ -33,7 +33,7 @@ module.exports = (Grown, util) => {
         const method = conn.req.method;
         const url = conn.req.url;
 
-        _logger.printf('{% green %s %} %s {% yellow %s %} {% gray - %s %}\r\n', method, url, code, time);
+        _logger.printf('{% green %s %} %s {% yellow %s %} {% gray (%s) %}\r\n', method, url, code, time);
       });
 
       return this.mixins();
