@@ -268,7 +268,7 @@ module.exports = (cwd, argv) => {
   delete _argv.flags.env;
 
   /* istanbul ignore else */
-  if (_argv.flags.debug) {
+  if (_argv.flags.debug && _argv.flags.verbose) {
     require('debug').enable('*');
   }
 

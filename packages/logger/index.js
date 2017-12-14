@@ -21,19 +21,41 @@ module.exports = (Grown, util) => {
     .setLevel(Grown.argv.flags.quiet ? false : _level)
     .getLogger(12, process.stdout, process.stderr);
 
+  function _elapsedTime(ctx) {
+    return _utils.timeDiff(ctx._startTime);
+  }
+
   return Grown.module('Logger', util.extendValues({
+    _elapsedTime,
+
+    before_render(ctx, template) {
+      if (template.contents.indexOf('{elapsed}') === -1) {
+        template.contents += `<p>&mdash; ${this._elapsedTime(ctx)}ms.</p>`;
+      } else {
+        template.contents = template.contents.replace(/\{elapsed\}/g, this._elapsedTime(ctx));
+      }
+    },
+
+    before_send(e, ctx) {
+      if (typeof ctx.end === 'function') {
+        ctx.put_resp_header('X-Response-Time', this._elapsedTime(ctx));
+      } else if (ctx.res) {
+        ctx.res.setHeader('X-Response-Time', this._elapsedTime(ctx));
+      }
+    },
+
     install(ctx) {
       ctx.on('request', conn => {
-        conn._startTime = new Date();
+        util.hiddenProperty(conn, '_startTime', new Date());
       });
 
       ctx.on('finished', conn => {
-        const time = _utils.timeDiff(conn._startTime);
+        const time = this._elapsedTime(conn);
         const code = conn.res.statusCode;
         const method = conn.req.method;
         const url = conn.req.url;
 
-        _logger.printf('{% green %s %} %s {% yellow %s %} {% gray (%s) %}\r\n', method, url, code, time);
+        _logger.debug('{% green %s %} %s {% yellow %s %} {% gray (%s) %}\r\n', method, url, code, time);
       });
 
       return this.mixins();
