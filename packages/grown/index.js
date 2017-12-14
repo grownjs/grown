@@ -283,7 +283,7 @@ module.exports = (cwd, argv) => {
   $('Grown.module', (id, def) => $(`Grown.${id}`, def), false);
   $('Grown.argv', () => _argv, false);
   $('Grown.cwd', () => cwd || process.cwd(), false);
-  $('Grown.env', () => process.env.NODE_ENV || 'development', false);
+  $('Grown.env', () => process.env.NODE_ENV, false);
   $('Grown.use', cb => cb(Grown, util), false);
 
   _env.config(Grown.cwd);
