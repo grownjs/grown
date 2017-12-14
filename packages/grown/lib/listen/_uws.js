@@ -42,9 +42,15 @@ function ServerResponse(resp) {
   $new.hiddenProperty(this, '_response', resp);
 
   this.on('finish', () => {
-    resp.finished = true;
-    resp.statusCode = this.statusCode;
-    resp.end(Buffer.concat(this._buffer));
+    const fixedHeaders = {};
+
+    Object.keys(this._headers).forEach(key => {
+      fixedHeaders[key.replace(/\b([a-z])/g, $0 => $0.toUpperCase())] = this._headers[key];
+    });
+
+    resp.writeHead(this.statusCode, fixedHeaders);
+    resp.write(Buffer.concat(this._buffer));
+    resp.end();
   });
 }
 
@@ -73,21 +79,21 @@ ServerResponse.prototype.writeHead = function writeHead(statusCode, reason, head
   /* istanbul ignore else */
   if (headers) {
     Object.keys(headers).forEach(key => {
-      this._response.setHeader(key, headers[key]);
+      this.setHeader(key, headers[key]);
     });
   }
 };
 
 ServerResponse.prototype.setHeader = function setHeader(name, value) {
-  this._response.setHeader(name, value);
+  this._headers[name.toLowerCase()] = value;
 };
 
 ServerResponse.prototype.getHeader = function getHeader(name) {
-  return this._response.getHeader(name);
+  return this._headers[name.toLowerCase()];
 };
 
 ServerResponse.prototype.removeHeader = function removeHeader(name) {
-  this._response.removeHeader(name);
+  delete this._headers[name.toLowerCase()];
 };
 
 ServerResponse.prototype.end = function end() {
