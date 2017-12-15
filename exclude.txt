@@ -8,5 +8,7 @@ CNAME
 *.sh
 src
 exclude.txt
+legacy
+packages
 node_modules
 bower_components
