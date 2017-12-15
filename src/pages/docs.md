@@ -27,8 +27,8 @@ If no arguments are given both values will be taken from the current `process`.
 
 ## Static methods
 
-- `module(classpath[, definition])` &mdash; extensions' accesor by classpath
 - `use(module)` &mdash; register third-party extensions
+- `new([options])` &mdash; instantiate a new server
 
 ➯ Next: [Extensions](./docs/extensions)
 
@@ -36,16 +36,16 @@ If no arguments are given both values will be taken from the current `process`.
 
 ## Constructor
 
-`Grown` is a _class-and-factory_ function which can define and access several
-extensions within its own context:
+- `Grown(classpath[, definition])`
 
 ```js
-// declare an extension with module()
-Grown.module('Application', {
+// declare an extension
+Grown('Application', {
   name: 'Example',
 });
 
-// access the extension directly
+// both calls are equivalent
+console.log(Grown('Application').name);
 console.log(Grown.Application.name);
 ```
 
