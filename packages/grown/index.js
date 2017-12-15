@@ -288,5 +288,9 @@ module.exports = (cwd, argv) => {
 
   _env.config(Grown.cwd);
 
+  // built-in extensions
+  Grown.use(require('./logger'));
+  Grown.use(require('./repl'));
+
   return Grown;
 };
