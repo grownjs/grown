@@ -26,7 +26,7 @@ describe 'Grown', ->
   describe '#use', ->
     it 'can load new module definitions', ->
       Grown.use ($, util) ->
-        $.module 'Example',
+        $ 'Example',
           props:
             _: util
 
