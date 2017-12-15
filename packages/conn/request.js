@@ -25,7 +25,7 @@ module.exports = (Grown, util) => {
     ].join('');
   }
 
-  return Grown.module('Conn.Request', {
+  return Grown('Conn.Request', {
     _fixURL,
 
     mixins() {

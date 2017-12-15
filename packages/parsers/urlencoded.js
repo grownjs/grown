@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = Grown => {
-  return Grown.module('Parsers.URLENCODED', {
+  return Grown('Parsers.URLENCODED', {
     urlencoded_options: {
       extended: false,
     },

@@ -212,7 +212,7 @@ module.exports = (Grown, util) => {
       });
   }
 
-  return Grown.module('Access', {
+  return Grown('Access', {
     _reduceHandler,
     _compileMatch,
     _makeMatcher,

@@ -5,7 +5,7 @@ module.exports = (Grown, util) => {
   const cookieParser = require('cookie-parser');
   const connectFlash = require('connect-flash');
 
-  return Grown.module('Session', {
+  return Grown('Session', {
     session_options: {
       secret: process.env.SESSION_SECRET || '__CHANGE_ME__',
       keys: (process.env.SESSION_KEYS || '__CHANGE_ME__').split(/\s+/),

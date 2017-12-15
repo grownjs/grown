@@ -280,7 +280,6 @@ module.exports = (cwd, argv) => {
   const Grown = $('Grown', grownFactory.bind(null, $));
 
   $('Grown.version', () => _pkg.version, false);
-  $('Grown.module', (id, def) => $(`Grown.${id}`, def), false);
   $('Grown.argv', () => _argv, false);
   $('Grown.cwd', () => cwd || process.cwd(), false);
   $('Grown.env', () => process.env.NODE_ENV, false);

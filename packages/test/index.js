@@ -4,7 +4,7 @@ module.exports = (Grown, util) => {
   const Request = require('./request')(Grown, util);
   const Mock = require('./mock')(Grown, util);
 
-  return Grown.module('Test', {
+  return Grown('Test', {
     include: [
       Request,
       Mock,

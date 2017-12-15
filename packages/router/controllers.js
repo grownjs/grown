@@ -69,7 +69,7 @@ module.exports = (Grown, util) => {
     });
   }
 
-  return Grown.module('Router.Controllers', {
+  return Grown('Router.Controllers', {
     _drawRoutes,
     _controllers: {},
 

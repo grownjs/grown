@@ -22,7 +22,7 @@ const HOOK_METHODS = [
 ];
 
 module.exports = (Grown, util) => {
-  return Grown.module('Model.Base', {
+  return Grown('Model.Base', {
     connect(options, refs, cwd) {
       const _opts = {};
 

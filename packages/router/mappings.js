@@ -83,7 +83,7 @@ module.exports = (Grown, util) => {
       });
   }
 
-  return Grown.module('Router.Mappings', {
+  return Grown('Router.Mappings', {
     _dispatchRoutes,
     _groupRoutes,
 

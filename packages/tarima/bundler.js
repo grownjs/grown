@@ -153,7 +153,7 @@ module.exports = (Grown, util) => {
     });
   }
 
-  return Grown.module('Tarima.Bundler', {
+  return Grown('Tarima.Bundler', {
     _bundleOptions,
     _bundleRender,
     _bundleCache,

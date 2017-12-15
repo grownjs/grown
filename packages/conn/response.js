@@ -105,7 +105,7 @@ module.exports = (Grown, util) => {
       : value;
   }
 
-  return Grown.module('Conn.Response', {
+  return Grown('Conn.Response', {
     _finishRequest,
     _endRequest,
     _cutBody,

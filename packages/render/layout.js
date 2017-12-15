@@ -85,7 +85,7 @@ module.exports = (Grown, util) => {
     }
   }
 
-  return Grown.module('Render.Layout', {
+  return Grown('Render.Layout', {
     _renderSlot,
 
     // default options

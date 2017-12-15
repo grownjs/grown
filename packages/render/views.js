@@ -256,7 +256,7 @@ module.exports = (Grown, util) => {
     return '';
   }
 
-  return Grown.module('Render.Views', {
+  return Grown('Render.Views', {
     // export render utils
     _buildPartial,
     _buildvNode,

@@ -25,7 +25,7 @@ module.exports = (Grown, util) => {
     return _utils.timeDiff(ctx._startTime);
   }
 
-  return Grown.module('Logger', util.extendValues({
+  return Grown('Logger', util.extendValues({
     _elapsedTime,
 
     before_render(ctx, template) {

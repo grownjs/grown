@@ -38,7 +38,7 @@ module.exports = (Grown, util) => {
     return this[name].connect(_opts, refs, cwd);
   }
 
-  return Grown.module('Model.Repo', {
+  return Grown('Model.Repo', {
     _getModels,
     _getModel,
 

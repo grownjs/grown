@@ -162,7 +162,7 @@ module.exports = (Grown, util) => {
       new Error(`Resource missing, given '${resource}'`));
   }
 
-  return Grown.module('Model.Resource', {
+  return Grown('Model.Resource', {
     _buildAttachments,
     _buildResource,
     _findModel,

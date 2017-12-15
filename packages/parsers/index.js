@@ -8,7 +8,7 @@ module.exports = (Grown, util) => {
   require('./text')(Grown, util);
   require('./raw')(Grown, util);
 
-  return Grown.module('Parsers', {
+  return Grown('Parsers', {
     include: [
       URLENCODED,
       JSON,

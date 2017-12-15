@@ -5,7 +5,7 @@ const path = require('path');
 module.exports = (Grown, util) => {
   const serveStatic = require('serve-static');
 
-  return Grown.module('Static', {
+  return Grown('Static', {
     install(ctx) {
       const _cwd = Grown.cwd;
 

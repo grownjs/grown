@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = Grown => {
-  return Grown.module('Parsers.JSON', {
+  return Grown('Parsers.JSON', {
     json_options: {
       limit: '5mb',
     },

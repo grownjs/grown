@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = Grown => {
-  return Grown.module('Render.Actions', {
+  return Grown('Render.Actions', {
     install(ctx) {
       ctx.mount('Render.Actions#pipe', conn => {
         if (conn.req.handler) {

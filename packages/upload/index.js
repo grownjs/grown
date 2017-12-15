@@ -34,7 +34,7 @@ module.exports = (Grown, util) => {
     });
   }
 
-  return Grown.module('Upload', {
+  return Grown('Upload', {
     _processForm,
 
     mixins() {

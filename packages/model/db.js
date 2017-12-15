@@ -5,7 +5,7 @@ const JSONSchemaSequelizer = require('json-schema-sequelizer');
 module.exports = (Grown, util) => {
   const DB = {};
 
-  return Grown.module('Model.DB', {
+  return Grown('Model.DB', {
     registered(name) {
       return typeof DB[name] !== 'undefined';
     },

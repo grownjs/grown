@@ -125,7 +125,7 @@ module.exports = (Grown, util) => {
     callback(null, value);
   }
 
-  return Grown.module('REPL', {
+  return Grown('REPL', {
     _initializeContext,
     _startREPL,
     _runCMD,

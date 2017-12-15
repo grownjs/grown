@@ -117,7 +117,7 @@ module.exports = (Grown, util) => {
       });
   }
 
-  return Grown.module('Tarima.Render', {
+  return Grown('Tarima.Render', {
     _dispatchBundle,
     _sendHeaders,
     _sendBundle,

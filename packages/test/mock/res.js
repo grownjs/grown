@@ -41,7 +41,7 @@ module.exports = Grown => {
     return res;
   }
 
-  return Grown.module('Test.Mock.Res', {
+  return Grown('Test.Mock.Res', {
     // export helpers
     _mockResponse,
 

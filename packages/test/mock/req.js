@@ -33,7 +33,7 @@ module.exports = (Grown, util) => {
     return req;
   }
 
-  return Grown.module('Test.Mock.Req', {
+  return Grown('Test.Mock.Req', {
     // export helpers
     _mockRequest,
 

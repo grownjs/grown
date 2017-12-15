@@ -54,7 +54,7 @@ module.exports = (Grown, util) => {
     return options;
   }
 
-  return Grown.module('Test.Request', {
+  return Grown('Test.Request', {
     // export heleprs
     _fixRequest,
 

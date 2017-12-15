@@ -3,7 +3,7 @@
 const JSONSchemaSequelizer = require('json-schema-sequelizer');
 
 module.exports = (Grown, util) => {
-  return Grown.module('Model.Loader', {
+  return Grown('Model.Loader', {
     scan(cwd, _refs) {
       const _models = {};
 
