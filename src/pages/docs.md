@@ -3,8 +3,6 @@ title: The interface
 $render: ../_layouts/default.pug
 ---
 
-# The interface
-
 Our main module is a factory which takes two optional arguments:
 
 ```js
@@ -36,10 +34,10 @@ If no arguments are given both values will be taken from the current `process`.
 
 ## Constructor
 
-- `Grown(classpath[, definition])`
+- `Grown(classpath[, definition])` &mdash; extensions' accesor
 
 ```js
-// declare an extension
+// register an extension
 Grown('Application', {
   name: 'Example',
 });

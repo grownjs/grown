@@ -39,7 +39,11 @@ html
             = error.stack
             summary= error.message
 
-        != yield
+        main
+          if title
+            h1= title
+
+          != yield
 
         hr
 

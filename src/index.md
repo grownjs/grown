@@ -3,8 +3,6 @@ title: Installation
 $render: _layouts/default.pug
 ---
 
-# Installation
-
 I suggest you installing NodeJS through NVM, using `v4.8.x` or higher is fine.
 
 See: [NVM installation instructions](https://github.com/creationix/nvm#installation)
