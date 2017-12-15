@@ -1,0 +1,36 @@
+#wrapper {
+  position: relative;
+  height: 100%;
+}
+
+#content {
+  color: @lo-gray;
+  background-color: #FFFFFF;
+}
+
+@media screen and (min-width: 940px) {
+  body {
+    background-image: linear-gradient(to right,
+      @hi-silver 0%,
+      @hi-silver 50%,
+      #FFFFFF 51%,
+      #FFFFFF 100%);
+  }
+
+  #wrapper {
+    max-width: 940px;
+    margin: 0 auto;
+  }
+
+  #sidebar {
+    overflow: auto;
+    position: fixed;
+    width: 220px;
+    bottom: 0;
+    top: 0;
+  }
+
+  #content {
+    margin-left: 220px;
+  }
+}

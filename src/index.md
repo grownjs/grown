@@ -1,21 +1,43 @@
 ---
-title: FTW
+title: Installation
 $render: _layouts/default.pug
 ---
 
-# Grown
+# Installation
 
-[![travis-ci](https://api.travis-ci.org/pateketrueke/grown.svg)](https://travis-ci.org/pateketrueke/grown) [![codecov](https://codecov.io/gh/pateketrueke/grown/branch/master/graph/badge.svg)](https://codecov.io/gh/pateketrueke/grown)
+I suggest you installing NodeJS through NVM, using `v4.8.x` or higher is fine.
 
-Experimental DSL for web applications
+See: [NVM installation instructions](https://github.com/creationix/nvm#installation)
+
+Once done, install the main `grown` dependency:
 
 ```bash
-$ yarn global add grown # or `npm i -g grown`
+$ npm install @grown/grown
 ```
 
-## Overview
+## How it works?
 
-**Grown** is a _homegrown_ nodejs framework built on top of open-source technology,
-it reuse many patterns from other frameworks and rely on terrific third-party libraries.
+If you're beginning, starting a new web server is a common task:
 
-- [docs](/docs)
+```js
+// require and create our web-server interface
+const Grown = require('@grown/grown')();
+
+// create a web-server instance
+const server = new Grown();
+
+// append middleware
+server.mount(ctx => {
+  ctx.res.end('<h1>It works!</h1>');
+});
+
+// starts the web-server
+server.listen(8080);
+```
+
+In the code above `Grown` is just a _class-and-factory_ which can receive
+different arguments to create, overload or declare extensions.
+
+Nothing glorious but it can do more stuff...
+
+➯ Next: [The interface](./docs)

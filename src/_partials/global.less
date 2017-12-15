@@ -1,0 +1,104 @@
+* {
+  box-sizing: content-box;
+}
+
+*::after,
+*::before {
+  box-sizing: inherit;
+}
+
+body, html {
+  height: 100%;
+}
+
+body {
+  font-family: 'Sorts Mill Goudy', serif;
+  font-size: 120%;
+  line-height: 1.33em;
+  background-color: @hi-silver;
+}
+
+hr {
+  border: 0;
+  border-top: 1px dashed @hi-gray;
+}
+
+h2 {
+  font-size: 25px;
+  font-weight: 300;
+}
+
+img {
+  max-width: 100%;
+}
+
+pre {
+  overflow: auto;
+}
+
+code {
+  background-color: @hi-silver;
+}
+
+a {
+  color: @hi-blue;
+  text-decoration: none;
+
+  &.here {
+    color: @hi-red;
+  }
+
+  &:hover {
+    color: @hi-red;
+    text-decoration: underline;
+  }
+}
+
+ul.reset {
+  list-style-type: none;
+
+  li ~ li {
+    margin-top: 5px;
+  }
+
+  li a {
+    border-bottom: 1px dashed @hi-gray;
+  }
+}
+
+.reset {
+  margin: 0;
+  padding: 0;
+}
+
+.body {
+  padding: 20px 30px;
+}
+
+.pad {
+  padding: 5px;
+}
+
+.mt {
+  margin-top: 25px;
+}
+
+.sp > * {
+  margin-right: 5px;
+
+  &:last-child {
+    margin-right: 0;
+  }
+}
+
+.flex {
+  display: flex;
+
+  > .col {
+    flex: 1 1 auto;
+  }
+}
+
+.hljs {
+  background-color: @hi-silver !important;
+}
