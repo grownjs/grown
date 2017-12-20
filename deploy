@@ -1,9 +1,11 @@
 #!/bin/sh
 
-OPTIONS="-avzC --exclude-from exclude.txt"
+OPTIONS="-avzC --exclude-from ../exclude.txt"
 TRANSPORT="ssh -p $1"
 CONNECTION="$2"
 REMOTE_PATH="$3"
+
+cd build
 
 if [ -z "$3" ] || [ -z "$2" ] || [ -z "$1" ]; then
   echo 'usage:'
@@ -14,3 +16,5 @@ if [ -z "$3" ] || [ -z "$2" ] || [ -z "$1" ]; then
 fi
 
 rsync $OPTIONS -e "$TRANSPORT" . $CONNECTION:$REMOTE_PATH
+
+cd ..
