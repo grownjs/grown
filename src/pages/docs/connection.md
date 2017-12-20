@@ -2,3 +2,41 @@
 title: Connection
 $render: ../../_layouts/default.pug
 ---
+
+## Events
+
+- `begin`
+- `start`
+- `listen`
+- `request`
+- `failure`
+- `finished`
+- `before_*`
+
+---
+
+## Testing
+
+`run()`
+
+---
+
+## Plugins
+
+`plug()`
+
+➯ Next: [Extensions](./docs/extensions--/Y)
+
+---
+
+## Mounting
+
+`mount()`
+
+➯ Next: [Middleware](./docs/middleware)
+
+---
+
+## Listening
+
+`listen()`

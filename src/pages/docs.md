@@ -106,4 +106,7 @@ const y = options('a.required.setting.here');
 - `mount(middleware)` &mdash; append middleware to the server instance
 - `listen([connection])` &mdash; starts a new web server connection
 
+> Events run on the `server` instance and extensions has access to it.
+> Extensions run on the `connection` instance and middleeware has access to it.
+
 ➯ Next: [Connection](./docs/connection)
