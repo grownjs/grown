@@ -167,7 +167,7 @@ module.exports = (Grown, util) => {
           const x = conn.req.url;
 
           for (let i = 0; i < _keys.length; i += 1) {
-            if (x.indexOf(_keys[i]) === 0 && x.charAt(x.length - 1) !== '/') {
+            if (x.indexOf(_keys[i]) === 0) {
               conn.req.originalUrl = x;
               conn.req.url = `/${x.substr(_keys[i].length)}`;
 
