@@ -2,6 +2,7 @@
 
 const debug = require('debug')('grown');
 
+const path = require('path');
 const _env = require('dotenv');
 const wargs = require('wargs');
 const $new = require('object-new');
@@ -13,7 +14,6 @@ const _mount = require('./lib/mount');
 const _listen = require('./lib/listen');
 
 require('source-map-support').install();
-require('dotenv').config();
 
 require('global-or-local')
   .dependencies([
@@ -285,7 +285,17 @@ module.exports = (cwd, argv) => {
   $('Grown.env', () => process.env.NODE_ENV, false);
   $('Grown.use', cb => cb(Grown, util), false);
 
-  _env.config(Grown.cwd);
+  const env = _env.config({
+    path: path.join(Grown.cwd, '.env'),
+  });
+
+  if (env.error && env.error.code !== 'ENOENT') {
+    throw env.error;
+  }
+
+  // cleanup
+  delete process.env.error;
+  delete env.error;
 
   return Grown;
 };
