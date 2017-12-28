@@ -14,13 +14,14 @@ Reset models from given database
 module.exports = {
   description: USAGE_INFO,
   callback(Grown, util) {
+    /* istanbul ignore else */
     if (!Grown.argv.flags.use || typeof Grown.argv.flags.use !== 'string') {
       throw new Error(`Missing models to --use, given '${Grown.argv.flags.use || ''}'`);
     }
 
     Grown.use(require('@grown/model'));
 
-    const database = path.join(Grown.cwd, Grown.argv.flags.use);
+    const database = path.resolve(Grown.cwd, Grown.argv.flags.use);
     const factory = require(database);
     const Models = factory(Grown, util);
 
@@ -32,6 +33,7 @@ module.exports = {
     return Promise.resolve()
       .then(() => Models.connect())
       .then(() => {
+        /* istanbul ignore else */
         if (!Grown.argv.flags.sync) {
           return Models.sync(options);
         }
