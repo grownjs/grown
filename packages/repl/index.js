@@ -153,8 +153,8 @@ module.exports = (Grown, util) => {
       if (!cbs.length && use.length) {
         throw new Error(
           use.length === 1
-            ? `Missing task '${use[0]}'`
-            : `Missing tasks ${use.join(', ')}`);
+            ? `Missing hook '${use[0]}'`
+            : `Missing hooks ${use.join(', ')}`);
       }
 
       const logger = Logger.getLogger()
