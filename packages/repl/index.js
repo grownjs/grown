@@ -158,7 +158,6 @@ module.exports = (Grown, util) => {
       }
 
       const logger = Logger.getLogger()
-        .info('{% gray Grown v%s (node %s) %}\n', Grown.version, process.version)
         .info('\r{% log Loading %s... %}', use.join(','));
 
       // FIXME: enable extensions?
@@ -170,10 +169,7 @@ module.exports = (Grown, util) => {
       Promise.resolve()
         .then(() => Promise.all(cbs.map(cb => cb && cb.call(null, ctx, util))))
         .then(() => {
-          logger
-            .info('\r{% ok NODE_ENV is %s %}\r\n', Grown.env)
-            .info('{% ok REPL is ready %}\n')
-            .info('{% log Type %} {% bold .help %} {% gray to list all available commands %}\n');
+          logger.info('{% log Type %} {% bold .help %} {% gray to list all available commands %}\n');
 
           repl.resume();
           repl.displayPrompt();

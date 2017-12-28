@@ -119,7 +119,7 @@ function start(cb) {
 }
 
 function run(taskName) {
-  logger.info('\r{% green Grown v%s %} {% gray (node %s - %s) %}\r\n',
+  logger.info('{% gray Grown v%s (node %s - %s) %}\n',
     thisPkg.version, process.version, process.env.NODE_ENV);
 
   /* istanbul ignore else */
@@ -127,7 +127,7 @@ function run(taskName) {
     throw new Error(`Unknown task '${taskName}'`);
   }
 
-  const task = require(taskFiles[taskName]);
+  const task = require(taskFiles[taskName]).callback;
 
   return task(Grown, util.extendValues({ logger }, util));
 }
@@ -142,7 +142,7 @@ if (Grown.argv.flags.version) {
 
 Promise.resolve()
   .then(() => {
-    const taskName = Grown.argv._[0];
+    const taskName = Grown.argv._.shift();
 
     /* istanbul ignore else */
     if (taskName && !Grown.argv.flags.help) {
@@ -155,6 +155,7 @@ Promise.resolve()
     showHelp();
   })
   .catch(e => {
-    logger.info('\r{% error %s %}\r\n', e.message);
+    e = util.cleanError(e, Grown.cwd);
+    logger.info('\r{% error %s %}\r\n', e.stack || e.message);
     exit(1);
   });
