@@ -65,26 +65,34 @@ function collectTasks() {
 const baseDir = path.resolve(Grown.cwd, path.dirname(appPkg.main || mainPkg));
 const taskFiles = collectTasks(path.join(__dirname, 'tasks'), path.join(baseDir, 'tasks'));
 
-function showHelp() {
+function showHelp(taskName) {
   logger.write(GROWN_TXT);
-  logger.printf('\n {% green Avalable tasks: %}\n');
 
-  let maxLength = 0;
+  if (!taskName) {
+    logger.printf('\n {% green Avalable tasks: %}\n');
 
-  Object.keys(taskFiles).sort()
-    .map(x => {
-      if (x.length > maxLength) {
-        maxLength = x.length;
-      }
+    let maxLength = 0;
 
-      return x;
-    })
-    .forEach(x => {
-      const pad = new Array((maxLength + 1) - x.length).join(' ');
-      const task = require(taskFiles[x]);
+    Object.keys(taskFiles).sort()
+      .map(x => {
+        if (x.length > maxLength) {
+          maxLength = x.length;
+        }
 
-      logger.printf('   {% gray %s %s  # %s %}\n', x, pad, task.description);
-    });
+        return x;
+      })
+      .forEach(x => {
+        const pad = new Array((maxLength + 1) - x.length).join(' ');
+        const task = require(taskFiles[x]);
+        const desc = (task.description || '').split('\n')[0];
+
+        logger.printf('   {% gray %s %s  # %s %}\n', x, pad, desc);
+      });
+  } else {
+    const desc = require(taskFiles[taskName]).description;
+
+    logger.printf('\n {% green %s %} {% gray ─ %s %}\n', taskName, desc);
+  }
 
   logger.write('\n');
 }
@@ -119,13 +127,8 @@ function start(cb) {
 }
 
 function run(taskName) {
-  logger.info('{% gray Grown v%s (node %s - %s) %}\n',
+  logger.info('{% gray Grown v%s (node %s ─ %s) %}\n',
     thisPkg.version, process.version, process.env.NODE_ENV);
-
-  /* istanbul ignore else */
-  if (!taskFiles[taskName]) {
-    throw new Error(`Unknown task '${taskName}'`);
-  }
 
   const task = require(taskFiles[taskName]).callback;
 
@@ -145,6 +148,11 @@ Promise.resolve()
     const taskName = Grown.argv._.shift();
 
     /* istanbul ignore else */
+    if (taskName && !taskFiles[taskName]) {
+      throw new Error(`Unknown task '${taskName}'`);
+    }
+
+    /* istanbul ignore else */
     if (taskName && !Grown.argv.flags.help) {
       return logger(taskName, () =>
         new Promise(cb => {
@@ -152,7 +160,7 @@ Promise.resolve()
         }));
     }
 
-    showHelp();
+    showHelp(taskName);
   })
   .catch(e => {
     e = util.cleanError(e, Grown.cwd);
