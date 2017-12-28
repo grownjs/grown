@@ -6,7 +6,7 @@ const cleanStack = require('clean-stack');
 const RE_ERR_MESSAGE = /.*Error:.+?\n/;
 const RE_NODE_MODULES = /\/.+?node_modules\//g;
 const RE_NO_SPACES = / +at /g;
-const RE_SRC_FILE = /^\S+\s\(.+?:\d+:\d+\)/;
+const RE_SRC_FILE = /[/.].+?:\d+:\d+/;
 
 const RE_NATIVES = new RegExp(`^.+(${
   Object.keys(process.binding('natives'))
@@ -74,14 +74,14 @@ function cleanError(e, cwd) {
     }
   }
 
-  e.stack = _stack.split('\n')
-    .filter(line => RE_SRC_FILE.test(line))
-    .join('\n');
-
   e.errors = e.errors || [];
   e.call = e.pipeline;
   e.name = e.name || 'Error';
   e.code = e.statusCode || 500;
+
+  e.stack = `${e.name}: ${e.message}\n ${_stack.split('\n')
+    .filter(line => RE_SRC_FILE.test(line))
+    .join('\n ')}`;
 
   return e;
 }
