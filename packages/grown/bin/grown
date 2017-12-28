@@ -130,9 +130,6 @@ function start(cb) {
 }
 
 function run(taskName) {
-  logger.info('{% gray Grown v%s (node %s ─ %s) %}\n',
-    thisPkg.version, process.version, process.env.NODE_ENV);
-
   const task = require(taskFiles[taskName]).callback;
 
   return task(Grown, util.extendValues({ logger }, util));
@@ -140,14 +137,15 @@ function run(taskName) {
 
 /* istanbul ignore else */
 if (Grown.argv.flags.version) {
-  logger.printf('\r{% green %s v%s %} {% gray (node %s) %}\r\n',
-    thisPkg.name, thisPkg.version,
-    process.version);
+  logger.printf('\r{% green Grown v%s %}\r\n', thisPkg.version);
   exit();
 }
 
 Promise.resolve()
   .then(() => {
+    logger.info('{% gray Grown v%s (node %s ─ %s) %}\n',
+      thisPkg.version, process.version, process.env.NODE_ENV);
+
     const taskName = Grown.argv._.shift();
 
     /* istanbul ignore else */
