@@ -6,8 +6,14 @@ const USAGE_INFO = `
 
 Reset models from given database
 
---use   Entry file exporting referenced models
---sync  Optional. Specific models to reset by name
+--use    Entry file exporting referenced models
+--sync   Optional. Specific models to reset by name
+--alter  Optional. Use ALTER instead of forcing
+--force  Optional. Force synchronization
+
+Examples:
+  grown db.sync --use lib/my_app/database --force
+  grown db.sync --use db/models --sync Account,Session,User
 
 `;
 
