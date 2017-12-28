@@ -235,7 +235,7 @@ function grownFactory($, options) {
 
 module.exports = (cwd, argv) => {
   const _argv = wargs(argv || process.argv.slice(2), {
-    boolean: 'Vd',
+    boolean: ['V', 'd', 'help'],
     alias: {
       V: 'verbose',
       d: 'debug',
