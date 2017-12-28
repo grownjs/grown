@@ -52,11 +52,14 @@ function collectTasks() {
   const files = {};
 
   dirs.forEach(cwd => {
-    fs.readdirSync(cwd)
-      .filter(x => x.indexOf('.js') > -1)
-      .forEach(x => {
-        files[x.replace('.js', '')] = path.join(cwd, x);
-      });
+    /* istanbul ignore else */
+    if (fs.existsSync(cwd)) {
+      fs.readdirSync(cwd)
+        .filter(x => x.indexOf('.js') > -1)
+        .forEach(x => {
+          files[x.replace('.js', '')] = path.join(cwd, x);
+        });
+    }
   });
 
   return files;
