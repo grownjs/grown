@@ -47,6 +47,46 @@ const appPkg = fs.existsSync(mainPkg)
   ? require(mainPkg)
   : {};
 
+function findApplication() {
+  const baseName = appPkg.name || path.basename(path.dirname(Grown.cwd));
+
+  const files = [
+    `lib/${baseName}/application.js`,
+    `lib/${baseName}/server.js`,
+    `lib/${baseName}/index.js`,
+    `lib/${baseName}.js`,
+    'lib/application.js',
+    'lib/server.js',
+    `${baseName}.js`,
+    'application.js',
+    'server.js',
+    'index.js',
+  ];
+
+  let mainFile;
+
+  if (files.indexOf(appPkg.main) === -1) {
+    files.push(appPkg.main);
+  }
+
+  for (let i = 0; i < files.length; i += 1) {
+    if (fs.existsSync(files[i])) {
+      mainFile = files[i];
+      break;
+    }
+  }
+
+  if (!mainFile) {
+    throw new Error(`Missing application script (e.g: ${files.join(', ')})`);
+  }
+
+  if (!fs.existsSync(mainFile)) {
+    throw new Error(`Missing ${mainFile}`);
+  }
+
+  return mainFile;
+}
+
 function collectTasks() {
   const dirs = Array.prototype.slice.call(arguments);
   const files = {};
@@ -78,6 +118,7 @@ function showHelp(taskName) {
 
     Object.keys(taskFiles).sort()
       .map(x => {
+        /* istanbul ignore else */
         if (x.length > maxLength) {
           maxLength = x.length;
         }
@@ -92,12 +133,11 @@ function showHelp(taskName) {
         logger.printf('   {% gray %s %s  # %s %}\n', x, pad, desc);
       });
   } else {
-    const desc = require(taskFiles[taskName]).description
-      .split('\n')
-      .join('\n ')
-      .trim();
-
-    logger.printf('\n {% green %s %} {% gray ─ %s %}\n', taskName, desc);
+    logger.printf('\n {% green %s %} {% gray ─ %s %}\n', taskName,
+      require(taskFiles[taskName]).description
+        .split('\n')
+        .join('\n ')
+        .trim());
   }
 
   logger.write('\n');
@@ -160,6 +200,11 @@ Promise.resolve()
     if (taskName && !Grown.argv.flags.help) {
       return logger(taskName, () =>
         new Promise(cb => {
+          /* istanbul ignore else */
+          if (!Grown.argv.flags.app) {
+            Grown.argv.flags.app = findApplication();
+          }
+
           start(() => cb(run(taskName)));
         }));
     }
