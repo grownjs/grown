@@ -82,14 +82,17 @@ function showHelp(taskName) {
         return x;
       })
       .forEach(x => {
-        const pad = new Array((maxLength + 1) - x.length).join(' ');
         const task = require(taskFiles[x]);
-        const desc = (task.description || '').split('\n')[0];
+        const desc = (task.description || '').trim().split('\n')[0];
+        const pad = new Array((maxLength + 1) - x.length).join(' ');
 
         logger.printf('   {% gray %s %s  # %s %}\n', x, pad, desc);
       });
   } else {
-    const desc = require(taskFiles[taskName]).description;
+    const desc = require(taskFiles[taskName]).description
+      .split('\n')
+      .join('\n ')
+      .trim();
 
     logger.printf('\n {% green %s %} {% gray ─ %s %}\n', taskName, desc);
   }
