@@ -20,7 +20,7 @@ const GROWN_TXT = `
        \u001b[32m░    ░         ░ ░      ░            ░\u001b[39m
 `;
 
-const execute = require('child_process').exec;
+const spawn = require('child_process').spawn;
 
 const exit = process.exit.bind(process);
 
@@ -154,8 +154,11 @@ function start(cb) {
   process.on('SIGINT', () => process.exit());
   process.on('exit', onExit);
 
-  if (Grown.argv.flags.exec) {
-    const child = execute(Grown.argv.flags.exec);
+  if (Grown.argv.raw.length) {
+    const child = spawn(Grown.argv.raw[0], Grown.argv.raw.slice(1));
+
+    // clear previous logs...
+    process.stdout.write('\x1b[K\r');
 
     child.stdout.pipe(process.stdout);
     child.stderr.pipe(process.stderr);
