@@ -112,7 +112,7 @@ function showHelp(taskName) {
   logger.write(GROWN_TXT);
 
   if (!taskName) {
-    logger.printf('\n {% green Avalable tasks: %}\n');
+    logger.printf('\n {% gray Tasks: %}\n');
 
     let maxLength = 0;
 
