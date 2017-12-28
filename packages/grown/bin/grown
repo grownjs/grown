@@ -1,0 +1,160 @@
+#!/bin/sh
+
+':' // ; exec "$(command -v nodejs || command -v node)" "$0" "$@"
+; // eslint-disable-line semi-style
+
+'use strict';
+
+/* eslint-disable global-require */
+/* eslint-disable no-nested-ternary */
+
+const GROWN_TXT = `
+   \u001b[32m▄████  ██▀███   ▒█████   █     █░███▄    █\u001b[39m
+  \u001b[32m██▒ ▀█▒▓██ ▒ ██▒▒██▒  ██▒▓█░ █ ░█░██ ▀█   █\u001b[39m
+ \u001b[32m▒██░▄▄▄░▓██ ░▄█ ▒▒██░  ██▒▒█░ █ ░█▓██  ▀█ ██▒\u001b[39m
+ \u001b[32m░▓█  ██▓▒██▀▀█▄  ▒██   ██░░█░ █ ░█▓██▒  ▐▌██▒\u001b[39m
+ \u001b[32m░▒▓███▀▒░██▓ ▒██▒░ ████▓▒░░░██▒██▓▒██░   ▓██░\u001b[39m
+  \u001b[32m░▒   ▒ ░ ▒▓ ░▒▓░░ ▒░▒░▒░ ░ ▓░▒ ▒ ░ ▒░   ▒ ▒\u001b[39m
+   \u001b[32m░   ░   ░▒ ░ ▒░  ░ ▒ ▒░   ▒ ░ ░ ░ ░░   ░ ▒░\u001b[39m
+   \u001b[32m░   ░   ░░   ░ ░ ░ ░ ▒    ░   ░    ░   ░ ░\u001b[39m
+       \u001b[32m░    ░         ░ ░      ░            ░\u001b[39m
+`;
+
+const execute = require('child_process').exec;
+
+const exit = process.exit.bind(process);
+
+const util = require('../lib/util');
+const Grown = require('..')();
+const path = require('path');
+const fs = require('fs');
+
+const logger = require('log-pose')
+  .setLevel(Grown.argv.flags.level || 'info')
+  .getLogger(12, process.stdout, process.stderr);
+
+/* istanbul ignore else */
+if (Grown.argv.flags.debug && Grown.argv.flags.verbose) {
+  require('debug').enable('*');
+  require('log-pose').setLevel(false);
+}
+
+const mainPkg = path.join(Grown.cwd, 'package.json');
+
+const thisPkg = require('../package.json');
+
+const appPkg = fs.existsSync(mainPkg)
+  ? require(mainPkg)
+  : {};
+
+function collectTasks() {
+  const dirs = Array.prototype.slice.call(arguments);
+  const files = {};
+
+  dirs.forEach(cwd => {
+    fs.readdirSync(cwd)
+      .filter(x => x.indexOf('.js') > -1)
+      .forEach(x => {
+        files[x.replace('.js', '')] = path.join(cwd, x);
+      });
+  });
+
+  return files;
+}
+
+const baseDir = path.resolve(Grown.cwd, path.dirname(appPkg.main || mainPkg));
+const taskFiles = collectTasks(path.join(__dirname, 'tasks'), path.join(baseDir, 'tasks'));
+
+function showHelp() {
+  logger.write(GROWN_TXT);
+  logger.printf('\n {% green Avalable tasks: %}\n');
+
+  let maxLength = 0;
+
+  Object.keys(taskFiles).sort()
+    .map(x => {
+      if (x.length > maxLength) {
+        maxLength = x.length;
+      }
+
+      return x;
+    })
+    .forEach(x => {
+      const pad = new Array((maxLength + 1) - x.length).join(' ');
+      const task = require(taskFiles[x]);
+
+      logger.printf('   {% gray %s %s  # %s %}\n', x, pad, task.description);
+    });
+
+  logger.write('\n');
+}
+
+function onExit(statusCode) {
+  /* istanbul ignore else */
+  if (!statusCode) {
+    logger.printf('\r\r{% end Done %}\n');
+  }
+}
+
+function start(cb) {
+  process.on('SIGINT', () => process.exit());
+  process.on('exit', onExit);
+
+  if (Grown.argv.flags.exec) {
+    const child = execute(Grown.argv.flags.exec);
+
+    child.stdout.pipe(process.stdout);
+    child.stderr.pipe(process.stderr);
+
+    child.on(process.version.split('.')[1] === '6' ? 'exit' : 'close', exitCode => {
+      if (exitCode !== 0) {
+        exit(1);
+      } else {
+        cb();
+      }
+    });
+  } else {
+    cb();
+  }
+}
+
+function run(taskName) {
+  logger.info('\r{% green Grown v%s %} {% gray (node %s - %s) %}\r\n',
+    thisPkg.version, process.version, process.env.NODE_ENV);
+
+  /* istanbul ignore else */
+  if (!taskFiles[taskName]) {
+    throw new Error(`Unknown task '${taskName}'`);
+  }
+
+  const task = require(taskFiles[taskName]);
+
+  return task(Grown, util.extendValues({ logger }, util));
+}
+
+/* istanbul ignore else */
+if (Grown.argv.flags.version) {
+  logger.printf('\r{% green %s v%s %} {% gray (node %s) %}\r\n',
+    thisPkg.name, thisPkg.version,
+    process.version);
+  exit();
+}
+
+Promise.resolve()
+  .then(() => {
+    const taskName = Grown.argv._[0];
+
+    /* istanbul ignore else */
+    if (taskName && !Grown.argv.flags.help) {
+      return logger(taskName, () =>
+        new Promise(cb => {
+          start(() => cb(run(taskName)));
+        }));
+    }
+
+    showHelp();
+  })
+  .catch(e => {
+    logger.info('\r{% error %s %}\r\n', e.message);
+    exit(1);
+  });
