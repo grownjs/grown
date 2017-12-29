@@ -195,7 +195,7 @@ Promise.resolve()
     const taskName = Grown.argv._.shift();
 
     /* istanbul ignore else */
-    if (taskName && !taskFiles[taskName]) {
+    if (taskName && (!taskFiles[taskName] || taskName.charAt() === '_')) {
       throw new Error(`Unknown task '${taskName}'`);
     }
 

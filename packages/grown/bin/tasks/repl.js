@@ -1,7 +1,5 @@
 'use strict';
 
-const path = require('path');
-
 const USAGE_INFO = `
 
 Start the application console
@@ -9,10 +7,10 @@ Start the application console
 --use   Entry file exporting referenced models
 
 Hooks:
-  connect   # Load and attach your models into the REPL
+  models   # Load and attach your models into the REPL
 
 Examples:
-  grown repl connect --use db/models
+  grown repl models --use db/models
 
 `;
 
@@ -22,17 +20,8 @@ module.exports = {
     Grown.use(require('@grown/repl'));
 
     Grown.REPL.start({
-      connect(ctx) {
-        /* istanbul ignore else */
-        if (!Grown.argv.flags.use || typeof Grown.argv.flags.use !== 'string') {
-          throw new Error(`Missing models to --use, given '${Grown.argv.flags.use || ''}'`);
-        }
-
-        Grown.use(require('@grown/model'));
-
-        const database = path.resolve(Grown.cwd, Grown.argv.flags.use);
-        const factory = require(database);
-        const Models = factory(Grown, util);
+      models(ctx) {
+        const Models = require('./_models')(Grown, util);
 
         return Models.connect().then(() => {
           const models = Models._getModels();
