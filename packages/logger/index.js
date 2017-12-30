@@ -8,11 +8,6 @@ module.exports = (Grown, util) => {
   let _level = 'info';
 
   /* istanbul ignore else */
-  if (Grown.argv.flags.verbose) {
-    _level = 'verbose';
-  }
-
-  /* istanbul ignore else */
   if (Grown.argv.flags.debug) {
     _level = 'debug';
   }
@@ -20,6 +15,12 @@ module.exports = (Grown, util) => {
   const _logger = Logger
     .setLevel(Grown.argv.flags.quiet ? false : _level)
     .getLogger(12, process.stdout, process.stderr);
+
+  /* istanbul ignore else */
+  if (Grown.argv.flags.debug && Grown.argv.flags.verbose) {
+    require('debug').enable('*');
+    Logger.setLevel(false);
+  }
 
   function _elapsedTime(ctx) {
     return _utils.timeDiff(ctx._startTime);
