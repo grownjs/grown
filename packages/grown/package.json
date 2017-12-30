@@ -5,6 +5,9 @@
   "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
   "license": "MIT",
   "main": "index.js",
+  "bin": {
+    "grown": "bin/grown"
+  },
   "scripts": {
     "dev": "jasmine-node spec --coffee --verbose --autoTest --captureExceptions --watchFolders lib",
     "lint": "eslint lib spec",
