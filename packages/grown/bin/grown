@@ -195,7 +195,7 @@ Promise.resolve()
     const taskName = Grown.argv._.shift();
 
     /* istanbul ignore else */
-    if (taskName && (!taskFiles[taskName] || taskName.charAt() === '_')) {
+    if (taskName && !taskFiles[taskName]) {
       throw new Error(`Unknown task '${taskName}'`);
     }
 
@@ -215,6 +215,19 @@ Promise.resolve()
     showHelp(taskName);
   })
   .catch(e => {
+    /* istanbul ignore else */
+    if (e.errors) {
+      e.errors.forEach(err => {
+        logger.info('{% exception %s (%s) %}\r\n', err.message, err.type);
+      });
+    }
+
+    /* istanbul ignore else */
+    if (e.original) {
+      logger.info('{% failure %s %}\r\n', e.original.detail);
+      logger.info('{% failure %s %}\r\n', e.original.message);
+    }
+
     e = util.cleanError(e, Grown.cwd);
     logger.info('\r{% error %s %}\r\n', e.stack || e.message);
     exit(1);
