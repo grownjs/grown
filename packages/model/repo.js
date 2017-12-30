@@ -38,9 +38,21 @@ module.exports = (Grown, util) => {
     return this[name].connect(_opts, refs, cwd);
   }
 
+  function _getDB(identifier) {
+    const _db = ((Grown.Model && Grown.Model.DB) || {})._registry || {};
+
+    /* istanbul ignore else */
+    if (typeof identifier === 'string' && !_db[identifier]) {
+      throw new Error(`Invalid database, given '${identifier}'`);
+    }
+
+    return Grown.Model.DB[identifier || Object.keys(_db)[0]];
+  }
+
   return Grown('Model.Repo', {
     _getModels,
     _getModel,
+    _getDB,
 
     sync(opts) {
       return JSONSchemaSequelizer.sync(this._getModels(), opts).then(() => this);
@@ -48,6 +60,10 @@ module.exports = (Grown, util) => {
 
     clear(opts) {
       return JSONSchemaSequelizer.clear(this._getModels(), opts).then(() => this);
+    },
+
+    migrate(identifier, opts) {
+      return JSONSchemaSequelizer.migrate(this._getDB(identifier), opts);
     },
 
     connect() {

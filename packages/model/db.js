@@ -3,15 +3,15 @@
 const JSONSchemaSequelizer = require('json-schema-sequelizer');
 
 module.exports = (Grown, util) => {
-  const DB = {};
-
   return Grown('Model.DB', {
+    _registry: {},
+
     registered(name) {
-      return typeof DB[name] !== 'undefined';
+      return typeof this._registry[name] !== 'undefined';
     },
 
     register(name, params) {
-      if (DB[name]) {
+      if (this._registry[name]) {
         throw new Error(`Database '${name}' already registred!`);
       }
 
@@ -19,11 +19,11 @@ module.exports = (Grown, util) => {
         params.config.identifier = name;
       }
 
-      DB[name] = new JSONSchemaSequelizer(params.config, params.refs, params.cwd);
+      this._registry[name] = new JSONSchemaSequelizer(params.config, params.refs, params.cwd);
 
-      util.readOnlyProperty(this, name, () => DB[name]);
+      util.readOnlyProperty(this, name, () => this._registry[name]);
 
-      return DB;
+      return this._registry;
     },
   });
 };
