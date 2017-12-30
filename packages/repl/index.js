@@ -175,7 +175,26 @@ module.exports = (Grown, util) => {
           repl.displayPrompt();
         })
         .catch(e => {
-          logger.info('\r{% error %s %}\r\n', e.stack);
+          /* istanbul ignore else */
+          if (e.errors) {
+            e.errors.forEach(err => {
+              logger.info('{% exception %s (%s) %}\r\n', err.message, err.type);
+            });
+          }
+
+          /* istanbul ignore else */
+          if (e.original) {
+            logger.info('{% failure %s %}\r\n', e.original.detail);
+            logger.info('{% failure %s %}\r\n', e.original.message);
+          }
+
+          /* istanbul ignore else */
+          if (!Grown.argv.flags.debug) {
+            e = util.cleanError(e, Grown.cwd);
+          }
+
+          logger.info('\r{% error %s %}\r\n', e.stack || e.message);
+          process.exit(1);
         });
     },
   });

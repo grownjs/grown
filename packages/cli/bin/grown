@@ -25,8 +25,6 @@ const GROWN_TXT = `
 
 const spawn = require('child_process').spawn;
 
-const exit = process.exit.bind(process);
-
 const util = require('@grown/grown/lib/util');
 const Grown = require('@grown/grown')();
 const path = require('path');
@@ -168,7 +166,7 @@ function start(cb) {
 
     child.on(process.version.split('.')[1] === '6' ? 'exit' : 'close', exitCode => {
       if (exitCode !== 0) {
-        exit(1);
+        process.exit(1);
       } else {
         cb();
       }
@@ -187,7 +185,7 @@ function run(taskName) {
 /* istanbul ignore else */
 if (Grown.argv.flags.version) {
   logger.printf('\r{% green Grown v%s %}\r\n', thisPkg.version);
-  exit();
+  process.exit();
 }
 
 Promise.resolve()
@@ -231,7 +229,11 @@ Promise.resolve()
       logger.info('{% failure %s %}\r\n', e.original.message);
     }
 
-    e = util.cleanError(e, Grown.cwd);
+    /* istanbul ignore else */
+    if (!Grown.argv.flags.debug) {
+      e = util.cleanError(e, Grown.cwd);
+    }
+
     logger.info('\r{% error %s %}\r\n', e.stack || e.message);
-    exit(1);
+    process.exit(1);
   });
