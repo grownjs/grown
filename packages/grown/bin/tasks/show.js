@@ -2,10 +2,10 @@
 
 const USAGE_INFO = `
 
-Inspect models from given database
+Inspect the database
 
---use    Entry file exporting referenced models
---only   Optional. Specific models to inspect by name
+--use    Entry file exporting models
+--only   Optional. Models to inspect by name
 
 Examples:
   grown db.inspect --use lib/my_app/database
@@ -16,19 +16,14 @@ Examples:
 module.exports = {
   description: USAGE_INFO,
   callback(Grown, util) {
-    const Models = require('./_models')(Grown, util);
+    const Models = require('../lib/models')(Grown, util);
 
     return Models.connect()
       .then(() => {
         util.logger.info('\r\r{% star %s %} (%s)\n',
           Models.connection.database, Models.connection.dialect);
 
-        const _models = Grown.argv.flags.only
-          ? String(Grown.argv.flags.only).split(',')
-          : [];
-
-        return Promise.all(Models._getModels()
-          .filter(x => (_models.length ? _models.indexOf(x.name) !== -1 : true))
+        return Promise.all(Models._get()
           .map(x => {
             /* istanbul ignore else */
             if (x.virtual) {

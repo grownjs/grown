@@ -2,9 +2,9 @@
 
 const USAGE_INFO = `
 
-Start the application console
+Start the console
 
---use   Entry file exporting referenced models
+--use   Entry file exporting models
 
 Hooks:
   models   # Load and attach your models into the REPL
@@ -21,7 +21,7 @@ module.exports = {
 
     Grown.REPL.start({
       models(ctx) {
-        const Models = require('./_models')(Grown, util);
+        const Models = require('../lib/models')(Grown, util);
 
         return Models.connect().then(() => {
           const models = Models._getModels();

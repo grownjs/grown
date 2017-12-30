@@ -2,9 +2,9 @@
 
 const USAGE_INFO = `
 
-Reset models from given database
+Update the database
 
---use    Entry file exporting referenced models
+--use    Entry file exporting models
 --only   Optional. Specific models to reset by name
 --alter  Optional. Use ALTER instead of forcing
 --force  Optional. Force synchronization
@@ -18,7 +18,7 @@ Examples:
 module.exports = {
   description: USAGE_INFO,
   callback(Grown, util) {
-    const Models = require('./_models')(Grown, util);
+    const Models = require('../lib/models')(Grown, util);
 
     const options = {
       force: Grown.argv.flags.force === true,
