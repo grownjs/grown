@@ -130,7 +130,7 @@ function showHelp(taskName) {
         const desc = (task.description || '').trim().split('\n')[0];
         const pad = new Array((maxLength + 1) - x.length).join(' ');
 
-        logger.printf('   {% gray %s %s  # %s %}\n', x, pad, desc);
+        logger.printf('   {% gray %s %s # %s %}\n', x, pad, desc);
       });
   } else {
     logger.printf('\n {% green %s %} {% gray ─ %s %}\n', taskName,
