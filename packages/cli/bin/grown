@@ -5,6 +5,9 @@
 
 'use strict';
 
+// FIXME: move this into a separated package?, e.g.
+// npm install -g @grown/cli
+
 /* eslint-disable global-require */
 /* eslint-disable no-nested-ternary */
 
@@ -24,8 +27,8 @@ const spawn = require('child_process').spawn;
 
 const exit = process.exit.bind(process);
 
-const util = require('../lib/util');
-const Grown = require('..')();
+const util = require('@grown/grown/lib/util');
+const Grown = require('@grown/grown')();
 const path = require('path');
 const fs = require('fs');
 
