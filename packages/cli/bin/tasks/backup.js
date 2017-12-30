@@ -49,13 +49,13 @@ module.exports = {
 
             /* istanbul ignore else */
             if (!file) {
-              return util.logger.info('{% item %s was skipped %}\r\n', x.name);
+              return util.logger.printf('{% item %s was skipped %}\r\n', x.name);
             }
 
             return x
               .bulkCreate(fs.readJsonSync(path.join(src, file)))
               .then(() => {
-                util.logger.info('{% item %s was loaded %}\r\n', x.name);
+                util.logger.printf('{% item %s was loaded %}\r\n', x.name);
               });
           })))
         .then(() => _umzug.run(after));

@@ -5,228 +5,33 @@
 
 'use strict';
 
-// FIXME: move this into a separated package?, e.g.
-// npm install -g @grown/cli
-
-/* eslint-disable global-require */
-/* eslint-disable no-nested-ternary */
-
-const GROWN_TXT = `
-   \u001b[32m▄████  ██▀███   ▒█████   █     █░███▄    █\u001b[39m
-  \u001b[32m██▒ ▀█▒▓██ ▒ ██▒▒██▒  ██▒▓█░ █ ░█░██ ▀█   █\u001b[39m
- \u001b[32m▒██░▄▄▄░▓██ ░▄█ ▒▒██░  ██▒▒█░ █ ░█▓██  ▀█ ██▒\u001b[39m
- \u001b[32m░▓█  ██▓▒██▀▀█▄  ▒██   ██░░█░ █ ░█▓██▒  ▐▌██▒\u001b[39m
- \u001b[32m░▒▓███▀▒░██▓ ▒██▒░ ████▓▒░░░██▒██▓▒██░   ▓██░\u001b[39m
-  \u001b[32m░▒   ▒ ░ ▒▓ ░▒▓░░ ▒░▒░▒░ ░ ▓░▒ ▒ ░ ▒░   ▒ ▒\u001b[39m
-   \u001b[32m░   ░   ░▒ ░ ▒░  ░ ▒ ▒░   ▒ ░ ░ ░ ░░   ░ ▒░\u001b[39m
-   \u001b[32m░   ░   ░░   ░ ░ ░ ░ ▒    ░   ░    ░   ░ ░\u001b[39m
-       \u001b[32m░    ░         ░ ░      ░            ░\u001b[39m
-`;
-
-const spawn = require('child_process').spawn;
-
 const util = require('@grown/grown/lib/util');
 const Grown = require('@grown/grown')();
-const path = require('path');
-const fs = require('fs');
 
-const logger = require('log-pose')
-  .setLevel(Grown.argv.flags.level || 'info')
-  .getLogger(12, process.stdout, process.stderr);
+require('../index')(Grown, util);
 
-/* istanbul ignore else */
-if (Grown.argv.flags.debug && Grown.argv.flags.verbose) {
-  require('debug').enable('*');
-  require('log-pose').setLevel(false);
-}
-
-const mainPkg = path.join(Grown.cwd, 'package.json');
-
-const thisPkg = require('../package.json');
-
-const appPkg = fs.existsSync(mainPkg)
-  ? require(mainPkg)
-  : {};
-
-function findApplication() {
-  const baseName = appPkg.name || path.basename(path.dirname(Grown.cwd));
-
-  const files = [
-    `lib/${baseName}/application.js`,
-    `lib/${baseName}/server.js`,
-    `lib/${baseName}/index.js`,
-    `lib/${baseName}.js`,
-    'lib/application.js',
-    'lib/server.js',
-    `${baseName}.js`,
-    'application.js',
-    'server.js',
-    'index.js',
-  ];
-
-  let mainFile;
-
-  if (files.indexOf(appPkg.main) === -1) {
-    files.push(appPkg.main);
-  }
-
-  for (let i = 0; i < files.length; i += 1) {
-    if (fs.existsSync(files[i])) {
-      mainFile = files[i];
-      break;
-    }
-  }
-
-  if (!mainFile) {
-    throw new Error(`Missing application script (e.g: ${files.join(', ')})`);
-  }
-
-  if (!fs.existsSync(mainFile)) {
-    throw new Error(`Missing ${mainFile}`);
-  }
-
-  return mainFile;
-}
-
-function collectTasks() {
-  const dirs = Array.prototype.slice.call(arguments);
-  const files = {};
-
-  dirs.forEach(cwd => {
-    /* istanbul ignore else */
-    if (fs.existsSync(cwd)) {
-      fs.readdirSync(cwd)
-        .filter(x => x.indexOf('.js') > -1)
-        .forEach(x => {
-          files[x.replace('.js', '')] = path.join(cwd, x);
-        });
-    }
-  });
-
-  return files;
-}
-
-const baseDir = path.resolve(Grown.cwd, path.dirname(appPkg.main || mainPkg));
-const taskFiles = collectTasks(path.join(__dirname, 'tasks'), path.join(baseDir, 'tasks'));
-
-function showHelp(taskName) {
-  logger.write(GROWN_TXT);
-
-  if (!taskName) {
-    logger.printf('\n {% gray Tasks: %}\n');
-
-    let maxLength = 0;
-
-    Object.keys(taskFiles).sort()
-      .map(x => {
-        /* istanbul ignore else */
-        if (x.length > maxLength) {
-          maxLength = x.length;
-        }
-
-        return x;
-      })
-      .forEach(x => {
-        const task = require(taskFiles[x]);
-        const desc = (task.description || '').trim().split('\n')[0];
-        const pad = new Array((maxLength + 1) - x.length).join(' ');
-
-        logger.printf('   {% gray %s %s # %s %}\n', x, pad, desc);
-      });
-  } else {
-    logger.printf('\n {% green %s %} {% gray ─ %s %}\n', taskName,
-      require(taskFiles[taskName]).description
-        .split('\n')
-        .join('\n ')
-        .trim());
-  }
-
-  logger.write('\n');
-}
-
-function onExit(statusCode) {
-  /* istanbul ignore else */
-  if (!statusCode) {
-    logger.printf('\r\r{% end Done %}\n');
-  }
-}
-
-function start(cb) {
-  process.on('SIGINT', () => process.exit());
-  process.on('exit', onExit);
-
-  if (Grown.argv.raw.length) {
-    const child = spawn(Grown.argv.raw[0], Grown.argv.raw.slice(1));
-
-    // clear previous logs...
-    process.stdout.write('\x1b[K\r');
-
-    child.stdout.pipe(process.stdout);
-    child.stderr.pipe(process.stderr);
-
-    child.on(process.version.split('.')[1] === '6' ? 'exit' : 'close', exitCode => {
-      if (exitCode !== 0) {
-        process.exit(1);
-      } else {
-        cb();
-      }
-    });
-  } else {
-    cb();
-  }
-}
-
-function run(taskName) {
-  const task = require(taskFiles[taskName]).callback;
-
-  return task(Grown, util.extendValues({ logger }, util));
-}
+const logger = Grown.Logger.getLogger();
 
 /* istanbul ignore else */
 if (Grown.argv.flags.version) {
-  logger.printf('\r{% green Grown v%s %}\r\n', thisPkg.version);
+  logger.printf('\r{% green Grown v%s %}\r\n', Grown.version);
   process.exit();
 }
 
 Promise.resolve()
-  .then(() => {
-    logger.info('{% gray Grown v%s (node %s ─ %s) %}\n',
-      thisPkg.version, process.version, process.env.NODE_ENV);
-
-    const taskName = Grown.argv._.shift();
-
-    /* istanbul ignore else */
-    if (taskName && !taskFiles[taskName]) {
-      throw new Error(`Unknown task '${taskName}'`);
-    }
-
-    /* istanbul ignore else */
-    if (taskName && !Grown.argv.flags.help) {
-      return logger(taskName, () =>
-        new Promise(cb => {
-          /* istanbul ignore else */
-          if (!Grown.argv.flags.app) {
-            Grown.argv.flags.app = findApplication();
-          }
-
-          start(() => cb(run(taskName)));
-        }));
-    }
-
-    showHelp(taskName);
-  })
+  .then(() => Grown.CLI.start(Grown.argv._.shift()))
   .catch(e => {
     /* istanbul ignore else */
     if (e.errors) {
       e.errors.forEach(err => {
-        logger.info('{% exception %s (%s) %}\r\n', err.message, err.type);
+        logger.printf('{% exception %s (%s) %}\r\n', err.message, err.type);
       });
     }
 
     /* istanbul ignore else */
     if (e.original) {
-      logger.info('{% failure %s %}\r\n', e.original.detail);
-      logger.info('{% failure %s %}\r\n', e.original.message);
+      logger.printf('{% failure %s %}\r\n', e.original.detail);
+      logger.printf('{% failure %s %}\r\n', e.original.message);
     }
 
     /* istanbul ignore else */
@@ -234,6 +39,6 @@ Promise.resolve()
       e = util.cleanError(e, Grown.cwd);
     }
 
-    logger.info('\r{% error %s %}\r\n', e.stack || e.message);
+    logger.printf('\r{% error %s %}\r\n', e.stack || e.message);
     process.exit(1);
   });
