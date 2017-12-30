@@ -10,35 +10,10 @@ const Grown = require('@grown/grown')();
 
 require('../index')(Grown, util);
 
-const logger = Grown.Logger.getLogger();
-
-/* istanbul ignore else */
 if (Grown.argv.flags.version) {
-  logger.printf('\r{% green Grown v%s %}\r\n', Grown.version);
-  process.exit();
+  Grown.Logger.getLogger()
+    .printf('\r{% green Grown v%s %}\r\n', Grown.version);
+} else {
+  Grown.CLI.start(Grown.argv._.shift());
 }
 
-Promise.resolve()
-  .then(() => Grown.CLI.start(Grown.argv._.shift()))
-  .catch(e => {
-    /* istanbul ignore else */
-    if (e.errors) {
-      e.errors.forEach(err => {
-        logger.printf('{% exception %s (%s) %}\r\n', err.message, err.type);
-      });
-    }
-
-    /* istanbul ignore else */
-    if (e.original) {
-      logger.printf('{% failure %s %}\r\n', e.original.detail);
-      logger.printf('{% failure %s %}\r\n', e.original.message);
-    }
-
-    /* istanbul ignore else */
-    if (!Grown.argv.flags.debug) {
-      e = util.cleanError(e, Grown.cwd);
-    }
-
-    logger.printf('\r{% error %s %}\r\n', e.stack || e.message);
-    process.exit(1);
-  });

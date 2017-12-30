@@ -116,13 +116,19 @@ module.exports = (Grown, util) => {
     /* istanbul ignore else */
     if (taskName && !Grown.argv.flags.help) {
       return logger(taskName, () =>
-        new Promise(cb => {
+        new Promise((cb, reject) => {
           /* istanbul ignore else */
           if (!Grown.argv.flags.app) {
             Grown.argv.flags.app = this._findApplication();
           }
 
-          this.exec(() => cb(this.run(taskName)));
+          this.exec(() => {
+            try {
+              cb(this.run(taskName));
+            } catch (e) {
+              reject(this._onError(e));
+            }
+          });
         }));
     }
 
@@ -163,6 +169,29 @@ module.exports = (Grown, util) => {
     logger.write('\n');
   }
 
+  function _onError(e) {
+    /* istanbul ignore else */
+    if (e.errors) {
+      e.errors.forEach(err => {
+        logger.printf('{% exception %s (%s) %}\r\n', err.message, err.type);
+      });
+    }
+
+    /* istanbul ignore else */
+    if (e.original) {
+      logger.printf('{% failure %s %}\r\n', e.original.detail);
+      logger.printf('{% failure %s %}\r\n', e.original.message);
+    }
+
+    /* istanbul ignore else */
+    if (!Grown.argv.flags.debug) {
+      e = util.cleanError(e, Grown.cwd);
+    }
+
+    logger.printf('\r{% error %s %}\r\n', e.stack || e.message);
+    process.exit(1);
+  }
+
   function _onExit(statusCode) {
     /* istanbul ignore else */
     if (!statusCode) {
@@ -176,6 +205,7 @@ module.exports = (Grown, util) => {
     _collectTasks,
     _showTasks,
     _showHelp,
+    _onError,
     _onExit,
 
     // shared
