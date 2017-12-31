@@ -62,10 +62,6 @@ module.exports = (Grown, util) => {
       return JSONSchemaSequelizer.clear(this._getModels(), opts).then(() => this);
     },
 
-    migrate(identifier, opts) {
-      return JSONSchemaSequelizer.migrate(this._getDB(identifier), opts);
-    },
-
     connect() {
       const _cwd = this.schemas_directory;
       const _refs = this.schemas;
