@@ -4,6 +4,7 @@ const USAGE_INFO = `
 
 Inspect the database
 
+--db     Database to be used, identifier
 --use    Entry file exporting models
 --only   Optional. Models to inspect by name
 

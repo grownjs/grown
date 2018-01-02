@@ -4,6 +4,7 @@ const USAGE_INFO = `
 
 Start the console
 
+--db    Database to be used, identifier
 --use   Entry file exporting models
 
 Hooks:

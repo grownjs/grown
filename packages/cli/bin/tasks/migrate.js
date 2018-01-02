@@ -4,6 +4,7 @@ const USAGE_INFO = `
 
 Perform database changes
 
+--db       Database to be used, identifier
 --use      Entry file exporting models
 --only     Optional. Specific models to reset by name
 

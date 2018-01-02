@@ -4,8 +4,9 @@ const USAGE_INFO = `
 
 Take and restore snapshots
 
---db    Database to be used
+--db    Database to be used, identifier
 --use   Entry file exporting models
+
 --load  Optional. Backup source, directory or file
 --save  Optional. Backup destination, directory
 --only  Optional. Models to reset by name

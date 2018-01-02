@@ -4,7 +4,9 @@ const USAGE_INFO = `
 
 Update the database
 
+--db     Database to be used, identifier
 --use    Entry file exporting models
+
 --only   Optional. Specific models to reset by name
 --alter  Optional. Use ALTER instead of forcing
 --force  Optional. Force synchronization
