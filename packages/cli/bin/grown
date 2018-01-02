@@ -16,4 +16,3 @@ if (Grown.argv.flags.version) {
 } else {
   Grown.CLI.start(Grown.argv._.shift());
 }
-
