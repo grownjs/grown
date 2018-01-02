@@ -27,6 +27,7 @@ module.exports = (Grown, util) => {
 
     return {
       sequelize: db.sequelize,
+      schemas: db.$refs,
       models: Object.keys(db.models)
         .filter(x => (_allowed.length ? _allowed.indexOf(x.name) !== -1 : true))
         .map(x => db.models[x]),
