@@ -1,6 +1,6 @@
 {
   "name": "@grown/cli",
-  "version": "0.1.0-alpha.2ec12255",
+  "version": "0.1.0-alpha.87b9c10b",
   "main": "index.js",
   "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
   "license": "MIT",
@@ -9,10 +9,10 @@
   },
   "dependencies": {
     "debug": "^3.1.0",
-    "@grown/logger": "^0.1.0-alpha.2ec12255",
-    "@grown/grown": "^0.1.0-alpha.2ec12255",
-    "@grown/model": "^0.1.0-alpha.2ec12255",
-    "@grown/repl": "^0.1.0-alpha.2ec12255"
+    "@grown/logger": "0.1.0-alpha.87b9c10b",
+    "@grown/grown": "0.1.0-alpha.87b9c10b",
+    "@grown/model": "0.1.0-alpha.87b9c10b",
+    "@grown/repl": "0.1.0-alpha.87b9c10b"
   },
   "devDependencies": {
     "codecov": "^3.0.0",
