@@ -5,12 +5,16 @@ const JSONSchemaSequelizer = require('json-schema-sequelizer');
 module.exports = (Grown, util) => {
   const Base = require('./base')(Grown, util);
 
+  function _getSchemas() {
+    return this._getModels().map(x => x.$schema || x.options.$schema);
+  }
+
   function _getModels() {
     const _models = [];
 
     Object.keys(this).forEach(key => {
       /* istanbul ignore else */
-      if (typeof this[key] === 'function' && this[key].sequelize) {
+      if (key !== 'all' && typeof this[key] === 'function' && (this[key].sequelize || this[key].$schema)) {
         _models.push(this[key]);
       }
     });
@@ -50,9 +54,20 @@ module.exports = (Grown, util) => {
   }
 
   return Grown('Model.Repo', {
+    _getSchemas,
     _getModels,
     _getModel,
     _getDB,
+
+    get all() {
+      const map = {};
+
+      this._getModels().forEach(x => {
+        map[x.name] = x;
+      });
+
+      return map;
+    },
 
     sync(opts) {
       return JSONSchemaSequelizer.sync(this._getModels(), opts).then(() => this);
@@ -60,6 +75,10 @@ module.exports = (Grown, util) => {
 
     clear(opts) {
       return JSONSchemaSequelizer.clear(this._getModels(), opts).then(() => this);
+    },
+
+    graphql(resolver) {
+      return JSONSchemaSequelizer.graphql(resolver);
     },
 
     connect() {
