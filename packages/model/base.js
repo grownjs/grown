@@ -47,6 +47,8 @@ module.exports = (Grown, util) => {
       const definition = {
         $schema: this.$schema,
         $graphql: this.$graphql,
+        graphqlMutators: this.graphqlMutators || null,
+        graphqlResolvers: this.graphqlResolvers || null,
         hooks: this.hooks || {},
         classMethods: this.classMethods || {},
         getterMethods: this.getterMethods || {},
