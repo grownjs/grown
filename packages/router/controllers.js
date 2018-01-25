@@ -15,11 +15,6 @@ module.exports = (Grown, util) => {
           route.use = util.flattenArgs(route.use);
         }
 
-        /* istanbul ignore else */
-        if (!route.pipeline) {
-          return;
-        }
-
         // route definition
         route.controller = controller;
         route.action = action;

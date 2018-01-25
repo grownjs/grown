@@ -70,7 +70,14 @@ module.exports = (Grown, util) => {
           // normalize given pipeline
           route.pipeline = util
             .flattenArgs(route.pipeline)
-            .map(x => util.buildMiddleware(x, route.path));
+            .map(x => {
+              /* istanbul ignore else */
+              if (!(x.type && x.name && x.call)) {
+                x = util.buildMiddleware(x, route.path);
+              }
+
+              return x;
+            });
 
           // group all routes per-verb
           this._routes[route.verb].push(route);
