@@ -124,6 +124,14 @@ function grownFactory($, options) {
       get halted() {
         return (this.res && this.res.finished) || this.has_body || this.has_status;
       },
+
+      get state() {
+        return util.extendValues({}, this.res.locals);
+      },
+
+      set state(value) {
+        util.extendValues(this.res.locals, value);
+      },
     },
   });
 

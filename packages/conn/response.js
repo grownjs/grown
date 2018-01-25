@@ -119,7 +119,6 @@ module.exports = (Grown, util) => {
 
       const _response = {
         headers: Object.create(null),
-        state: Object.create(null),
         type: 'text/html',
         body: null,
         status: null,
@@ -131,14 +130,6 @@ module.exports = (Grown, util) => {
           // response body
           has_body: () => _response.body !== null,
           has_status: () => _response.status !== null,
-
-          get state() {
-            return util.extendValues({}, _response.state, this.res.locals);
-          },
-
-          set state(value) {
-            util.extendValues(_response.state, value);
-          },
 
           get content_type() {
             return _response.type;
