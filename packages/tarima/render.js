@@ -50,7 +50,7 @@ module.exports = (Grown, util) => {
         }))
       .catch(e => {
         /* istanbul ignore else */
-        if (ctx.opts.fallthrough !== false) {
+        if (ctx.opts.fallthrough !== true) {
           e.statusCode = 404;
           e.message = `/* ${e.message.replace(ctx.cwd, '.')} */`;
 
@@ -78,7 +78,7 @@ module.exports = (Grown, util) => {
       })
       .catch(e => {
         /* istanbul ignore else */
-        if (ctx.opts.fallthrough !== false) {
+        if (ctx.opts.fallthrough !== true) {
           throw e;
         }
 
@@ -109,7 +109,7 @@ module.exports = (Grown, util) => {
       })
       .catch(e => {
         /* istanbul ignore else */
-        if (!set.length && x.opts.fallthrough !== false) {
+        if (!set.length && x.opts.fallthrough !== true) {
           throw e;
         }
 
@@ -178,7 +178,7 @@ module.exports = (Grown, util) => {
           throw util.buildError(404);
         } catch (e) {
           /* istanbul ignore else */
-          if (this.fallthrough !== false) {
+          if (this.fallthrough !== true) {
             throw e;
           }
         }

@@ -101,7 +101,7 @@ module.exports = (Grown, util) => {
           return this._dispatchRoutes(conn, _options);
         } catch (e) {
           /* istanbul ignore else */
-          if (this.fallthrough !== false) {
+          if (this.fallthrough !== true) {
             throw e;
           }
         }
