@@ -78,7 +78,23 @@ module.exports = (Grown, util) => {
     },
 
     graphql(resolver) {
-      return JSONSchemaSequelizer.graphql(resolver);
+      const instance = JSONSchemaSequelizer.graphql(resolver);
+
+      this._getModels().forEach(x => {
+        if (x.$graphql) {
+          instance.schemas.push(x.$graphql);
+        }
+
+        if (x.graphqlMutators) {
+          instance.resolvers.push(x.graphqlMutators);
+        }
+
+        if (x.graphqlResolvers) {
+          instance.resolvers.push(x.graphqlResolvers);
+        }
+      });
+
+      return instance;
     },
 
     connect() {
