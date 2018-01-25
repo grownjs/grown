@@ -42,6 +42,9 @@ module.exports = function $host(_protocol, req, res) {
     }
   }
 
+  // compat
+  res.locals = {};
+
   const conn = this._connection(null, {
     props: {
       server: () => _server,

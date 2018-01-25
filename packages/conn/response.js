@@ -133,7 +133,7 @@ module.exports = (Grown, util) => {
           has_status: () => _response.status !== null,
 
           get state() {
-            return _response.state;
+            return util.extendValues({}, _response.state, this.res.locals);
           },
 
           set state(value) {
