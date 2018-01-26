@@ -114,6 +114,11 @@ module.exports = (Grown, util) => {
         }
       });
 
+      /* istanbul ignore else */
+      if (typeof this.routes === 'function') {
+        this.routes(_router);
+      }
+
       return {
         props: {
           router: () => _router,
