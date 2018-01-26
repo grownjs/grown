@@ -36,6 +36,7 @@ module.exports = (Grown, util) => {
         template.contents = template.contents.replace(/\{elapsed\}/g, this._elapsedTime(ctx));
       }
 
+      /* istanbul ignore else */
       if (!ctx.res.headerSent) {
         this.before_send(null, ctx);
       }
