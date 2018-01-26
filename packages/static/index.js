@@ -9,7 +9,7 @@ module.exports = (Grown, util) => {
     install(ctx) {
       const _cwd = Grown.cwd;
 
-      util.flattenArgs(this.static_folders)
+      util.flattenArgs(this.from_folders)
         .forEach(cwd => {
           const opts = {};
 
