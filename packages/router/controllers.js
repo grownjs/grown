@@ -37,32 +37,32 @@ module.exports = (Grown, util) => {
               instance: new Ctrl(),
               definition: Ctrl,
             };
-
-            /* istanbul ignore else */
-            if (!(this._controllers[controller].instance[action])) {
-              throw new Error(`No callback found for ${route.verb} ${route.path} (${controller}#${action})`);
-            }
-
-            route.pipeline = route.pipeline || [];
-
-            /* istanbul ignore else */
-            if (typeof this._controllers[controller].definition.pipe === 'function') {
-              route.pipeline.unshift({
-                call: [this._controllers[controller].definition, 'pipe'],
-                name: `${controller}#pipe`,
-                type: 'method',
-              });
-            }
-
-            route.pipeline.push({
-              call: [this._controllers[controller].instance, action],
-              name: `${controller}#${action}`,
-              type: 'method',
-            });
           } catch (e) {
             throw new Error(`${controller} controller failed\n${e.stack}`);
           }
         }
+
+        /* istanbul ignore else */
+        if (!this._controllers[controller].instance[action]) {
+          throw new Error(`No callback found for ${route.verb} ${route.path} (${controller}#${action})`);
+        }
+
+        route.pipeline = route.pipeline || [];
+
+        /* istanbul ignore else */
+        if (typeof this._controllers[controller].definition.pipe === 'function') {
+          route.pipeline.unshift({
+            call: [this._controllers[controller].definition, 'pipe'],
+            name: `${controller}#pipe`,
+            type: 'method',
+          });
+        }
+
+        route.pipeline.push({
+          call: [this._controllers[controller].instance, action],
+          name: `${controller}#${action}`,
+          type: 'method',
+        });
 
         delete route.handler;
       }
@@ -85,7 +85,9 @@ module.exports = (Grown, util) => {
       const ctrl = {};
 
       _controllers.forEach(x => {
-        ctrl[x.name] = require(x.src)(Grown, util);
+        const key = x.name.split('/').join('.');
+
+        util.setProp(ctrl, key, require(x.src)(Grown, util));
       });
 
       return ctrl;

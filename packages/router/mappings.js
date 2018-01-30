@@ -116,7 +116,7 @@ module.exports = (Grown, util) => {
 
       /* istanbul ignore else */
       if (typeof this.routes === 'function') {
-        this.routes(_router);
+        this.routes(opts => _router.namespace('/', opts));
       }
 
       return {
