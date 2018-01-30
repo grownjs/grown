@@ -92,7 +92,9 @@ module.exports = (Grown, util) => {
         util.setProp(ctrl, key, require(x.src)(Grown, util));
       });
 
-      return ctrl;
+      this.extensions.push(ctrl);
+
+      return this;
     },
 
     before_routes: _drawRoutes,
