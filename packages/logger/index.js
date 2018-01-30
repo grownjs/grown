@@ -30,15 +30,15 @@ module.exports = (Grown, util) => {
     _elapsedTime,
 
     before_render(ctx, template) {
+      /* istanbul ignore else */
+      if (!ctx.res.headerSent) {
+        this.before_send(null, ctx);
+      }
+
       if (template.contents.indexOf('{elapsed}') === -1) {
         template.contents += `<p>&mdash; ${this._elapsedTime(ctx)}</p>`;
       } else {
         template.contents = template.contents.replace(/\{elapsed\}/g, this._elapsedTime(ctx));
-      }
-
-      /* istanbul ignore else */
-      if (!ctx.res.headerSent) {
-        this.before_send(null, ctx);
       }
     },
 
