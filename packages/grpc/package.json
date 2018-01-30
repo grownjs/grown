@@ -1,0 +1,14 @@
+{
+  "name": "@grown/grpc",
+  "version": "0.1.0-alpha.87b9c10b",
+  "main": "index.js",
+  "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "glob": "^7.1.2",
+    "grpc": "^1.8.4"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

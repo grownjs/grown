@@ -15,6 +15,7 @@
   },
   "devDependencies": {
     "@grown/conn": "0.1.0-alpha.87b9c10b",
+    "@grown/grpc": "0.1.0-alpha.87b9c10b",
     "@grown/model": "0.1.0-alpha.87b9c10b",
     "@grown/render": "0.1.0-alpha.87b9c10b",
     "@grown/repl": "0.1.0-alpha.87b9c10b",
