@@ -86,11 +86,15 @@ module.exports = (Grown, util) => {
         }
 
         if (x.graphqlMutators) {
-          instance.resolvers.push(x.graphqlMutators);
+          instance.resolvers.push(typeof x.graphqlMutators === 'function'
+            ? x.graphqlMutators(Grown, util)
+            : x.graphqlMutators);
         }
 
         if (x.graphqlResolvers) {
-          instance.resolvers.push(x.graphqlResolvers);
+          instance.resolvers.push(typeof x.graphqlResolvers === 'function'
+            ? x.graphqlResolvers(Grown, util)
+            : x.graphqlResolvers);
         }
       });
 
