@@ -64,6 +64,8 @@ module.exports = (Grown, util) => {
           type: 'method',
         });
 
+        route.Controller = this._controllers[controller].definition;
+
         delete route.handler;
       }
     });
