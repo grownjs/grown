@@ -9,7 +9,7 @@ module.exports = (Grown, util) => {
   const GRPC = require('grpc');
 
   return Grown('GRPC', {
-    load(cwd) {
+    scan(cwd) {
       const credentials = GRPC.credentials.createInsecure();
       const namespace = this.proto_namespace || 'API';
       const port = this.default_port || 80;
