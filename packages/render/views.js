@@ -146,6 +146,11 @@ function _buildPartial(view, data) {
     ? view.src.split('/').pop()
     : 'yield');
 
+  /* istanbul ignore else */
+  if (typeof view.src === 'string') {
+    view.src = view.src.replace(/\./g, '/');
+  }
+
   delete data.as;
 
   return {
@@ -284,7 +289,7 @@ module.exports = (Grown, util) => {
         try {
           return this._partial(this._buildPartial(src, data), this._cache, defaults);
         } catch (e) {
-          throw new Error(`Failed to render '${src}' template\n${e.message}`);
+          throw new Error(`Failed to render '${src.replace(/\./g, '/')}' template\n${e.message}`);
         }
       };
 
