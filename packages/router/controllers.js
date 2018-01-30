@@ -1,5 +1,10 @@
 'use strict';
 
+const glob = require('glob');
+const path = require('path');
+
+const RE_CTRL = /(?:\/?Controller)?(?:\/index)?\.js/g;
+
 module.exports = (Grown, util) => {
   function _drawRoutes(ctx, routes) {
     routes.forEach(route => {
@@ -35,7 +40,7 @@ module.exports = (Grown, util) => {
 
             /* istanbul ignore else */
             if (!(this._controllers[controller].instance[action])) {
-              throw new Error(`No callback found for ${route.verb} ${route.path}`);
+              throw new Error(`No callback found for ${route.verb} ${route.path} (${controller}#${action})`);
             }
 
             route.pipeline = route.pipeline || [];
@@ -67,6 +72,24 @@ module.exports = (Grown, util) => {
   return Grown('Router.Controllers', {
     _drawRoutes,
     _controllers: {},
+
+    scan(cwd) {
+      const _controllers =
+        glob.sync('**/*.js', { cwd })
+          .filter(x => x !== 'index.js' || x.indexOf('Controller') !== -1)
+          .map(x => ({
+            src: path.join(cwd, x),
+            name: path.relative(cwd, path.join(cwd, x)).replace(RE_CTRL, ''),
+          }));
+
+      const ctrl = {};
+
+      _controllers.forEach(x => {
+        ctrl[x.name] = require(x.src)(Grown, util);
+      });
+
+      return ctrl;
+    },
 
     before_routes: _drawRoutes,
   });
