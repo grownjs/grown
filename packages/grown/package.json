@@ -20,6 +20,7 @@
     "@grown/render": "0.1.0-alpha.87b9c10b",
     "@grown/repl": "0.1.0-alpha.87b9c10b",
     "@grown/router": "0.1.0-alpha.87b9c10b",
+    "@grown/schema": "0.1.0-alpha.87b9c10b",
     "@grown/static": "0.1.0-alpha.87b9c10b",
     "@grown/tarima": "0.1.0-alpha.87b9c10b",
     "@grown/logger": "0.1.0-alpha.87b9c10b",
