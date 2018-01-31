@@ -6,7 +6,24 @@ module.exports = (Grown, util) => {
   const Base = require('./base')(Grown, util);
 
   function _getSchemas() {
-    return this._getModels().map(x => x.$schema || x.options.$schema);
+    const _refs = {};
+
+    this._getModels()
+      .map(x => x.$schema || x.options.$schema)
+      .forEach(schema => {
+        _refs[schema.id] = schema;
+      });
+
+    return this.schemas.map(schema => {
+      const copy = util.extendValues({}, schema);
+
+      /* istanbul ignore else */
+      if (_refs[schema.id]) {
+        util.extendValues(copy, _refs[schema.id]);
+      }
+
+      return copy;
+    });
   }
 
   function _getModels() {
