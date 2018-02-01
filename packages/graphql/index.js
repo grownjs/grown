@@ -1,11 +1,11 @@
 'use strict';
 
 module.exports = (Grown, util) => {
-  const graphqlSequelizer = require('graphql-sequelizer');
+  const graphqlizer = require('graphqlizer');
 
   return Grown('GraphQL', {
     builder(resolver) {
-      return graphqlSequelizer(resolver);
+      return graphqlizer(resolver);
     },
   });
 };
