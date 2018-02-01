@@ -24,6 +24,7 @@
     "@grown/static": "0.1.0-alpha.87b9c10b",
     "@grown/tarima": "0.1.0-alpha.87b9c10b",
     "@grown/logger": "0.1.0-alpha.87b9c10b",
+    "@grown/graphql": "0.1.0-alpha.87b9c10b",
     "@grown/parsers": "0.1.0-alpha.87b9c10b",
     "@grown/session": "0.1.0-alpha.87b9c10b",
     "@grown/upload": "0.1.0-alpha.87b9c10b",
