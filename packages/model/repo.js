@@ -94,30 +94,6 @@ module.exports = (Grown, util) => {
       return JSONSchemaSequelizer.clear(this._getModels(), opts).then(() => this);
     },
 
-    graphql(resolver) {
-      const instance = JSONSchemaSequelizer.graphql(resolver);
-
-      this._getModels().forEach(x => {
-        if (x.$graphql) {
-          instance.schemas.push(x.$graphql);
-        }
-
-        if (x.graphqlMutators) {
-          instance.resolvers.push(typeof x.graphqlMutators === 'function'
-            ? x.graphqlMutators(Grown, util)
-            : x.graphqlMutators);
-        }
-
-        if (x.graphqlResolvers) {
-          instance.resolvers.push(typeof x.graphqlResolvers === 'function'
-            ? x.graphqlResolvers(Grown, util)
-            : x.graphqlResolvers);
-        }
-      });
-
-      return instance;
-    },
-
     connect() {
       const _cwd = this.schemas_directory;
       const _refs = this.schemas;
