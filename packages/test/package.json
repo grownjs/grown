@@ -5,6 +5,7 @@
   "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "@grown/logger": "0.1.0-alpha.87b9c10b",
     "debug": "^3.1.0",
     "mock-req": "^0.2.0",
     "mock-res": "^0.5.0"
