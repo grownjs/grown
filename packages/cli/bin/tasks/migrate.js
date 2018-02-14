@@ -50,6 +50,11 @@ module.exports = {
         const _baseDir = _conn.options.directory;
         const _identifier = _conn.options.identifier;
 
+        /* istanbul ignore else */
+        if (!fs.existsSync(_baseDir)) {
+          throw new Error(`Missing ${_baseDir} directory`);
+        }
+
         const schemaFile = path.join(_baseDir, 'schema.js');
         const schemaJson = path.join(_baseDir, 'schema.json');
         const migrationsDir = path.join(_baseDir, 'migrations');
