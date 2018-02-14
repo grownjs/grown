@@ -5,14 +5,15 @@ module.exports = Grown => {
   const Ajv = require('ajv');
 
   return Grown('Schema', {
-    load(refs) {
+    load(repo) {
       const $ = deref();
       const _schemas = {};
+      const _refs = repo._getModels();
 
-      refs.forEach(schema => {
+      _refs.forEach(schema => {
         /* istanbul ignore else */
         if (schema.id && schema.type === 'object' && schema.properties) {
-          _schemas[schema.id] = $(schema, refs);
+          _schemas[schema.id] = $(schema, _refs);
         }
       });
 
