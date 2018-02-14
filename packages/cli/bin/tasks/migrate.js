@@ -31,6 +31,13 @@ NOTE: All additional arguments after -- are taken as single migrations
 
 `;
 
+function fixedName(value) {
+  return value
+    .replace(/([A-Z])/g, (_, $1) => `_${$1}`)
+    .replace(/\W+/g, '_')
+    .toLowerCase();
+}
+
 module.exports = {
   description: USAGE_INFO,
   callback(Grown, util) {
@@ -135,8 +142,8 @@ module.exports = {
                 ].join('');
 
                 const name = typeof Grown.argv.flags.make === 'string'
-                  ? `_${Grown.argv.flags.make.replace(/\W+/g, '_').toLowerCase()}`
-                  : `_${result.code.indexOf('createTable') > -1 ? 'create' : 'update'}_${result.model.tableName.toLowerCase()}`;
+                  ? `_${fixedName(Grown.argv.flags.make)}`
+                  : `_${result.code.indexOf('createTable') > -1 ? 'create' : 'update'}${fixedName(result.model.tableName)}`;
 
                 const file = path.join(migrationsDir, `${fulldate}${hourtime}${name}.js`);
                 const src = path.relative(Grown.cwd, file);
