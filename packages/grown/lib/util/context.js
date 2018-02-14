@@ -4,8 +4,8 @@ const debug = require('debug')('grown:context');
 
 const STATUS_CODES = require('http').STATUS_CODES;
 
-const util = require('./object');
-const proc = require('./process');
+const util = require('@grown/bare/util/object');
+const proc = require('@grown/bare/util/process');
 
 function buildSettings(data) {
   return (key, defvalue) => {
