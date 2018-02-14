@@ -118,7 +118,7 @@ module.exports = (Grown, util) => {
       return logger(taskName, () =>
         new Promise((cb, reject) => {
           /* istanbul ignore else */
-          if (!Grown.argv.flags.app) {
+          if (!Grown.argv.flags.app && taskName === 'up') {
             Grown.argv.flags.app = this._findApplication();
           }
 
@@ -126,10 +126,11 @@ module.exports = (Grown, util) => {
             try {
               cb(this.run(taskName));
             } catch (e) {
-              reject(this._onError(e));
+              reject(e);
             }
           });
-        }));
+        }))
+        .catch(e => this._onError(e));
     }
 
     logger.write(GROWN_TXT);
@@ -178,14 +179,17 @@ module.exports = (Grown, util) => {
     }
 
     /* istanbul ignore else */
-    if (e.original) {
-      logger.printf('{% failure %s %}\r\n', e.original.detail);
-      logger.printf('{% failure %s %}\r\n', e.original.message);
-    }
-
-    /* istanbul ignore else */
     if (!Grown.argv.flags.debug) {
       e = util.cleanError(e, Grown.cwd);
+    }
+
+    if (e.original) {
+      /* istanbul ignore else */
+      if (e.original.detail) {
+        logger.printf('{% failure %s %}\r\n', e.original.detail);
+      }
+
+      logger.printf('{% failure %s %}\r\n', e.original.message);
     }
 
     logger.printf('\r{% error %s %}\r\n', e.stack || e.message);
