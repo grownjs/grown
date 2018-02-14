@@ -236,7 +236,7 @@ module.exports = (Grown, util) => {
           }
 
           /* istanbul ignore else */
-          if (options.environment === 'development') {
+          if (options.environment.indexOf('dev') === 0) {
             /* istanbul ignore else */
             if (fs.statSync(cached[_id].file).mtime - cached[_id].mtime) {
               util.clearModules(cached[_id].file);

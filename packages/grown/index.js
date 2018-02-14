@@ -259,7 +259,7 @@ module.exports = (cwd, argv) => {
   process.env.HOST = _argv.flags.host || process.env.HOST || '0.0.0.0';
   process.env.PORT = _argv.flags.port || process.env.PORT || 8080;
 
-  process.env.NODE_ENV = _argv.flags.env || 'development';
+  process.env.NODE_ENV = _argv.flags.env || process.env.NODE_ENV || 'development';
 
   Object.keys(_argv.data).forEach(key => {
     /* istanbul ignore else */
@@ -269,7 +269,7 @@ module.exports = (cwd, argv) => {
   });
 
   /* istanbul ignore else */
-  if (process.env.CI && process.env.NODE_ENV === 'testing') {
+  if (process.env.CI && process.env.NODE_ENV.indexOf('test') === 0) {
     process.env.NODE_ENV = 'ci';
   }
 
