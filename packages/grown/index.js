@@ -2,29 +2,14 @@
 
 const debug = require('debug')('grown');
 
-const _util = require('util');
 const wargs = require('wargs');
 const $new = require('object-new');
 
 const _pkg = require('./package.json');
 
-const util = require('@grown/bare/util');
+const util = require('./lib/util');
 const _mount = require('./lib/mount');
 const _listen = require('./lib/listen');
-
-const extraHelpers = require('./lib/util/helpers');
-const contextHelpers = require('./lib/util/context');
-
-_util._extend(util, extraHelpers);
-_util._extend(util, contextHelpers);
-
-const buildPipeline = require('./lib/plug/pipeline');
-const buildMiddleware = require('./lib/plug/middleware');
-
-_util._extend(util, {
-  buildPipeline,
-  buildMiddleware,
-});
 
 require('source-map-support').install();
 
