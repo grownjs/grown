@@ -101,7 +101,16 @@ module.exports = (Grown, util) => {
 
       return Promise.resolve()
         .then(() => Grown.Model.DB[name].connect())
-        .then(() => Grown.Model.DB[name].models[this.$schema.id]);
+        .then(() => {
+          const Model = Grown.Model.DB[name].models[this.$schema.id];
+
+          /* istanbul ignore else */
+          if (!Model) {
+            throw new Error(`${this.$schema.id} model was not defined?`);
+          }
+
+          return Model;
+        });
     },
   });
 };
