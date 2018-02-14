@@ -12,9 +12,13 @@ module.exports = (Grown, util) => {
           Sequelize: _sequelize,
         }));
 
-        Object.keys(def).forEach(key => {
-          util.readOnlyProperty(Model, key, def[key]);
-        });
+        try {
+          Object.keys(def).forEach(key => {
+            util.readOnlyProperty(Model, key, def[key]);
+          });
+        } catch (e) {
+          throw new Error(`${model} definition failed. ${e.message}`);
+        }
 
         return Model;
       }).forEach(m => {
