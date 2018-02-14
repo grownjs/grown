@@ -108,7 +108,7 @@ module.exports = {
 
           /* istanbul ignore else */
           if (_buffer.length) {
-            util.logger.write(`${_buffer.join('')}\n`);
+            util.logger.write(`\r\r${_buffer.join('')}\n`);
           }
         });
     }
