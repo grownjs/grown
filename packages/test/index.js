@@ -15,13 +15,22 @@ module.exports = (Grown, util) => {
     ],
 
     do(callback) {
-      return done =>
-        Promise.resolve()
+      return done => {
+        function end(ex) {
+          if (typeof done === 'function') {
+            done(ex);
+          }
+
+          if (ex) {
+            logger.printf('\r\r%s\n', util.cleanError(ex).stack || ex.toString());
+          }
+        }
+
+        return Promise.resolve()
           .then(() => callback())
-          .catch(e => {
-            logger.printf('\r\r%s\n', util.cleanError(e).stack || e.toString());
-          })
-          .then(() => typeof done === 'function' && done());
+          .then(() => end())
+          .catch(end);
+      };
     },
   });
 };
