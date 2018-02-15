@@ -22,7 +22,45 @@ const HOOK_METHODS = [
 ];
 
 module.exports = (Grown, util) => {
+  function _makeDefinition(src) {
+    Object.keys(src).forEach(key => {
+      /* istanbul ignore else */
+      if (key !== 'connect' && typeof src[key] === 'function') {
+        if (HOOK_METHODS.indexOf(key) === -1) {
+          this.classMethods[key] = src[key];
+        } else {
+          this.hooks[key] = src[key];
+        }
+      }
+    });
+
+    Object.keys(src.props || {}).forEach(key => {
+      const d = util.getDescriptor(src.props, key);
+
+      /* istanbul ignore else */
+      if (d.get) {
+        this.getterMethods[key] = d.get;
+      }
+
+      /* istanbul ignore else */
+      if (d.set) {
+        this.setterMethods[key] = d.set;
+      }
+
+      /* istanbul ignore else */
+      if (d.value) {
+        this.getterMethods[key] = () => d.value;
+      }
+    });
+
+    Object.keys(src.methods || {}).forEach(key => {
+      this.instanceMethods[key] = src.methods[key];
+    });
+  }
+
   return Grown('Model.Base', {
+    _makeDefinition,
+
     connect(options, refs, cwd) {
       const _opts = {};
 
@@ -44,49 +82,6 @@ module.exports = (Grown, util) => {
 
       name = name || this.database || _opts.identifier || 'default';
 
-      const definition = {
-        $schema: this.$schema,
-        hooks: this.hooks || {},
-        classMethods: this.classMethods || {},
-        getterMethods: this.getterMethods || {},
-        setterMethods: this.setterMethods || {},
-        instanceMethods: this.instanceMethods || {},
-      };
-
-      Object.keys(this).forEach(key => {
-        /* istanbul ignore else */
-        if (key !== 'connect' && typeof this[key] === 'function') {
-          if (HOOK_METHODS.indexOf(key) === -1) {
-            definition.classMethods[key] = this[key];
-          } else {
-            definition.hooks[key] = this[key];
-          }
-        }
-      });
-
-      Object.keys(this.props || {}).forEach(key => {
-        const d = util.getDescriptor(this.props, key);
-
-        /* istanbul ignore else */
-        if (d.get) {
-          definition.getterMethods[key] = d.get;
-        }
-
-        /* istanbul ignore else */
-        if (d.set) {
-          definition.setterMethods[key] = d.set;
-        }
-
-        /* istanbul ignore else */
-        if (d.value) {
-          definition.getterMethods[key] = () => d.value;
-        }
-      });
-
-      Object.keys(this.methods || {}).forEach(key => {
-        definition.instanceMethods[key] = this.methods[key];
-      });
-
       /* istanbul ignore else */
       if (!Grown.Model.DB.registered(name)) {
         Grown.Model.DB.register(name, {
@@ -97,7 +92,14 @@ module.exports = (Grown, util) => {
       }
 
       // define first
-      Grown.Model.DB[name].add(definition);
+      Grown.Model.DB[name].add({
+        $schema: this.$schema,
+        hooks: this.hooks,
+        classMethods: this.classMethods,
+        getterMethods: this.getterMethods,
+        setterMethods: this.setterMethods,
+        instanceMethods: this.instanceMethods,
+      });
 
       return Promise.resolve()
         .then(() => Grown.Model.DB[name].connect())
