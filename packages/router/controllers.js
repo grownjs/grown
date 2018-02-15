@@ -87,9 +87,7 @@ module.exports = (Grown, util) => {
       const ctrl = {};
 
       _controllers.forEach(x => {
-        const key = x.name.split('/').join('.');
-
-        util.setProp(ctrl, key, require(x.src)(Grown, util));
+        util.setProp(ctrl, x.name.split('/').join('.'), require(x.src)(Grown, util));
       });
 
       this.extensions.push(ctrl);
