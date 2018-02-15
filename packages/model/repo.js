@@ -50,8 +50,21 @@ module.exports = (Grown, util) => {
     /* istanbul ignore else */
     if (!this[name].connect) {
       const Model = Base({
-        include: [this[name]],
+        name: `${name}Model`,
+        include: [{
+          $schema: this[name].$schema,
+          hooks: this[name].hooks || {},
+          classMethods: this[name].classMethods || {},
+          getterMethods: this[name].getterMethods || {},
+          setterMethods: this[name].setterMethods || {},
+          instanceMethods: this[name].instanceMethods || {},
+        }],
       });
+
+      this[name].extensions
+        .forEach(ext => {
+          Model._makeDefinition(ext);
+        });
 
       return Model.connect(_opts, refs, cwd);
     }
