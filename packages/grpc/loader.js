@@ -29,6 +29,7 @@ module.exports = (Grown, util) => {
             /* istanbul ignore else */
             if (Proto[namespace][key].service) {
               const id = key.replace(RE_DASHERIZE, ($0, $1) => $1.toLowerCase());
+              const host = this.self_hostname === true ? id : '0.0.0.0';
 
               let _client;
 
@@ -36,7 +37,7 @@ module.exports = (Grown, util) => {
                 getClient: () => {
                   /* istanbul ignore else */
                   if (!_client) {
-                    _client = new Proto[namespace][key](`${id}:${port}`, credentials);
+                    _client = new Proto[namespace][key](`${host}:${port}`, credentials);
                   }
 
                   return _client;
