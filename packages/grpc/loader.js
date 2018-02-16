@@ -12,7 +12,6 @@ module.exports = (Grown, util) => {
     scan(cwd) {
       const credentials = this.with_credentials || grpc.credentials.createInsecure();
       const namespace = this.proto_namespace || 'API';
-      const port = this.gateway_port || 50051;
       const map = {};
 
       glob.sync('**/schema.proto', { cwd })
@@ -37,7 +36,7 @@ module.exports = (Grown, util) => {
                 getClient: () => {
                   /* istanbul ignore else */
                   if (!_client) {
-                    _client = new Proto[namespace][key](`${host}:${port}`, credentials);
+                    _client = new Proto[namespace][key](`${host}:${this.gateway_port || 50051}`, credentials);
                   }
 
                   return _client;
