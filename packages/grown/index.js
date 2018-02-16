@@ -11,30 +11,6 @@ const util = require('./lib/util');
 const _mount = require('./lib/mount');
 const _listen = require('./lib/listen');
 
-require('source-map-support').install();
-
-require('global-or-local')
-  .dependencies([
-    // known-plugins
-    '@grown/session',
-    '@grown/parsers',
-    '@grown/upload',
-    '@grown/access',
-    '@grown/conn',
-    '@grown/model',
-    '@grown/render',
-    '@grown/router',
-    '@grown/static',
-    '@grown/tarima',
-    '@grown/test',
-    '@grown/repl',
-
-    // optionals
-    'sqlite3',
-    'pg',
-    'uws',
-  ]);
-
 let _pid = 0;
 
 function bind(mixins) {
