@@ -14,6 +14,7 @@
     "test": "npm run lint && npm run cover"
   },
   "devDependencies": {
+    "@grown/cli": "0.1.0-beta.44a47235",
     "@grown/conn": "0.1.0-beta.44a47235",
     "@grown/grpc": "0.1.0-beta.44a47235",
     "@grown/model": "0.1.0-beta.44a47235",
