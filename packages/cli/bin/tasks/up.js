@@ -12,9 +12,9 @@ Start the web server
     --https  Optional. Force HTTPS
 
 Examples:
-  grown up 8081          # Use port 8081
-  grown up --https       # Use https:// protocol
-  grown up 0.0.0.1:8081  # Custom host name and port
+  grown up 8081            # Use port 8081
+  grown up --https         # Use https:// protocol
+  grown up 127.0.0.1:8081  # Custom host name and port
 
 `;
 
@@ -48,6 +48,6 @@ module.exports = {
       }
     }
 
-    server.listen(`${_protocol}://${process.env.HOST}:${process.env.PORT}`);
+    server.listen(`${_protocol}://${process.env.HOST || '0.0.0.0'}:${process.env.PORT || 8080}`);
   },
 };
