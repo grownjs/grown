@@ -1,55 +1,88 @@
 'use strict';
 
-module.exports = Grown => {
-  const deref = require('deref');
-  const Ajv = require('ajv');
+module.exports = (Grown, util) => {
+  const validator = require('is-my-json-valid');
+  const jsf = require('json-schema-faker');
 
-  return Grown('Schema', {
-    load(repo) {
-      const $ = deref();
-      const _schemas = {};
-      const _refs = repo._getModels();
+  function _validateFrom(schema, refs, data) {
+    return new Promise((resolve, reject) => {
+      try {
+        this._assertFrom(schema, refs, data);
+        resolve(data);
+      } catch (e) {
+        reject(e);
+      }
+    });
+  }
 
-      _refs.forEach(schema => {
-        /* istanbul ignore else */
-        if (schema.id && schema.type === 'object' && schema.properties) {
-          _schemas[schema.id] = $(schema, _refs);
-        }
+  function _assertFrom(schema, refs, data) {
+    const copy = util.extendValues({}, schema);
+
+    const validate = validator(copy, {
+      schemas: refs,
+      verbose: true,
+      greedy: true,
+    });
+
+    /* istanbul ignore else */
+    if (!validate(data)) {
+      const err = new Error(copy.id
+        ? `Invalid input for ${copy.id}`
+        : 'Invalid input for given schema');
+
+      err.sample = data;
+      err.schema = copy;
+      err.errors = validate.errors.map(e => {
+        e.field = e.field !== 'data'
+          ? e.field.substr(5)
+          : e.field;
+
+        return e;
       });
 
-      this.extensions.push(_schemas);
+      throw err;
+    }
+  }
+
+  function _fakeAll(schema, refs) {
+    return jsf.resolve({
+      type: 'array',
+      items: schema,
+      minItems: 1,
+    }, refs);
+  }
+
+  function _fake(schema, refs) {
+    return jsf.resolve(schema, refs);
+  }
+
+  return Grown('Schema', {
+    _validateFrom,
+    _assertFrom,
+    _fakeAll,
+    _fake,
+
+    load(repository, config) {
+      const map = {};
+      const refs = repository._getSchemas()
+
+      // FIXME: enable on single-calls?
+      jsf.option(config || {});
+
+      repository._getModels().forEach(model => {
+        const schema = refs[model.$schema.id];
+
+        map[model.$schema.id] = {
+          fake: () => this._fake(schema, refs),
+          fakeAll: () => this._fakeAll(schema, refs),
+          assert: data => this._assertFrom(schema, refs, data),
+          validate: data => this._validateFrom(schema, refs, data),
+        };
+      });
+
+      this.extensions.push(map);
 
       return this;
     },
-
-    assert(schema, data) {
-      const ajv = new Ajv({
-        logger: false,
-      });
-
-      const valid = ajv.validate(schema, data);
-
-      /* istanbul ignore else */
-      if (valid !== true) {
-        const err = new Error('Invalid input for given schema');
-
-        err.sample = data;
-        err.schema = schema;
-        err.errors = ajv.errors;
-
-        throw err;
-      }
-    },
-
-    validate(schema, data) {
-      return new Promise((resolve, reject) => {
-        try {
-          this.assert(schema, data);
-          resolve();
-        } catch (e) {
-          reject(e);
-        }
-      });
-    }
   });
 };
