@@ -1,6 +1,6 @@
 {
   "name": "@grown/cli",
-  "version": "0.1.0-beta.8400e7ac",
+  "version": "0.1.0-beta.f7a58d2c",
   "main": "index.js",
   "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
   "license": "MIT",
@@ -8,9 +8,9 @@
     "grown": "bin/grown"
   },
   "dependencies": {
-    "@grown/bare": "0.1.0-beta.8400e7ac",
-    "@grown/logger": "0.1.0-beta.8400e7ac",
-    "@grown/repl": "0.1.0-beta.8400e7ac",
+    "@grown/bare": "0.1.0-beta.f7a58d2c",
+    "@grown/logger": "0.1.0-beta.f7a58d2c",
+    "@grown/repl": "0.1.0-beta.f7a58d2c",
     "debug": "^3.1.0"
   },
   "devDependencies": {
