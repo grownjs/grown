@@ -14,7 +14,7 @@ module.exports = (Grown, util) => {
         _refs[schema.id] = schema;
       });
 
-    return this.schemas.map(schema => {
+    this.schemas.forEach(schema => {
       const copy = util.extendValues({}, schema);
 
       /* istanbul ignore else */
@@ -22,8 +22,10 @@ module.exports = (Grown, util) => {
         util.extendValues(copy, _refs[schema.id]);
       }
 
-      return copy;
+      _refs[schema.id] = copy;
     });
+
+    return _refs;
   }
 
   function _getModels() {
@@ -31,7 +33,7 @@ module.exports = (Grown, util) => {
 
     Object.keys(this).forEach(key => {
       /* istanbul ignore else */
-      if (key !== 'all' && typeof this[key] === 'function' && (this[key].sequelize || this[key].$schema)) {
+      if (typeof this[key] === 'function' && (this[key].sequelize || this[key].$schema)) {
         _models.push(this[key]);
       }
     });
@@ -88,16 +90,6 @@ module.exports = (Grown, util) => {
     _getModels,
     _getModel,
     _getDB,
-
-    get all() {
-      const map = {};
-
-      this._getModels().forEach(x => {
-        map[x.name] = x;
-      });
-
-      return map;
-    },
 
     sync(opts) {
       return JSONSchemaSequelizer.sync(this._getModels(), opts).then(() => this);
