@@ -5,10 +5,9 @@
 
 'use strict';
 
-const util = require('@grown/grown/lib/util');
-const Grown = require('@grown/grown')();
+const Grown = require('@grown/bare')();
 
-require('../index')(Grown, util);
+Grown.use(require('../index'));
 
 if (Grown.argv.flags.version) {
   Grown.Logger.getLogger()
