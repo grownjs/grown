@@ -94,8 +94,28 @@ function invoke(value, context, interpolate) {
   return value.replace(RE_INTERPOLATE, ($0, $1) => vm.runInNewContext($1, context));
 }
 
+function wrap(callback) {
+  return done => {
+    function end(ex) {
+      if (typeof done === 'function') {
+        done(ex);
+      }
+
+      if (ex) {
+        console.error(cleanError(ex).stack || ex.toString());
+      }
+    }
+
+    Promise.resolve()
+      .then(() => callback())
+      .then(() => end())
+      .catch(end);
+  };
+}
+
 module.exports = {
   clearModules,
   cleanError,
   invoke,
+  wrap,
 };

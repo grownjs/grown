@@ -1,10 +1,5 @@
 'use strict';
 
-const glob = require('glob');
-const path = require('path');
-
-const RE_CTRL = /(?:\/?Controller)?(?:\/index)?\.js/g;
-
 module.exports = (Grown, util) => {
   function _drawRoutes(ctx, routes) {
     routes.forEach(route => {
@@ -76,23 +71,7 @@ module.exports = (Grown, util) => {
     _controllers: {},
 
     scan(cwd) {
-      const _controllers =
-        glob.sync('**/*.js', { cwd })
-          .filter(x => x !== 'index.js' || x.indexOf('Controller') !== -1)
-          .map(x => ({
-            src: path.join(cwd, x),
-            name: path.relative(cwd, path.join(cwd, x)).replace(RE_CTRL, ''),
-          }));
-
-      const ctrl = {};
-
-      _controllers.forEach(x => {
-        util.setProp(ctrl, x.name.split('/').join('.'), require(x.src)(Grown, util));
-      });
-
-      this.extensions.push(ctrl);
-
-      return this;
+      return util.scanDir(cwd, 'Controller', cb => cb(Grown, util));
     },
 
     before_routes: _drawRoutes,

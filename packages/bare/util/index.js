@@ -6,10 +6,12 @@ const $new = require('object-new');
 
 const objectUtil = require('./object');
 const processUtil = require('./process');
+const helpersUtil = require('./helpers');
 
 // merge all helpers
 util._extend(module.exports, objectUtil);
 util._extend(module.exports, processUtil);
+util._extend(module.exports, helpersUtil);
 
 // merge definition helpers
 Object.keys($new).forEach(key => {
