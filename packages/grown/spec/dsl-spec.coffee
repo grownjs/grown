@@ -23,6 +23,10 @@ describe 'Grown', ->
 
       expect(Grown.Dummy.new().value).toEqual 42
 
+  describe '#loader', ->
+    it 'can load definitions from given directories', ->
+      expect(Grown.loader("#{__dirname}/fixtures").Example.truth).toEqual 42
+
   describe '#use', ->
     it 'can load new module definitions', ->
       Grown.use ($, util) ->
@@ -34,6 +38,36 @@ describe 'Grown', ->
 
       expect(ex._.flattenArgs(1, [2], [[3]])).toEqual [1, 2, 3]
       expect(Object.keys(ex)).toEqual []
+
+  describe '#do', ->
+    it 'can test guard blocks as promises', Grown.do ->
+      new Promise((cb) -> setTimeout(cb, 1000))
+
+    describe 'rescue', ->
+      beforeEach ->
+        @calls = []
+        @result = null
+
+        printf = (_, msg) =>
+          @calls.push 'printf'
+          @result = msg.trim()
+
+        Grown 'Logger', getLogger: -> { printf }
+
+      afterEach ->
+        delete Grown.Logger
+        expect(@calls).toEqual ['guard', 'rescue', 'printf']
+        expect(@result).toEqual 'Error: OK'
+
+      it 'can use Grown.Logger if it exists', Grown.do (rescue) ->
+        @calls.push 'guard'
+        expect(@result).toBe null
+
+        rescue (e) ->
+          @calls.push 'rescue'
+          expect(@result).toBe null
+
+        throw 'OK'
 
   describe 'Test', ->
     beforeEach ->
