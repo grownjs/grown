@@ -4,7 +4,7 @@ const glob = require('glob');
 const path = require('path');
 const fs = require('fs');
 
-const obj = require('./object');
+const _obj = require('./object');
 
 function findFile(src, paths, throws) {
   /* istanbul ignore else */
@@ -26,6 +26,7 @@ function findFile(src, paths, throws) {
     }
   }
 
+  /* istanbul ignore else */
   if (throws !== false) {
     throw new Error(`Given file '${src}' does not exists`);
   }
@@ -49,7 +50,14 @@ function scanDir(cwd, suffix, callback) {
   const map = {};
 
   _extensions.forEach(x => {
-    obj.setProp(map, x.name.split('/').join('.'), callback(require(x.src)));
+    let target = require(x.src);
+
+    /* istanbul ignore else */
+    if (typeof target === 'function') {
+      target = callback(target);
+    }
+
+    _obj.setProp(map, x.name.split('/').join('.'), target);
   });
 
   return map;
