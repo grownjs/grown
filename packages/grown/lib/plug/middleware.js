@@ -75,7 +75,7 @@ module.exports = (Factory, _name) => {
   if (Factory.init || Factory.extensions
     || (Factory.prototype && Object.keys(Factory.prototype).length)) {
     return {
-      name: Factory.name || '?',
+      name: Factory.name || '#',
       call: [new Factory(), 'call'],
       type: 'method',
     };
@@ -84,7 +84,7 @@ module.exports = (Factory, _name) => {
   /* istanbul ignore else */
   if (Factory.length > 2) {
     return {
-      name: Factory.name || '?',
+      name: Factory.name || '!',
       call: _expressMiddleware(Factory),
       type: 'x-function',
     };

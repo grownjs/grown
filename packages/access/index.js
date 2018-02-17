@@ -87,7 +87,7 @@ module.exports = (Grown, util) => {
     const children = this._makeTree(role, this._groups, 'children');
     const parents = this._makeTree(role, this._groups, 'parents');
 
-    debug('#%s Checking access for %s <%s>', conn.pid, role, handlers.join(', ') || '?');
+    debug('#%s Checking access for %s <%s>', conn.pid, role, handlers.join(', ') || '...');
 
     return Promise.resolve()
       .then(() => {
