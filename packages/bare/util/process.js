@@ -74,19 +74,31 @@ function cleanError(e, cwd) {
     }
   }
 
-  e.errors = e.errors || [];
-  e.call = e.pipeline;
-  e.name = e.name || 'Error';
-  e.code = e.statusCode || 500;
+  let _e;
 
-  e.stack = `${e.name}: ${e.message}\n ${_stack.split('\n')
+  if (!(e instanceof Error)) {
+    _e = new Error(e);
+  } else {
+    _e = e;
+  }
+
+  /* istanbul ignore else */
+  if (typeof e === 'object') {
+    _e.errors = e.errors || [];
+    _e.call = e.pipeline;
+    _e.name = e.name || 'Error';
+    _e.code = e.statusCode || 500;
+  }
+
+  _e.stack = `${_e.name}: ${_e.message || String(e)}\n ${_stack.split('\n')
     .filter(line => RE_SRC_FILE.test(line))
     .join('\n ')}`;
 
-  return e;
+  return _e;
 }
 
 function invoke(value, context, interpolate) {
+  /* istanbul ignore else */
   if (!interpolate) {
     return vm.runInNewContext(value, context);
   }
@@ -94,20 +106,40 @@ function invoke(value, context, interpolate) {
   return value.replace(RE_INTERPOLATE, ($0, $1) => vm.runInNewContext($1, context));
 }
 
-function wrap(callback) {
-  return done => {
-    function end(ex) {
-      if (typeof done === 'function') {
-        done(ex);
-      }
+function wrap(callback, getLogger) {
+  let _errCallback;
 
-      if (ex) {
-        console.error(cleanError(ex).stack || ex.toString());
+  function ifErr(cb) {
+    _errCallback = cb;
+  }
+
+  return function $end(done) {
+    const self = this;
+
+    function end(ex) {
+      const logError = (getLogger && getLogger()) || console.error.bind(console);
+
+      try {
+        if (ex) {
+          /* istanbul ignore else */
+          if (_errCallback) {
+            _errCallback.call(self, ex);
+          }
+
+          logError(cleanError(ex).stack || ex.toString());
+        }
+      } catch (e) {
+        logError(e.stack || e.toString());
+      } finally {
+        /* istanbul ignore else */
+        if (typeof done === 'function') {
+          done.call(self, ex);
+        }
       }
     }
 
-    Promise.resolve()
-      .then(() => callback())
+    return Promise.resolve()
+      .then(() => callback.call(self, ifErr))
       .then(() => end())
       .catch(end);
   };
