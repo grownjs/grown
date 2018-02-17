@@ -37,11 +37,7 @@ describe 'Grown', ->
 
   describe 'Test', ->
     beforeEach ->
-      @g = Grown.new({
-        cwd: __dirname
-        env: 'development'
-      })
-
+      @g = Grown.new()
       @g.plug Grown.Test
 
     describe '#plug -> #mount -> #listen -> #request', ->
