@@ -7,11 +7,7 @@ node_js:
   - 4
   - 6
   - 8
-env:
-  - PACKAGE=@grown/grown
-before_script:
-  - lerna bootstrap
 script:
-  - lerna run test --scope $PACKAGE
+  - npm test
 notifications:
   email: false
