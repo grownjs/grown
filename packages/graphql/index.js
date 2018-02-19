@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = (Grown, util) => {
+module.exports = Grown => {
   const graphqlizer = require('graphqlizer');
 
   return Grown('GraphQL', {

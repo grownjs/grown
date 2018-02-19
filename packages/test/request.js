@@ -5,7 +5,7 @@ const debug = require('debug')('grown:test');
 const path = require('path');
 const fs = require('fs');
 
-module.exports = (Grown, util) => {
+module.exports = Grown => {
   function _fixRequest(url, method, options) {
     options = options || {};
     options.url = url || options.url || '/';
@@ -58,7 +58,7 @@ module.exports = (Grown, util) => {
     // export heleprs
     _fixRequest,
 
-    install(ctx, _options) {
+    install(ctx) {
       return {
         methods: {
           request(url, method, options, callback) {
