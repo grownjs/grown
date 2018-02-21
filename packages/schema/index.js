@@ -45,7 +45,7 @@ module.exports = (Grown, util) => {
   }
 
   function _fakeAll(schema, refs) {
-    return jsf.resolve({
+    return jsf({
       type: 'array',
       items: schema,
       minItems: 1,
@@ -53,7 +53,7 @@ module.exports = (Grown, util) => {
   }
 
   function _fake(schema, refs) {
-    return jsf.resolve(schema, refs);
+    return jsf(schema, refs);
   }
 
   return Grown('Schema', {
@@ -62,12 +62,11 @@ module.exports = (Grown, util) => {
     _fakeAll,
     _fake,
 
-    load(repository, config) {
+    load(repository) {
       const map = {};
       const refs = repository._getSchemas()
 
-      // FIXME: enable on single-calls?
-      jsf.option(config || {});
+      // FIXME: jsf.option()
 
       repository._getModels().forEach(model => {
         const schema = refs[model.$schema.id];
