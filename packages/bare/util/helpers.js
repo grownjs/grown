@@ -57,7 +57,10 @@ function scanDir(cwd, suffix, callback) {
       target = callback(target);
     }
 
-    _obj.setProp(map, x.name.split('/').join('.'), target);
+    _obj.setProp(map, x.name
+        .split('/')
+        .map(x => x.replace(/-([a-z])/g, ($0, $1) => $1.toUpperCase()))
+        .join('.'), target);
   });
 
   return map;
