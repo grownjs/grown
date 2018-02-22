@@ -12,9 +12,11 @@ module.exports = (Grown, util) => {
           Sequelize: _sequelize,
         });
 
-        const Model = def(Grown, _util);
+        let Model;
 
         try {
+          Model = def(Grown, _util);
+
           Object.keys(def).forEach(key => {
             util.readOnlyProperty(Model, key, typeof def[key] === 'function'
               ? def[key](Grown, _util)
