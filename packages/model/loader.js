@@ -8,13 +8,17 @@ module.exports = (Grown, util) => {
       const _models = {};
 
       JSONSchemaSequelizer.scan(cwd, (def, model, _sequelize) => {
-        const Model = def(Grown, util.extendValues({}, util, {
+        const _util = util.extendValues({}, util, {
           Sequelize: _sequelize,
-        }));
+        });
+
+        const Model = def(Grown, _util);
 
         try {
           Object.keys(def).forEach(key => {
-            util.readOnlyProperty(Model, key, def[key]);
+            util.readOnlyProperty(Model, key, typeof def[key] === 'function'
+              ? def[key](Grown, _util)
+              : def[key]);
           });
         } catch (e) {
           throw new Error(`${model} definition failed. ${e.message}`);
