@@ -4,6 +4,12 @@ module.exports = (Grown, util) => {
   const validator = require('is-my-json-valid');
   const jsf = require('json-schema-faker');
 
+  const defaults = {
+    random: Math.random,
+    useDefaultValue: false,
+    alwaysFakeOptionals: false,
+  };
+
   function _validateFrom(schema, refs, data) {
     return new Promise((resolve, reject) => {
       try {
@@ -44,7 +50,9 @@ module.exports = (Grown, util) => {
     }
   }
 
-  function _fakeAll(schema, refs) {
+  function _fakeAll(schema, refs, opts) {
+    jsf.option(util.extendValues(opts, defaults));
+
     return jsf({
       type: 'array',
       items: schema,
@@ -52,7 +60,9 @@ module.exports = (Grown, util) => {
     }, refs);
   }
 
-  function _fake(schema, refs) {
+  function _fake(schema, refs, opts) {
+    jsf.option(util.extendValues(opts, defaults));
+
     return jsf(schema, refs);
   }
 
@@ -66,14 +76,12 @@ module.exports = (Grown, util) => {
       const map = {};
       const refs = repository._getSchemas()
 
-      // FIXME: jsf.option()
-
       repository._getModels().forEach(model => {
         const schema = refs[model.$schema.id];
 
         map[model.$schema.id] = {
-          fake: () => this._fake(schema, refs),
-          fakeAll: () => this._fakeAll(schema, refs),
+          fake: opts => this._fake(schema, refs, opts),
+          fakeAll: opts => this._fakeAll(schema, refs, opts),
           assert: data => this._assertFrom(schema, refs, data),
           validate: data => this._validateFrom(schema, refs, data),
         };
