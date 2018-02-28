@@ -40,7 +40,7 @@
   "dependencies": {
     "@grown/bare": "0.1.0-beta.f7a58d2c",
     "debug": "^3.1.0",
-    "object-new": "^0.2.2",
+    "object-new": "^0.2.3",
     "wargs": "^0.8.0"
   },
   "publishConfig": {
