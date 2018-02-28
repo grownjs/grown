@@ -14,6 +14,10 @@ module.exports = (Grown, util) => {
 
       deadline.setSeconds(deadline.getSeconds() + (this.timeout || 5));
 
+      if (!client[method] || typeof client[method] !== 'function') {
+        throw new Error(`${util.inspect(client).split(' ')[0]}#${method} is not a function`);
+      }
+
       client[method](data, { deadline }, (error, result) => {
         /* istanbul ignore else */
         if (error) {
