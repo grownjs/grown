@@ -19,6 +19,7 @@ module.exports = (Grown, util) => {
       }
 
       client[method](data, { deadline }, (error, result) => {
+        console.log(data, error, result);
         /* istanbul ignore else */
         if (error) {
           let parsedError;
@@ -68,7 +69,7 @@ module.exports = (Grown, util) => {
       return this;
     },
 
-    setup(controllers, enableServer) {
+    setup(controllers) {
       const _server = grpc.ServerCredentials.createInsecure();
       const _channel = grpc.credentials.createInsecure();
 
@@ -98,7 +99,7 @@ module.exports = (Grown, util) => {
         server[`send${key}`] = (method, data) => {
           /* istanbul ignore else */
           if (!_client) {
-            _client = new Proto(`${host}:${port || 50051}`, _channel);
+            _client = new Proto(`${host}:${port}`, _channel);
           }
 
           return this.request(_client, method, data);
@@ -107,9 +108,12 @@ module.exports = (Grown, util) => {
         server.addService(Proto.service, new Ctrl());
       });
 
-      if (enableServer) {
+      const _start = server.start.bind(server);
+
+      server.start = () => {
         server.bind(`0.0.0.0:${port}`, _server);
-      }
+        _start();
+      };
 
       return server;
     },
