@@ -64,7 +64,7 @@ module.exports = (Grown, util) => {
       return this;
     },
 
-    setup(controllers) {
+    setup(controllers, enableServer) {
       const _server = grpc.ServerCredentials.createInsecure();
       const _channel = grpc.credentials.createInsecure();
 
@@ -87,11 +87,11 @@ module.exports = (Grown, util) => {
         let _client;
 
         /* istanbul ignore else */
-        if (Grown.GRPC[`send${key}`]) {
+        if (server[`send${key}`]) {
           throw new Error(`Method 'send${key}' already setup`);
         }
 
-        Grown.GRPC[`send${key}`] = (method, data) => {
+        server[`send${key}`] = (method, data) => {
           /* istanbul ignore else */
           if (!_client) {
             _client = new Proto(`${host}:${port || 50051}`, _channel);
@@ -103,7 +103,9 @@ module.exports = (Grown, util) => {
         server.addService(Proto.service, new Ctrl());
       });
 
-      server.bind(`0.0.0.0:${port}`, _server);
+      if (enableServer) {
+        server.bind(`0.0.0.0:${port}`, _server);
+      }
 
       return server;
     },
