@@ -1,5 +1,0 @@
-*.log
-/build
-/external
-/coverage
-/node_modules
