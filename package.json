@@ -4,6 +4,6 @@
     "test": "lerna run test --scope @grown/grown"
   },
   "devDependencies": {
-    "lerna": "^2.5.1"
+    "lerna": "^2.8.0"
   }
 }
