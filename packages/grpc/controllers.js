@@ -16,6 +16,10 @@ module.exports = (Grown, util) => {
 
                 // return a promise by default
                 ext.methods[key] = function $proxy(ctx, reply) {
+                  if (!ctx || typeof reply !== 'function') {
+                    throw new Error(`${Ctrl.name}#${key}: Illegal arguments`);
+                  }
+
                   // overload given context
                   ctx.controller = Ctrl.name;
                   ctx.method = key;
