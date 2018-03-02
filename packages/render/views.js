@@ -276,7 +276,7 @@ module.exports = (Grown, util) => {
     view_folders: [],
 
     // setup extensions
-    install(ctx, options) {
+    $install(ctx, options) {
       const defaults = {
         directories: util.flattenArgs(this.view_folders),
         fallthrough: this.fallthrough,
@@ -317,7 +317,7 @@ module.exports = (Grown, util) => {
       };
     },
 
-    mixins() {
+    $mixins() {
       const self = this;
 
       return {

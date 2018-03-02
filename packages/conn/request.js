@@ -28,7 +28,7 @@ module.exports = (Grown, util) => {
   return Grown('Conn.Request', {
     _fixURL,
 
-    mixins() {
+    $mixins() {
       function _accepts(req) {
         if (!_accepts.fn) {
           _accepts.fn = accepts(req);

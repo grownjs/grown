@@ -123,7 +123,7 @@ function wrap(callback, getLogger) {
         if (ex) {
           /* istanbul ignore else */
           if (_errCallback) {
-            _errCallback.call(self, ex);
+            _errCallback.call(self, ex, getLogger);
           }
 
           logError(cleanError(ex).stack || ex.toString());
@@ -139,7 +139,7 @@ function wrap(callback, getLogger) {
     }
 
     return Promise.resolve()
-      .then(() => callback.call(self, ifErr))
+      .then(() => callback.call(self, ifErr, getLogger))
       .then(() => end())
       .catch(end);
   };

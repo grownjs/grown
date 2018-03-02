@@ -172,7 +172,7 @@ module.exports = (Grown, util) => {
         this._buildResource(this._findModel(resource), conn, options);
     },
 
-    install(ctx) {
+    $install(ctx) {
       ctx.mount('Model.Resource#pipe', (conn, options) => {
         debug('#%s Checking for resources', conn.pid);
 

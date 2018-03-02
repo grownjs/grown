@@ -37,7 +37,7 @@ module.exports = (Grown, util) => {
     // export helpers
     _mockRequest,
 
-    mixins(options) {
+    $mixins(options) {
       const req = this._mockRequest(options);
 
       return {

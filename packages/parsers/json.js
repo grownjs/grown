@@ -5,7 +5,7 @@ module.exports = Grown => {
     json_options: {
       limit: '5mb',
     },
-    install(ctx) {
+    $install(ctx) {
       ctx.mount(require('body-parser').json(this.json_options));
     },
   });

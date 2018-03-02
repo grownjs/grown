@@ -58,7 +58,7 @@ module.exports = Grown => {
     // export heleprs
     _fixRequest,
 
-    install(ctx) {
+    $install(ctx) {
       return {
         methods: {
           request(url, method, options, callback) {

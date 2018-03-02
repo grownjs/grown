@@ -1,8 +1,5 @@
 'use strict';
 
-const wargs = require('wargs')
-const $new = require('object-new');
-
 require('source-map-support').install();
 
 require('global-or-local')
@@ -30,9 +27,13 @@ require('global-or-local')
     'uws',
   ]);
 
+const util = require('./util');
+
 // @grown/grown barebones
 module.exports = (cwd, argv) => {
-  const _argv = wargs(argv || process.argv.slice(2), {
+  require('debug').enable('*');
+
+  const _argv = util.argvParser(argv || process.argv.slice(2), {
     boolean: ['V', 'd', 'help'],
     alias: {
       V: 'verbose',
@@ -42,9 +43,7 @@ module.exports = (cwd, argv) => {
   });
 
   // private container
-  const $ = function $(id, props, extensions) {
-    return $new(id, props, $, extensions);
-  };
+  const $ = util.newContainer();
 
   const Grown = $('Grown', () => {
     throw new Error('Not implemented');

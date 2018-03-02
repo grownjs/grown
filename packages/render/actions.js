@@ -2,7 +2,7 @@
 
 module.exports = Grown => {
   return Grown('Render.Actions', {
-    install(ctx) {
+    $install(ctx) {
       ctx.mount('Render.Actions#pipe', conn => {
         if (conn.req.handler
           && conn.req.handler.Controller

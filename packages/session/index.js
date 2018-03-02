@@ -12,7 +12,7 @@ module.exports = (Grown, util) => {
       maxAge: parseInt(process.env.SESSION_MAXAGE || 0, 10) || 86400000,
     },
 
-    install(ctx) {
+    $install(ctx) {
       ctx.mount('cookie-parser', cookieParser(this.session_secret, this.cookie_options || {}));
       ctx.mount('cookie-session', cookieSession(this.session_options));
       ctx.mount('connect-flash', connectFlash());
@@ -33,7 +33,7 @@ module.exports = (Grown, util) => {
       });
     },
 
-    mixins() {
+    $mixins() {
       return {
         props: {
           csrf_token() {

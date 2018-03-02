@@ -29,10 +29,10 @@ module.exports = (Grown, util) => {
   return Grown('Logger', util.extendValues({
     _elapsedTime,
 
-    before_render(ctx, template) {
+    $before_render(ctx, template) {
       /* istanbul ignore else */
       if (!ctx.res.headerSent) {
-        this.before_send(null, ctx);
+        this.$before_send(null, ctx);
       }
 
       if (template.contents.indexOf('{elapsed}') === -1) {
@@ -42,7 +42,7 @@ module.exports = (Grown, util) => {
       }
     },
 
-    before_send(e, ctx) {
+    $before_send(e, ctx) {
       if (typeof ctx.end === 'function') {
         ctx.put_resp_header('X-Response-Time', this._elapsedTime(ctx));
       } else if (ctx.res) {
@@ -50,7 +50,7 @@ module.exports = (Grown, util) => {
       }
     },
 
-    install(ctx) {
+    $install(ctx) {
       ctx.on('request', conn => {
         util.hiddenProperty(conn, '_startTime', new Date());
       });
@@ -64,9 +64,9 @@ module.exports = (Grown, util) => {
         _logger.debug('{% green %s %} %s {% yellow %s %} {% gray (%s) %}\r\n', method, url, code, time);
       });
 
-      return this.mixins();
+      return this.$mixins();
     },
-    mixins() {
+    $mixins() {
       return {
         props: {
           logger: () => _logger,

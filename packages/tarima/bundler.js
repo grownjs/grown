@@ -159,7 +159,7 @@ module.exports = (Grown, util) => {
     _bundleCache,
     _bundleView,
 
-    install() {
+    $install() {
       const _cwd = Grown.cwd;
 
       this.bundle = (src, data) => {
@@ -185,7 +185,7 @@ module.exports = (Grown, util) => {
       };
     },
 
-    mixins() {
+    $mixins() {
       return {
         methods: {
           bundle: this.bundle,

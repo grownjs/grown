@@ -123,7 +123,7 @@ module.exports = (Grown, util) => {
     _sendBundle,
     _sendView,
 
-    install(ctx) {
+    $install(ctx) {
       if (!this._bundleRender) {
         throw new Error('Tarima.Render depends on Tarima.Bundler, please include within');
       }

@@ -1,7 +1,7 @@
 'use strict';
 
 const util = require('util');
-
+const wargs = require('wargs');
 const $new = require('object-new');
 
 const objectUtil = require('./object');
@@ -20,3 +20,10 @@ Object.keys($new).forEach(key => {
 
 // common utils
 module.exports.inspect = util.inspect;
+module.exports.argvParser = wargs;
+
+// object-new wrapper
+module.exports.newContainer = () =>
+  function $(id, props, extensions) {
+    return $new(id, props, $, extensions);
+  };

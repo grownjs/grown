@@ -5,7 +5,7 @@ module.exports = Grown => {
     urlencoded_options: {
       extended: false,
     },
-    install(ctx) {
+    $install(ctx) {
       ctx.mount(require('body-parser').urlencoded(this.urlencoded_options));
     },
   });

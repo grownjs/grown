@@ -92,15 +92,15 @@ module.exports = (Grown, util) => {
     template: '',
 
     // render hooks
-    before_render: _onRender,
+    $before_render: _onRender,
 
-    install() {
+    $install() {
       if (!this._buildvNode) {
         throw new Error('Render.Layout depends on Render.Views, please include within');
       }
     },
 
-    mixins() {
+    $mixins() {
       const _views = {
         before: {
           head: [],

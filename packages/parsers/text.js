@@ -3,7 +3,7 @@
 module.exports = Grown => {
   return Grown('Parsers.TEXT', {
     text_options: {},
-    install(ctx) {
+    $install(ctx) {
       ctx.mount(require('body-parser').json(this.text_options));
     },
   });

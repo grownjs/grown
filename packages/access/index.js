@@ -225,7 +225,7 @@ module.exports = (Grown, util) => {
     resources: {},
     permissions: {},
 
-    install(ctx) {
+    $install(ctx) {
       /* istanbul ignore else */
       if (typeof this.access_rules === 'object') {
         this.rules(this.access_rules);
@@ -242,7 +242,7 @@ module.exports = (Grown, util) => {
       });
     },
 
-    mixins() {
+    $mixins() {
       const self = this;
 
       return {

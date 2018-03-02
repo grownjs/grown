@@ -74,6 +74,6 @@ module.exports = (Grown, util) => {
       return util.scanDir(cwd, 'Controller', cb => cb(Grown, util));
     },
 
-    before_routes: _drawRoutes,
+    $before_routes: _drawRoutes,
   });
 };

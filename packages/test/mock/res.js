@@ -45,7 +45,7 @@ module.exports = Grown => {
     // export helpers
     _mockResponse,
 
-    mixins() {
+    $mixins() {
       const res = this._mockResponse();
 
       return {

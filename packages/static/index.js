@@ -6,7 +6,7 @@ module.exports = (Grown, util) => {
   const serveStatic = require('serve-static');
 
   return Grown('Static', {
-    install(ctx) {
+    $install(ctx) {
       const _cwd = Grown.cwd;
 
       util.flattenArgs(this.from_folders)

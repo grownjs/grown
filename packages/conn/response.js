@@ -110,11 +110,11 @@ module.exports = (Grown, util) => {
     _endRequest,
     _cutBody,
 
-    before_render(ctx, template) {
+    $before_render(ctx, template) {
       util.extendValues(template.locals, ctx.state);
     },
 
-    mixins() {
+    $mixins() {
       const self = this;
 
       const _response = {

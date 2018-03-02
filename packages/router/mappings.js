@@ -94,7 +94,7 @@ module.exports = (Grown, util) => {
     _dispatchRoutes,
     _groupRoutes,
 
-    install(ctx, options) {
+    $install(ctx, options) {
       const routeMappings = require('route-mappings');
 
       const _router = routeMappings();
@@ -127,7 +127,7 @@ module.exports = (Grown, util) => {
       };
     },
 
-    mixins() {
+    $mixins() {
       return {
         methods: {
           routes: this._mappings,

@@ -166,8 +166,8 @@ function grownFactory($, options) {
             }
 
             Object.keys(p).forEach(k => {
-              if (k.indexOf('before_') === 0) {
-                this.on(k, p[k].bind(p));
+              if (k.indexOf('$before_') === 0) {
+                this.on(k.substr(1), p[k].bind(p));
               }
             });
 
@@ -183,8 +183,8 @@ function grownFactory($, options) {
             }
 
             /* istanbul ignore else */
-            if (typeof p.install === 'function') {
-              util.flattenArgs(p.install.call(p, this, scope._options)).forEach(def => {
+            if (typeof p.$install === 'function') {
+              util.flattenArgs(p.$install.call(p, this, scope._options)).forEach(def => {
                 /* istanbul ignore else */
                 if (Object.prototype.toString.call(def) === '[object Object]') {
                   util.mergeDefinitionsInto.call(p, this, def);
