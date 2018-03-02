@@ -1,6 +1,6 @@
 {
   "name": "@grown/cli",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "main": "index.js",
   "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
   "license": "MIT",
@@ -8,18 +8,9 @@
     "grown": "bin/grown"
   },
   "dependencies": {
-    "@grown/bare": "^0.0.1",
-    "@grown/logger": "^0.0.1",
-    "@grown/repl": "^0.0.1",
-    "debug": "^3.1.0"
-  },
-  "devDependencies": {
-    "codecov": "^3.0.0",
-    "eslint": "^4.11.0",
-    "eslint-config-airbnb-base": "^12.1.0",
-    "eslint-plugin-import": "^2.8.0",
-    "istanbul": "^0.4.5",
-    "jasmine-node": "^2.0.0-beta4"
+    "@grown/bare": "^0.0.3",
+    "@grown/logger": "^0.0.2",
+    "@grown/repl": "^0.0.2"
   },
   "publishConfig": {
     "access": "public"

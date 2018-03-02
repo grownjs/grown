@@ -31,8 +31,6 @@ const util = require('./util');
 
 // @grown/grown barebones
 module.exports = (cwd, argv) => {
-  require('debug').enable('*');
-
   const _argv = util.argvParser(argv || process.argv.slice(2), {
     boolean: ['V', 'd', 'help'],
     alias: {

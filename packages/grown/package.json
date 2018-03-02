@@ -1,6 +1,6 @@
 {
   "name": "@grown/grown",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Experimental DSL for web applications",
   "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
   "license": "MIT",
@@ -22,7 +22,7 @@
     "jasmine-node": "2.0.0-beta4"
   },
   "dependencies": {
-    "@grown/bare": "^0.0.1",
+    "@grown/bare": "^0.0.3",
     "debug": "^3.1.0"
   },
   "publishConfig": {
