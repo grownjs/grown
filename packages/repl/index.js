@@ -90,7 +90,7 @@ module.exports = (Grown, util) => {
     });
 
     repl.defineCommand('prune', {
-      help: 'Delete the history and logs',
+      help: 'Delete the history and clear the active log',
       action() {
         process.nextTick(() => {
           fs.writeFileSync(logFile, '');
