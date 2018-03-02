@@ -74,12 +74,13 @@ module.exports = (Grown, util) => {
 
     load(repository) {
       const map = {};
-      const refs = repository._getSchemas()
+      const refs = repository._getSchemas();
 
       repository._getModels().forEach(model => {
-        const schema = refs[model.$schema.id];
+        const _schema = (model.options || model).$schema;
+        const schema = refs[_schema.id];
 
-        map[model.$schema.id] = {
+        map[_schema.id] = {
           fake: opts => this._fake(schema, refs, opts),
           fakeAll: opts => this._fakeAll(schema, refs, opts),
           assert: data => this._assertFrom(schema, refs, data),
