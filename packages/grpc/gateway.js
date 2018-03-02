@@ -18,8 +18,11 @@ module.exports = (Grown, util) => {
         throw new Error(`${util.inspect(client).split(' ')[0]}#${method} is not a function`);
       }
 
+      if (typeof data === 'undefined') {
+        throw new Error(`${util.inspect(client).split(' ')[0]}#${method}: Missing data`);
+      }
+
       client[method](data, { deadline }, (error, result) => {
-        console.log(data, error, result);
         /* istanbul ignore else */
         if (error) {
           let parsedError;
