@@ -4,6 +4,16 @@ const path = require('path');
 const fs = require('fs');
 
 module.exports = (Grown, util) => {
+  const logDir = path.join(Grown.cwd, 'logs');
+
+  /* istanbul ignore else */
+  if (!fs.existsSync(logDir)) {
+    fs.mkdirSync(logDir);
+  }
+
+  const logFile = process.env.NODE_REPL_HISTORY
+    || path.join(logDir, `REPL.${this.logName || 'default'}.log`);
+
   const Logger = require('log-pose');
   const _utils = require('log-pose/lib/utils.js');
 
@@ -14,16 +24,6 @@ module.exports = (Grown, util) => {
   }
 
   function _startREPL() {
-    const logDir = path.join(Grown.cwd, 'logs');
-
-    /* istanbul ignore else */
-    if (!fs.existsSync(logDir)) {
-      fs.mkdirSync(logDir);
-    }
-
-    const logFile = process.env.NODE_REPL_HISTORY
-      || path.join(logDir, `REPL.${this.logName || 'default'}.log`);
-
     let fd;
     let ws;
 
@@ -86,6 +86,18 @@ module.exports = (Grown, util) => {
       help: 'Show the history',
       action() {
         Logger.getLogger().write(repl.rli.history.slice().reverse().join('\n'));
+        repl.displayPrompt();
+      },
+    });
+
+    repl.defineCommand('prune', {
+      help: 'Delete the history and logs',
+      action() {
+        process.nextTick(() => {
+          fs.writeFileSync(logFile, '');
+        });
+
+        repl.rli.history = [];
         repl.displayPrompt();
       },
     });
