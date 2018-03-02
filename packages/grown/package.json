@@ -23,9 +23,7 @@
   },
   "dependencies": {
     "@grown/bare": "^0.0.1",
-    "debug": "^3.1.0",
-    "object-new": "^0.2.3",
-    "wargs": "^0.8.1"
+    "debug": "^3.1.0"
   },
   "publishConfig": {
     "access": "public"

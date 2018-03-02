@@ -2,9 +2,6 @@
 
 const debug = require('debug')('grown');
 
-const wargs = require('wargs');
-const $new = require('object-new');
-
 const _pkg = require('./package.json');
 
 const util = require('./lib/util');
@@ -174,13 +171,13 @@ function grownFactory($, options) {
               }
             });
 
-            if (p.mixins) {
-              scope._extensions.push(bind.call(p, p.mixins));
+            if (p.$mixins) {
+              scope._extensions.push(bind.call(p, p.$mixins));
             } else if (p.extensions) {
               p.extensions.forEach(x => {
                 /* istanbul ignore else */
-                if (x.mixins) {
-                  scope._extensions.push(bind.call(p, x.mixins));
+                if (x.$mixins) {
+                  scope._extensions.push(bind.call(p, x.$mixins));
                 }
               });
             }
@@ -214,7 +211,7 @@ function grownFactory($, options) {
 }
 
 module.exports = (cwd, argv) => {
-  const _argv = wargs(argv || process.argv.slice(2), {
+  const _argv = util.argvParser(argv || process.argv.slice(2), {
     boolean: ['V', 'd', 'help'],
     alias: {
       V: 'verbose',
@@ -226,9 +223,7 @@ module.exports = (cwd, argv) => {
   });
 
   // private container
-  const $ = function $(id, props, extensions) {
-    return $new(id, props, $, extensions);
-  };
+  const $ = util.newContainer();
 
   const Grown = $('Grown', grownFactory.bind(null, $));
 

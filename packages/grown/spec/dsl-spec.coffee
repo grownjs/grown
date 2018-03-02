@@ -1,10 +1,12 @@
 #require('debug').enable '*'
 
-Grown = require('../index')()
-
-Grown.use require('../../test')
+Grown = null
 
 describe 'Grown', ->
+  beforeEach ->
+    Grown = require('../index')()
+    Grown.use require('../../test')
+
   it 'is a function', ->
     expect(typeof Grown).toEqual 'function'
     expect(typeof Grown.new).toEqual 'function'
@@ -40,8 +42,10 @@ describe 'Grown', ->
       expect(Object.keys(ex)).toEqual []
 
   describe '#do', ->
-    it 'can test guard blocks as promises', Grown.do ->
-      new Promise((cb) -> setTimeout(cb, 1000))
+    it 'can test guard blocks as promises', (done) ->
+      (Grown.do.call @, ->
+        new Promise((cb) -> setTimeout(cb, 1000))
+      )(done)
 
     describe 'rescue', ->
       beforeEach ->
@@ -59,15 +63,17 @@ describe 'Grown', ->
         expect(@calls).toEqual ['guard', 'rescue', 'printf']
         expect(@result).toEqual 'Error: OK'
 
-      it 'can use Grown.Logger if it exists', Grown.do (rescue) ->
-        @calls.push 'guard'
-        expect(@result).toBe null
-
-        rescue (e) ->
-          @calls.push 'rescue'
+      it 'can use Grown.Logger if it exists', (done) ->
+        (Grown.do.call @, (rescue) =>
+          @calls.push 'guard'
           expect(@result).toBe null
 
-        throw 'OK'
+          rescue.call @, (e) =>
+            @calls.push 'rescue'
+            expect(@result).toBe null
+
+          throw 'OK'
+        )(done)
 
   describe 'Test', ->
     beforeEach ->
@@ -76,7 +82,7 @@ describe 'Grown', ->
 
     describe '#plug -> #mount -> #listen -> #request', ->
       it 'runs over the current instance', (done) ->
-        g = @g.plug mixins: Grown.Dummy
+        g = @g.plug $mixins: props: value: 42
 
         expect(g).toBe @g
 
