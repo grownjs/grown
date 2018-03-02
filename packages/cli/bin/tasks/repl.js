@@ -8,10 +8,14 @@ Start the console
 --use   Entry file exporting models
 
 Hooks:
-  models   # Load and attach your models into the REPL
+  db   # Load models into the session
+  use  # Load external modules
 
 Examples:
-  grown repl models --use db/models
+  grown repl db --use db/models
+  grown repl use:lib/services use:path/to/module
+
+NOTE: All additional arguments are executed as single hooks
 
 `;
 
@@ -19,6 +23,6 @@ module.exports = {
   description: USAGE_INFO,
   callback(Grown, util) {
     Grown.use(require('@grown/repl'));
-    Grown.REPL.start(require('../lib/helpers')(Grown, util));
+    Grown.REPL.start(require('../lib/hooks')(Grown, util));
   },
 };

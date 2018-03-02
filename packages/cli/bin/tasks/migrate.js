@@ -25,9 +25,9 @@ Perform database changes
 Examples:
   grown migrate --use db/models --apply "migration description"
   grown migrate --use db/models --from one --to three
-  grown migrate --use db/models -- one two three
+  grown migrate --use db/models one two three --up
 
-NOTE: All additional arguments after -- are taken as single migrations
+NOTE: All additional arguments are taken as single migrations
 
 `;
 
@@ -181,8 +181,8 @@ module.exports = {
           });
 
           /* istanbul ignore else */
-          if (Grown.argv.raw.length) {
-            params.migrations = Grown.argv.raw;
+          if (Grown.argv._.length) {
+            params.migrations = Grown.argv._;
           }
 
           return Promise.all([

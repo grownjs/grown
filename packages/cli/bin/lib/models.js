@@ -9,8 +9,7 @@ module.exports = (Grown, util) => {
   }
 
   const database = path.resolve(Grown.cwd, Grown.argv.flags.use);
-  const factory = require(database);
-  const Models = factory(Grown, util);
+  const Models = Grown.use(require(database));
 
   const _allowed = Grown.argv.flags.only
     ? String(Grown.argv.flags.only).split(',')

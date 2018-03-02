@@ -1,7 +1,19 @@
 'use strict';
 
+const path = require('path');
+
 module.exports = (Grown, util) => ({
-  models(ctx) {
+  use(ctx) {
+    util.flattenArgs(Grown.argv.params.use)
+      .forEach(moduleId => {
+        try {
+          Grown.use(require(path.join(Grown.cwd, moduleId)));
+        } catch (e) {
+          throw util.cleanError(e);
+        }
+      });
+  },
+  db(ctx) {
     const Models = require('./models')(Grown, util);
 
     return Models.connect()
