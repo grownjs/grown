@@ -72,8 +72,7 @@ module.exports = (Grown, util) => {
 
     repl.rli.addListener('line', code => {
       if (code && code !== '.history') {
-        /* istanbul ignore else */
-        if (ws && repl.rli.history.indexOf(code, 1) === -1) {
+        if (ws && repl.rli.history[1] !== code) {
           ws.write(`${code}\n`);
         }
       } else {
@@ -153,8 +152,6 @@ module.exports = (Grown, util) => {
 
       util.readOnlyProperty(this, 'repl', repl);
 
-      repl.setPrompt(_utils.style('{% gray.pointer %}'));
-
       const hooks = Grown.argv._.slice()
         .concat(Object.keys(Grown.argv.params));
 
@@ -182,6 +179,13 @@ module.exports = (Grown, util) => {
 
       Promise.resolve()
         .then(() => Promise.all(cbs.map(cb => cb && cb.call(null, ctx, util))))
+        .then(() => {
+          if (typeof Grown.argv.flags.load === 'string') {
+            repl.commands.load.action.call(repl, Grown.argv.flags.load);
+          }
+
+          repl.setPrompt(_utils.style('{% gray.pointer %}'));
+        })
         .then(() => {
           logger.info('{% log Type %} {% bold .help %} {% gray to list all available commands %}\n');
 
