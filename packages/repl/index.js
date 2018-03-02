@@ -10,7 +10,7 @@ module.exports = (Grown, util) => {
   const REPL = require('repl');
 
   function _initializeContext(target) {
-    util.readOnlyProperty(target, 'Grown', () => Grown);
+    util.readOnlyProperty(target, '$', () => Grown);
   }
 
   function _startREPL() {
@@ -131,7 +131,11 @@ module.exports = (Grown, util) => {
     _runCMD,
 
     start() {
-      const tasks = util.flattenArgs(arguments);
+      const tasks = util.flattenArgs(arguments).reduce((prev, cur) => {
+        util.extendValues(prev, cur);
+        return prev;
+      }, {});
+
       const repl = this._startREPL();
       const cbs = [];
 
@@ -139,26 +143,24 @@ module.exports = (Grown, util) => {
 
       repl.setPrompt(_utils.style('{% gray.pointer %}'));
 
-      const use = Grown.argv._.slice();
+      const hooks = Grown.argv._.slice()
+        .concat(Object.keys(Grown.argv.params));
 
-      tasks.forEach(task => {
-        Object.keys(task).forEach(key => {
-          /* istanbul ignore else */
-          if (use.indexOf(key) !== -1) {
-            cbs.push(task[key]);
-          }
-        });
-      });
+      hooks.forEach(x => {
+        if (tasks[x]) {
+          cbs.push(tasks[x]);
+        }
+      })
 
-      if (!cbs.length && use.length) {
+      if (!cbs.length && hooks.length) {
         throw new Error(
-          use.length === 1
-            ? `Missing hook '${use[0]}'`
-            : `Missing hooks ${use.join(', ')}`);
+          hooks.length === 1
+            ? `Missing hook '${hooks[0]}'`
+            : `Missing hooks ${hooks.join(', ')}`);
       }
 
       const logger = Logger.getLogger()
-        .info('\r{% log Loading %s... %}', use.join(','));
+        .info('\r{% log Loading %s... %}', hooks.join(', '));
 
       // FIXME: enable extensions?
       const ctx = {
