@@ -6,16 +6,14 @@ Start the console
 
 --db    Database to be used, identifier
 --use   Entry file exporting models
+--load  Run scripts into the REPL
 
 Hooks:
-  db   # Load models into the session
-  use  # Load external modules
+  connect  # Load models into the session
 
 Examples:
-  grown repl db --use db/models
-  grown repl use:lib/services use:path/to/module
-
-NOTE: All additional arguments are executed as single hooks
+  grown repl connect --use db/models
+  grown repl --load path/to/commands
 
 `;
 
