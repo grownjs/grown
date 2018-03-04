@@ -12,6 +12,7 @@ require('global-or-local')
     '@grown/repl',
     '@grown/router',
     '@grown/schema',
+    '@grown/server',
     '@grown/static',
     '@grown/tarima',
     '@grown/logger',
@@ -29,13 +30,15 @@ require('global-or-local')
 
 const util = require('./util');
 
-// @grown/grown barebones
+// Grown-container barebones
 module.exports = (cwd, argv) => {
   const _argv = util.argvParser(argv || process.argv.slice(2), {
     boolean: ['V', 'd', 'help'],
     alias: {
       V: 'verbose',
       d: 'debug',
+      p: 'port',
+      h: 'host',
       e: 'env',
     },
   });
@@ -43,12 +46,18 @@ module.exports = (cwd, argv) => {
   // private container
   const $ = util.newContainer();
 
-  const Grown = $('Grown', () => {
-    throw new Error('Not implemented');
+  const Grown = $('Grown', {
+    init(options) {
+      if (!Grown.Server) {
+        throw new Error('Missing Grown.Server');
+      }
+
+      return Grown.Server._createServer($, options);
+    },
   });
 
   // defaults
-  process.name = 'Grown (bare)';
+  process.name = 'Grown';
 
   require('./environment')(_argv);
   require('./configure')($, cwd || process.cwd(), _argv, Grown);

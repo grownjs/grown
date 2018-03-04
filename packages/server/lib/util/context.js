@@ -4,15 +4,12 @@ const debug = require('debug')('grown:context');
 
 const STATUS_CODES = require('http').STATUS_CODES;
 
-const util = require('@grown/bare/util/object');
-const proc = require('@grown/bare/util/process');
-
 function buildSettings(data) {
   return (key, defvalue) => {
     let value;
 
     try {
-      value = util.getProp(data, key, defvalue);
+      value = this.getProp(data, key, defvalue);
     } catch (e) {
       throw new Error(`Cannot resolve config: ${key}`);
     }
@@ -161,10 +158,10 @@ function doneCallback(err, conn, options) {
     });
 }
 
-module.exports = {
-  buildSettings,
+module.exports = util => ({
+  buildSettings: buildSettings.bind(util),
   buildPubsub,
   buildError,
   endCallback,
   doneCallback,
-};
+});

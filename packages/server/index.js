@@ -1,10 +1,10 @@
 'use strict';
 
-const debug = require('debug')('grown');
+const debug = require('debug')('grown:server');
 
 const _pkg = require('./package.json');
 
-const util = require('./lib/util');
+const _util = require('./lib/util');
 const _mount = require('./lib/mount');
 const _listen = require('./lib/listen');
 
@@ -24,7 +24,7 @@ function bind(mixins) {
   return mixins;
 }
 
-function grownFactory($, options) {
+function _grownFactory($, util, options) {
   options = options || {};
 
   // shared defaults
@@ -210,28 +210,14 @@ function grownFactory($, options) {
   };
 }
 
-module.exports = (cwd, argv) => {
-  const _argv = util.argvParser(argv || process.argv.slice(2), {
-    boolean: ['V', 'd', 'help'],
-    alias: {
-      V: 'verbose',
-      d: 'debug',
-      p: 'port',
-      h: 'host',
-      e: 'env',
-    },
+module.exports = (Grown, util) => {
+  const fixedUtils = _util(util);
+
+  function _createServer($, options) {
+    return _grownFactory($, fixedUtils, options);
+  }
+
+  return Grown('Server', {
+    _createServer,
   });
-
-  // private container
-  const $ = util.newContainer();
-
-  const Grown = $('Grown', grownFactory.bind(null, $));
-
-  // defaults
-  process.name = 'Grown (bare)';
-
-  require('@grown/bare/environment')(_argv);
-  require('@grown/bare/configure')($, cwd || process.cwd(), _argv, Grown);
-
-  return Grown;
 };
