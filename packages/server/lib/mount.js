@@ -2,8 +2,6 @@
 
 const debug = require('debug')('grown:mount');
 
-const buildMiddleware = require('./plug/middleware');
-
 module.exports = function $mount(name, handler, callback) {
   /* istanbul ignore else */
   if (typeof name !== 'string') {
@@ -12,7 +10,7 @@ module.exports = function $mount(name, handler, callback) {
     name = null;
   }
 
-  const cb = buildMiddleware(handler, name
+  const cb = this._.buildMiddleware(handler, name
     ? `mount.${name}`
     : 'mount');
 

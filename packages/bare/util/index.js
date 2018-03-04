@@ -8,6 +8,9 @@ const objectUtil = require('./object');
 const processUtil = require('./process');
 const helpersUtil = require('./helpers');
 
+const buildPipeline = require('./plug/pipeline');
+const buildMiddleware = require('./plug/middleware');
+
 // merge all helpers
 util._extend(module.exports, objectUtil);
 util._extend(module.exports, processUtil);
@@ -21,6 +24,9 @@ Object.keys($new).forEach(key => {
 // common utils
 module.exports.inspect = util.inspect;
 module.exports.argvParser = wargs;
+
+module.exports.buildPipeline = buildPipeline;
+module.exports.buildMiddleware = buildMiddleware;
 
 // object-new wrapper
 module.exports.newContainer = () =>

@@ -35,6 +35,7 @@ function _grownFactory($, util, options) {
 
   const scope = {};
 
+  scope._ = util;
   scope._hosts = {};
   scope._servers = {};
   scope._protocols = {};
