@@ -1,7 +1,25 @@
 {
+  "name": "grown",
+  "version": "1.0.0",
+  "homepage": "https://grown.fun",
+  "description": "Experimental DSL for web applications",
+  "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
+  "license": "MIT",
+  "main": "index.js",
   "scripts": {
     "pretest": "lerna bootstrap",
-    "test": "lerna run test --scope @grown/server"
+    "test": "lerna run test --scope @grown/bare --scope @grown/server"
+  },
+  "bugs": {
+    "url": "https://github.com/pateketrueke/grown/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pateketrueke/grown.git"
+  },
+  "dependencies": {
+    "@grown/bare": "^0.0.4",
+    "@grown/server": "^0.0.3"
   },
   "devDependencies": {
     "lerna": "^2.8.0"
