@@ -1,0 +1,7 @@
+node_modules
+packages
+.gitattributes
+.travis.yml
+.nvmrc
+*.json
+*.log
