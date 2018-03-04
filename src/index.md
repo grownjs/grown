@@ -10,7 +10,7 @@ See: [NVM installation instructions](https://github.com/creationix/nvm#installat
 Once done, install the main `grown` dependency:
 
 ```bash
-$ npm install @grown/grown
+$ npm install grown
 ```
 
 ## How it works?
@@ -18,10 +18,10 @@ $ npm install @grown/grown
 If you're beginning, starting a new web server is a common task:
 
 ```js
-// require and create our web-server interface
-const Grown = require('@grown/grown')();
+// require and create a Grown-container
+const Grown = require('grown')();
 
-// create a web-server instance
+// create the web-server instance
 const server = new Grown();
 
 // append middleware
