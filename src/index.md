@@ -15,9 +15,9 @@ Once done, install the main `grown` dependency:
 $ npm install grown --save
 ```
 
-## How it works?
+## How it works
 
-If you're beginning, starting a new web server is a common task:
+On the beginning, starting a new web server is a simple task:
 
 ```js
 /* @runkit */
@@ -36,7 +36,6 @@ server.mount(ctx => {
 server.listen(8080);
 ```
 
-Checkout the following article to get all available
-methods and properties.
+Quite simple, right?
 
 ➯ Next: [The interface](./docs)
