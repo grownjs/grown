@@ -19,9 +19,11 @@ module.exports = () => {
 };
 ```
 
+### Starting the server
+
 There's no need to start the server manually, it'll be handled by the `CLI` extension.
 
-Get `@grown/cli` globally to start your application:
+Get `@grown/cli` globally to run your application:
 
 ```bash
 $ npm install -g @grown/cli
