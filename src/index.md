@@ -12,7 +12,7 @@ See: [NVM installation instructions](https://github.com/creationix/nvm#installat
 Once done, install the main `grown` dependency:
 
 ```bash
-$ npm install grown
+$ npm install grown --save
 ```
 
 ## How it works?
@@ -25,20 +25,19 @@ If you're beginning, starting a new web server is a common task:
 const Grown = require('grown')();
 
 // create the web-server instance
-const server = new Grown();
+const app = new Grown();
 
 // append middleware
-server.mount(ctx => {
-  ctx.res.end('<h1>It works!</h1>');
+app.mount(ctx => {
+  ctx.res.end('<pre>It works!</pre>');
 });
 
 // starts the web-server
-server.listen(8080);
+app.listen(8080);
 ```
 
-In the code above `Grown` is just a _class-and-factory_ which can receive
-different arguments to create, overload or declare extensions.
-
-Nothing glorious but it can do more stuff...
+As you can see the basic usage is pretty straight-forward,
+checkout the following article to get all available
+methods and properties.
 
 ➯ Next: [The interface](./docs)
