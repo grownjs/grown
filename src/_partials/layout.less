@@ -9,13 +9,28 @@
   background-color: #FFFFFF;
 }
 
+#sidebar {
+  background-color: @hi-silver;
+  border-bottom: 1px dashed @hi-gray;
+}
+
 @media screen and (min-width: 640px) {
+  body {
+    background-image: linear-gradient(to right,
+      @hi-silver 0%,
+      @hi-silver 50%,
+      #FFFFFF 51%,
+      #FFFFFF 100%);
+  }
+
   #wrapper {
     max-width: 940px;
     margin: 0 auto;
   }
 
   #sidebar {
+    border: 0;
+    border-right: 1px dashed @hi-gray;
     overflow: auto;
     position: fixed;
     width: 220px;
