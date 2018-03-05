@@ -10,7 +10,7 @@
   a.onclick = e => {
     delete a.onclick;
     e.preventDefault();
-    a.innerText = 'Loading..';
+    a.innerText = 'Loading...';
     const target = document.createElement('div');
     const notebook = RunKit.createNotebook({
       element: target,
