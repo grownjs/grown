@@ -6,13 +6,33 @@ $render: ../_layouts/default.pug
 Our main module is a factory which takes two optional arguments:
 
 ```js
-// our generated class-and-factory
-const Grown = require('@grown/grown')(cwd, argv);
+const cwd = process.cwd();
+const argv = process.argv.slice(2);
+
+const Grown = require('grown')(cwd, argv);
 ```
 
-If no arguments are given both values will be taken from the current `process`.
+> If no arguments are given both values will be taken from the current `process`
 
-## Static props
+Once created, the `Grown` function behaves like a container, it can be called to
+store and retrieve definitions from it.
+
+```js
+// register an extension
+Grown('Application', {
+  name: 'Example',
+});
+
+// both calls are equivalent
+console.log(Grown.Application.name);
+console.log(Grown('Application.name'));
+```
+
+See: [`object-new` definitions](https://www.npmjs.com/package/object-new#definitions)
+
+---
+
+### Static props
 
 - `version` &mdash; will return the framework's version
 - `argv` &mdash; parsed argv from command-line
@@ -23,48 +43,23 @@ If no arguments are given both values will be taken from the current `process`.
 
 ---
 
-## Static methods
+### Static methods
 
-- `use(module)` &mdash; register third-party extensions
-- `new([options])` &mdash; instantiate a new server
+- `do(body)` &mdash; wraps code into promises
+- `use(module)` &mdash; register custom extensions
+- `new([options])` &mdash; shortcut for `new Grown(...)`
+- `load(cwd[, suffix])` &mdash; allow to collect extensions
 
 ➯ Next: [Extensions](./docs/extensions)
 
 ---
 
-## Constructor
+## The instance
 
-- `Grown(classpath[, definition])` &mdash; extensions' accesor
-
-```js
-// register an extension
-Grown('Application', {
-  name: 'Example',
-});
-
-// both calls are equivalent
-console.log(Grown('Application').name);
-console.log(Grown.Application.name);
-```
-
-See: [`object-new` definitions](https://www.npmjs.com/package/object-new#definitions)
-
----
-
-## Server instances
-
-Our interface can create any amount of server instances by using the `new` operator or method:
+When you invoke the `Grown` constructor a new `Server` instance is created, e.g.
 
 ```js
-// both calls are equivalent
-const server1 = new Grown();
-const server2 = Grown.new();
-```
-
-Servers can take options during instantiation:
-
-```js
-const server = Grown.new({
+const server = new Grown({
   foo: 'bar',
   baz: {
     buzz: 'bazzinga',
@@ -72,7 +67,7 @@ const server = Grown.new({
 });
 ```
 
-Those options are only accessible within the connection:
+Received options are accessible only within the connection:
 
 ```js
 server.mount((ctx, options) => {
@@ -91,22 +86,19 @@ const x = options('some.value', 42);
 const y = options('a.required.setting.here');
 ```
 
-➯ Next: [Middleware](./docs/middleware)
+➯ Next: [Connection](./docs/connection)
 
 ---
 
-## Instance methods
+### Instance methods
 
 - `on(e, cb)` &mdash; subscribe to events
 - `off(e, cb)` &mdash; unsubscribe from events
 - `once(e, cb)` &mdash; subscribe (once) to events
 - `emit(e[, ...])` &mdash; broadcast events to listeners
 - `run(scope)` &mdash; dispatch a request through the middleware
-- `plug(extensions)` &mdash; overload extensions from connection
+- `plug(extensions)` &mdash; extends the server with additional functionality
 - `mount(middleware)` &mdash; append middleware to the server instance
 - `listen([connection])` &mdash; starts a new web server connection
 
-> Events run on the `server` instance and extensions has access to it.
-> Extensions run on the `connection` instance and middleeware has access to it.
-
-➯ Next: [Connection](./docs/connection)
+➯ Next: [Middleware](./docs/middleware)
