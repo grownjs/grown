@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base href="/">
+    <meta lang="en">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="HandheldFriendly" content="true">
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no"><!--[if lt IE 9]>
+    <script src="https://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <script src="https://css3-mediaqueries-js.googlecode.com/svn/trunk/css3-mediaqueries.js"></script><![endif]-->
+    <title>Grown // Command line</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://unpkg.com/highlight.js/styles/default.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Sorts+Mill+Goudy">
+  </head>
+  <body class="reset">
+    <main id="wrapper">
+      <aside class="inverted" id="sidebar">
+        <div class="body">
+          <h1>Grown</h1>
+          <p>Experimental DSL for web applications</p>
+          <div class="sp"><a href="//travis-ci.org/pateketrueke/grown" target="_blank"><img src="//api.travis-ci.org/pateketrueke/grown.svg"></a><a href="//codecov.io/gh/pateketrueke/grown" target="_blank"><img src="//codecov.io/gh/pateketrueke/grown/branch/master/graph/badge.svg"></a></div>
+          <ul class="mt reset">
+            <li><a href="/">Installation</a>
+            </li>
+            <li><a href="/docs">The interface</a>
+            </li>
+            <li><strong><a class="here" href="/docs/command-line">Command line</a></strong>
+            </li>
+            <li><a href="/docs/extensions">Extensions</a>
+            </li>
+            <li><a href="/docs/connection">Connection</a>
+            </li>
+            <li><a href="/docs/middlewares">Middlewares</a>
+            </li>
+          </ul>
+        </div>
+      </aside>
+      <div class="body" id="content">
+        <main>
+          <h1>Command line</h1><p>You may want to seperate the application code from the server initialization, e.g.</p>
+<p><strong>your-app/application.js</strong></p>
+<pre class="hljs"><code class="lang-js"><span class="hljs-comment">// require and create a Grown-container</span>
+<span class="hljs-keyword">const</span> Grown = <span class="hljs-built_in">require</span>(<span class="hljs-string">'grown'</span>)();
+
+<span class="hljs-built_in">module</span>.exports = <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+  <span class="hljs-comment">// create the web-server instance</span>
+  <span class="hljs-keyword">const</span> server = <span class="hljs-keyword">new</span> Grown();
+
+  <span class="hljs-keyword">return</span> server;
+};
+</code></pre>
+<p>There&#39;s no need to start the server manually, it&#39;ll be handled by the <code>CLI</code> extension.</p>
+<p>Get <code>@grown/cli</code> globally to start your application:</p>
+<pre class="hljs"><code class="lang-bash">$ npm install -g @grown/cli
+$ <span class="hljs-built_in">cd</span> your-app
+$ grown up
+</code></pre>
+<p>Try <code>grown --help</code> to get more usage info.</p>
+<p>➯ Next: <a href="./docs/extensions">Extensions</a></p>
+
+        </main>
+      </div>
+    </main>
+    <script>window.__runkit__ = {};</script>
+    <script src="https://embed.runkit.com"></script>
+    <script src="scripts.js"></script>
+  </body>
+</html>

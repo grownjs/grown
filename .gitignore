@@ -1,12 +1,4 @@
 .DS_Store
 *.log
-<<<<<<< HEAD
 *.todo
 node_modules
-=======
-/build
-/coverage
-/packages
-/node_modules
-/bower_components
->>>>>>> Implement toggles for runkit snippets; WIP
