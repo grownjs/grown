@@ -45,5 +45,6 @@ html
 
           != yield
 
+    script window.__runkit__ = !{JSON.stringify(runkit || {})};
     script(src='https://embed.runkit.com')
     script(src='scripts.js')

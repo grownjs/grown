@@ -1,6 +1,8 @@
 ---
 title: Installation
 $render: _layouts/default.pug
+runkit:
+  endpoint: true
 ---
 
 I suggest you installing NodeJS through NVM, using `v4.8.x` or higher is fine.
@@ -18,6 +20,7 @@ $ npm install grown
 If you're beginning, starting a new web server is a common task:
 
 ```js
+/* @runkit */
 // require and create a Grown-container
 const Grown = require('grown')();
 
