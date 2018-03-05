@@ -1,4 +1,4 @@
 ---
-title: Access
+title: Session
 $render: ../../../_layouts/default.pug
 ---

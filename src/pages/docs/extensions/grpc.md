@@ -1,4 +1,4 @@
 ---
-title: Access
+title: GRPC
 $render: ../../../_layouts/default.pug
 ---
