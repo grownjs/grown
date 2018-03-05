@@ -33,7 +33,7 @@ $render: ../../_layouts/default.pug
 
 `mount()`
 
-➯ Next: [Middleware](./docs/middleware)
+➯ Next: [Middlewares](./docs/middlewares)
 
 ---
 

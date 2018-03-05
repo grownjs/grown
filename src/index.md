@@ -25,19 +25,18 @@ If you're beginning, starting a new web server is a common task:
 const Grown = require('grown')();
 
 // create the web-server instance
-const app = new Grown();
+const server = new Grown();
 
 // append middleware
-app.mount(ctx => {
+server.mount(ctx => {
   ctx.res.end('<pre>It works!</pre>');
 });
 
 // starts the web-server
-app.listen(8080);
+server.listen(8080);
 ```
 
-As you can see the basic usage is pretty straight-forward,
-checkout the following article to get all available
+Checkout the following article to get all available
 methods and properties.
 
 ➯ Next: [The interface](./docs)

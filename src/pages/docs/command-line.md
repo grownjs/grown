@@ -3,53 +3,32 @@ title: Command line
 $render: ../../_layouts/default.pug
 ---
 
-## Application script
+You may want to seperate the application code from the server initialization, e.g.
+
+**your-app/application.js**
 
 ```js
-const Grown = require('@grown/grown')();
+// require and create a Grown-container
+const Grown = require('grown')();
 
 module.exports = () => {
+  // create the web-server instance
   const server = new Grown();
 
   return server;
 };
 ```
 
----
+There's no need to start the server manually, it'll be handled by the `CLI` extension.
 
-## REPL script
+Get `@grown/cli` globally to start your application:
 
-```js
-const Grown = require('@grown/grown')();
-
-Grown.use(require('@grown/repl'));
-
-Grown.REPL.start({
-  example(ctx) {
-    // Node's REPL instance
-    ctx.repl;
-
-    // log-pose instance
-    ctx.logger;
-  },
-});
+```bash
+$ npm install -g @grown/cli
+$ cd your-app
+$ grown up
 ```
 
-See: [`log-pose` methods](https://github.com/pateketrueke/log-pose)
+Try `grown --help` to get more usage info.
 
----
-
-## Server script
-
-```js
-module.exports = () => {
-  const serverFactory = require('./app');
-  const server = serverFactory();
-
-  server.listen(8080);
-};
-
-if (require.main === module) {
-  module.exports();
-}
-```
+➯ Next: [Extensions](./docs/extensions)

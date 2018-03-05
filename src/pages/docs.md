@@ -101,4 +101,4 @@ const y = options('a.required.setting.here');
 - `mount(middleware)` &mdash; append middleware to the server instance
 - `listen([connection])` &mdash; starts a new web server connection
 
-➯ Next: [Middleware](./docs/middleware)
+➯ Next: [Middlewares](./docs/middlewares)
