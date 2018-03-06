@@ -36,6 +36,6 @@ server.mount(ctx => {
 server.listen(8080);
 ```
 
-With this simple setup you're ready to continue!
+---
 
 ➯ Next: [The interface](./docs)

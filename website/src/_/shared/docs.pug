@@ -22,31 +22,36 @@ mixin linkTo(href, title)
       img(src='//codecov.io/gh/pateketrueke/grown/branch/master/graph/badge.svg')
 
   ul.mt.reset
-    li: +linkTo('/', 'Installation')
-    li: +linkTo('/docs', 'The interface')
-    li: +linkTo('/docs/command-line', 'Command line')
     li
-      +linkTo('/docs/extensions', 'Extensions')
-      if url.indexOf('/docs/extensions') === 0
-        ul.pl.reset
-          li: +linkTo('/docs/extensions/access', 'Access')
-          li: +linkTo('/docs/extensions/bare', 'Bare')
-          li: +linkTo('/docs/extensions/cli', 'CLI')
-          li: +linkTo('/docs/extensions/conn', 'Conn')
-          li: +linkTo('/docs/extensions/graphql', 'GraphQL')
-          li: +linkTo('/docs/extensions/grpc', 'GRPC')
-          li: +linkTo('/docs/extensions/logger', 'Logger')
-          li: +linkTo('/docs/extensions/model', 'Model')
-          li: +linkTo('/docs/extensions/parsers', 'Parsers')
-          li: +linkTo('/docs/extensions/render', 'Render')
-          li: +linkTo('/docs/extensions/repl', 'REPL')
-          li: +linkTo('/docs/extensions/router', 'Router')
-          li: +linkTo('/docs/extensions/schema', 'Schema')
-          li: +linkTo('/docs/extensions/server', 'Server')
-          li: +linkTo('/docs/extensions/session', 'Session')
-          li: +linkTo('/docs/extensions/static', 'Static')
-          li: +linkTo('/docs/extensions/tarima', 'Tarima')
-          li: +linkTo('/docs/extensions/test', 'Test')
-          li: +linkTo('/docs/extensions/upload', 'Upload')
-    li: +linkTo('/docs/connection', 'Connection')
-    li: +linkTo('/docs/middlewares', 'Middlewares')
+      h3.reset APIs
+      ul.pl.reset
+        li: +linkTo('/', 'Installation')
+        li: +linkTo('/docs', 'The interface')
+        li: +linkTo('/docs/command-line', 'Command line')
+    li
+      h3.mt.reset Add-ons
+      ul.pl.reset
+        li
+          +linkTo('/docs/extensions', 'Extensions')
+          if url.indexOf('/docs/extensions') === 0
+            ul.pl.reset
+              li: +linkTo('/docs/extensions/access', 'Access')
+              li: +linkTo('/docs/extensions/bare', 'Bare')
+              li: +linkTo('/docs/extensions/cli', 'CLI')
+              li: +linkTo('/docs/extensions/conn', 'Conn')
+              li: +linkTo('/docs/extensions/graphql', 'GraphQL')
+              li: +linkTo('/docs/extensions/grpc', 'GRPC')
+              li: +linkTo('/docs/extensions/logger', 'Logger')
+              li: +linkTo('/docs/extensions/model', 'Model')
+              li: +linkTo('/docs/extensions/parsers', 'Parsers')
+              li: +linkTo('/docs/extensions/render', 'Render')
+              li: +linkTo('/docs/extensions/repl', 'REPL')
+              li: +linkTo('/docs/extensions/router', 'Router')
+              li: +linkTo('/docs/extensions/schema', 'Schema')
+              li: +linkTo('/docs/extensions/server', 'Server')
+              li: +linkTo('/docs/extensions/session', 'Session')
+              li: +linkTo('/docs/extensions/static', 'Static')
+              li: +linkTo('/docs/extensions/tarima', 'Tarima')
+              li: +linkTo('/docs/extensions/test', 'Test')
+              li: +linkTo('/docs/extensions/upload', 'Upload')
+        li: +linkTo('/docs/middlewares', 'Middlewares')

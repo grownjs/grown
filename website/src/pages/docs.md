@@ -30,7 +30,10 @@ console.log(Grown('Application.name'));
 
 See: [`object-new` definitions](https://www.npmjs.com/package/object-new#definitions)
 
----
+
+### Instances
+
+Invoking `new Grown` will return a [Server](./docs/extensions/server) instance.
 
 ### Static props
 
@@ -39,10 +42,6 @@ See: [`object-new` definitions](https://www.npmjs.com/package/object-new#definit
 - `cwd` &mdash; current working directory
 - `env` &mdash; current `process.env.NODE_ENV`
 
-➯ Next: [Command line](./docs/command-line)
-
----
-
 ### Static methods
 
 - `do(body)` &mdash; wraps code into promises
@@ -50,55 +49,6 @@ See: [`object-new` definitions](https://www.npmjs.com/package/object-new#definit
 - `new([options])` &mdash; shortcut for `new Grown(...)`
 - `load(cwd[, suffix])` &mdash; allow to collect extensions
 
-➯ Next: [Extensions](./docs/extensions)
-
 ---
 
-## The instance
-
-When you invoke the `Grown` constructor a new `Server` instance is created, e.g.
-
-```js
-const server = new Grown({
-  foo: 'bar',
-  baz: {
-    buzz: 'bazzinga',
-  },
-});
-```
-
-Received options are accessible only within the connection:
-
-```js
-server.mount((ctx, options) => {
-  console.log(options('foo')); // bar
-  console.log(options('baz.buzz')); // bazzinga
-});
-```
-
-Options can resolve to default values, otherwise they'll throw an error:
-
-```js
-// it's fine to have default values
-const x = options('some.value', 42);
-
-// but some options should be present!
-const y = options('a.required.setting.here');
-```
-
-➯ Next: [Connection](./docs/connection)
-
----
-
-### Instance methods
-
-- `on(e, cb)` &mdash; subscribe to events
-- `off(e, cb)` &mdash; unsubscribe from events
-- `once(e, cb)` &mdash; subscribe (once) to events
-- `emit(e[, ...])` &mdash; broadcast events to listeners
-- `run(scope)` &mdash; dispatch a request through the middleware
-- `plug(extensions)` &mdash; extends the server with additional functionality
-- `mount(middleware)` &mdash; append middleware to the server instance
-- `listen([connection])` &mdash; starts a new web server connection
-
-➯ Next: [Middlewares](./docs/middlewares)
+➯ Next: [Command line](./docs/command-line)
