@@ -29,4 +29,4 @@ $ grown up
 
 Try `grown --help` to get more usage info.
 
-➯ Next: [Extensions](./docs/extensions)
+➯ Next: [Add-ons &rangle; Extensions](./docs/extensions)

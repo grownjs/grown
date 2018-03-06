@@ -51,4 +51,4 @@ Invoking `new Grown` will return a [Server](./docs/extensions/server) instance.
 
 ---
 
-➯ Next: [Command line](./docs/command-line)
+➯ Next: [APIs &rangle; Command line](./docs/command-line)

@@ -5,4 +5,4 @@ $render: ../../../_/layouts/default.pug
 
 ---
 
-➯ Next: [Middlewares](./docs/middlewares)
+➯ Next: [Extensions &rangle; Conn](./docs/extensions/conn)

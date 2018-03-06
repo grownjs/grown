@@ -5,7 +5,7 @@ mixin linkTo(href, title)
   if href === url
     strong
       a.here(href=href)= title
-  else
+  else if !block
     a(href=href)= title
   if block
     block
@@ -54,4 +54,25 @@ mixin linkTo(href, title)
               li: +linkTo('/docs/extensions/tarima', 'Tarima')
               li: +linkTo('/docs/extensions/test', 'Test')
               li: +linkTo('/docs/extensions/upload', 'Upload')
+        li: +linkTo('/docs/connection', 'Connection')
         li: +linkTo('/docs/middlewares', 'Middlewares')
+    li
+      h3.mt.reset Data-layer
+      ul.pl.reset
+        li: +linkTo('/docs/database', 'Models')
+        if url.indexOf('/docs/database') === 0
+          ul.pl.reset
+            li: +linkTo('/docs/database/backups', 'Backups')
+            li: +linkTo('/docs/database/migrations', 'Migrations')
+        li: +linkTo('/docs/validation', 'Schemas')
+        if url.indexOf('/docs/validation') === 0
+          ul.pl.reset
+            li: +linkTo('/docs/validation/graphql', 'GraphQL')
+            li: +linkTo('/docs/validation/json-schema', 'JSON-Schema')
+            li: +linkTo('/docs/validation/protobuf', 'Protocol Buffers')
+    li
+      h3.mt.reset Controllers
+      ul.pl.reset
+        li: +linkTo('/docs/controllers', 'Web')
+        li: +linkTo('/docs/controllers/grpc', 'GRPC')
+        li: +linkTo('/docs/controllers/graphql', 'GraphQL')
