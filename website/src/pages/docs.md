@@ -28,9 +28,6 @@ console.log(Grown.Application.name);
 console.log(Grown('Application.name'));
 ```
 
-See: [`object-new` definitions](https://www.npmjs.com/package/object-new#definitions)
-
-
 ### Instances
 
 Invoking `new Grown` will return a [Server](./docs/extensions/server) instance.
