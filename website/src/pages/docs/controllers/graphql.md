@@ -5,4 +5,4 @@ $render: ../../../_/layouts/default.pug
 
 ---
 
-➯ Next: &infin;
+➯ Next: [Testing &rangle; Server](./docs/testing)

@@ -1,3 +1,15 @@
+- var segment = self && self.parent.split('/').slice(2).join('/').replace(/\.\w+$/, '')
+- var url = `/${segment || ''}`;
+
+mixin linkTo(href, title)
+  if href === url
+    strong
+      a.here(href=href)= title
+  else if !block
+    a(href=href)= title
+  if block
+    block
+
 doctype html
 html
   head
@@ -30,9 +42,6 @@ html
         ga('send', 'pageview');
 
     main#wrapper
-      aside#sidebar.inverted
-        include ../shared/docs
-
       #content.body
         if error
           details
@@ -40,10 +49,15 @@ html
             summary= error.message
 
         main
+          a#menu(href=`${url !== '/' ? url : ''}/#sidebar`) &#9776;
+
           if title
             h1= title
 
           != yield
+
+      aside#sidebar.inverted
+        include ../shared/docs
 
     script window.__runkit__ = !{JSON.stringify(runkit || {})};
     script(src='https://embed.runkit.com')
