@@ -26,8 +26,18 @@ module.exports = (Grown, util) => {
     return _utils.timeDiff(ctx._startTime);
   }
 
+  function _errorLog(text) {
+    _logger.printf('\r\r{% error %s %}\n', text);
+  }
+
+  function _msgLog(text) {
+    _logger.printf('\r\r%s\n', text);
+  }
+
   return Grown('Logger', util.extendValues({
     _elapsedTime,
+    _errorLog,
+    _msgLog,
 
     $before_render(ctx, template) {
       /* istanbul ignore else */
@@ -66,12 +76,21 @@ module.exports = (Grown, util) => {
 
       return this.$mixins();
     },
+
     $mixins() {
       return {
         props: {
           logger: () => _logger,
         },
       };
+    },
+
+    message(text) {
+      this._msgLog(text);
+    },
+
+    error(text) {
+      this._errorLog(text);
     },
   }, Logger));
 };
