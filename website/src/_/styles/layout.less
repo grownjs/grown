@@ -6,6 +6,20 @@
 #content {
   color: @lo-gray;
   background-color: @bg-color;
+
+  h2, h3, h4 {
+    position: relative;
+
+    var {
+      background-color: @hi-gray;
+      position: absolute;
+      color: @bg-color;
+      font-size: .6em;
+      padding: 0 .3em;
+      line-height: 16px;
+      margin-left: .4em;
+    }
+  }
 }
 
 #sidebar {

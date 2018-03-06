@@ -17,6 +17,8 @@ module.exports = Grown => {
 
 > `Grown` extensions are just [`object-new`](https://www.npmjs.com/package/object-new#definitions) definitions
 
+## Loading definitions
+
 The `load()` method will scan and require any modules matching the given suffix, e.g. **controllers/HomeController.js**
 
 ```js
@@ -26,6 +28,8 @@ module.exports = Grown => {
 ```
 
 > Given suffix is stripped from the module name and then it's registered on the container
+
+## Using extensions
 
 Now, you can register those extensions on your main application, e.g.
 

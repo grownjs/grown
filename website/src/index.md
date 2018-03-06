@@ -15,7 +15,7 @@ Once done, install the main `grown` dependency:
 $ npm install grown --save
 ```
 
-## How it works
+## How it works?
 
 On the beginning, starting a new web server is a simple task:
 

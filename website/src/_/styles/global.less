@@ -31,7 +31,16 @@ hr {
 
 h2 {
   font-size: 25px;
-  font-weight: 300;
+  font-weight: 700;
+  position: relative;
+
+  &::after {
+    top: 0;
+    right: 0;
+    content: '◥';
+    color: @lo-silver;
+    position: absolute;
+  }
 }
 
 img {

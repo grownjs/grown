@@ -28,7 +28,7 @@ console.log(Grown.Application.name);
 console.log(Grown('Application.name'));
 ```
 
-### Instances
+## Instances
 
 Invoking `new Grown` will return a [Server](./docs/extensions/server) instance.
 

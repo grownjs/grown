@@ -3,13 +3,13 @@ title: Bare
 $render: ../../../_/layouts/default.pug
 ---
 
-### Static props
+### Public props <var>static</var>
 
 - `argv` &mdash; parsed argv from command-line
 - `cwd` &mdash; current working directory
 - `env` &mdash; `process.env.NODE_ENV`
 
-### Static methods
+### Public methods <var>static</var>
 
 - `do(body)` &mdash; wraps code into promises
 - `use(module)` &mdash; register custom extensions
