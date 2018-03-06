@@ -14,8 +14,6 @@ $render: ../../../_/layouts/default.pug
 - `$mixins()` &mdash;
 - `rules(config)` &mdash;
 
----
-
 ### Private* props <var>static</var>
 
 - `_groups` &mdash;

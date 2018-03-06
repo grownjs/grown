@@ -14,6 +14,8 @@ const Grown = require('grown')(cwd, argv);
 
 > If no arguments are given both values will be taken from the current `process`
 
+## Extensions
+
 Once created, the `Grown` function behaves like a container, it can be called to
 store and retrieve definitions from it.
 

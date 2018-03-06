@@ -3,7 +3,7 @@ title: Command line
 $render: ../../_/layouts/default.pug
 ---
 
-There's no need to start the server manually, it'll be handled by the `CLI` extension.
+> There's no need to start the server manually, it'll be handled by the `CLI` extension.
 
 Make sure you write a script like the shown below, e.g. **your-app/application.js**
 
@@ -28,5 +28,7 @@ $ grown up
 ```
 
 Try `grown --help` to get more usage info.
+
+---
 
 ➯ Next: [Add-ons &rangle; Extensions](./docs/extensions)
