@@ -35,6 +35,9 @@ See: [`object-new` definitions](https://www.npmjs.com/package/object-new#definit
 
 Invoking `new Grown` will return a [Server](./docs/extensions/server) instance.
 
+> Actually, the [main module](https://github.com/pateketrueke/grown/blob/master/index.js)
+> `grown` is a wrapper of `@grown/bare` and `@grown/server`
+
 ### Static props
 
 - `version` &mdash; will return the framework's version

@@ -3,7 +3,7 @@ title: Server
 $render: ../../../_/layouts/default.pug
 ---
 
-When you invoke the `Grown` constructor a new `Server` instance is created, e.g.
+When you invoke the `new Grown` constructor an instance of `Server` is created, e.g.
 
 ```js
 const server = new Grown({
@@ -33,10 +33,6 @@ const x = options('some.value', 42);
 const y = options('a.required.setting.here');
 ```
 
-➯ Next: [Connection](./docs/connection)
-
----
-
 ### Instance methods
 
 - `on(e, cb)` &mdash; subscribe to events
@@ -47,5 +43,7 @@ const y = options('a.required.setting.here');
 - `plug(extensions)` &mdash; extends the server with additional functionality
 - `mount(middleware)` &mdash; append middleware to the server instance
 - `listen([connection])` &mdash; starts a new web server connection
+
+---
 
 ➯ Next: [Extensions &rangle; Session](./docs/extensions/session)
