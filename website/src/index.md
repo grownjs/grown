@@ -1,6 +1,6 @@
 ---
 title: Installation
-$render: _layouts/default.pug
+$render: _/layouts/default.pug
 runkit:
   endpoint: true
 ---

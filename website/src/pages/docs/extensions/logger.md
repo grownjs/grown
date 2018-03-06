@@ -1,4 +1,4 @@
 ---
 title: Logger
-$render: ../../../_layouts/default.pug
+$render: ../../../_/layouts/default.pug
 ---

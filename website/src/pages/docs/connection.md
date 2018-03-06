@@ -1,6 +1,6 @@
 ---
 title: Connection
-$render: ../../_layouts/default.pug
+$render: ../../_/layouts/default.pug
 ---
 
 ## Events

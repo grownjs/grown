@@ -1,13 +1,11 @@
 ---
 title: Command line
-$render: ../../_layouts/default.pug
+$render: ../../_/layouts/default.pug
 ---
 
 There's no need to start the server manually, it'll be handled by the `CLI` extension.
 
-First, make sure you write a script like this:
-
-**your-app/application.js**
+Make sure you write a script like the shown below, e.g. **your-app/application.js**
 
 ```js
 // require and create a Grown-container

@@ -1,6 +1,6 @@
 ---
 title: The interface
-$render: ../_layouts/default.pug
+$render: ../_/layouts/default.pug
 ---
 
 Our main module is a factory which takes two optional arguments:
