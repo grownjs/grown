@@ -3,7 +3,9 @@ title: Command line
 $render: ../../_layouts/default.pug
 ---
 
-You may want to seperate the application code from the server initialization, e.g.
+There's no need to start the server manually, it'll be handled by the `CLI` extension.
+
+First, make sure you write a script like this:
 
 **your-app/application.js**
 
@@ -18,10 +20,6 @@ module.exports = () => {
   return server;
 };
 ```
-
-### Starting the server
-
-There's no need to start the server manually, it'll be handled by the `CLI` extension.
 
 Get `@grown/cli` globally to run your application:
 
