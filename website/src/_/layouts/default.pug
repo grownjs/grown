@@ -1,6 +1,9 @@
 - var segment = self && self.parent.split('/').slice(2).join('/').replace(/\.\w+$/, '')
 - var url = `/${segment || ''}`;
 
+- var gitBase = 'github.com/pateketrueke/grown/blob/master/website/src';
+- var gitUrl = `//${gitBase}${(url === '/' ? '/index' : '/pages' + url) + '.md'}`
+
 mixin linkTo(href, title)
   if href === url
     strong
@@ -52,7 +55,7 @@ html
           a#menu(href=`${url !== '/' ? url : ''}/#sidebar`) &#9776;
 
           if title
-            h1= title
+            h1 #{title} #[small: a#github-ribbon(href=gitUrl target='_blank') ✎]
 
           != yield
 
