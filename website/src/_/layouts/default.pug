@@ -55,7 +55,7 @@ html
           a#menu(href=`${url !== '/' ? url : ''}/#sidebar`) &#9776;
 
           if title
-            h1 #{title} #[small: a#github-ribbon(href=gitUrl target='_blank') ✎]
+            h1 #{title} #[small: a(href=gitUrl target='_blank') ✎]
 
           != yield
 
