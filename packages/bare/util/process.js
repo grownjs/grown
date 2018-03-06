@@ -106,7 +106,7 @@ function invoke(value, context, interpolate) {
   return value.replace(RE_INTERPOLATE, ($0, $1) => vm.runInNewContext($1, context));
 }
 
-function wrap(callback, getLogger) {
+function wrap(callback, fixedUtils) {
   let _errCallback;
 
   function ifErr(cb) {
@@ -117,19 +117,25 @@ function wrap(callback, getLogger) {
     const self = this;
 
     function end(ex) {
-      const logError = (getLogger && getLogger()) || console.error.bind(console);
+      let _logger;
+
+      try {
+        _logger = fixedUtils.getLogger();
+      } catch (e) {
+        _logger = console;
+      }
 
       try {
         if (ex) {
           /* istanbul ignore else */
           if (_errCallback) {
-            _errCallback.call(self, ex, getLogger);
+            _errCallback.call(self, ex, fixedUtils);
           }
 
-          logError(cleanError(ex).stack || ex.toString());
+          _logger.error(cleanError(ex).stack || ex.toString());
         }
       } catch (e) {
-        logError(e.stack || e.toString());
+        _logger.error(e.stack || e.toString());
       } finally {
         /* istanbul ignore else */
         if (typeof done === 'function') {
@@ -139,7 +145,7 @@ function wrap(callback, getLogger) {
     }
 
     return Promise.resolve()
-      .then(() => callback.call(self, ifErr, getLogger))
+      .then(() => callback.call(self, ifErr, fixedUtils))
       .then(() => end())
       .catch(end);
   };

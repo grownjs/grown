@@ -8,10 +8,6 @@ describe 'Grown', ->
     expect(typeof Grown).toEqual 'function'
     expect(typeof Grown.new).toEqual 'function'
 
-  describe '#version', ->
-    it 'will be the package version', ->
-      expect(Grown.version).not.toBeUndefined()
-
   describe '#module', ->
     it 'can access its module definition', ->
       expect(Grown.Dummy).toBeUndefined()
@@ -22,9 +18,9 @@ describe 'Grown', ->
 
       expect(Grown.Dummy.new().value).toEqual 42
 
-  describe '#loader', ->
+  describe '#load', ->
     it 'can load definitions from given directories', ->
-      expect(Grown.loader("#{__dirname}/fixtures").Example.truth).toEqual 42
+      expect(Grown.load("#{__dirname}/fixtures").Example.truth).toEqual 42
 
   describe '#use', ->
     it 'can load new module definitions', ->
@@ -53,7 +49,9 @@ describe 'Grown', ->
           @calls.push 'printf'
           @result = msg.trim()
 
-        Grown 'Logger', getLogger: -> { printf }
+        Grown 'Logger', getLogger: ->
+          error: (msg) -> printf(null, msg)
+          message: (msg) -> printf(null, msg)
 
       afterEach ->
         delete Grown.Logger
