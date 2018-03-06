@@ -40,10 +40,9 @@ Invoking `new Grown` will return a [Server](./docs/extensions/server) instance.
 
 ### Static props
 
-- `version` &mdash; will return the framework's version
 - `argv` &mdash; parsed argv from command-line
 - `cwd` &mdash; current working directory
-- `env` &mdash; current `process.env.NODE_ENV`
+- `env` &mdash; `process.env.NODE_ENV`
 
 ### Static methods
 
