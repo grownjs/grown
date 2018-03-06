@@ -1,7 +1,7 @@
 {
   "name": "grown",
   "version": "1.0.0",
-  "main": "index.html",
+  "description": "Experimental DSL for web-apps",
   "repository": "git@github.com:pateketrueke/grown.git",
   "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
   "license": "MIT",

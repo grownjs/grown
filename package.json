@@ -2,7 +2,7 @@
   "name": "grown",
   "version": "1.0.1",
   "homepage": "https://grown.fun",
-  "description": "Experimental DSL for web applications",
+  "description": "Experimental DSL for web-apps",
   "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
   "license": "MIT",
   "main": "index.js",
