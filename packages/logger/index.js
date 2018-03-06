@@ -85,12 +85,12 @@ module.exports = (Grown, util) => {
       };
     },
 
-    message(text) {
-      this._msgLog(text);
+    message(log) {
+      this._msgLog(log);
     },
 
-    error(text) {
-      this._errorLog(text);
+    error(log) {
+      this._errorLog(log);
     },
   }, Logger));
 };
