@@ -9,7 +9,7 @@ function buildSettings(data) {
     let value;
 
     try {
-      value = this.getProp(data, key, defvalue);
+      value = this._.getProp(data, key, defvalue);
     } catch (e) {
       throw new Error(`Cannot resolve config: ${key}`);
     }
@@ -97,7 +97,7 @@ function endCallback(err, conn, options) {
         return Promise.resolve()
           .then(() => {
             if (err) {
-              conn.end(this.cleanError(err, options('cwd')));
+              conn.end(this._.cleanError(err, options('cwd')));
             }
           })
           .catch(e => {
@@ -110,7 +110,7 @@ function endCallback(err, conn, options) {
         try {
           /* istanbul ignore else */
           if (err) {
-            const failure = this.cleanError(err, options('cwd'));
+            const failure = this._.cleanError(err, options('cwd'));
 
             conn.res.statusCode = failure.code;
             conn.res.write(failure.message);
@@ -158,10 +158,10 @@ function doneCallback(err, conn, options) {
     });
 }
 
-module.exports = util => ({
-  buildSettings: buildSettings.bind(util),
+module.exports = {
+  buildSettings,
   buildPubsub,
   buildError,
   endCallback,
   doneCallback,
-});
+};

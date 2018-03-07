@@ -44,7 +44,7 @@ function _grownFactory($, util, options) {
   scope._extensions = [];
 
   scope._events = util.buildPubsub();
-  scope._options = util.buildSettings(options);
+  scope._options = util.buildSettings.call(scope, options);
   scope._callback = util.buildPipeline('^', scope._pipeline, util.doneCallback.bind(scope));
 
   // skip npm-cli keys
