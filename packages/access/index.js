@@ -196,18 +196,18 @@ module.exports = (Grown, util) => {
             }
 
             return cur;
-          }, null);
+          }, false);
       })
       .then(result => {
+        /* istanbul ignore else */
+        if (result === false) {
+          return conn.raise(403);
+        }
+
         if (!result) {
           debug('#%s Skip. No rules were defined', conn.pid);
         } else {
           debug('#%s Got access <%s> %s', conn.pid, result[0], result[1]);
-        }
-
-        /* istanbul ignore else */
-        if (result && result[1] === false) {
-          return conn.raise(403);
         }
       });
   }
@@ -254,7 +254,7 @@ module.exports = (Grown, util) => {
 
             return Promise.resolve()
               .then(() => role || (self.access_filter && self.access_filter(this)) || 'Unknown')
-              .then(x => self._validateRules(this, x, _handlers));
+              .then(x => self._runACL(this, x, _handlers));
           },
         },
       };
