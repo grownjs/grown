@@ -32,14 +32,16 @@ module.exports = (Grown, util) => {
   }
 
   function _compileMatch(rule) {
-    const fixedRoute = rule.path
-      .replace(RE_DOUBLE_STAR, '/.*?')
-      .replace(RE_SINGLE_STAR, '/[^\\/]+?');
-
     let regex;
 
     try {
-      regex = new RegExp(`^${fixedRoute}$`);
+      regex = !(rule.path instanceof RegExp)
+        ? new RegExp(`^${
+          rule.path
+            .replace(RE_DOUBLE_STAR, '/.*?')
+            .replace(RE_SINGLE_STAR, '/[^\\/]+?')
+        }$`)
+        : rule.path;
     } catch (e) {
       throw new Error(`Cannot compile '${rule.path}' as route handler`);
     }
@@ -269,7 +271,7 @@ module.exports = (Grown, util) => {
           let _method = 'GET';
 
           /* istanbul ignore else */
-          if (_path.indexOf(' ') > -1) {
+          if (typeof _path === 'string' && _path.indexOf(' ') > -1) {
             _path = _path.split(' ');
             _method = _path[0].toUpperCase();
             _path = _path[1];
