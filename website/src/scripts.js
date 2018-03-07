@@ -5,7 +5,7 @@
   const isEndpoint = snippet.endpoint;
   const sourceCode = source.innerText.replace(`${matches[0]}\n`, '');
   const a = document.createElement('a');
-  a.innerText = 'Load in REPL';
+  a.innerText = '▾ Open in REPL';
   a.href = '#';
   a.onclick = e => {
     delete a.onclick;
