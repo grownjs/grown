@@ -264,22 +264,22 @@ module.exports = (Grown, util) => {
       util.extendValues(this.permissions, config.permissions);
 
       Object.keys(config.resources || {}).forEach(key => {
-        this.resources[key] = config.resources[key];
+        this.resources[key] = util.flattenArgs(config.resources[key]);
+        this.resources[key].forEach(_path => {
+          let _method = 'GET';
 
-        let _path = config.resources[key];
-        let _method = 'GET';
+          /* istanbul ignore else */
+          if (_path.indexOf(' ') > -1) {
+            _path = _path.split(' ');
+            _method = _path[0].toUpperCase();
+            _path = _path[1];
+          }
 
-        /* istanbul ignore else */
-        if (_path.indexOf(' ') > -1) {
-          _path = _path.split(' ');
-          _method = _path[0].toUpperCase();
-          _path = _path[1];
-        }
-
-        this._ruleset.push({
-          path: _path,
-          method: _method,
-          handler: key,
+          this._ruleset.push({
+            path: _path,
+            method: _method,
+            handler: key,
+          });
         });
       });
 
