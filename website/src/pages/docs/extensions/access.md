@@ -54,6 +54,10 @@ server.mount(ctx => {
 
 ---
 
+### Methods <var>mixin</var>
+
+- `check(role, resource, action)` &mdash;
+
 ### Public props <var>static</var>
 
 - `resources` &mdash;
