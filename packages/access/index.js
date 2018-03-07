@@ -249,7 +249,7 @@ module.exports = (Grown, util) => {
 
       return {
         methods: {
-          can(role, resource, action) {
+          check(role, resource, action) {
             const _handlers = !Array.isArray(resource)
               ? [action ? `${resource}.${action}` : resource]
               : resource;
