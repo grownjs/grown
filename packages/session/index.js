@@ -28,7 +28,7 @@ module.exports = (Grown, util) => {
 
         /* istanbul ignore else */
         if (conn.is_xhr) {
-          conn.set_resp_header('X-CSRF-Token', conn.csrf_token);
+          conn.put_resp_header('X-CSRF-Token', conn.csrf_token);
         }
       });
     },
