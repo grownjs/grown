@@ -1,0 +1,6 @@
+endpoint: true
+preamble: |
+  const Grown = require('@grown/bare@0.0.6')();
+  Grown.use(require('@grown/server@0.0.5'));
+  const server = new Grown();
+  process.nextTick(() => server.listen(8080));

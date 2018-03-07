@@ -1,13 +1,7 @@
 ---
 title: Access
 $render: ../../../_/layouts/default.pug
-runkit:
-  endpoint: true
-  preamble: |
-    const Grown = require('grown')();
-    Grown.use(require('@grown/server@0.0.5'));
-    const server = new Grown();
-    process.nextTick(() => server.listen(8080));
+runkit: !include ../../../_/shared/runkit.yml
 ---
 
 Allow or deny access on certain resources from your application, e.g.
