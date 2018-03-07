@@ -47,11 +47,11 @@ module.exports = (Grown, util) => {
     return conn => {
       /* istanbul ignore else */
       if (rule.method
-        && rule.method !== conn.method) {
+        && rule.method !== conn.req.method) {
         return;
       }
 
-      return regex.test(conn.request_path) && rule.handler;
+      return regex.test(conn.req.url) && rule.handler;
     };
   }
 
@@ -200,7 +200,7 @@ module.exports = (Grown, util) => {
       })
       .then(result => {
         /* istanbul ignore else */
-        if (result === false) {
+        if (result === false || result[1] === false) {
           return conn.raise(403);
         }
 
