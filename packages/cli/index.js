@@ -24,6 +24,7 @@ module.exports = (Grown, util) => {
 
   const logger = util.getLogger();
 
+  const thisPkg = require('./package.json');
   const mainPkg = path.join(Grown.cwd, 'package.json');
   const appPkg = fs.existsSync(mainPkg)
     ? require(mainPkg)
@@ -32,7 +33,8 @@ module.exports = (Grown, util) => {
   const baseDir = path.resolve(Grown.cwd, path.dirname(appPkg.main || mainPkg));
 
   function _findAvailableTasks() {
-    const taskFiles = this._collectTasks(path.join(__dirname, 'bin/tasks'), path.join(baseDir, 'tasks'));
+    const taskDirs = util.flattenArgs(this.task_folders || path.join(baseDir, 'tasks'));
+    const taskFiles = this._collectTasks(taskDirs, path.join(__dirname, 'bin/tasks'));
 
     this._tasks = taskFiles;
 
@@ -84,7 +86,7 @@ module.exports = (Grown, util) => {
   }
 
   function _collectTasks() {
-    const dirs = Array.prototype.slice.call(arguments);
+    const dirs = util.flattenArgs(arguments);
     const files = {};
 
     dirs.forEach(cwd => {
@@ -103,8 +105,8 @@ module.exports = (Grown, util) => {
   }
 
   function _showTasks(taskName) {
-    logger.printf('{% gray Grown v%s (node %s ─ %s) %}\n',
-      Grown.version, process.version, process.env.NODE_ENV);
+    logger.printf('{% gray Grown CLI v%s (node %s ─ %s) %}\n',
+      thisPkg.version, process.version, process.env.NODE_ENV);
 
     const taskFiles = this._findAvailableTasks();
 
@@ -248,9 +250,18 @@ module.exports = (Grown, util) => {
     },
 
     run(taskName) {
-      const task = require(this._tasks[taskName]);
+      /* istanbul ignore else */
+      if (!this._tasks[taskName]) {
+        throw new Error(`Task ${taskName} is not registered`);
+      }
 
-      return task.callback(Grown, util);
+      try {
+        const task = require(this._tasks[taskName]);
+
+        return task.callback(Grown, util);
+      } catch (e) {
+        throw new Error(`Task '${taskName}': ${e.message}`);
+      }
     },
   });
 };
