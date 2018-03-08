@@ -33,12 +33,15 @@ module.exports = (Grown, util) => {
   const baseDir = path.resolve(Grown.cwd, path.dirname(appPkg.main || mainPkg));
 
   function _findAvailableTasks() {
-    const taskDirs = util.flattenArgs(this.task_folders || path.join(baseDir, 'tasks'));
-    const taskFiles = this._collectTasks(taskDirs, path.join(__dirname, 'bin/tasks'));
+    /* istanbul ignore else */
+    if (!this._tasks) {
+      const taskDirs = util.flattenArgs(this.task_folders || path.join(baseDir, 'tasks'));
+      const taskFiles = this._collectTasks(taskDirs, path.join(__dirname, 'bin/tasks'));
 
-    this._tasks = taskFiles;
+      this._tasks = taskFiles;
+    }
 
-    return taskFiles;
+    return this._tasks;
   }
 
   function _findApplication() {
@@ -108,10 +111,10 @@ module.exports = (Grown, util) => {
     logger.printf('{% gray Grown CLI v%s (node %s ─ %s) %}\n',
       thisPkg.version, process.version, process.env.NODE_ENV);
 
-    const taskFiles = this._findAvailableTasks();
+    this._findAvailableTasks();
 
     /* istanbul ignore else */
-    if (taskName && !taskFiles[taskName]) {
+    if (taskName && !this._tasks[taskName]) {
       throw new Error(`Unknown task '${taskName}'`);
     }
 
@@ -139,7 +142,6 @@ module.exports = (Grown, util) => {
   }
 
   function _showHelp(taskName) {
-
     if (!taskName) {
       logger.printf('\n {% gray Tasks: %}\n');
 
@@ -215,7 +217,7 @@ module.exports = (Grown, util) => {
     _onExit,
 
     // shared
-    _tasks: {},
+    _tasks: null,
 
     start(taskName) {
       /* istanbul ignore else */
@@ -250,6 +252,8 @@ module.exports = (Grown, util) => {
     },
 
     run(taskName) {
+      this._findAvailableTasks();
+
       /* istanbul ignore else */
       if (!this._tasks[taskName]) {
         throw new Error(`Task ${taskName} is not registered`);
