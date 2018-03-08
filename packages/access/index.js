@@ -85,11 +85,11 @@ module.exports = (Grown, util) => {
     return out;
   }
 
-  function _runACL(conn, role, handlers) {
+  function _runACL(ctx, role, handlers) {
     const children = this._makeTree(role, this._groups, 'children');
     const parents = this._makeTree(role, this._groups, 'parents');
 
-    debug('#%s Checking access for %s <%s>', conn.pid, role, handlers.join(', ') || '...');
+    debug('#%s Checking access for %s <%s>', ctx.pid, role, handlers.join(', ') || '...');
 
     return Promise.resolve()
       .then(() => {
@@ -154,7 +154,7 @@ module.exports = (Grown, util) => {
           .map(check => {
             /* istanbul ignore else */
             if (typeof check[1] === 'function') {
-              check[1] = check[1](conn);
+              check[1] = check[1](ctx);
             }
 
             /* istanbul ignore else */
@@ -172,20 +172,20 @@ module.exports = (Grown, util) => {
               check[1] = false;
             }
 
-            debug('#%s Test access <%s> %s', conn.pid, check[0], check[1]);
+            debug('#%s Test access <%s> %s', ctx.pid, check[0], check[1]);
 
             return check;
           })
           .reduce((prev, cur) => {
             /* istanbul ignore else */
             if (parents.indexOf(cur[0]) > -1) {
-              debug('#%s Parent access found <%s>', conn.pid, cur[0]);
+              debug('#%s Parent access found <%s>', ctx.pid, cur[0]);
               cur[1] = false;
             }
 
             /* istanbul ignore else */
             if (children.indexOf(cur[0]) > -1) {
-              debug('#%s Children access found <%s>', conn.pid, cur[0]);
+              debug('#%s Children access found <%s>', ctx.pid, cur[0]);
               cur[1] = true;
             }
 
@@ -194,7 +194,7 @@ module.exports = (Grown, util) => {
               cur[0] = prev[0];
               cur[1] = prev[1];
 
-              debug('#%s Inherited access <%s> %s', conn.pid, cur[0], prev[1]);
+              debug('#%s Inherited access <%s> %s', ctx.pid, cur[0], prev[1]);
             }
 
             return cur;
@@ -203,13 +203,13 @@ module.exports = (Grown, util) => {
       .then(result => {
         /* istanbul ignore else */
         if (result === false || result[1] === false) {
-          return conn.raise(403);
+          return ctx.raise(403);
         }
 
         if (!result) {
-          debug('#%s Skip. No rules were defined', conn.pid);
+          debug('#%s Skip. No rules were defined', ctx.pid);
         } else {
-          debug('#%s Got access <%s> %s', conn.pid, result[0], result[1]);
+          debug('#%s Got access <%s> %s', ctx.pid, result[0], result[1]);
         }
       });
   }
