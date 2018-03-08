@@ -84,4 +84,4 @@ server.mount(ctx => {
 
 ---
 
-➯ Next: [Extensions &rangle; Bare](./docs/extensions/bare)
+➯ Next: [Extensions &rangle; Bud](./docs/extensions/bud)

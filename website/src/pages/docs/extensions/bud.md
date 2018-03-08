@@ -1,7 +1,24 @@
 ---
-title: Bare
+title: Bud
 $render: ../../../_/layouts/default.pug
 ---
+
+The foundation of the whole framework is this, it provides the DSL
+used by all extensions, expose common utils, etc.
+
+```js
+/* @runkit */
+const Grown = require('@grown/bud')();
+const Util = require('@grown/bud/util');
+
+// both references are passed on use() calls
+Grown.use(($, util) => {
+  console.log($ === Grown);
+  console.log(Util === util);
+});
+```
+
+> Note that invoking `new Grown` will throw an error because `Server` is not available
 
 ### Public props <var>static</var>
 

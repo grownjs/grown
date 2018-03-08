@@ -35,7 +35,7 @@ console.log(Grown('Application.name'));
 Invoking `new Grown` will return a [Server](./docs/extensions/server) instance.
 
 > Actually, the [main module](https://github.com/pateketrueke/grown/blob/master/index.js)
-> `grown` is a wrapper of `@grown/bare` and `@grown/server`
+> `grown` is a wrapper of `@grown/bud` and `@grown/server`
 
 ---
 
