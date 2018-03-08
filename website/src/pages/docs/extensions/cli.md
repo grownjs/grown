@@ -67,20 +67,18 @@ Grown.CLI.start(taskName)
 
 ## How it works?
 
-Task files are defined as modules, e.g.
+Task files are defined as modules, e.g. **tasks/words.js**
 
 ```js
 const USAGE_INFO = `
 
-It will print any given messages
+It will print messages
 
-Just the first line is used as description,
-the rest is shown when --help is used.
+Given any arguments, this task will print them
+back as they were received, or reversed, etc.
 
 --mirror   Invert whole output before print
 --reverse  Invert words before print
-
-(any format is allowed here)
 
 Examples:
   node script.js example hello world
@@ -113,6 +111,8 @@ module.exports = {
 
 See: [built-in tasks](https://github.com/pateketrueke/grown/tree/master/packages/cli/bin/tasks) from CLI module
 
+Now you can invoke this task using `grown words` or `node script.js words` depending on your installation.
+
 ---
 
 ### Public methods <var>static</var>
@@ -123,18 +123,19 @@ See: [built-in tasks](https://github.com/pateketrueke/grown/tree/master/packages
 
 ### Private* props <var>static</var>
 
-- `_tasks` &mdash;
+- `_start` &mdash; Initialization date, e.g. `new Date`.
+- `_tasks` &mdash; Collected tasks by name.
 
 ### Private* methods <var>static</var>
 
-- `_findAvailableTasks()` &mdash;
-- `_findApplication()` &mdash;
-- `_collectTasks(...args)` &mdash;
-- `_showTasks([taskName])` &mdash;
-- `_showHelp([taskName])` &mdash;
-- `_onError(errObj)` &mdash;
-- `_onExit(statusCode)` &mdash;
-- `_exec(argv, callback)` &mdash;
+- `_findAvailableTasks()` &mdash; Scan and register file tasks once.
+- `_findApplication()` &mdash; Scan for a initialization script.
+- `_collectTasks(...fromDirs)` &mdash; Scan and return file tasks from given directories.
+- `_showTasks([taskName])` &mdash; Test and `run` if the given `taskName` is registered. Returns a promise if it exists.
+- `_showHelp([taskName])` &mdash; Display the usage info for a the given `taskName`.
+- `_onError(errObj)` &mdash; Default error handler.
+- `_onExit(statusCode)` &mdash; Default exit handler.
+- `_exec(argv, callback)` &mdash; Invoke a shell command from the given `argv`, then `callback` when finished.
 
 ---
 
