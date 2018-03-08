@@ -34,14 +34,14 @@ module.exports = (Grown, util) => {
 
   function _findAvailableTasks() {
     /* istanbul ignore else */
-    if (!this._tasks) {
+    if (!this._start) {
       const taskDirs = util.flattenArgs(this.task_folders || path.join(baseDir, 'tasks'));
       const taskFiles = this._collectTasks(taskDirs, path.join(__dirname, 'bin/tasks'));
 
-      this._tasks = taskFiles;
-    }
+      util.extendValues(this._tasks, taskFiles);
 
-    return this._tasks;
+      this._start = new Date();
+    }
   }
 
   function _findApplication() {
@@ -243,7 +243,8 @@ module.exports = (Grown, util) => {
     _exec,
 
     // shared
-    _tasks: null,
+    _start: null,
+    _tasks: {},
 
     start(taskName) {
       try {
