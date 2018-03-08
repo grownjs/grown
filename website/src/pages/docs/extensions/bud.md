@@ -70,16 +70,18 @@ assert(Test.name === Grown.TestHandler.name);
 
 ### Public props <var>static</var>
 
-- `argv` &mdash; parsed argv from command-line
-- `cwd` &mdash; current working directory
-- `env` &mdash; `process.env.NODE_ENV`
+- `argv` &mdash; Parsed argv from command-line.
+- `cwd` &mdash; Current working directory.
+- `env` &mdash; Current `process.env.NODE_ENV` value.
 
 ### Public methods <var>static</var>
 
-- `do(body)` &mdash; wraps code into promises
-- `use(module)` &mdash; register custom extensions
-- `new([options])` &mdash; shortcut for `new Grown(...)`
-- `load(cwd[, suffix[, callback]])` &mdash; allow to collect extensions
+- `do(body)` &mdash; Wraps code into promises.
+- `use(module)` &mdash; Register custom extensions.
+- `new([options])` &mdash; Shortcut for `new Grown(...)` constructor.
+- `load(cwd[, suffix[, callback]])` &mdash; Allow to collect extensions.
+  If `callback` is given, found modules will be passed to it, so they can be
+  extended or completely replaced.
 
 ---
 

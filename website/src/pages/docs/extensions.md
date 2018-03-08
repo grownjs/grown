@@ -3,7 +3,7 @@ title: Extensions
 $render: ../../_/layouts/default.pug
 ---
 
-Additional functionality can be added through the `Grown` container, e.g. **controllers/index.js**
+More functionality can be added through the `Grown` container, e.g. **controllers/index.js**
 
 ```js
 module.exports = Grown => {
@@ -43,6 +43,15 @@ console.log(Grown.Controllers.Home.name);
 ```
 
 > Modules named after `Controller` should work too, e.g. **controllers/HomeController/index.js**
+
+Built-in extensions are registered the same way:
+
+```js
+Grown.use(require('@grown/session'));
+Grown.use(require('@grown/router'));
+Grown.use(require('@grown/test'));
+// etc.
+```
 
 ---
 
