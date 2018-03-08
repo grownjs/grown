@@ -28,3 +28,13 @@
   };
   source.parentNode.appendChild(a);
 });
+
+const activeLocation = location.pathname.replace(/\/$/, '') || '/';
+const linkSelector = `#sidebar a[href$="${activeLocation}"]`;
+const activeLink = document.querySelector(linkSelector);
+
+if (activeLink && activeLocation !== '/') {
+  activeLink.scrollIntoView({
+    block: 'end',
+  });
+}
