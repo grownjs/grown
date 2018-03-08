@@ -28,6 +28,8 @@ module.exports = {
     const glob = require('glob');
     const fs = require('fs-extra');
 
+    const logger = Grown.Logger.getLogger();
+
     function load() {
       /* istanbul ignore else */
       if (typeof Grown.argv.flags.load !== 'string') {
@@ -50,13 +52,13 @@ module.exports = {
 
             /* istanbul ignore else */
             if (!file) {
-              return util.logger.printf('{% item %s was skipped %}\r\n', x.name);
+              return logger.printf('{% item %s was skipped %}\r\n', x.name);
             }
 
             return x
               .bulkCreate(fs.readJsonSync(path.join(src, file)))
               .then(() => {
-                util.logger.printf('{% item %s was loaded %}\r\n', x.name);
+                logger.printf('{% item %s was loaded %}\r\n', x.name);
               });
           })))
         .then(() => _umzug.run(after));
@@ -98,7 +100,7 @@ module.exports = {
 
               const file = path.join(Grown.cwd, Grown.argv.flags.save, `${fulldate}${hourtime}`, `${result.model.name}.json`);
 
-              return util.logger('write', path.relative(Grown.cwd, file), () => {
+              return logger('write', path.relative(Grown.cwd, file), () => {
                 fs.outputJsonSync(file, result.data, { spaces: 2 });
               });
             }
@@ -108,7 +110,7 @@ module.exports = {
 
           /* istanbul ignore else */
           if (_buffer.length) {
-            util.logger.write(`\r\r${_buffer.join('')}\n`);
+            logger.write(`\r\r${_buffer.join('')}\n`);
           }
         });
     }

@@ -49,6 +49,8 @@ module.exports = {
     const glob = require('glob');
     const fs = require('fs-extra');
 
+    const logger = Grown.Logger.getLogger();
+
     return Promise.resolve()
       .then(() => Models.connect())
       .then(() => {
@@ -77,11 +79,11 @@ module.exports = {
             }
           });
 
-          return util.logger('write', path.relative(Grown.cwd, schemaJson), () =>
+          return logger('write', path.relative(Grown.cwd, schemaJson), () =>
             fs.outputJsonSync(schemaJson, JSONSchemaSequelizer.bundle(_db.models, fixedRefs,
               typeof Grown.argv.flags.apply === 'string' && Grown.argv.flags.apply), { spaces: 2 }))
             .then(() => {
-              util.logger.printf('\r\r{% log %s model%s exported %}\n',
+              logger.printf('\r\r{% log %s model%s exported %}\n',
                 _db.models.length,
                 _db.models.length === 1 ? '' : 's');
             });
@@ -101,10 +103,10 @@ module.exports = {
             fs.outputFileSync(migrationsFile, '[]');
           }
 
-          return util.logger('read', path.relative(Grown.cwd, schemaFile), () =>
+          return logger('read', path.relative(Grown.cwd, schemaFile), () =>
             JSONSchemaSequelizer.migrate(_conn, require(schemaFile), true)[Grown.argv.flags.create ? 'up' : 'down']())
             .then(() => {
-              util.logger.printf('\r\r{% log %s %s %}\n', Grown.argv.flags.use, Grown.argv.flags.create ? 'applied' : 'reverted');
+              logger.printf('\r\r{% log %s %s %}\n', Grown.argv.flags.use, Grown.argv.flags.create ? 'applied' : 'reverted');
             });
         }
 
@@ -123,7 +125,7 @@ module.exports = {
             .then(results => {
               /* istanbul ignore else */
               if (!results.length) {
-                util.logger.printf('\r\r{% log Without changes %}\n');
+                logger.printf('\r\r{% log Without changes %}\n');
                 return;
               }
 
@@ -148,7 +150,7 @@ module.exports = {
                 const file = path.join(migrationsDir, `${fulldate}${hourtime}${name}.js`);
                 const src = path.relative(Grown.cwd, file);
 
-                util.logger('write', src, () => {
+                logger('write', src, () => {
                   fs.outputFileSync(file, result.code);
                 });
               });
@@ -193,7 +195,7 @@ module.exports = {
               configFile: migrationsFile,
               baseDir: migrationsDir,
               logging(message) {
-                util.logger.printf('\r\r{% gray %s %}\n', message);
+                logger.printf('\r\r{% gray %s %}\n', message);
               },
             })[method](params),
           ])
@@ -202,7 +204,7 @@ module.exports = {
 
               /* istanbul ignore else */
               if (results[0]) {
-                util.logger('write', path.relative(Grown.cwd, schemaFile), () => {
+                logger('write', path.relative(Grown.cwd, schemaFile), () => {
                   fs.outputFileSync(schemaFile, results[0].code);
                 });
               }
@@ -210,26 +212,26 @@ module.exports = {
               if (!Array.isArray(result)) {
                 /* istanbul ignore else */
                 if (result.executed && result.executed.length === 0) {
-                  util.logger.printf('\r\r{% log No executed migrations %}\n');
+                  logger.printf('\r\r{% log No executed migrations %}\n');
                 }
 
                 /* istanbul ignore else */
                 if (result.pending && result.pending.length) {
-                  util.logger.printf('\r\r{% log Pending migrations: %}\n');
+                  logger.printf('\r\r{% log Pending migrations: %}\n');
 
                   result.pending.forEach(x => {
-                    util.logger.printf('{% yellow.line %s %}\n', x);
+                    logger.printf('{% yellow.line %s %}\n', x);
                   });
                 }
 
                 /* istanbul ignore else */
                 if (result.pending && result.pending.length === 0) {
-                  util.logger.printf('\r\r{% log No pending migrations %}\n');
+                  logger.printf('\r\r{% log No pending migrations %}\n');
                 }
               } else if (!result.length) {
-                util.logger.printf('\r\r{% log No changes were made %}\n');
+                logger.printf('\r\r{% log No changes were made %}\n');
               } else {
-                util.logger.printf('\r\r{% log %s migration%s %s %s %}\n',
+                logger.printf('\r\r{% log %s migration%s %s %s %}\n',
                   result.length,
                   result.length === 1 ? '' : 's',
                   result.length === 1 ? 'was' : 'were',
