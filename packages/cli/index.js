@@ -246,10 +246,17 @@ module.exports = (Grown, util) => {
     _tasks: null,
 
     start(taskName) {
-      /* istanbul ignore else */
-      if (!Grown.CLI._showTasks(taskName)) {
-        Grown.CLI._showHelp(taskName);
-      }
+      return Promise.resolve()
+        .then(() => {
+          const promise = Grown.CLI._showTasks(taskName);
+
+          /* istanbul ignore else */
+          if (!promise) {
+            Grown.CLI._showHelp(taskName);
+          }
+
+          return promise;
+        });
     },
 
     run(taskName) {
