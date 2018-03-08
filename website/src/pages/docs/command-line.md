@@ -3,21 +3,37 @@ title: Command line
 $render: ../../_/layouts/default.pug
 ---
 
-> There's no need to start the server manually, it'll be handled by the `CLI` extension.
-
 Make sure you write a script like the shown below, e.g. **your-app/application.js**
 
 ```js
 // require and create a Grown-container
 const Grown = require('grown')();
 
-module.exports = () => {
+function initServer() {
   // create the web-server instance
   const server = new Grown();
 
+  // return the server to be called later
   return server;
+}
+
+// e.g. `node ./your-app/application.js`
+if (require.main === module) {
+  initServer()
+    .listen(8080)
+    .catch(e => {
+      console.log('E_FATAL', e);
+      process.exit(1);
+    });
+}
+
+// exports for external usage
+module.exports = {
+  initServer,
 };
 ```
+
+> Now you can start the server manually, or use the `CLI` extension...
 
 Get `@grown/cli` globally to run your application:
 
