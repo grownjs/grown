@@ -22,7 +22,7 @@ const fs = require('fs');
 module.exports = (Grown, util) => {
   Grown.use(require('@grown/logger'));
 
-  const logger = Grown.Logger.getLogger();
+  const logger = util.getLogger();
 
   const mainPkg = path.join(Grown.cwd, 'package.json');
   const appPkg = fs.existsSync(mainPkg)
@@ -248,9 +248,9 @@ module.exports = (Grown, util) => {
     },
 
     run(taskName) {
-      const task = require(this._tasks[taskName]).callback;
+      const task = require(this._tasks[taskName]);
 
-      return task(Grown, util.extendValues({ logger }, util));
+      return task.callback(Grown, util);
     },
   });
 };
