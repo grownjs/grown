@@ -127,7 +127,7 @@ module.exports = (Grown, util) => {
             Grown.argv.flags.app = this._findApplication();
           }
 
-          this.exec(() => {
+          this._exec(Grown.argv.raw, () => {
             try {
               cb(this.run(taskName));
             } catch (e) {
@@ -207,6 +207,31 @@ module.exports = (Grown, util) => {
     }
   }
 
+  function _exec(argv, callback) {
+    process.on('SIGINT', () => process.exit());
+    process.on('exit', this._onExit);
+
+    if (argv.length) {
+      const child = spawn(argv[0], argv.slice(1));
+
+      // clear previous logs...
+      process.stdout.write('\x1b[K\r');
+
+      child.stdout.pipe(process.stdout);
+      child.stderr.pipe(process.stderr);
+
+      child.on(process.version.split('.')[1] === '6' ? 'exit' : 'close', exitCode => {
+        if (exitCode !== 0) {
+          process.exit(1);
+        } else {
+          callback();
+        }
+      });
+    } else {
+      callback();
+    }
+  }
+
   return Grown('CLI', {
     _findAvailableTasks,
     _findApplication,
@@ -215,6 +240,7 @@ module.exports = (Grown, util) => {
     _showHelp,
     _onError,
     _onExit,
+    _exec,
 
     // shared
     _tasks: null,
@@ -223,31 +249,6 @@ module.exports = (Grown, util) => {
       /* istanbul ignore else */
       if (!Grown.CLI._showTasks(taskName)) {
         Grown.CLI._showHelp(taskName);
-      }
-    },
-
-    exec(callback) {
-      process.on('SIGINT', () => process.exit());
-      process.on('exit', this._onExit);
-
-      if (Grown.argv.raw.length) {
-        const child = spawn(Grown.argv.raw[0], Grown.argv.raw.slice(1));
-
-        // clear previous logs...
-        process.stdout.write('\x1b[K\r');
-
-        child.stdout.pipe(process.stdout);
-        child.stderr.pipe(process.stderr);
-
-        child.on(process.version.split('.')[1] === '6' ? 'exit' : 'close', exitCode => {
-          if (exitCode !== 0) {
-            process.exit(1);
-          } else {
-            callback();
-          }
-        });
-      } else {
-        callback();
       }
     },
 
