@@ -33,3 +33,9 @@ module.exports.newContainer = () =>
   function $(id, props, extensions) {
     return $new(id, props, $, extensions);
   };
+
+// the default logger interface is disabled
+module.exports.getLogger = () => ({
+  error() {},
+  message() {},
+});

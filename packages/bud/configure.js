@@ -4,7 +4,22 @@ const _env = require('dotenv');
 const path = require('path');
 
 module.exports = ($, cwd, argv, util) => {
-  const _loader = (_cwd, suffix) => util.scanDir(_cwd, suffix, cb => cb($.Grown, util));
+  const _loader = (_cwd, suffix, callback) => {
+    if (typeof suffix === 'function') {
+      callback = suffix;
+      suffix = '';
+    }
+
+    return util.scanDir(_cwd, suffix, cb => {
+      let _module = cb($.Grown, util);
+
+      if (typeof callback === 'function') {
+        _module = callback(_module) || _module;
+      }
+
+      return _module;
+    });
+  };
 
   // props
   $('Grown.argv', () => argv, false);

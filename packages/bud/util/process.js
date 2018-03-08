@@ -117,13 +117,7 @@ function wrap(callback, fixedUtils) {
     const self = this;
 
     function end(ex) {
-      let _logger;
-
-      try {
-        _logger = fixedUtils.getLogger();
-      } catch (e) {
-        _logger = console;
-      }
+      const _logger = fixedUtils.getLogger();
 
       try {
         if (ex) {
