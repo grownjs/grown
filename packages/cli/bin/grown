@@ -5,7 +5,7 @@
 
 'use strict';
 
-const Grown = require('@grown/bare')();
+const Grown = require('@grown/bud')();
 
 Grown.use(require('../index'));
 
