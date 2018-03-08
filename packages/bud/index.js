@@ -56,21 +56,19 @@ module.exports = (cwd, argv) => {
     },
   });
 
-  const fixedUtils = util.extendValues({
-    getLogger() {
-      if (!Grown.Logger) {
-        throw new Error('Missing Grown.Logger');
-      }
+  util.getLogger = () => {
+    if (!Grown.Logger) {
+      throw new Error('Missing Grown.Logger');
+    }
 
-      return Grown.Logger.getLogger();
-    },
-  }, util);
+    return Grown.Logger.getLogger();
+  };
 
   // defaults
   process.name = 'Grown';
 
   require('./environment')(_argv);
-  require('./configure')($, cwd || process.cwd(), _argv, fixedUtils);
+  require('./configure')($, cwd || process.cwd(), _argv, util);
 
   return Grown;
 };
