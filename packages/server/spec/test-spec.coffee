@@ -2,7 +2,7 @@ Grown = null
 
 describe 'Grown', ->
   beforeEach ->
-    Grown = require('../../bare')()
+    Grown = require('../../bud')()
     Grown.use require('../')
     Grown.use require('../../test')
 
