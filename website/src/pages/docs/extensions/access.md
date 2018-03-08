@@ -46,9 +46,16 @@ server.plug([
   }),
 ]);
 
-// middleware
+// once Access is plugged on the server
+// all new middleware gets protected by default
 server.mount(ctx => {
   ctx.res.write('You are welcome!');
+
+  // validate against undefined rules
+  return ctx.check('Foo', 'Bar', 'baz')
+    .catch(() => {
+      ctx.res.write('\nNot here...');
+    });
 });
 ```
 
@@ -58,31 +65,32 @@ server.mount(ctx => {
 
 ### Methods <var>mixin</var>
 
-- `check(role, resource, action)` &mdash;
+- `check(role, resource[, action])` &mdash; Validate given rules through the current connection, returns a promise.
+  If no `role` is given it'll try to call `access_filter` to retrieve one.
 
 ### Public props <var>static</var>
 
-- `resources` &mdash;
-- `permissions` &mdash;
+- `resources` &mdash; Collected resources from `rules` calls.
+- `permissions` &mdash; Collected permissions from `rules` calls.
 
 ### Public methods <var>static</var>
 
-- `$install(ctx)` &mdash;
-- `$mixins()` &mdash;
-- `rules(config)` &mdash;
+- `$install(ctx)` &mdash; Used by `server.plug` calls.
+- `$mixins()` &mdash; Extra `Grown.Conn.Builder` definitions.
+- `rules(config)` &mdash; Compile given `config` into access rules.
 
 ### Private* props <var>static</var>
 
-- `_groups` &mdash;
-- `_ruleset` &mdash;
+- `_groups` &mdash; Graph from collected roles.
+- `_ruleset` &mdash; Collection of compiled rules.
 
 ### Private* methods <var>static</var>
 
-- `_reduceHandler(handler, permissions)` &mdash;
-- `_compileMatch(rule)` &mdash;
-- `_makeMatcher(ruleset)` &mdash;
-- `_makeTree(role, groups, property)` &mdash;
-- `_runACL(conn, role, handlers)` &mdash;
+- `_reduceHandler(handler, permissions)` &mdash; Check if `handler` exists within `permissions`, returns `null` otherwise.
+- `_compileMatch(rule)` &mdash; Turns a single `rule` into a middleware callback.
+- `_makeMatcher(ruleset)` &mdash; Iterates the given `ruleset` and compile each one. It returns a middleware callback.
+- `_makeTree(role, groups, property)` &mdash; Returns a flat representation of the given `role` in the `groups` graph, `property` can be `children` or `parent`.
+- `_runACL(ctx, role, handlers)` &mdash; Validate `role` access through `ctx`. Given `handlers` should be an array of single resources and actions. It returns a promise.
 
 ---
 
