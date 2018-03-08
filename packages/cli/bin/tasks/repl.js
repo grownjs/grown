@@ -20,7 +20,11 @@ Examples:
 module.exports = {
   description: USAGE_INFO,
   callback(Grown, util) {
-    Grown.use(require('@grown/repl'));
-    Grown.REPL.start(require('../lib/hooks')(Grown, util));
+    if (!Grown.REPL) {
+      Grown.use(require('@grown/repl'));
+    }
+
+    Grown.REPL.add(require('../lib/hooks')(Grown, util));
+    Grown.REPL.start();
   },
 };
