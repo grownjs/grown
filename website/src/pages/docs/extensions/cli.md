@@ -109,9 +109,9 @@ module.exports = {
 };
 ```
 
-See: [built-in tasks](https://github.com/pateketrueke/grown/tree/master/packages/cli/bin/tasks) from CLI module
-
 Now you can invoke this task using `grown words` or `node script.js words` depending on your installation.
+
+See: [built-in tasks](https://github.com/pateketrueke/grown/tree/master/packages/cli/bin/tasks) from CLI module
 
 ---
 
