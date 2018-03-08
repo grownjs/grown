@@ -141,12 +141,17 @@ module.exports = (Grown, util) => {
     _startREPL,
     _runCMD,
 
-    start() {
-      const tasks = util.flattenArgs(arguments).reduce((prev, cur) => {
+    // shared
+    _cmds: {},
+
+    add() {
+      util.flattenArgs(arguments).reduce((prev, cur) => {
         util.extendValues(prev, cur);
         return prev;
-      }, {});
+      }, this._cmds);
+    },
 
+    start() {
       const repl = this._startREPL();
       const cbs = [];
 
@@ -156,8 +161,8 @@ module.exports = (Grown, util) => {
         .concat(Object.keys(Grown.argv.params));
 
       hooks.forEach(x => {
-        if (tasks[x]) {
-          cbs.push(tasks[x]);
+        if (this._cmds[x]) {
+          cbs.push(this._cmds[x]);
         }
       })
 
