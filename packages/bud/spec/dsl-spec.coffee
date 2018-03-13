@@ -36,6 +36,8 @@ describe 'Grown', ->
 
   describe '#do', ->
     it 'can test guard blocks as promises', (done) ->
+      Grown.Logger = getLogger: -> {}
+
       (Grown.do.call @, ->
         new Promise((cb) -> setTimeout(cb, 1000))
       )(done)
