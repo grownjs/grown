@@ -26,7 +26,7 @@ module.exports = {
       .then(() => Models.connect())
       .then(() => Models.backup(Models._db(), {
         options: Grown.argv.flags,
-        logger: Grown.Logger.getLogger(),
+        logger: Grown.Logger,
       }))
       .then(() => Models.disconnect());
   },

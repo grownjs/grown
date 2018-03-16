@@ -41,7 +41,7 @@ module.exports = {
       .then(() => Models.migrate(Models._db(), {
         migrations: Grown.argv._.slice(),
         options: Grown.argv.flags,
-        logger: Grown.Logger.getLogger(),
+        logger: Grown.Logger,
       }))
       .then(() => Models.disconnect());
   },
