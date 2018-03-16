@@ -23,6 +23,7 @@ module.exports = {
     const Models = require('../lib/models')(Grown, util);
 
     const options = {
+      where: util.extendValues({}, Grown.argv.params, Grown.argv.data),
       force: Grown.argv.flags.force === true,
       alter: Grown.argv.flags.alter === true,
     };
@@ -30,13 +31,24 @@ module.exports = {
     return Promise.resolve()
       .then(() => Models.connect())
       .then(() => {
+        const _method = Grown.argv.flags.clear
+          ? 'clear'
+          : 'sync';
+
         /* istanbul ignore else */
         if (!Grown.argv.flags.only) {
-          return Models.sync(options);
+          return Models[_method](Models._getModels(), options);
         }
 
         return Grown.argv.flags.only.split(',').reduce((prev, cur) => {
-          return prev.then(() => Models[cur].sync(options));
+          return prev.then(() => {
+            /* istanbul ignore else */
+            if (_method === 'clear') {
+              return Models[cur].destroy(options);
+            }
+
+            return Models[cur].sync(options);
+          });
         }, Promise.resolve());
       })
       .then(() => Models.disconnect());
