@@ -1,6 +1,7 @@
 'use strict';
 
 const JSONSchemaSequelizer = require('json-schema-sequelizer');
+const JSONSchemaSequelizerCLI = require('json-schema-sequelizer/cli');
 
 module.exports = (Grown, util) => {
   const Base = require('./base')(Grown, util);
@@ -82,7 +83,12 @@ module.exports = (Grown, util) => {
       throw new Error(`Invalid database, given '${identifier}'`);
     }
 
-    return Grown.Model.DB[identifier || Object.keys(_db)[0]];
+    /* istanbul ignore else */
+    if (!identifier) {
+      identifier = Object.keys(_db)[0];
+    }
+
+    return _db[identifier];
   }
 
   return Grown('Model.Repo', {
@@ -97,6 +103,14 @@ module.exports = (Grown, util) => {
 
     clear(opts) {
       return JSONSchemaSequelizer.clear(this._getModels(), opts).then(() => this);
+    },
+
+    backup(conn, opts) {
+      return JSONSchemaSequelizerCLI.backup(conn, opts);
+    },
+
+    migrate(conn, opts) {
+      return JSONSchemaSequelizerCLI.migrate(conn, opts);
     },
 
     connect() {
