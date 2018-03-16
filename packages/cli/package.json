@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@grown/bud": "^0.0.11",
-    "@grown/logger": "^0.0.4",
+    "@grown/logger": "^0.0.5",
     "@grown/repl": "^0.0.3"
   },
   "publishConfig": {
