@@ -31,7 +31,13 @@ module.exports = (Grown, util) => {
   }
 
   function _msgLog(text) {
-    _logger.printf('\r\r%s\n', text);
+    if (text.charAt() === '-') {
+      _logger.printf('\r\r{% item %s %}\n', text);
+    } else if (text.indexOf('read ') === 0 || text.indexOf('write ') === 0) {
+      _logger(text.split(' ').shift(1), text.split(' ').slice(1).join(' '));
+    } else {
+      _logger.printf('\r\r{% log %s %}\n', text);
+    }
   }
 
   return Grown('Logger', util.extendValues({
