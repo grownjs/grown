@@ -97,20 +97,20 @@ module.exports = (Grown, util) => {
     _getModel,
     _getDB,
 
-    sync(models, opts) {
-      return JSONSchemaSequelizer.sync(models, opts).then(() => this);
+    sync(opts) {
+      return JSONSchemaSequelizer.sync(this._getModels(), opts).then(() => this);
     },
 
-    clear(models, opts) {
-      return JSONSchemaSequelizer.clear(models, opts).then(() => this);
+    clear(opts) {
+      return JSONSchemaSequelizer.clear(this._getModels(), opts).then(() => this);
     },
 
-    backup(conn, opts) {
-      return JSONSchemaSequelizerCLI.backup(conn, opts);
+    backup(opts) {
+      return JSONSchemaSequelizerCLI.backup(this._getDB(), opts);
     },
 
-    migrate(conn, opts) {
-      return JSONSchemaSequelizerCLI.migrate(conn, opts);
+    migrate(opts) {
+      return JSONSchemaSequelizerCLI.migrate(this._getDB(), opts);
     },
 
     connect() {
