@@ -118,13 +118,14 @@ function wrap(callback, fixedUtils) {
         if (_logger.error) {
           _logger.error(message);
         } else {
-          process.stderr.write(`${message}\n`);
+          process.stderr.write(`\r\x1b[31m${message}\x1b[0m\n`);
         }
       } catch (e) {
-        process.stderr.write(`${e.stack}\n`);
-        process.exit(1);
+        process.stderr.write(`\r\x1b[31m${e.stack}\x1b[0m\n`);
       }
     }
+
+    process.exit(1);
   }
 
   function ifErr(cb) {
@@ -142,7 +143,20 @@ function wrap(callback, fixedUtils) {
             _errCallback.call(self, ex, fixedUtils);
           }
 
-          err(cleanError(ex).stack || ex.toString());
+          const msg = [];
+
+          /* istanbul ignore else */
+          if (ex.name.indexOf('Sequelize') !== -1) {
+            msg.push('Errors:');
+
+            ex.errors.forEach(error => {
+              msg.push(`- ${error.message} (${error.type})`);
+            });
+          }
+
+          msg.push(cleanError(ex).stack || ex.toString());
+
+          err(msg.join('\n'));
         }
       } catch (e) {
         err(e.stack || e.toString());
