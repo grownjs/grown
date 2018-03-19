@@ -147,11 +147,16 @@ function wrap(callback, fixedUtils) {
 
           /* istanbul ignore else */
           if (ex.name.indexOf('Sequelize') !== -1) {
-            msg.push('Errors:');
+            if (ex.errors) {
+              msg.push('Errors:');
 
-            ex.errors.forEach(error => {
-              msg.push(`- ${error.message} (${error.type})`);
-            });
+              ex.errors.forEach(error => {
+                msg.push(`- ${error.message} (${error.type})`);
+              });
+            } else {
+              msg.push(`${ex.original.message}:`);
+              msg.push(`- ${ex.sql}`);
+            }
           }
 
           msg.push(cleanError(ex).stack || ex.toString());
