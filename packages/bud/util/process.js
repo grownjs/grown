@@ -107,7 +107,25 @@ function invoke(value, context, interpolate) {
 }
 
 function wrap(callback, fixedUtils) {
+  const _logger = fixedUtils.getLogger();
+
   let _errCallback;
+
+  function err(message) {
+    /* istanbul ignore else */
+    if (message) {
+      try {
+        if (_logger.error) {
+          _logger.error(message);
+        } else {
+          process.stderr.write(`${message}\n`);
+        }
+      } catch (e) {
+        process.stderr.write(`${e.stack}\n`);
+        process.exit(1);
+      }
+    }
+  }
 
   function ifErr(cb) {
     _errCallback = cb;
@@ -117,8 +135,6 @@ function wrap(callback, fixedUtils) {
     const self = this;
 
     function end(ex) {
-      const _logger = fixedUtils.getLogger();
-
       try {
         if (ex) {
           /* istanbul ignore else */
@@ -126,10 +142,10 @@ function wrap(callback, fixedUtils) {
             _errCallback.call(self, ex, fixedUtils);
           }
 
-          _logger.error(cleanError(ex).stack || ex.toString());
+          err(cleanError(ex).stack || ex.toString());
         }
       } catch (e) {
-        _logger.error(e.stack || e.toString());
+        err(e.stack || e.toString());
       } finally {
         /* istanbul ignore else */
         if (typeof done === 'function') {
