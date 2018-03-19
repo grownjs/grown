@@ -38,7 +38,7 @@ module.exports = {
 
     return Promise.resolve()
       .then(() => Models.connect())
-      .then(() => Models.migrate(Models._db(), {
+      .then(() => Models.migrate({
         migrations: Grown.argv._.slice(),
         options: Grown.argv.flags,
         logger: Grown.Logger,

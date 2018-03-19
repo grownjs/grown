@@ -24,7 +24,7 @@ module.exports = {
 
     return Promise.resolve()
       .then(() => Models.connect())
-      .then(() => Models.backup(Models._db(), {
+      .then(() => Models.backup({
         options: Grown.argv.flags,
         logger: Grown.Logger,
       }))
