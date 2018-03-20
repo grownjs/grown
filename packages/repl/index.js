@@ -172,16 +172,13 @@ module.exports = (Grown, util) => {
         .concat(Object.keys(Grown.argv.params));
 
       hooks.forEach(x => {
+        /* istanbul ignore else */
+        if (!this._cmds[x] || typeof this._cmds[x].callback !== 'function') {
+          throw new Error(`Missing hook '${x}'`);
+        }
+
         cbs.push(this._cmds[x].callback);
       });
-
-      /* istanbul ignore else */
-      if (!cbs.length && hooks.length) {
-        throw new Error(
-          hooks.length === 1
-            ? `Missing hook '${hooks[0]}'`
-            : `Missing hooks ${hooks.join(', ')}`);
-      }
 
       const logger = Logger.getLogger()
         .info('\r{% log Loading %s... %}', hooks.join(', '));
@@ -244,7 +241,7 @@ module.exports = (Grown, util) => {
         });
       });
 
-      Promise.resolve()
+      return Promise.resolve()
         .then(() => Promise.all(cbs.map(cb => cb && cb.call(null, ctx, util))))
         .then(() => {
           if (typeof Grown.argv.flags.load === 'string') {
