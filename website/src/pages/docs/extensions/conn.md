@@ -1,7 +1,40 @@
 ---
 title: Conn
 $render: ../../../_/layouts/default.pug
+runkit: !include ../../../_/shared/runkit/server.yml
 ---
+
+TODO
+
+```js
+/* @runkit */
+// register extension
+Grown.use(require('@grown/conn'));
+
+// register middleware
+server.plug(Grown.Conn);
+
+// new props/methods are available at `ctx`
+server.mount(ctx => {
+  if (ctx.is_json) {
+    return ctx.json({
+      status: 'ok',
+      result: ctx.req_headers,
+    });
+  }
+
+  ctx.resp_body = `<dl>
+    <dt>host</dt>
+    <dd>${ctx.host}</dd>
+    <dt>content_type</dt>
+    <dd>${ctx.content_type}</dd>
+    <dt>accept_languages</dt>
+    <dd>${ctx.accept_languages}</dd>
+  </dl>`;
+});
+```
+
+> Try requesting the endpoint as `application/json`
 
 ## Request
 

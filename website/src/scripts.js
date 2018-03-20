@@ -1,3 +1,4 @@
+/* global RunKit, __runkit__ */
 [].slice.call(document.querySelectorAll('pre code.lang-js')).forEach(source => {
   const matches = source.innerText.match(/\/\*+\s*@runkit\s*(.+?)\s*\*+\//);
   if (!matches) return;
@@ -12,7 +13,7 @@
     e.preventDefault();
     a.innerText = 'Loading...';
     const target = document.createElement('div');
-    const notebook = RunKit.createNotebook({
+    RunKit.createNotebook({
       element: target,
       source: sourceCode,
       mode: isEndpoint && 'endpoint',
