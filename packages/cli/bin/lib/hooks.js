@@ -1,7 +1,5 @@
 'use strict';
 
-const path = require('path');
-
 module.exports = (Grown, util) => ({
   connect(ctx) {
     const Models = require('./models')(Grown, util);
