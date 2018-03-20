@@ -142,8 +142,6 @@ module.exports = (Grown, util) => {
             }
 
             _response.type = mimeType;
-
-            return this;
           },
 
           get status_code() {
@@ -161,8 +159,6 @@ module.exports = (Grown, util) => {
             debug('#%s Set status: %s', this.pid, code);
 
             _response.status = code;
-
-            return this;
           },
 
           get resp_body() {

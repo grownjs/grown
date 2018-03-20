@@ -1,12 +1,12 @@
 'use strict';
 
-module.exports = (Grown, util) => {
-  const URLENCODED = require('./urlencoded')(Grown, util);
-  const JSON = require('./json')(Grown, util);
+module.exports = Grown => {
+  const URLENCODED = require('./urlencoded')(Grown);
+  const JSON = require('./json')(Grown);
 
   // register only
-  require('./text')(Grown, util);
-  require('./raw')(Grown, util);
+  require('./text')(Grown);
+  require('./raw')(Grown);
 
   return Grown('Parsers', {
     include: [

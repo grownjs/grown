@@ -16,11 +16,11 @@ module.exports = (Grown, util) => {
           throw new Error(`${req.method} requests does not need body, given ${JSON.stringify(_body)}`);
         }
 
-        if (_body && (Buffer.isBuffer(_body) || typeof _body === 'string')) {
+        if (Buffer.isBuffer(_body) || typeof _body === 'string') {
           req.write(_body);
         }
 
-        if (_body && typeof _body.pipe === 'function') {
+        if (typeof _body.pipe === 'function') {
           _body.pipe(req);
         }
       }

@@ -203,14 +203,12 @@ module.exports = (Grown, util) => {
       .then(result => {
         /* istanbul ignore else */
         if (result === false || result[1] === false) {
+          debug('#%s Skip. No rules were defined', ctx.pid);
+
           return ctx.raise(403);
         }
 
-        if (!result) {
-          debug('#%s Skip. No rules were defined', ctx.pid);
-        } else {
-          debug('#%s Got access <%s> %s', ctx.pid, result[0], result[1]);
-        }
+        debug('#%s Got access <%s> %s', ctx.pid, result[0], result[1]);
       });
   }
 

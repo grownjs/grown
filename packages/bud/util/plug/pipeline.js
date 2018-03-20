@@ -64,7 +64,7 @@ function _run(task, state, options) {
 
             const _next =
               (typeof result.value === 'function' || result.value.call || result.value.next)
-                ? middleware(result.value, options, `${task.name}.${task.type}`)
+                ? middleware(result.value, options)
                 : result;
 
             next(undefined, typeof _next.value === 'undefined'
