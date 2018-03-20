@@ -21,7 +21,7 @@
     "dotenv": "^5.0.0",
     "glob": "^7.1.2",
     "global-or-local": "^0.1.1",
-    "object-new": "^0.3.3",
+    "object-new": "^0.3.4",
     "source-map-support": "^0.5.3",
     "wargs": "^0.8.1"
   },
