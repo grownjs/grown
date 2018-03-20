@@ -27,9 +27,9 @@ module.exports = ($, cwd, argv, util) => {
   $('Grown.env', () => process.env.NODE_ENV, false);
 
   // methods
-  $('Grown.load', () => _loader, false);
+  $('Grown.load', _loader, false);
   $('Grown.use', cb => cb($.Grown, util), false);
-  $('Grown.do', cb => util.wrap(cb, util), false);
+  $('Grown.do', util.wrap, false);
 
   const env = _env.config({
     path: path.join(cwd, '.env'),
