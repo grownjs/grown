@@ -247,35 +247,41 @@ module.exports = (Grown, util) => {
     _tasks: {},
 
     start(taskName) {
-      try {
-        const promise = Grown.CLI._showTasks(taskName);
+      return Promise.resolve()
+        .then(() => {
+          try {
+            const promise = Grown.CLI._showTasks(taskName);
 
-        /* istanbul ignore else */
-        if (!promise) {
-          Grown.CLI._showHelp(taskName);
-        }
+            /* istanbul ignore else */
+            if (!promise) {
+              Grown.CLI._showHelp(taskName);
+            }
 
-        return promise;
-      } catch (e) {
-        return Promise.reject(e);
-      }
+            return promise;
+          } catch (e) {
+            throw new Error(`Task '${taskName}': ${e.message}`);
+          }
+        });
     },
 
     run(taskName) {
-      this._findAvailableTasks();
+      return Promise.resolve()
+        .then(() => {
+          this._findAvailableTasks();
 
-      /* istanbul ignore else */
-      if (!this._tasks[taskName]) {
-        throw new Error(`Task ${taskName} is not registered`);
-      }
+          /* istanbul ignore else */
+          if (!this._tasks[taskName]) {
+            throw new Error(`Task ${taskName} is not registered`);
+          }
 
-      try {
-        const task = require(this._tasks[taskName]);
+          try {
+            const task = require(this._tasks[taskName]);
 
-        return task.callback(Grown, util);
-      } catch (e) {
-        throw new Error(`Task '${taskName}': ${e.message}`);
-      }
+            return task.callback(Grown, util);
+          } catch (e) {
+            throw new Error(`Task '${taskName}': ${e.message}`);
+          }
+        });
     },
   });
 };
