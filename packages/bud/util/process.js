@@ -106,20 +106,14 @@ function invoke(value, context, interpolate) {
   return value.replace(RE_INTERPOLATE, ($0, $1) => vm.runInNewContext($1, context));
 }
 
-function wrap(callback, fixedUtils) {
-  const _logger = fixedUtils.getLogger();
-
+function wrap(callback) {
   let _errCallback;
 
   function err(message) {
     /* istanbul ignore else */
     if (message) {
       try {
-        if (_logger.error) {
-          _logger.error(message);
-        } else {
-          process.stderr.write(`\r\x1b[31m${message}\x1b[0m\n`);
-        }
+        process.stderr.write(`\r\x1b[31m${message}\x1b[0m\n`);
       } catch (e) {
         process.stderr.write(`\r\x1b[31m${e.stack}\x1b[0m\n`);
       }
@@ -140,13 +134,13 @@ function wrap(callback, fixedUtils) {
         if (ex) {
           /* istanbul ignore else */
           if (_errCallback) {
-            _errCallback.call(self, ex, fixedUtils);
+            _errCallback.call(self, ex);
           }
 
           const msg = [];
 
           /* istanbul ignore else */
-          if (ex.name.indexOf('Sequelize') !== -1) {
+          if (ex.name && ex.name.indexOf('Sequelize') !== -1) {
             if (ex.errors) {
               msg.push('Errors:');
 
@@ -174,7 +168,7 @@ function wrap(callback, fixedUtils) {
     }
 
     return Promise.resolve()
-      .then(() => callback.call(self, ifErr, fixedUtils))
+      .then(() => callback.call(self, ifErr))
       .then(() => end())
       .catch(end);
   };
