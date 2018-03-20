@@ -22,6 +22,7 @@ Object.keys($new).forEach(key => {
 });
 
 // common utils
+module.exports.extend = util._extend;
 module.exports.inspect = util.inspect;
 module.exports.argvParser = wargs;
 
