@@ -1,3 +1,6 @@
+stdMocks = require('std-mocks')
+procExit = process.exit
+
 Grown = null
 
 describe 'Grown', ->
@@ -36,8 +39,6 @@ describe 'Grown', ->
 
   describe '#do', ->
     it 'can test guard blocks as promises', (done) ->
-      Grown.Logger = getLogger: -> {}
-
       (Grown.do.call @, ->
         new Promise((cb) -> setTimeout(cb, 1000))
       )(done)
@@ -45,29 +46,25 @@ describe 'Grown', ->
     describe 'rescue', ->
       beforeEach ->
         @calls = []
-        @result = null
-
-        printf = (_, msg) =>
-          @calls.push 'printf'
-          @result = msg.trim()
-
-        Grown 'Logger', getLogger: ->
-          error: (msg) -> printf(null, msg)
-          message: (msg) -> printf(null, msg)
+        stdMocks.use()
+        process.exit = =>
+          @calls.push 'exit'
 
       afterEach ->
-        delete Grown.Logger
-        expect(@calls).toEqual ['guard', 'rescue', 'printf']
-        expect(@result).toEqual 'Error: OK'
+        stdMocks.restore()
+        process.exit = procExit
+        result = stdMocks.flush()
 
-      it 'can use Grown.Logger if it exists', (done) ->
+        expect(result.stdout).toEqual []
+        expect(result.stderr[0]).toContain 'Error: OK'
+        expect(@calls).toEqual ['guard', 'rescue', 'exit']
+
+      it 'will output to stderr', (done) ->
         (Grown.do.call @, (rescue) =>
           @calls.push 'guard'
-          expect(@result).toBe null
 
           rescue.call @, (e) =>
             @calls.push 'rescue'
-            expect(@result).toBe null
 
           throw 'OK'
         )(done)
