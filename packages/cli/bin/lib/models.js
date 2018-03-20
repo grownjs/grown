@@ -2,17 +2,22 @@
 
 const path = require('path');
 
-module.exports = (Grown, util) => {
+module.exports = (Grown, util, ctx) => {
+  const use = (ctx._ && ctx._[0]) || Grown.argv.flags.use;
+  const only = (ctx._ && ctx.flags.only) || Grown.argv.flags.only;
+  const dbName = (ctx._ && (ctx.flags.db || ctx.params.db)) || Grown.argv.flags.db;
+
   /* istanbul ignore else */
-  if (!Grown.argv.flags.use || typeof Grown.argv.flags.use !== 'string') {
-    throw new Error(`Missing models to --use, given '${Grown.argv.flags.use || ''}'`);
+  if (!use || typeof use !== 'string') {
+    throw new Error(`Missing models to --use, given '${use || ''}'`);
   }
 
-  const database = path.resolve(Grown.cwd, Grown.argv.flags.use);
+  const database = path.resolve(Grown.cwd, use);
   const Models = Grown.use(require(database));
+  const db = Models._getDB(dbName);
 
-  const _allowed = Grown.argv.flags.only
-    ? String(Grown.argv.flags.only).split(',')
+  const _allowed = only
+    ? String(only).split(',')
     : [];
 
   Models._get = () =>
@@ -20,8 +25,6 @@ module.exports = (Grown, util) => {
       .filter(x => (_allowed.length ? _allowed.indexOf(x.name) !== -1 : true));
 
   Models._db = () => {
-    const db = Models._getDB(Grown.argv.flags.db);
-
     return {
       sequelize: db.sequelize,
       schemas: db.$refs,
