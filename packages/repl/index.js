@@ -1,5 +1,6 @@
 'use strict';
 
+const wargs = require('wargs');
 const path = require('path');
 const fs = require('fs');
 
@@ -144,11 +145,21 @@ module.exports = (Grown, util) => {
     // shared
     _cmds: {},
 
-    add() {
-      util.flattenArgs(arguments).reduce((prev, cur) => {
-        util.extendValues(prev, cur);
-        return prev;
-      }, this._cmds);
+    add(cmd, desc, callback) {
+      /* istanbul ignore else */
+      if (typeof desc === 'object') {
+        callback = desc.callback || callback;
+        desc = desc.description;
+      }
+
+      if (typeof cmd === 'object') {
+        util.extend(this._cmds, cmd);
+      } else {
+        this._cmds[cmd] = {
+          description: desc,
+          callback,
+        };
+      }
     },
 
     start() {
@@ -161,11 +172,10 @@ module.exports = (Grown, util) => {
         .concat(Object.keys(Grown.argv.params));
 
       hooks.forEach(x => {
-        if (this._cmds[x]) {
-          cbs.push(this._cmds[x]);
-        }
-      })
+        cbs.push(this._cmds[x].callback);
+      });
 
+      /* istanbul ignore else */
       if (!cbs.length && hooks.length) {
         throw new Error(
           hooks.length === 1
@@ -181,6 +191,58 @@ module.exports = (Grown, util) => {
         logger,
         repl,
       };
+
+      function onError(e) {
+        /* istanbul ignore else */
+        if (e.errors) {
+          e.errors.forEach(err => {
+            logger.info('{% exception %s (%s) %}\r\n', err.message, err.type);
+          });
+        }
+
+        /* istanbul ignore else */
+        if (e.original) {
+          logger.info('{% failure %s %}\r\n', e.original.detail);
+          logger.info('{% failure %s %}\r\n', e.original.message);
+        }
+
+        /* istanbul ignore else */
+        if (!Grown.argv.flags.debug) {
+          e = util.cleanError(e, Grown.cwd);
+        }
+
+        logger.info('\r{% error %s %}\r\n', e.stack || e.message);
+      }
+
+      Object.keys(this._cmds).forEach(cmd => {
+        const fn = this._cmds[cmd].callback;
+
+        /* istanbul ignore else */
+        if (!fn || typeof fn !== 'function') {
+          throw new Error(`Invalid callback for ${cmd}, given '${util.inspect(this._cmds[cmd])}'`);
+        }
+
+        /* istanbul ignore else */
+        if (!this._cmds[cmd].description) {
+          throw new Error(`Missing description for ${cmd}, given '${util.inspect(this._cmds[cmd])}'`);
+        }
+
+        repl.defineCommand(cmd, {
+          help: this._cmds[cmd].description,
+          action(value) {
+            util.extend(ctx, wargs(value));
+            repl.pause();
+
+            Promise.resolve()
+              .then(() => fn.call(null, ctx, util))
+              .catch(onError)
+              .then(() => {
+                repl.resume();
+                repl.displayPrompt();
+              });
+          },
+        });
+      });
 
       Promise.resolve()
         .then(() => Promise.all(cbs.map(cb => cb && cb.call(null, ctx, util))))
@@ -198,25 +260,7 @@ module.exports = (Grown, util) => {
           repl.displayPrompt();
         })
         .catch(e => {
-          /* istanbul ignore else */
-          if (e.errors) {
-            e.errors.forEach(err => {
-              logger.info('{% exception %s (%s) %}\r\n', err.message, err.type);
-            });
-          }
-
-          /* istanbul ignore else */
-          if (e.original) {
-            logger.info('{% failure %s %}\r\n', e.original.detail);
-            logger.info('{% failure %s %}\r\n', e.original.message);
-          }
-
-          /* istanbul ignore else */
-          if (!Grown.argv.flags.debug) {
-            e = util.cleanError(e, Grown.cwd);
-          }
-
-          logger.info('\r{% error %s %}\r\n', e.stack || e.message);
+          onError(e);
           process.exit(1);
         });
     },
