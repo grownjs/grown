@@ -4,8 +4,9 @@ const STATUS_CODES = require('http').STATUS_CODES;
 
 const Transform = require('stream').Transform;
 
-const util = require('../util');
 const _util = require('util');
+
+const util = require('../util');
 
 let uws;
 

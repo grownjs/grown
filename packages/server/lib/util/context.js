@@ -83,8 +83,7 @@ function buildPubsub() {
       const args = Array.prototype.slice.call(arguments, 1);
 
       return ee(e)
-        .reduce((prev, cur) =>
-          prev.then(() => cur.apply(null, args)), Promise.resolve()).then(() => this);
+        .reduce((prev, cur) => prev.then(() => cur.apply(null, args)), Promise.resolve()).then(() => this);
     },
   };
 }

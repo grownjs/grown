@@ -5,12 +5,19 @@
   "license": "MIT",
   "main": "index.js",
   "scripts": {
-    "dev": "jasmine-node spec --coffee --verbose --autoTest --captureExceptions",
-    "lint": "eslint index.js util spec",
-    "spec": "jasmine-node spec --coffee --noStackTrace --captureExceptions",
-    "cover": "istanbul cover --x '**/spec/**' -- jasmine-node --coffee spec",
-    "cover:up": "codecov --file=coverage/lcov.info --disable=gcov -e TRAVIS_NODE_VERSION",
-    "test": "npm run lint && npm run cover"
+    "dev": "npm test -- -w",
+    "lint": "eslint lib tests",
+    "test": "npm run test:unit --",
+    "test:ci": "npm run coverage:all && npm run report -- -r lcov",
+    "test:all": "npm run test:run tests && npm run report -- -r html",
+    "test:run": "NODE_ENV=test _mocha --exit --recursive -bR spec",
+    "test:unit": "npm run test:run tests --",
+    "coverage": "nyc -x '**/tests/**' -x '**/*.test.js'",
+    "coverage:all": "npm run coverage -- npm run test:all",
+    "coverage:unit": "npm run coverage -- npm run test:unit",
+    "codecov": "codecov --file=coverage/lcov.info -e TRAVIS_NODE_VERSION",
+    "report": "nyc report",
+    "pretest": "npm run lint"
   },
   "publishConfig": {
     "access": "public"
@@ -23,7 +30,7 @@
     "codecov": "^3.1.0",
     "eslint": "^5.9.0",
     "eslint-config-airbnb-base": "^13.1.0",
-    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-import": "^2.14.0",
     "mocha": "^5.2.0",
     "nyc": "^13.1.0"
   }
