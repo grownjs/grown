@@ -30,10 +30,9 @@ module.exports.buildPipeline = buildPipeline;
 module.exports.buildMiddleware = buildMiddleware;
 
 // object-new wrapper
-module.exports.newContainer = () =>
-  function $(id, props, extensions) {
-    return $new(id, props, $, extensions);
-  };
+module.exports.newContainer = () => function $(id, props, extensions) {
+  return $new(id, props, $, extensions);
+};
 
 // the default logger interface is disabled
 module.exports.getLogger = () => ({

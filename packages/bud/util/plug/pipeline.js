@@ -62,10 +62,9 @@ function _run(task, state, options) {
               return;
             }
 
-            const _next =
-              (typeof result.value === 'function' || result.value.call || result.value.next)
-                ? middleware(result.value, options)
-                : result;
+            const _next = (typeof result.value === 'function' || result.value.call || result.value.next)
+              ? middleware(result.value, options)
+              : result;
 
             next(undefined, typeof _next.value === 'undefined'
               ? _run(_next, state, options)

@@ -39,13 +39,12 @@ function scanDir(cwd, suffix, callback) {
 
   const reSuffix = new RegExp(`${_suffix}(?:/index)?\\.js`, 'g');
 
-  const _extensions =
-    glob.sync('**/*.js', { cwd })
-      .filter(x => x !== 'index.js' || (suffix && x.indexOf(suffix) !== -1))
-      .map(x => ({
-        src: path.join(cwd, x),
-        name: path.relative(cwd, path.join(cwd, x)).replace(reSuffix, ''),
-      }));
+  const _extensions = glob.sync('**/*.js', { cwd })
+    .filter(x => x !== 'index.js' || (suffix && x.indexOf(suffix) !== -1))
+    .map(x => ({
+      src: path.join(cwd, x),
+      name: path.relative(cwd, path.join(cwd, x)).replace(reSuffix, ''),
+    }));
 
   const map = {};
 

@@ -142,10 +142,9 @@ function resolveValues(obj, filter) {
     }
   });
 
-  return Promise.all(Object.keys(target).map(key =>
-    Promise.resolve(target[key]).then(value => {
-      target[key] = value;
-    })))
+  return Promise.all(Object.keys(target).map(key => Promise.resolve(target[key]).then(value => {
+    target[key] = value;
+  })))
     .then(() => target);
 }
 

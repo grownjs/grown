@@ -53,8 +53,7 @@ function _purgeCache(moduleName) {
 
 function clearModules(cwd) {
   Object.keys(require.cache)
-    .filter(key =>
-      key.indexOf(cwd) === 0 && key.indexOf('node_modules') === -1)
+    .filter(key => key.indexOf(cwd) === 0 && key.indexOf('node_modules') === -1)
     .forEach(_purgeCache);
 }
 
