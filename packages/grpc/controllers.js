@@ -32,7 +32,9 @@ module.exports = (Grown, util) => {
                         if (typeof hooks.after === 'function') {
                           hooks.after(ctx, data);
                         }
-                      } catch (_e) {}
+                      } catch (_e) {
+                        // do nothing
+                      }
 
                       reply(null, data);
                     })
@@ -41,7 +43,9 @@ module.exports = (Grown, util) => {
                         if (typeof hooks.formatError === 'function') {
                           e = hooks.formatError(e, ctx) || e;
                         }
-                      } catch (_e) {}
+                      } catch (_e) {
+                        // do nothing
+                      }
 
                       reply(e);
                     });
