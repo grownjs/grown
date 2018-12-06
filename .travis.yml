@@ -2,11 +2,11 @@ language: node_js
 sudo: false
 branches:
   only:
-    - master 
+    - master
 node_js:
-  - 4
   - 6
   - 8
+  - 11
 script:
   - npm test
 notifications:
