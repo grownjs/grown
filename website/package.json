@@ -6,13 +6,12 @@
   "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "dev": "tarima watch",
+    "dev": "tarima watch -dp 3001",
     "dist": "tarima -fqe"
   },
   "tarima": {
     "cwd": ".",
     "from": "src",
-    "output": "build",
     "public": "build",
     "watching": [
       ".env",
@@ -39,17 +38,7 @@
     "plugins": [
       "talavera"
     ],
-    "pluginOptions": {
-      "talavera": {
-        "dest": "images"
-      },
-      "tarima-lr": {
-        "timeout": 1000
-      }
-    },
     "bundleOptions": {
-      "bundleCache": true,
-      "entryCache": true,
       "extensions": {
         "js": "es6",
         "css": "less"
@@ -65,21 +54,19 @@
     }
   },
   "devDependencies": {
-    "buble": "^0.19.3",
-    "eslint": "^5.9.0",
+    "buble": "^0.19.6",
+    "eslint": "^5.12.1",
     "eslint-config-airbnb-base": "^13.1.0",
-    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-import": "^2.15.0",
+    "eslint-plugin-pug": "^1.1.1",
     "highlight.js": "^9.11.0",
     "kramed": "^0.5.6",
     "less": "^3.9.0",
     "less-plugin-autoprefix": "^2.0.0",
-    "pug": "^2.0.0-rc.1",
-    "rollup": "^0.67.4",
-    "talavera": "^0.6.1",
-    "tarima": "^4.2.5"
-  },
-  "optionalDependencies": {
-    "node-notifier": "^5.1.2",
-    "tarima-lr": "^0.4.0"
+    "pug": "^2.0.0-beta11",
+    "rollup": "^1.1.2",
+    "talavera": "^0.6.2",
+    "tarima": "^4.2.8",
+    "tarima-lr": "^0.4.1"
   }
 }
