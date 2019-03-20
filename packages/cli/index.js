@@ -285,7 +285,12 @@ module.exports = (Grown, util) => {
 
             return task.callback(Grown, util);
           } catch (e) {
-            throw new Error(`Task '${taskName}': ${e.message}`);
+            /* istanbul ignore else */
+            if (!Grown.argv.flags.debug) {
+              e = util.cleanError(e, Grown.cwd);
+            }
+
+            throw e;
           }
         });
     },
