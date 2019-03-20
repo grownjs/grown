@@ -25,7 +25,6 @@ require('global-or-local')
     // optionals
     'sqlite3',
     'pg',
-    'uws',
   ]);
 
 const util = require('./util');

@@ -8,7 +8,6 @@ Start the web server
 
 -p, --port   Optional. Server's port (default: 8080)
 -h, --host   Optional. Server's host name (default: 0.0.0.0)
-    --uws    Optional. Use UWS instead of HTTP(s)
     --https  Optional. Force HTTPS
 
 Examples:
@@ -29,11 +28,6 @@ module.exports = {
     /* istanbul ignore else */
     if (Grown.argv.flags.https === true) {
       _protocol += 's';
-    }
-
-    /* istanbul ignore else */
-    if (Grown.argv.flags.uws === true) {
-      _protocol = 'uws';
     }
 
     /* istanbul ignore else */
