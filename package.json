@@ -6,6 +6,14 @@
   "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
   "license": "MIT",
   "main": "index.js",
+  "bin": {
+    "grown": "cli"
+  },
+  "files": [
+    "cli",
+    "cli.js",
+    "index.js"
+  ],
   "scripts": {
     "pretest": "lerna bootstrap",
     "test": "lerna run test --scope @grown/bud --scope @grown/server"
@@ -19,6 +27,7 @@
   },
   "dependencies": {
     "@grown/bud": "^0.0.11",
+    "@grown/cli": "^0.0.15",
     "@grown/server": "^0.0.4"
   },
   "devDependencies": {
@@ -26,6 +35,7 @@
   },
   "bundleDependencies": [
     "@grown/bud",
+    "@grown/cli",
     "@grown/server"
   ]
 }
