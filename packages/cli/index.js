@@ -63,7 +63,7 @@ module.exports = (Grown, util) => {
     let mainFile;
 
     /* istanbul ignore else */
-    if (files.indexOf(appPkg.main) === -1) {
+    if (appPkg.main && files.indexOf(appPkg.main) === -1) {
       files.push(appPkg.main);
     }
 
