@@ -89,9 +89,9 @@ function cleanError(e, cwd) {
     _e.code = e.statusCode || 500;
   }
 
-  _e.stack = `${_e.name}: ${_e.message || String(e)}\n ${_stack.split('\n')
+  _e.stack = `${String(_e.message || e.stack.match(RE_ERR_MESSAGE)[0] || _e.name).trim()}\n${_stack.split('\n')
     .filter(line => RE_SRC_FILE.test(line))
-    .join('\n ')}`;
+    .join('\n')}`;
 
   return _e;
 }
