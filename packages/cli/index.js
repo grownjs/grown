@@ -51,13 +51,19 @@ module.exports = (Grown, util) => {
       `lib/${baseName}/application.js`,
       `lib/${baseName}/server.js`,
       `lib/${baseName}/index.js`,
+      `lib/${baseName}/main.js`,
+      `lib/${baseName}/app.js`,
       `lib/${baseName}.js`,
       'lib/application.js',
       'lib/server.js',
+      'lib/main.js',
+      'lib/app.js',
       `${baseName}.js`,
       'application.js',
       'server.js',
       'index.js',
+      'main.js',
+      'app.js',
     ];
 
     let mainFile;
