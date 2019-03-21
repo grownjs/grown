@@ -3,38 +3,46 @@
 const RE_SERVICE = /Service$/;
 const RE_DASHERIZE = /\b([A-Z])/g;
 
-module.exports = (Grown, util) => {
+module.exports = Grown => {
   function _callService(client, method, data) {
     return new Promise((resolve, reject) => {
-      const deadline = new Date();
+      const identifier = client.constructor.service[method]
+        ? client.constructor.service[method].path
+        : method;
 
-      deadline.setSeconds(deadline.getSeconds() + (this.timeout || 5));
-
-      if (!client[method] || typeof client[method] !== 'function') {
-        throw new Error(`${util.inspect(client).split(' ')[0]}#${method} is not a function`);
+      if (typeof client[method] !== 'function') {
+        throw new Error(`Invalid method for '${identifier}' service`);
       }
 
       if (typeof data === 'undefined') {
-        throw new Error(`${util.inspect(client).split(' ')[0]}#${method}: Missing data`);
+        throw new Error(`Missing data for '${identifier}' request`);
       }
 
-      client[method](data, { deadline }, (error, result) => {
-        /* istanbul ignore else */
-        if (error) {
-          let parsedError;
+      try {
+        const deadline = new Date();
 
-          try {
-            parsedError = JSON.parse(error.message);
-          } catch (e) {
-            parsedError = error;
-            parsedError.code = 500;
+        deadline.setSeconds(deadline.getSeconds() + (this.timeout || 5));
+
+        client[method](data, { deadline }, (error, result) => {
+          /* istanbul ignore else */
+          if (error) {
+            let parsedError;
+
+            try {
+              parsedError = JSON.parse(error.message);
+            } catch (e) {
+              parsedError = error;
+              parsedError.code = 500;
+            }
+
+            return reject(parsedError);
           }
 
-          return reject(parsedError);
-        }
-
-        return resolve(result);
-      });
+          return resolve(result);
+        });
+      } catch (e) {
+        throw new Error(`Failed at calling ${identifier}: ${e.stack || e.message}`);
+      }
     });
   }
 
