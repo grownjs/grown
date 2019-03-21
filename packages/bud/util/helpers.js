@@ -1,10 +1,7 @@
 'use strict';
 
-const glob = require('glob');
 const path = require('path');
 const fs = require('fs');
-
-const _obj = require('./object');
 
 function findFile(src, paths, throws) {
   /* istanbul ignore else */
@@ -32,37 +29,12 @@ function findFile(src, paths, throws) {
   }
 }
 
-function scanDir(cwd, suffix, callback) {
-  const _suffix = suffix
-    ? `(?:/?${suffix})?`
-    : '';
+function scanDir(src, callback) {
+  const { Resolver } = require('sastre');
 
-  const reSuffix = new RegExp(`${_suffix}(?:/index)?\\.js`, 'g');
-
-  const _extensions = glob.sync('**/*.js', { cwd })
-    .filter(x => x !== 'index.js' || (suffix && x.indexOf(suffix) !== -1))
-    .map(x => ({
-      src: path.join(cwd, x),
-      name: path.relative(cwd, path.join(cwd, x)).replace(reSuffix, ''),
-    }));
-
-  const map = {};
-
-  _extensions.forEach(x => {
-    let target = require(x.src);
-
-    /* istanbul ignore else */
-    if (typeof target === 'function') {
-      target = callback(target);
-    }
-
-    _obj.setProp(map, x.name
-      .split('/')
-      .map(_ => _.replace(/-([a-z])/g, ($0, $1) => $1.toUpperCase()))
-      .join('.'), target);
+  return callback((ctx, hooks) => {
+    return new Resolver(ctx || null, path.resolve(src), hooks);
   });
-
-  return map;
 }
 
 module.exports = {
