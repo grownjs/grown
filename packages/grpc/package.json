@@ -5,6 +5,7 @@
   "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "@grpc/proto-loader": "^0.4.0",
     "glob": "^7.1.2",
     "grpc": "^1.16.1"
   },

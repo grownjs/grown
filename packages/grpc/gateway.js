@@ -1,6 +1,5 @@
 'use strict';
 
-const glob = require('glob');
 const path = require('path');
 
 const RE_DASHERIZE = /\b([A-Z])/g;
@@ -45,34 +44,39 @@ module.exports = (Grown, util) => {
   return Grown('GRPC.Gateway', {
     _callService,
 
-    load(cwd) {
+    load(file, options) {
+      const protoLoader = require('@grpc/proto-loader');
+
+      const protoOptions = {
+        longs: String,
+        enums: String,
+        defaults: true,
+        oneofs: true,
+        ...options,
+      };
+
+      const packageDefinition = protoLoader.loadSync(file, protoOptions);
+      const Proto = grpc.loadPackageDefinition(packageDefinition);
+      const name = path.basename(file);
+
       const namespace = this.proto_namespace || 'API';
-      const map = {};
 
-      glob.sync('**/schema.proto', { cwd })
-        .forEach(proto => {
-          const Proto = grpc.load(path.join(cwd, proto));
-          const name = path.basename(path.dirname(proto));
+      /* istanbul ignore else */
+      if (!Proto[namespace]) {
+        throw new Error(`${name}::${namespace} package not found`);
+      }
 
-          /* istanbul ignore else */
-          if (!Proto[namespace]) {
-            throw new Error(`${name}.${namespace} package not found`);
-          }
-
-          Object.keys(Proto[namespace]).forEach(key => {
-            /* istanbul ignore else */
-            if (Proto[namespace][key].service) {
-              util.setProp(map, `${namespace}.${key}`, Proto[namespace][key]);
-            }
-          });
-        });
-
-      this.extensions.push(map);
+      Object.keys(Proto[namespace]).forEach(key => {
+        /* istanbul ignore else */
+        if (Proto[namespace][key].service && !Proto[namespace][key].service.type) {
+          util.setProp(this, `${namespace}.${key}`, Proto[namespace][key]);
+        }
+      });
 
       return this;
     },
 
-    setup(controllers) {
+    setup(controllers, suffix) {
       const _server = grpc.ServerCredentials.createInsecure();
       const _channel = grpc.credentials.createInsecure();
 
@@ -88,18 +92,20 @@ module.exports = (Grown, util) => {
       Object.keys(this[namespace]).forEach(key => {
         const id = key.replace(RE_DASHERIZE, ($0, $1) => $1.toLowerCase());
         const host = this.self_hostname === true ? id : '0.0.0.0';
-
-        const Proto = this[namespace][key];
-        const Ctrl = controllers[key];
+        const handler = typeof suffix === 'string'
+          ? key.replace(suffix, '')
+          : key;
 
         let _client;
 
         /* istanbul ignore else */
-        if (server[`send${key}`]) {
-          throw new Error(`Method 'send${key}' already setup`);
+        if (server[`send${handler}`]) {
+          throw new Error(`Method 'send${handler}' already setup`);
         }
 
-        server[`send${key}`] = (method, data) => {
+        const Proto = this[namespace][key];
+
+        server[`send${handler}`] = (method, data) => {
           /* istanbul ignore else */
           if (!_client) {
             _client = new Proto(`${host}:${port}`, _channel);
@@ -108,7 +114,7 @@ module.exports = (Grown, util) => {
           return this.request(_client, method, data);
         };
 
-        server.addService(Proto.service, new Ctrl());
+        server.addService(Proto.service, controllers.get(handler));
       });
 
       const _start = server.start.bind(server);
