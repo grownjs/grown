@@ -11,12 +11,11 @@ module.exports = ($, cwd, argv, util) => {
 
   // methods
   $('Grown.load', (_cwd, hooks) => util.scanDir(_cwd, def => def($.Grown, hooks || {})), false);
+  $('Grown.def', (name, fn) => $(`Grown.${name}`, fn, false), false);
   $('Grown.use', cb => cb($.Grown, util), false);
   $('Grown.do', util.wrap, false);
 
-  const env = _env.config({
-    path: path.join(cwd, '.env'),
-  });
+  const env = _env.config({ path: path.join(cwd, '.env') });
 
   if (env.error && env.error.code !== 'ENOENT') {
     throw env.error;
