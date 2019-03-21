@@ -89,8 +89,12 @@ module.exports = (Grown, util) => {
       const _start = server.start.bind(server);
 
       server.start = () => {
-        server.bind(`0.0.0.0:${port}`, _server);
-        _start();
+        if (!server.started) {
+          server.bind(`0.0.0.0:${port}`, _server);
+          _start();
+        }
+
+        return server;
       };
 
       return server;
