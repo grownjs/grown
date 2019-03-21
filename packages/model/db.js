@@ -19,7 +19,9 @@ module.exports = (Grown, util) => {
         params.config.identifier = name;
       }
 
-      this._registry[name] = new JSONSchemaSequelizer(params.config, params.refs, params.cwd);
+      const opts = (params.use_env_variable && process.env[params.use_env_variable]) || params.config;
+
+      this._registry[name] = new JSONSchemaSequelizer(opts, params.refs, params.cwd);
 
       util.readOnlyProperty(this, name, () => this._registry[name]);
 
