@@ -12,7 +12,7 @@ const RE_NATIVES = new RegExp(`^.+(${
   Object.keys(process.binding('natives'))
     .concat('bootstrap_node', 'node')
     .join('|')
-})\\.js.+$`, 'gm');
+})\\.js(?!:).+$`, 'gm');
 
 const RE_INTERPOLATE = /`([^`]+)`/g;
 
@@ -58,8 +58,9 @@ function clearModules(cwd) {
 }
 
 function cleanError(e, cwd) {
-  let _stack = cleanStack(e.stack || '')
-    .replace(/^.+(es6-promise|bluebird|internal|grown).+$/gm)
+  let _stack = cleanStack(e.stack || new Error().stack || '')
+    .replace(/^.+(es6-promise|bluebird|internal).+$/gm)
+    .replace(/^[ ]*at \/.*node_modules.*$/gm, '')
     .replace(RE_ERR_MESSAGE, '')
     .replace(RE_NATIVES, '');
 
@@ -89,7 +90,9 @@ function cleanError(e, cwd) {
     _e.code = e.statusCode || 500;
   }
 
-  _e.stack = `${String(_e.message || e.stack.match(RE_ERR_MESSAGE)[0] || _e.name).trim()}\n${_stack.split('\n')
+  const message = (e.stack || _e.message || _e.name).match(RE_ERR_MESSAGE);
+
+  _e.stack = `${message ? message[0].trim() : _e.name}\n${_stack.split('\n')
     .filter(line => RE_SRC_FILE.test(line))
     .join('\n')}`;
 
