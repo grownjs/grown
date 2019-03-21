@@ -73,22 +73,19 @@ module.exports = (Grown, util) => {
     _fake,
 
     load(repository) {
-      const map = {};
       const refs = repository._getSchemas();
 
       repository._getModels().forEach(model => {
         const _schema = (model.options || model).$schema;
         const schema = refs[_schema.id];
 
-        map[_schema.id] = {
+        this[_schema.id] = {
           fake: opts => this._fake(schema, refs, opts),
           fakeAll: opts => this._fakeAll(schema, refs, opts),
           assert: data => this._assertFrom(schema, refs, data),
           validate: data => this._validateFrom(schema, refs, data),
         };
       });
-
-      this.extensions.push(map);
 
       return this;
     },
