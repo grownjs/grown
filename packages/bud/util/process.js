@@ -92,9 +92,9 @@ function cleanError(e, cwd) {
 
   const message = (e.stack || _e.message || _e.name).match(RE_ERR_MESSAGE);
 
-  _e.stack = `${message ? message[0].trim() : _e.name}\n${_stack.split('\n')
+  _e.stack = `${message ? message[0].trim() : _e.name}\n    ${_stack.split('\n')
     .filter(line => RE_SRC_FILE.test(line))
-    .join('\n')}`;
+    .join('\n    ')}`;
 
   return _e;
 }

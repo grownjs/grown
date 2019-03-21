@@ -202,7 +202,7 @@ module.exports = (Grown, util) => {
       logger.printf('{% failure %s %}\r\n', e.original.message);
     }
 
-    logger.printf('\r{% error %s %}\r\n', e.stack || e.message);
+    logger.printf('\r{% error %s %}\r\n', (e.stack || e.message).replace(/\b(\w+):/, '($1)'));
     process.exit(1);
   }
 
@@ -214,6 +214,7 @@ module.exports = (Grown, util) => {
   }
 
   function _exec(argv, callback) {
+    process.on('unhandledRejection', err => _onError(err));
     process.on('SIGINT', () => process.exit());
     process.on('exit', this._onExit);
 

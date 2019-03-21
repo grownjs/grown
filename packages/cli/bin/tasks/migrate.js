@@ -2,10 +2,10 @@
 
 const USAGE_INFO = `
 
-Perform database changes
+Perform database changes (Repo only)
 
 --db       Database to be used, identifier
---use      Entry file exporting models
+--use      Entry file exporting models (Repo only)
 --only     Optional. Specific models to reset by name
 
 --make     Optional. Take an snapshot from your models

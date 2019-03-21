@@ -2,10 +2,10 @@
 
 const USAGE_INFO = `
 
-Take and restore snapshots
+Take and restore snapshots (Repo only)
 
 --db    Database to be used, identifier
---use   Entry file exporting models
+--use   Entry file exporting models (Repo only)
 
 --load  Optional. Backup source, directory or file
 --save  Optional. Backup destination, directory

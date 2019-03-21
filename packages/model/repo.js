@@ -79,13 +79,13 @@ module.exports = (Grown, util) => {
     const _db = ((Grown.Model && Grown.Model.DB) || {})._registry || {};
 
     /* istanbul ignore else */
-    if (typeof identifier === 'string' && !_db[identifier]) {
-      throw new Error(`Invalid database, given '${identifier}'`);
+    if (!identifier) {
+      identifier = Object.keys(_db)[0];
     }
 
     /* istanbul ignore else */
-    if (!identifier) {
-      identifier = Object.keys(_db)[0];
+    if (typeof identifier === 'string' && !_db[identifier]) {
+      throw new Error(`Invalid database, given '${identifier}'`);
     }
 
     return _db[identifier];

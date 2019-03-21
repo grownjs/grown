@@ -5,7 +5,7 @@ const USAGE_INFO = `
 Inspect the database
 
 --db     Database to be used, identifier
---use    Entry file exporting models
+--use    Entry file exporting models (Repo only)
 --only   Optional. Models to inspect by name
 
 Examples:
@@ -23,8 +23,10 @@ module.exports = {
 
     return Models.connect()
       .then(() => {
-        logger.printf('\r\r{% star %s %} (%s)\n',
-          Models.connection.database, Models.connection.dialect);
+        if (Models.connection) {
+          logger.printf('\r\r{% star %s %} (%s)\n',
+            Models.connection.database, Models.connection.dialect);
+        }
 
         return Promise.all(Models._get()
           .map(x => {

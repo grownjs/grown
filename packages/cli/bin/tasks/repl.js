@@ -5,7 +5,7 @@ const USAGE_INFO = `
 Start the console
 
 --db    Database to be used, identifier
---use   Entry file exporting models
+--use   Entry file exporting models (Repo only)
 --load  Run scripts into the REPL
 
 Hooks:

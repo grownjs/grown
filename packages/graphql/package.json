@@ -4,9 +4,7 @@
   "main": "index.js",
   "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
   "license": "MIT",
-  "dependencies": {
-    "graphqlizer": "^0.0.3"
-  },
+  "dependencies": {},
   "publishConfig": {
     "access": "public"
   }
