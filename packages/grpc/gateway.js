@@ -1,12 +1,9 @@
 'use strict';
 
-const path = require('path');
-
+const RE_SERVICE = /Service$/;
 const RE_DASHERIZE = /\b([A-Z])/g;
 
 module.exports = (Grown, util) => {
-  const grpc = require('grpc');
-
   function _callService(client, method, data) {
     return new Promise((resolve, reject) => {
       const deadline = new Date();
@@ -44,39 +41,9 @@ module.exports = (Grown, util) => {
   return Grown('GRPC.Gateway', {
     _callService,
 
-    load(file, options) {
-      const protoLoader = require('@grpc/proto-loader');
+    setup(controllers) {
+      const grpc = require('grpc');
 
-      const protoOptions = {
-        longs: String,
-        enums: String,
-        defaults: true,
-        oneofs: true,
-        ...options,
-      };
-
-      const packageDefinition = protoLoader.loadSync(file, protoOptions);
-      const Proto = grpc.loadPackageDefinition(packageDefinition);
-      const name = path.basename(file);
-
-      const namespace = this.proto_namespace || 'API';
-
-      /* istanbul ignore else */
-      if (!Proto[namespace]) {
-        throw new Error(`${name}::${namespace} package not found`);
-      }
-
-      Object.keys(Proto[namespace]).forEach(key => {
-        /* istanbul ignore else */
-        if (Proto[namespace][key].service && !Proto[namespace][key].service.type) {
-          util.setProp(this, `${namespace}.${key}`, Proto[namespace][key]);
-        }
-      });
-
-      return this;
-    },
-
-    setup(controllers, suffix) {
       const _server = grpc.ServerCredentials.createInsecure();
       const _channel = grpc.credentials.createInsecure();
 
@@ -92,29 +59,31 @@ module.exports = (Grown, util) => {
       Object.keys(this[namespace]).forEach(key => {
         const id = key.replace(RE_DASHERIZE, ($0, $1) => $1.toLowerCase());
         const host = this.self_hostname === true ? id : '0.0.0.0';
-        const handler = typeof suffix === 'string'
-          ? key.replace(suffix, '')
-          : key;
 
         let _client;
 
         /* istanbul ignore else */
-        if (server[`send${handler}`]) {
-          throw new Error(`Method 'send${handler}' already setup`);
+        if (server[`send${key}`]) {
+          throw new Error(`Method 'send${key}' already setup`);
         }
 
+        const name = key.replace(RE_SERVICE, '');
         const Proto = this[namespace][key];
 
-        server[`send${handler}`] = (method, data) => {
+        server[`send${name}`] = (method, data) => {
           /* istanbul ignore else */
           if (!_client) {
             _client = new Proto(`${host}:${port}`, _channel);
           }
 
-          return this.request(_client, method, data);
+          return this._callService(_client, method, data);
         };
 
-        server.addService(Proto.service, controllers.get(handler));
+        try {
+          server.addService(Proto.service, controllers.get(name));
+        } catch (e) {
+          throw new Error(`Failed at loading '${name}' service. ${e.stack || e.message}`);
+        }
       });
 
       const _start = server.start.bind(server);
@@ -125,10 +94,6 @@ module.exports = (Grown, util) => {
       };
 
       return server;
-    },
-
-    request(client, method, data) {
-      return this._callService(client, method, data);
     },
   });
 };
