@@ -29,7 +29,7 @@ module.exports = (Grown, util) => {
               new Error(`${_controller} is not defined`));
 
             this._controllers[controller] = {
-              instance: new Ctrl(),
+              instance: typeof Ctrl === 'function' ? new Ctrl() : Ctrl,
               definition: Ctrl,
             };
           } catch (e) {
@@ -69,10 +69,6 @@ module.exports = (Grown, util) => {
   return Grown('Router.Controllers', {
     _drawRoutes,
     _controllers: {},
-
-    scan(cwd) {
-      return util.scanDir(cwd, 'Controller', cb => cb(Grown, util));
-    },
 
     $before_routes: _drawRoutes,
   });
