@@ -29,7 +29,7 @@ module.exports = (Grown, util) => {
             let parsedError;
 
             try {
-              parsedError = JSON.parse(error.message);
+              parsedError = JSON.parse(error.details);
             } catch (e) {
               parsedError = error;
               parsedError.code = 500;
