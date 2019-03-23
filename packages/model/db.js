@@ -37,8 +37,23 @@ module.exports = (Grown, util) => {
         before(_name, definition) {
           DB[name].add(definition);
         },
-        after(_name) {
-          return DB[name].models[_name];
+        after(_name, definition) {
+          const Model = DB[name].models[_name];
+
+          if (definition.hooks) {
+            Object.keys(definition.hooks).forEach(hook => {
+              Model.addHook(hook, definition.hooks[hook]);
+            });
+          }
+
+          Object.assign(Model, definition.classMethods);
+          Object.assign(Model.prototype, definition.instanceMethods);
+
+          delete definition.hooks;
+          delete definition.classMethods;
+          delete definition.instanceMethods;
+
+          return Model;
         },
       });
 
@@ -60,6 +75,14 @@ module.exports = (Grown, util) => {
             configurable: false,
           });
         }
+      });
+
+      DB[name].ready(() => {
+        Object.keys(Models.values).forEach(key => {
+          if (Models.values[key].$schema) {
+            Models.values[key] = DB[name].models[key];
+          }
+        });
       });
 
       return Grown(`Model.DB.$${name}`, {
