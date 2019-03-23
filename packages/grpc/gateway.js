@@ -4,6 +4,8 @@ const RE_SERVICE = /Service$/;
 const RE_DASHERIZE = /\b([A-Z])/g;
 
 module.exports = (Grown, util) => {
+  const grpc = require('grpc');
+
   function _callService(client, method, data) {
     return new Promise((resolve, reject) => {
       const identifier = client.constructor.service[method]
@@ -52,7 +54,14 @@ module.exports = (Grown, util) => {
 
         return Promise.resolve()
           .then(() => callback.call(this, ctx))
-          .then(data => reply(null, data)).catch(reply);
+          .then(data => reply(null, data))
+          .catch(e => {
+            const meta = new grpc.Metadata();
+
+            meta.add('originalError', JSON.stringify(e));
+
+            reply(e, null, meta);
+          });
       };
     });
 
@@ -64,8 +73,6 @@ module.exports = (Grown, util) => {
     _getService,
 
     setup(controllers) {
-      const grpc = require('grpc');
-
       const _server = grpc.ServerCredentials.createInsecure();
       const _channel = grpc.credentials.createInsecure();
 
@@ -99,7 +106,16 @@ module.exports = (Grown, util) => {
             _client = new Proto(`${host}:${port}`, _channel);
           }
 
-          return this._callService(_client, method, data);
+          return this._callService(_client, method, data)
+            .catch(e => {
+              const originalError = e.metadata.get('originalError');
+
+              if (originalError) {
+                e.original = JSON.parse(originalError);
+              }
+
+              throw e;
+            });
         };
 
         Object.keys(Proto.service).forEach(method => {

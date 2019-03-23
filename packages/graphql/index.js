@@ -20,7 +20,7 @@ module.exports = (Grown, util) => {
         .then(result => {
           if (result.errors && Grown.env === 'development') {
             result.errors.forEach(e => {
-              e.exception = e.stack.toString();
+              e.description = e.stack.toString();
             });
           }
 
