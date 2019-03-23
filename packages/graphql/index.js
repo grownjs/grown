@@ -1,104 +1,74 @@
 'use strict';
 
-// const { Resolver } = require('sastre');
+const fs = require('fs');
 
-// const fs = require('fs');
-// const path = require('path');
+module.exports = (Grown, util) => {
+  function _startGraphQLServer(typeDefs, resolvers) {
+    const gql = require('graphql');
+    const gqltools = require('graphql-tools');
 
-// class GraphQLResolver {
-//   constructor(container, { directory }) {
-//     this.repository = new Resolver(container, directory);
-//   }
+    const _schema = gqltools.makeExecutableSchema({ typeDefs, resolvers });
 
-//   static startGraphQLServer(app, prefix, typeDefs, resolvers) {
-//     const gql = require('graphql');
-//     const gqltools = require('graphql-tools');
+    return ctx => {
+      const body = ctx.req.body || {};
+      const query = ctx.req.query || {};
 
-//     const _schema = gqltools.makeExecutableSchema({ typeDefs, resolvers });
+      const _query = body.query || query.body;
+      const data = body.variables || query.data;
 
-//     app.use(prefix, (req, res, next) => {
-//       const query = req.body.query || req.query.body;
-//       const data = req.body.variables || req.query.data;
+      return gql.graphql(_schema, _query, null, ctx, data)
+        .then(result => {
+          if (result.errors && Grown.env === 'development') {
+            result.errors.forEach(e => {
+              e.exception = e.stack.toString();
+            });
+          }
 
-//       gql.graphql(_schema, query, null, { req }, data)
-//         .then(response => {
-//           res.json(response);
-//         })
-//         .catch(next);
-//     });
-//   }
+          ctx.res.setHeader('Content-Type', 'application/json');
+          ctx.res.end(JSON.stringify(result));
+        });
+    };
+  }
 
-//   use(app, prefix) {
-//     const schemaCommon = path.resolve(__dirname, '../../../schema/common.gql');
-//     const schemaIndex = path.resolve(__dirname, '../../../schema/generated/index.gql');
+  function _bindGraphQLServer(schemas, container) {
+    const typeDefs = schemas.map(file => fs.readFileSync(file, 'utf8'));
 
-//     const typeDefs = [
-//       schemaCommon,
-//       schemaIndex,
-//     ].map(file => fs.readFileSync(file, 'utf8'));
+    const resolvers = {
+      Mutation: {},
+      Query: {},
+    };
 
-//     const resolvers = {
-//       Mutation: {},
-//       Query: {},
-//     };
+    Object.keys(container.registry).forEach(name => {
+      const target = container.get(name);
 
-//     Object.keys(this.repository.registry).forEach(name => {
-//       const target = this.repository.get(name);
+      Object.keys(resolvers).forEach(method => {
+        Object.keys(target[method] || {}).forEach(prop => {
+          if (typeof target[method][prop] === 'function') {
+            resolvers[method][prop] = function $call(root, args, { req }) {
+              return Promise.resolve()
+                .then(() => target[method][prop]({ root, args, req }))
+                .catch(error => {
+                  if (!Grown.argv.flags.debug) {
+                    error = util.cleanError(error, Grown.cwd);
+                  }
 
-//       Object.keys(resolvers).forEach(method => {
-//         Object.keys(target[method] || {}).forEach(prop => {
-//           if (typeof target[method][prop] === 'function') {
-//             resolvers[method][prop] = async function call(root, args, { req }) {
-//               log.info(`${name}.${prop} <-`, { request: args }, req.guid);
+                  throw error;
+                });
+            };
+          }
+        });
+      });
+    });
 
-//               try {
-//                 const response = await target[method][prop]({ root, args, req });
-
-//                 log.info(`${name}.${prop}`, { response }, req.guid);
-
-//                 return response;
-//               } catch (error) {
-//                 log.exception(error.originalError || error, `${name}.${prop}`, null, req.guid);
-
-//                 const _err = error.originalError || error;
-
-//                 if (_err instanceof Error) {
-//                   throw _err;
-//                 }
-
-//                 if (!(_err.original && _err.original.errno)) {
-//                   throw new Error(_err.description || _err.message);
-//                 }
-
-//                 throw new Error(`${_err.description || _err.message} (${_err.original.errno})`);
-//               }
-//             };
-//           }
-//         });
-//       });
-//     });
-
-//     GraphQLResolver.startGraphQLServer(app, prefix, typeDefs, resolvers);
-//   }
-
-//   get(name) {
-//     try {
-//       return this.repository.get(name);
-//     } catch (e) {
-//       throw new Error(`Unable to load graphql-handler for '${name}'. ${e.message || e.toString()}`);
-//     }
-//   }
-// }
-
-// module.exports = GraphQLResolver;
-
-
-module.exports = Grown => {
-  // const graphqlizer = require('graphqlizer');
+    return this._startGraphQLServer(typeDefs, resolvers);
+  }
 
   return Grown('GraphQL', {
-    // builder(resolver) {
-    //   return graphqlizer(resolver);
-    // },
+    _startGraphQLServer,
+    _bindGraphQLServer,
+
+    setup(schemas, container) {
+      return this._bindGraphQLServer(schemas, container);
+    },
   });
 };
