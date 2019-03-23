@@ -3,7 +3,7 @@
 const RE_SERVICE = /Service$/;
 const RE_DASHERIZE = /\b([A-Z])/g;
 
-module.exports = Grown => {
+module.exports = (Grown, util) => {
   function _callService(client, method, data) {
     return new Promise((resolve, reject) => {
       const identifier = client.constructor.service[method]
@@ -46,8 +46,32 @@ module.exports = Grown => {
     });
   }
 
+  function _getService(name, controller) {
+    Object.keys(controller).forEach(key => {
+      const callback = controller[key];
+
+      controller[key] = function $proxy(ctx, reply) {
+        if (!ctx || typeof reply !== 'function') {
+          throw new Error(`${name}#${key}: Illegal arguments`);
+        }
+
+        // overload given context
+        ctx.handler = name;
+        ctx.method = key;
+
+        return Promise.resolve()
+          .then(() => callback.call(this, ctx))
+          .then(data => reply(null, data))
+          .catch(e => reply(e));
+      };
+    });
+
+    return controller;
+  }
+
   return Grown('GRPC.Gateway', {
     _callService,
+    _getService,
 
     setup(controllers) {
       const grpc = require('grpc');
@@ -58,6 +82,7 @@ module.exports = Grown => {
       const namespace = this.proto_namespace || 'API';
       const port = this.gateway_port || 50051;
       const server = new grpc.Server();
+      const services = [];
 
       /* istanbul ignore else */
       if (!this[namespace]) {
@@ -87,17 +112,29 @@ module.exports = Grown => {
           return this._callService(_client, method, data);
         };
 
-        try {
-          server.addService(Proto.service, controllers.get(name));
-        } catch (e) {
-          throw new Error(`Failed at loading '${name}' service. ${e.stack || e.message}`);
-        }
+        Object.keys(Proto.service).forEach(method => {
+          util.setProp(server, `${namespace}.${name}.${method}`, data => {
+            return server[`send${name}`](method, data);
+          });
+        });
+
+        services.push([Proto, name]);
       });
 
       const _start = server.start.bind(server);
 
       server.start = () => {
         if (!server.started) {
+          services.forEach(([Proto, name]) => {
+            try {
+              const handler = controllers.get(name);
+
+              server.addService(Proto.service, this._getService(name, handler));
+            } catch (e) {
+              throw new Error(`Failed at loading '${name}' service. ${e.stack || e.message}`);
+            }
+          });
+
           server.bind(`0.0.0.0:${port}`, _server);
           _start();
         }
