@@ -26,16 +26,7 @@ module.exports = (Grown, util) => {
         client[method](data, { deadline }, (error, result) => {
           /* istanbul ignore else */
           if (error) {
-            let parsedError;
-
-            try {
-              parsedError = JSON.parse(error.details);
-            } catch (e) {
-              parsedError = error;
-              parsedError.code = 500;
-            }
-
-            return reject(parsedError);
+            return reject(error);
           }
 
           return resolve(result);
@@ -61,8 +52,7 @@ module.exports = (Grown, util) => {
 
         return Promise.resolve()
           .then(() => callback.call(this, ctx))
-          .then(data => reply(null, data))
-          .catch(e => reply(e));
+          .then(data => reply(null, data)).catch(reply);
       };
     });
 
