@@ -44,19 +44,27 @@ module.exports = (Grown, util) => {
 
       const map = {};
 
+      function get(model) {
+        try {
+          return Models.get(model);
+        } catch (e) {
+          throw new Error(`Unable to load model '${model}'. ${e.message || e.toString()}`);
+        }
+      }
+
       Object.keys(DB[name].$refs).forEach(ref => {
         if (DB[name].$refs[ref].$schema.properties) {
           Object.defineProperty(map, ref, {
+            get,
             enumerable: true,
             configurable: false,
-            get: () => Models.get(ref),
           });
         }
       });
 
       return Grown(`Model.DB.$${name}`, {
         _getDB: _name => DB[_name],
-        getModel: _name => Models.get(_name),
+        getModel: get,
         connect: DB[name].connect,
         disconnect: DB[name].close,
         connection: DB[name].sequelize.options,
