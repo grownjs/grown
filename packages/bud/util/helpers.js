@@ -33,7 +33,11 @@ function scanDir(src, callback) {
   const { Resolver } = require('sastre');
 
   return callback((ctx, hooks) => {
-    return new Resolver(ctx || null, path.resolve(src), hooks);
+    if (!fs.existsSync(src)) {
+      throw new Error(`Invalid source to scan, given '${src}'`);
+    }
+
+    return new Resolver(ctx || null, src, hooks);
   });
 }
 
