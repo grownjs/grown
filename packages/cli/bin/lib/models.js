@@ -25,10 +25,9 @@ module.exports = (Grown, util, ctx) => {
     ? String(only).split(',')
     : [];
 
-  Models._get = () =>
-    Object.keys(db.models)
-      .filter(x => (_allowed.length ? _allowed.indexOf(x) !== -1 : true))
-      .map(x => db.models[x]);
+  Models._get = () => Object.keys(db.models)
+    .filter(x => (_allowed.length ? _allowed.indexOf(x) !== -1 : true))
+    .map(x => db.models[x]);
 
   Models._db = () => {
     return {

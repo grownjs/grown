@@ -11,7 +11,7 @@ module.exports = ($, cwd, argv, util) => {
 
   // methods
   $('Grown.load', (_cwd, hooks) => util.scanDir(_cwd, def => def($.Grown, hooks || {})), false);
-  $('Grown.def', (name, fn) => $(`Grown.${name}`, fn, false), false);
+  $('Grown.defn', (name, fn) => $(`Grown.${name}`, fn, false), false);
   $('Grown.use', cb => cb($.Grown, util), false);
   $('Grown.do', util.wrap, false);
 
