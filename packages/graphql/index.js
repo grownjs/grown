@@ -21,6 +21,7 @@ module.exports = (Grown, util) => {
           if (result.errors && Grown.env === 'development') {
             result.errors.forEach(e => {
               e.description = e.stack.toString();
+              e.message = e.message.replace(/^\d+ [_A-Z]+: /, '');
             });
           }
 
