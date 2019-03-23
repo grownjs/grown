@@ -57,7 +57,7 @@ function _grownFactory($, util, options) {
     }
   });
 
-  $('Grown.Conn.Builder', {
+  $.Grown('Conn.Builder', {
     methods: {
       halt(cb) {
         /* istanbul ignore else */
@@ -109,7 +109,7 @@ function _grownFactory($, util, options) {
   scope._connection = (request, _extensions) => {
     const PID = `${process.pid}.${_pid}`;
 
-    return $('Grown.Conn.Builder')({
+    return $.Grown('Conn.Builder')({
       name: `Grown.Conn#${PID}`,
       props: {
         pid: () => PID,
@@ -214,11 +214,9 @@ function _grownFactory($, util, options) {
 module.exports = (Grown, util) => {
   const fixedUtils = _util(util);
 
-  function _createServer($, options) {
-    return _grownFactory($, fixedUtils, options);
-  }
-
   return Grown('Server', {
-    _createServer,
+    create(options) {
+      return _grownFactory({ Grown }, fixedUtils, options);
+    },
   });
 };

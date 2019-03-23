@@ -51,7 +51,7 @@ module.exports = (cwd, argv) => {
         throw new Error('Missing Grown.Server');
       }
 
-      return Grown.Server._createServer($, options);
+      return Grown.Server.create(options);
     },
   });
 
