@@ -1,6 +1,12 @@
 'use strict';
 
 module.exports = (Grown, util) => ({
+  import: {
+    description: 'Import symbols into the context, e.g. `.import lib/helpers`',
+    callback(ctx) {
+      require('./imports')(Grown, util, ctx);
+    },
+  },
   connect: {
     description: 'Load your database, e.g. `.connect path/to/models`',
     callback(ctx) {
