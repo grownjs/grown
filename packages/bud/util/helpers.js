@@ -1,5 +1,7 @@
 'use strict';
 
+const { Resolver, Chainable } = require('sastre');
+
 const path = require('path');
 const fs = require('fs');
 
@@ -30,8 +32,6 @@ function findFile(src, paths, throws) {
 }
 
 function scanDir(src, callback) {
-  const { Resolver } = require('sastre');
-
   return callback((ctx, hooks) => {
     if (!fs.existsSync(src)) {
       throw new Error(`Invalid source to scan, given '${src}'`);
@@ -41,7 +41,12 @@ function scanDir(src, callback) {
   });
 }
 
+function chain(ctx, middleware) {
+  return new Chainable(ctx, middleware);
+}
+
 module.exports = {
+  chain,
   scanDir,
   findFile,
 };
