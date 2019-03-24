@@ -1,14 +1,13 @@
 'use strict';
 
-const path = require('path');
-
 const USAGE_INFO = `
 
 Manage your database
 
---db       Optional. Database to be used, identifier
---use      Optional. Entry file exporting models
+--models   Entry file exporting models
+
 --only     Optional. Filter out specific models
+--db       Optional. Database to be used, identifier
 
 --make     Optional. Take an snapshot from your models
 --apply    Optional. Save changes from executed migrations
@@ -30,11 +29,13 @@ Examples:
 
 `;
 
+const CACHED = {};
+
 module.exports = {
   description: USAGE_INFO,
-  callback(Grown, util,ctx) {
-    const use = (ctx && ctx._ && ctx._[0]) || Grown.argv.flags.use;
-    const db = (ctx && ctx._ && ctx._[0]) || Grown.argv.flags.db;
+  callback(Grown, util) {
+    const use = Grown.argv.flags.models;
+    const db = Grown.argv.flags.db;
 
     /* istanbul ignore else */
     if (!use || typeof use !== 'string') {
@@ -45,7 +46,12 @@ module.exports = {
       Grown.use(require('@grown/model/cli'));
     }
 
-    const Models = Grown.use(require(path.resolve(Grown.cwd, Grown.argv.flags.use)));
+    const path = require('path');
+
+    const Models = !CACHED[use]
+      ? (CACHED[use] = Grown.use(require(path.resolve(Grown.cwd, use))))
+      : CACHED[use];
+
     const DB = Models._getDB(db);
     const cmd = Grown.argv._[0] || 'migrate';
 
@@ -66,7 +72,7 @@ module.exports = {
       .then(() => run(x => x.connect()))
       .then(() => {
         if (cmd === 'migrate' || cmd === 'backup') {
-          return run(x => Grown.Model.CLI.execute(x));
+          return run(x => Grown.Model.CLI.execute(Grown.argv, x));
         }
 
         Grown.Logger.getLogger()

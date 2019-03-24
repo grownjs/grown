@@ -4,9 +4,10 @@ const USAGE_INFO = `
 
 Manage your snapshots
 
---db      Optional. Database to be used, identifier
---use     Optional. Entry file exporting models
+--models  Entry file exporting models
+
 --only    Optional. Filter out specific models
+--db      Optional. Database to be used, identifier
 
 --import  Optional. Load into the database, directory or file
 --export  Optional. Save backup to destination, directory

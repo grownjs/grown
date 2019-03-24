@@ -4,15 +4,17 @@ const USAGE_INFO = `
 
 Start the console
 
---db    Optional. Database to be used, identifier
---use   Optional. Entry file exporting models
 --load  Optional. Run scripts into the REPL
 
 Hooks:
-  connect  # Load models into the session
+  --import   # Load symbols into the session
+  --models   # Load models into the session
+
+All hooks can be invoked inside the REPL,
+just prefix them with '.', e.g. \`.import lib\`
 
 Examples:
-  grown repl connect --use db/models
+  grown repl --models db/models --import lib
   grown repl --load path/to/commands
 
 `;
