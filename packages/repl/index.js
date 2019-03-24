@@ -254,7 +254,10 @@ module.exports = (Grown, util) => {
           logger.info('{% log Type %} {% bold .help %} {% gray to list all available commands %}\n');
 
           repl.resume();
-          repl.displayPrompt();
+
+          setTimeout(() => {
+            repl.displayPrompt();
+          });
         })
         .catch(e => {
           onError(e);
