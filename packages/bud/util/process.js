@@ -59,7 +59,7 @@ function clearModules(cwd) {
 
 function cleanError(e, cwd) {
   let _stack = cleanStack(e.stack || new Error().stack || '')
-    .replace(/^.+(es6-promise|bluebird|internal).+$/gm)
+    .replace(/^.+(es6-promise|bluebird|internal|evalmachine).+$/gm)
     .replace(/^[ ]*at \/.*node_modules.*$/gm, '')
     .replace(RE_ERR_MESSAGE, '')
     .replace(RE_NATIVES, '');

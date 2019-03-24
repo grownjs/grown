@@ -39,7 +39,7 @@ module.exports = {
 
     /* istanbul ignore else */
     if (!use || typeof use !== 'string') {
-      throw new Error(`Missing models to --use, given '${use || ''}'`);
+      throw new Error(`Missing --models to load, given '${use || ''}'`);
     }
 
     if (!(Grown.Model && Grown.Model.CLI)) {

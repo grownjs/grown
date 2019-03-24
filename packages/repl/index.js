@@ -117,20 +117,20 @@ module.exports = (Grown, util) => {
 
         /* istanbul ignore else */
         if (value && typeof value.then === 'function') {
-          return value
-            .then(result => {
-              callback(null, result);
-            })
-            .catch(e => {
-              Logger.getLogger().info('\r{% error %s %}\r\n', e.toString());
-              callback();
-            });
+          return value.then(result => {
+            callback(null, result);
+          });
         }
 
         callback(null, value);
       })
       .catch(e => {
-        Logger.getLogger().info('\r{% error %s %}\r\n', e.toString());
+        /* istanbul ignore else */
+        if (!Grown.argv.flags.debug) {
+          e = util.cleanError(e, Grown.cwd);
+        }
+
+        Logger.getLogger().info('\r{% error %s %}\r\n', e.stack || e.message);
         callback();
       });
   }
