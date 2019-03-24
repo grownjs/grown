@@ -1,21 +1,15 @@
 'use strict';
 
-const JSONSchemaSequelizer = require('json-schema-sequelizer');
-const JSONSchemaSequelizerCLI = require('json-schema-sequelizer/cli');
-
 module.exports = (Grown, util) => {
-  const Base = require('./base')(Grown, util);
-
   function _getSchemas() {
     const _refs = {};
 
     this._getModels()
-      .map(x => x.$schema || x.options.$schema)
-      .forEach(schema => {
-        _refs[schema.id] = schema;
+      .forEach(x => {
+        _refs[x.options.$schema.id] = x.options.$schema;
       });
 
-    this.schemas.forEach(schema => {
+    (this.$refs || []).forEach(schema => {
       const copy = util.extendValues({}, schema);
 
       /* istanbul ignore else */
@@ -52,7 +46,11 @@ module.exports = (Grown, util) => {
 
     /* istanbul ignore else */
     if (!this[name].connect) {
-      const Model = Base({
+      if (!Grown.Model.Base) {
+        Grown.use(require('./base'));
+      }
+
+      const Model = Grown.Model.Base({
         name: `${name}Model`,
         include: [{
           $schema: this[name].$schema,
@@ -97,25 +95,29 @@ module.exports = (Grown, util) => {
     _getModel,
     _getDB,
 
-    sync(opts) {
-      return JSONSchemaSequelizer.sync(this._getModels(), opts).then(() => this);
+    get connection() {
+      return this._getDB().sequelize.options;
     },
 
-    clear(opts) {
-      return JSONSchemaSequelizer.clear(this._getModels(), opts).then(() => this);
+    get sequelize() {
+      return this._getDB().sequelize;
     },
 
-    backup(opts) {
-      return JSONSchemaSequelizerCLI.backup(this._getDB(), opts);
+    get schemas() {
+      return this._getSchemas();
     },
 
-    migrate(opts) {
-      return JSONSchemaSequelizerCLI.migrate(this._getDB(), opts);
+    get models() {
+      return this._getModels();
+    },
+
+    refs(index) {
+      return require('json-schema-sequelizer').refs(index);
     },
 
     connect() {
       const _cwd = this.schemas_directory;
-      const _refs = this.schemas;
+      const _refs = this.$refs || [];
       const _tasks = [];
 
       return Promise.resolve()

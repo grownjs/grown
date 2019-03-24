@@ -8,7 +8,7 @@ module.exports = (Grown, util) => ({
 
       return Models.connect()
         .then(() => {
-          const models = Models._getModels();
+          const models = Models.models || [];
           const count = models.length;
 
           models.forEach(m => {

@@ -1,8 +1,8 @@
 'use strict';
 
-const JSONSchemaSequelizer = require('json-schema-sequelizer');
-
 module.exports = (Grown, util) => {
+  const JSONSchemaSequelizer = require('json-schema-sequelizer');
+
   return Grown('Model.DB', {
     _registry: {},
 
@@ -57,8 +57,6 @@ module.exports = (Grown, util) => {
         },
       });
 
-      const map = {};
-
       function get(model) {
         try {
           return Models.get(model);
@@ -67,31 +65,22 @@ module.exports = (Grown, util) => {
         }
       }
 
-      Object.keys(DB[name].$refs).forEach(ref => {
-        if (DB[name].$refs[ref].$schema.properties) {
-          Object.defineProperty(map, ref, {
-            get,
-            enumerable: true,
-            configurable: false,
-          });
-        }
-      });
-
       DB[name].ready(() => {
-        Object.keys(Models.values).forEach(key => {
-          if (Models.values[key].$schema) {
-            Models.values[key] = DB[name].models[key];
-          }
-        });
+        Object.assign(Models.values, DB[name].models);
       });
 
-      return Grown(`Model.DB.$${name}`, {
-        _getDB: _name => DB[_name],
-        getModel: get,
-        connect: DB[name].connect,
-        disconnect: DB[name].close,
-        connection: DB[name].sequelize.options,
-        include: [map],
+      if (!(Grown.Model && Grown.Model.Repo)) {
+        Grown.use(require('./repo'));
+      }
+
+      return Grown(`Model.Repo.${name}`, {
+        extend: Grown('Model.Repo', {
+          _getModels: () => Object.keys(DB[name].models).map(get),
+          _getDB: () => DB[name],
+          connect: DB[name].connect,
+          disconnect: DB[name].close,
+          getModel: _name => get(_name),
+        }),
       });
     },
   });
