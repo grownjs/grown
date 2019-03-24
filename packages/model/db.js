@@ -73,7 +73,7 @@ module.exports = (Grown, util) => {
         Grown.use(require('./repo'));
       }
 
-      return Grown(`Model.Repo.${name}`, {
+      return Grown(`Model.DB.${name}.repository`, {
         extend: Grown('Model.Repo', {
           _getModels: () => Object.keys(DB[name].models).map(get),
           _getDB: () => DB[name],
