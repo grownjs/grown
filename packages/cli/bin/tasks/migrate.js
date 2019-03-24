@@ -1,5 +1,7 @@
 'use strict';
 
+const path = require('path');
+
 const USAGE_INFO = `
 
 Manage your database
@@ -30,50 +32,61 @@ Examples:
 
 module.exports = {
   description: USAGE_INFO,
-  callback(Grown, util) {
+  callback(Grown, util,ctx) {
+    const use = (ctx && ctx._ && ctx._[0]) || Grown.argv.flags.use;
+    const db = (ctx && ctx._ && ctx._[0]) || Grown.argv.flags.db;
+
+    /* istanbul ignore else */
+    if (!use || typeof use !== 'string') {
+      throw new Error(`Missing models to --use, given '${use || ''}'`);
+    }
+
     if (!(Grown.Model && Grown.Model.CLI)) {
       Grown.use(require('@grown/model/cli'));
     }
 
-    // const Models = Grown.use(require(path.resolve(Grown.cwd, Grown.argv.flags.use)));
+    const Models = Grown.use(require(path.resolve(Grown.cwd, Grown.argv.flags.use)));
+    const DB = Models._getDB(db);
+    const cmd = Grown.argv._[0] || 'migrate';
 
-    console.log(Models);
+    let _error;
+
+    function run(cb) {
+      if (cmd === 'migrate' || cmd === 'backup') {
+        return cb(DB);
+      }
+    }
+
+    function fail(e) {
+      Grown.Logger.getLogger()
+        .printf('\r{% error %s %}\r\n', e.stack);
+    }
+
+    return Promise.resolve()
+      .then(() => run(x => x.connect()))
+      .then(() => {
+        if (cmd === 'migrate' || cmd === 'backup') {
+          return run(x => Grown.Model.CLI.execute(x));
+        }
+
+        Grown.Logger.getLogger()
+          .printf('\r{% error Unknown %s action, add --help for usage info %}\r\n', cmd);
+
+        process.exit(1);
+      })
+      .catch(e => {
+        fail(e);
+        _error = true;
+      })
+      .then(() => run(x => x.close()))
+      .catch(e => {
+        fail(e);
+        _error = true;
+      })
+      .then(() => {
+        if (_error) {
+          process.exit(1);
+        }
+      });
   },
 };
-
-
-// # const cmd = process.argv.slice(2)[0];
-
-// # let _error;
-
-// # function db(cb) {
-// #   if (cmd === 'migrate' || cmd === 'backup') {
-// #     return cb(Grown.Model.DB.default);
-// #   }
-// # }
-
-// # Promise.resolve()
-// #   .then(() => db(x => x.connect()))
-// #   .then(() => {
-// #     if (cmd === 'migrate' || cmd === 'backup') {
-// #       return db(x => Grown.Model.CLI.execute(x));
-// #     }
-
-// #     process.stderr.write(`${Grown.Model.CLI.usage('bin/db')}\n`);
-// #     process.exit(1);
-// #   })
-// #   .catch(e => {
-// #     process.stderr.write(`${e.stack}\n`);
-// #     _error = true;
-// #   })
-// #   .then(() => db(x => x.close()))
-// #   .catch(e => {
-// #     process.stderr.write(`${e.stack}\n`);
-// #     _error = true;
-// #   })
-// #   .then(() => {
-// #     if (_error) {
-// #       process.exit(1);
-// #     }
-// #   });
-// # #
