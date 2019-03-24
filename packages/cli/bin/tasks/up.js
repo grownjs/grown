@@ -31,8 +31,8 @@ module.exports = {
     }
 
     /* istanbul ignore else */
-    if (Grown.argv._[0]) {
-      const _address = Grown.argv._[0].split(':');
+    if (Grown.argv._[1]) {
+      const _address = Grown.argv._[1].split(':');
 
       if (_address[0].indexOf('.') === -1) {
         process.env.PORT = _address[0];
