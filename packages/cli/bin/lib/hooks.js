@@ -7,8 +7,8 @@ module.exports = (Grown, util) => ({
       require('./imports')(Grown, util, ctx);
     },
   },
-  connect: {
-    description: 'Load your database, e.g. `.connect path/to/models`',
+  models: {
+    description: 'Load your database, e.g. `.models path/to/models`',
     callback(ctx) {
       const Models = require('./models')(Grown, util, ctx);
 

@@ -166,8 +166,7 @@ module.exports = (Grown, util) => {
 
       util.readOnlyProperty(this, 'repl', repl);
 
-      const hooks = Grown.argv._.slice()
-        .concat(Object.keys(Grown.argv.params));
+      const hooks = Object.keys(Grown.argv.flags);
 
       hooks.forEach(x => {
         /* istanbul ignore else */
@@ -175,7 +174,7 @@ module.exports = (Grown, util) => {
           throw new Error(`Missing hook '${x}'`);
         }
 
-        cbs.push(this._cmds[x].callback);
+        cbs[x === 'import' ? 'unshift' : 'push'](this._cmds[x].callback);
       });
 
       const logger = Logger.getLogger()
@@ -240,7 +239,7 @@ module.exports = (Grown, util) => {
       });
 
       return Promise.resolve()
-        .then(() => Promise.all(cbs.map(cb => cb && cb.call(null, ctx, util))))
+        .then(() => cbs.reduce((prev, cb) => prev.then(() => cb && cb.call(null, ctx, util)), Promise.resolve()))
         .then(() => {
           if (typeof Grown.argv.flags.load === 'string') {
             repl.commands.load.action.call(repl, Grown.argv.flags.load);
