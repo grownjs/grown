@@ -1,196 +1,198 @@
-'use strict';
+// 'use strict';
 
-const debug = require('debug')('grown:model:resource');
+// FIXME: use `json-schema-sequelizer`.resource for this
 
-const JSONSchemaSequelizer = require('json-schema-sequelizer');
+// const debug = require('debug')('grown:model:resource');
 
-module.exports = (Grown, util) => {
-  function _buildAttachments(Model, options) {
-    const _attachments = [];
+// const JSONSchemaSequelizer = require('json-schema-sequelizer');
 
-    /* istanbul ignore else */
-    if (Model.options.$schema.properties) {
-      Object.keys(Model.options.$schema.properties).forEach(key => {
-        const x = Model.options.$schema.properties[key].attachment;
+// module.exports = (Grown, util) => {
+//   function _buildAttachments(Model, options) {
+//     const _attachments = [];
 
-        /* istanbul ignore else */
-        if (x) {
-          const dest = options(typeof x === 'string' ? x : 'paths.uploads');
+//     /* istanbul ignore else */
+//     if (Model.options.$schema.properties) {
+//       Object.keys(Model.options.$schema.properties).forEach(key => {
+//         const x = Model.options.$schema.properties[key].attachment;
 
-          _attachments.push({
-            key,
-            dest,
-            baseDir: options('cwd'),
-          });
-        }
-      });
-    }
+//         /* istanbul ignore else */
+//         if (x) {
+//           const dest = options(typeof x === 'string' ? x : 'paths.uploads');
 
-    return _attachments;
-  }
+//           _attachments.push({
+//             key,
+//             dest,
+//             baseDir: options('cwd'),
+//           });
+//         }
+//       });
+//     }
 
-  function _buildResource(Model, conn, options) {
-    const refs = Grown.Model.DB[Model.database].$refs;
+//     return _attachments;
+//   }
 
-    const config = {
-      attachments: this._buildAttachments(Model, options),
-      payload: conn.req.params.payload,
-      where: conn.req.params.where,
-    };
+//   function _buildResource(Model, conn, options) {
+//     const refs = Grown.Model.DB[Model.database].$refs;
 
-    /* istanbul ignore else */
-    if (Model.primaryKeyAttribute) {
-      config[Model.primaryKeyAttribute] = null;
-    }
+//     const config = {
+//       attachments: this._buildAttachments(Model, options),
+//       payload: conn.req.params.payload,
+//       where: conn.req.params.where,
+//     };
 
-    const resource = JSONSchemaSequelizer.resource(refs, Model, config);
+//     /* istanbul ignore else */
+//     if (Model.primaryKeyAttribute) {
+//       config[Model.primaryKeyAttribute] = null;
+//     }
 
-    resource.options.isNew = conn.req.handler.action === 'new';
-    resource.options.action = conn.req.handler.action;
-    resource.options.actions = {};
-    resource.options.actions[Model.name] = {
-      index: {
-        verb: 'GET',
-        path: '/',
-      },
-    };
+//     const resource = JSONSchemaSequelizer.resource(refs, Model, config);
 
-    ['new', 'create', 'edit', 'show', 'update', 'destroy'].forEach(method => {
-      resource.options.actions[Model.name][method] = {
-        verb: 'GET',
-        path: '/',
-      };
-    });
+//     resource.options.isNew = conn.req.handler.action === 'new';
+//     resource.options.action = conn.req.handler.action;
+//     resource.options.actions = {};
+//     resource.options.actions[Model.name] = {
+//       index: {
+//         verb: 'GET',
+//         path: '/',
+//       },
+//     };
 
-    conn.state.resource = resource.options;
+//     ['new', 'create', 'edit', 'show', 'update', 'destroy'].forEach(method => {
+//       resource.options.actions[Model.name][method] = {
+//         verb: 'GET',
+//         path: '/',
+//       };
+//     });
 
-    function end(location) {
-      /* istanbul ignore else */
-      if (location) {
-        return conn.redirect(location);
-      }
-    }
+//     conn.state.resource = resource.options;
 
-    function err(e, location) {
-      debug('#%s Wait. Resource failed: %s', conn.pid, e.stack);
+//     function end(location) {
+//       /* istanbul ignore else */
+//       if (location) {
+//         return conn.redirect(location);
+//       }
+//     }
 
-      conn.status_code = 400;
+//     function err(e, location) {
+//       debug('#%s Wait. Resource failed: %s', conn.pid, e.stack);
 
-      /* istanbul ignore else */
-      if (conn.is_json) {
-        return conn.json({
-          result: e.message || e.toString(),
-          errors: e.errors || [],
-          status: 'error',
-          redirect: location,
-        });
-      }
+//       conn.status_code = 400;
 
-      /* istanbul ignore else */
-      if (!location) {
-        debug('#%s Skip. Resource was errored', conn.pid);
+//       /* istanbul ignore else */
+//       if (conn.is_json) {
+//         return conn.json({
+//           result: e.message || e.toString(),
+//           errors: e.errors || [],
+//           status: 'error',
+//           redirect: location,
+//         });
+//       }
 
-        return conn.end(util.cleanError(e, options('cwd')));
-      }
+//       /* istanbul ignore else */
+//       if (!location) {
+//         debug('#%s Skip. Resource was errored', conn.pid);
 
-      return end(location);
-    }
+//         return conn.end(util.cleanError(e, options('cwd')));
+//       }
 
-    function ok(result, location) {
-      debug('#%s OK. Resource finished', conn.pid);
+//       return end(location);
+//     }
 
-      /* istanbul ignore else */
-      if (conn.is_json) {
-        return conn.json({
-          result,
-          status: 'ok',
-          redirect: location,
-        });
-      }
+//     function ok(result, location) {
+//       debug('#%s OK. Resource finished', conn.pid);
 
-      return end(location);
-    }
+//       /* istanbul ignore else */
+//       if (conn.is_json) {
+//         return conn.json({
+//           result,
+//           status: 'ok',
+//           redirect: location,
+//         });
+//       }
 
-    let _method = conn.req.handler.action;
+//       return end(location);
+//     }
 
-    return Promise.resolve()
-      .then(() => {
-        /* istanbul ignore else */
-        if (typeof Model.setResource === 'function') {
-          return Model.setResource(conn, resource);
-        }
-      })
-      .then(() => {
-        /* istanbul ignore else */
-        if (_method === 'new') {
-          return ok(resource.options);
-        }
+//     let _method = conn.req.handler.action;
 
-        /* istanbul ignore else */
-        if (_method === 'index') {
-          _method = 'findAll';
-        }
+//     return Promise.resolve()
+//       .then(() => {
+//         /* istanbul ignore else */
+//         if (typeof Model.setResource === 'function') {
+//           return Model.setResource(conn, resource);
+//         }
+//       })
+//       .then(() => {
+//         /* istanbul ignore else */
+//         if (_method === 'new') {
+//           return ok(resource.options);
+//         }
 
-        /* istanbul ignore else */
-        if (_method === 'edit' || _method === 'show') {
-          _method = 'findOne';
-        }
-      })
-      .then(() => {
-        /* istanbul ignore else */
-        if (_method.indexOf('find') === 0 || !Model.virtual) {
-          return resource.actions[_method]();
-        }
-      })
-      .then(result => {
-        debug('#%s %s loaded', conn.pid, Model.name);
+//         /* istanbul ignore else */
+//         if (_method === 'index') {
+//           _method = 'findAll';
+//         }
 
-        resource.options.result = result;
+//         /* istanbul ignore else */
+//         if (_method === 'edit' || _method === 'show') {
+//           _method = 'findOne';
+//         }
+//       })
+//       .then(() => {
+//         /* istanbul ignore else */
+//         if (_method.indexOf('find') === 0 || !Model.virtual) {
+//           return resource.actions[_method]();
+//         }
+//       })
+//       .then(result => {
+//         debug('#%s %s loaded', conn.pid, Model.name);
 
-        /* istanbul ignore else */
-        if (resource.isNew || conn.req.handler.action === 'edit') {
-          return ok(resource.options);
-        }
+//         resource.options.result = result;
 
-        return ok(result);
-      })
-      .catch(e => err(e));
-  }
+//         /* istanbul ignore else */
+//         if (resource.isNew || conn.req.handler.action === 'edit') {
+//           return ok(resource.options);
+//         }
 
-  function _findModel(resource) {
-    return util.getProp(Grown, resource,
-      new Error(`Resource missing, given '${resource}'`));
-  }
+//         return ok(result);
+//       })
+//       .catch(e => err(e));
+//   }
 
-  return Grown('Model.Resource', {
-    _buildAttachments,
-    _buildResource,
-    _findModel,
+//   function _findModel(resource) {
+//     return util.getProp(Grown, resource,
+//       new Error(`Resource missing, given '${resource}'`));
+//   }
 
-    dispatch(resource) {
-      return (conn, options) =>
-        this._buildResource(this._findModel(resource), conn, options);
-    },
+//   return Grown('Model.Resource', {
+//     _buildAttachments,
+//     _buildResource,
+//     _findModel,
 
-    $install(ctx) {
-      ctx.mount('Model.Resource#pipe', (conn, options) => {
-        debug('#%s Checking for resources', conn.pid);
+//     dispatch(resource) {
+//       return (conn, options) =>
+//         this._buildResource(this._findModel(resource), conn, options);
+//     },
 
-        /* istanbul ignore else */
-        if (!conn.req.handler || !conn.req.handler.resource) {
-          debug('#%s No resources found', conn.pid);
-          return;
-        }
+//     $install(ctx) {
+//       ctx.mount('Model.Resource#pipe', (conn, options) => {
+//         debug('#%s Checking for resources', conn.pid);
 
-        const Model = this._findModel(conn.req.handler.resource);
+//         /* istanbul ignore else */
+//         if (!conn.req.handler || !conn.req.handler.resource) {
+//           debug('#%s No resources found', conn.pid);
+//           return;
+//         }
 
-        debug('#%s %s model found in %s connection',
-          conn.pid,
-          Model.name,
-          Model.database);
+//         const Model = this._findModel(conn.req.handler.resource);
 
-        return this._buildResource(Model, conn, options);
-      });
-    },
-  });
-};
+//         debug('#%s %s model found in %s connection',
+//           conn.pid,
+//           Model.name,
+//           Model.database);
+
+//         return this._buildResource(Model, conn, options);
+//       });
+//     },
+//   });
+// };

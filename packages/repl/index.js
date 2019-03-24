@@ -5,7 +5,7 @@ const path = require('path');
 const fs = require('fs');
 
 module.exports = (Grown, util) => {
-  const logDir = path.join(Grown.cwd, 'logs');
+  const logDir = path.join(Grown.cwd, 'log');
 
   /* istanbul ignore else */
   if (!fs.existsSync(logDir)) {
