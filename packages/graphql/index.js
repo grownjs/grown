@@ -20,8 +20,8 @@ module.exports = (Grown, util) => {
         .then(result => {
           if (result.errors && Grown.env === 'development') {
             result.errors.forEach(e => {
-              e.description = e.stack.toString();
               e.message = e.message.replace(/^\d+ [_A-Z]+: /, '');
+              e.description = e.stack.toString().replace(`: ${e.message}`, '').trim();
             });
           }
 
