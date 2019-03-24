@@ -4,9 +4,9 @@ const USAGE_INFO = `
 
 Start the console
 
---db    Database to be used, identifier
---use   Entry file exporting models (Repo only)
---load  Run scripts into the REPL
+--db    Optional. Database to be used, identifier
+--use   Optional. Entry file exporting models
+--load  Optional. Run scripts into the REPL
 
 Hooks:
   connect  # Load models into the session
