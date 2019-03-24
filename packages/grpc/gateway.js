@@ -108,7 +108,7 @@ module.exports = (Grown, util) => {
 
           return this._callService(_client, method, data)
             .catch(e => {
-              const originalError = e.metadata.get('originalError');
+              const originalError = e.metadata && e.metadata.get('originalError');
 
               if (originalError) {
                 e.original = JSON.parse(originalError);
