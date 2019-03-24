@@ -1,6 +1,8 @@
 'use strict';
 
 module.exports = (Grown, util) => {
+  const Auth = require('./auth')(Grown, util);
+
   const cookieSession = require('cookie-session');
   const cookieParser = require('cookie-parser');
   const connectFlash = require('connect-flash');
@@ -160,5 +162,8 @@ module.exports = (Grown, util) => {
         },
       };
     },
+    include: [
+      Auth,
+    ],
   });
 };

@@ -65,10 +65,9 @@ module.exports = (Grown, util) => {
       ruleset.length === 1 ? '' : 's',
       ruleset.length === 1 ? 'was' : 'were');
 
-    return conn =>
-      matches
-        .map(match => match(conn))
-        .filter(x => x);
+    return conn => matches
+      .map(match => match(conn))
+      .filter(x => x);
   }
 
   function _makeTree(role, groups, property) {
