@@ -26,9 +26,9 @@
     "url": "git+https://github.com/pateketrueke/grown.git"
   },
   "dependencies": {
-    "@grown/bud": "^0.0.11",
-    "@grown/cli": "^0.0.15",
-    "@grown/server": "^0.0.4"
+    "@grown/bud": "^0.0.13",
+    "@grown/cli": "^0.0.16",
+    "@grown/server": "^0.0.6"
   },
   "devDependencies": {
     "lerna": "^2.8.0"
