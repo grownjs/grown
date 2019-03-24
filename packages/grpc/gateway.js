@@ -80,6 +80,7 @@ module.exports = (Grown, util) => {
       const port = this.gateway_port || 50051;
       const server = new grpc.Server();
       const services = [];
+      const map = {};
 
       /* istanbul ignore else */
       if (!this[namespace]) {
@@ -93,14 +94,14 @@ module.exports = (Grown, util) => {
         let _client;
 
         /* istanbul ignore else */
-        if (server[`send${key}`]) {
+        if (map[`send${key}`]) {
           throw new Error(`Method 'send${key}' already setup`);
         }
 
         const name = key.replace(RE_SERVICE, '');
         const Proto = this[namespace][key];
 
-        server[`send${name}`] = (method, data) => {
+        map[`send${name}`] = (method, data) => {
           /* istanbul ignore else */
           if (!_client) {
             _client = new Proto(`${host}:${port}`, _channel);
@@ -110,8 +111,12 @@ module.exports = (Grown, util) => {
             .catch(e => {
               const originalError = e.metadata && e.metadata.get('originalError');
 
-              if (originalError) {
-                e.original = JSON.parse(originalError);
+              try {
+                if (originalError && typeof originalError[0] === 'string') {
+                  e.original = JSON.parse(originalError[0]);
+                }
+              } catch (_e) {
+                throw new Error(`Failed to deserialize error. ${e.message}`);
               }
 
               throw e;
@@ -119,17 +124,15 @@ module.exports = (Grown, util) => {
         };
 
         Object.keys(Proto.service).forEach(method => {
-          util.setProp(server, `${namespace}.${name}.${method}`, data => {
-            return server[`send${name}`](method, data);
+          util.setProp(map, `${namespace}.${name}.${method}`, data => {
+            return map[`send${name}`](method, data);
           });
         });
 
         services.push([Proto, name]);
       });
 
-      const _start = server.start.bind(server);
-
-      server.start = () => {
+      map.start = () => {
         if (!server.started) {
           services.forEach(([Proto, name]) => {
             try {
@@ -142,13 +145,13 @@ module.exports = (Grown, util) => {
           });
 
           server.bind(`0.0.0.0:${port}`, _server);
-          _start();
+          server.start();
         }
 
-        return server;
+        return map;
       };
 
-      return server;
+      return map;
     },
   });
 };

@@ -106,35 +106,33 @@ module.exports = (Grown, util) => {
   }
 
   function _runCMD(cmd, context, filename, callback) {
-    let value;
-
-    try {
-      value = util.invoke(cmd, context);
-    } catch (e) {
-      Logger.getLogger().info('\r{% error %s %}\r\n', e.toString());
-      callback();
-      return;
-    }
-
-    /* istanbul ignore else */
-    if (typeof value === 'undefined') {
-      callback();
-      return;
-    }
-
-    /* istanbul ignore else */
-    if (value && typeof value.then === 'function') {
-      return value
-        .then(result => {
-          callback(null, result);
-        })
-        .catch(e => {
-          Logger.getLogger().info('\r{% error %s %}\r\n', e.toString());
+    Promise.resolve()
+      .then(() => util.invoke(cmd, context))
+      .then(value => {
+        /* istanbul ignore else */
+        if (typeof value === 'undefined') {
           callback();
-        });
-    }
+          return;
+        }
 
-    callback(null, value);
+        /* istanbul ignore else */
+        if (value && typeof value.then === 'function') {
+          return value
+            .then(result => {
+              callback(null, result);
+            })
+            .catch(e => {
+              Logger.getLogger().info('\r{% error %s %}\r\n', e.toString());
+              callback();
+            });
+        }
+
+        callback(null, value);
+      })
+      .catch(e => {
+        Logger.getLogger().info('\r{% error %s %}\r\n', e.toString());
+        callback();
+      });
   }
 
   return Grown('REPL', {
