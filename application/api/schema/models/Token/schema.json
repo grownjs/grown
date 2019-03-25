@@ -1,0 +1,29 @@
+{
+  "id": "Token",
+  "options": {
+    "tableName": "tokens",
+    "paranoid": false
+  },
+  "properties": {
+    "id": {
+      "$ref": "dataTypes#/definitions/primaryKey"
+    },
+    "type": {
+      "$ref": "userTypes#/definitions/accessType"
+    },
+    "token": {
+      "type": "string"
+    },
+    "userId": {
+      "type": "integer"
+    },
+    "expirationDate": {
+      "type": "string",
+      "format": "datetime"
+    }
+  },
+  "required": [
+    "type",
+    "userId"
+  ]
+}

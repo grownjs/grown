@@ -1,0 +1,63 @@
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #fff;
+}
+
+.mail-content {
+  max-width: 600px;
+  margin: auto;
+  padding: 30px 0;
+  font-family: Lato, sans-serif;
+  font-size: 18px;
+  font-weight: 300;
+  line-height: 24px;
+}
+
+.content-body {
+  background-color: #fff;
+  padding: 44px;
+  text-align: justify;
+}
+
+.header {
+  background-color: #ffffff;
+  text-align: center;
+  color: #fff;
+  padding: 44px;
+  padding-bottom: 0;
+  line-height: 0;
+}
+
+.footer {
+  background-color: #4d4d4d;
+  padding: 25px 44px;
+  color: #fff;
+  text-align: center;
+  font-size: 12px;
+}
+
+.company {
+  text-align: center;
+  margin-bottom: 32px;
+  color: #fff;
+  line-height: 1.57;
+}
+
+.btn {
+  display: block;
+  border-radius: 10px;
+  min-width: 10em;
+  margin: 45px auto;
+  background-color: #4d4d4d;
+  color: #fff;
+  text-align: center;
+  padding: 12px 30px;
+  text-decoration: none;
+  font-size: 12px;
+}
+
+a {
+  color: #58b560;
+  text-decoration: none;
+}

@@ -1,0 +1,6 @@
+version: "3.2"
+
+services:
+  app:
+    entrypoint: bash
+    command: -c "echo test"

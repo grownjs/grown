@@ -1,0 +1,123 @@
+{
+  "name": "web",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Web service",
+  "author": "Agave Lab <oss@agavelab.com> (https://agavelab.com/)",
+  "maintainers": [
+    "Alvaro Cabrera <pateketrueke@gmail.com> (https://soypache.co)"
+  ],
+  "license": "MIT",
+  "main": "main.js",
+  "engines": {
+    "node": ">=10"
+  },
+  "scripts": {
+    "grown": "grown",
+    "debug": "ndb npm run watch --",
+    "watch": "nodemon --ignore build --ignore web --ignore log --ignore bin --ignore Makefile --ignore",
+    "watch:mail": "mailor watch lib/mailer/templates -d lib/mailer/generated --no-open",
+    "build:mail": "mailor build lib/mailer/templates -d lib/mailer/generated",
+    "mocha": "NODE_ENV=test _mocha -c --exit --recursive",
+    "schema": "npm run schema-to:json && npm run schema-to:graphql && npm run schema-to:protobuf",
+    "schema-to:json": "json-schema-to -tw api/schema -pbc index --json",
+    "schema-to:graphql": "json-schema-to -tw api/schema -pc index --graphql",
+    "schema-to:protobuf": "json-schema-to -tw api/schema -pc index --protobuf -br ../common -k API",
+    "dev": "tarima watch -p 4000 -P '/api/v1/graphql -> http://localhost:8080'",
+    "dist": "tarima -mfqe production",
+    "test": "npm run test:unit && npm run test:functional --",
+    "test:e2e": "BASE_URL=http://localhost:4000 testcafe",
+    "test:e2e:ci": "BASE_URL=http://web:4000/ testcafe --ports 9505,9506 remote:1",
+    "test:unit": "npm run mocha -- -bR spec 'api/**/*.test.js'",
+    "test:functional": "npm run mocha -- -t 180000 -bR spec 'testing/**/*.test.js'",
+    "test:coverage": "nyc --silent -x '**/{fixtures}/**' -x '**/fixtures.js' -x '**/*.test.js'",
+    "test:coverage:unit": "npm run test:coverage -- npm run test:unit --",
+    "test:coverage:functional": "npm run test:coverage -- npm run test:functional",
+    "test:report": "nyc report"
+  },
+  "tarima": {
+    "from": "web/front",
+    "public": "build",
+    "rename": [
+      "**/front/**:{fullpath/2}"
+    ],
+    "filter": [
+      "!_*",
+      "!**/_*",
+      "!**/_*/**",
+      "!**/{lib,shared,components}/**"
+    ],
+    "bundle": [
+      "**/main.js"
+    ],
+    "devPlugins": [
+      "tarima-lr"
+    ],
+    "ignoreFiles": [
+      ".gitignore"
+    ],
+    "bundleOptions": {
+      "extensions": {
+        "js": "es6",
+        "css": "less",
+        "gql": "json"
+      },
+      "rollup": {
+        "context": "window",
+        "plugins": {
+          "rollup-plugin-node-resolve": {
+            "browser": true,
+            "main": false
+          },
+          "rollup-plugin-commonjs": {}
+        },
+        "globals": {
+          "node-fetch": "fetch"
+        }
+      },
+      "buble": {
+        "objectAssign": "Object.assign"
+      },
+      "less": {
+        "plugins": [
+          "less-plugin-autoprefix"
+        ]
+      }
+    }
+  },
+  "devDependencies": {
+    "buble": "^0.19.3",
+    "chai": "^4.1.2",
+    "csso": "^3.5.1",
+    "fetchql": "^3.0.0",
+    "less": "^3.8.1",
+    "less-plugin-autoprefix": "^2.0.0",
+    "mocha": "^6.0.0",
+    "nyc": "^13.0.1",
+    "pug": "^2.0.3",
+    "rollup": "^1.1.2",
+    "rollup-plugin-commonjs": "^9.1.6",
+    "rollup-plugin-node-resolve": "^4.0.0",
+    "svelte": "^2.13.4",
+    "tarima": "^4.2.8",
+    "tarima-lr": "^0.4.3",
+    "terser": "^3.10.12",
+    "testcafe": "^1.0.1",
+    "uglify-es": "^3.3.9"
+  },
+  "dependencies": {
+    "@grown/bud": "0.0.13",
+    "@grown/graphql": "0.0.3",
+    "@grown/grpc": "0.0.3",
+    "@grown/model": "0.0.8",
+    "@grown/parsers": "0.0.3",
+    "@grown/server": "0.0.6",
+    "@grown/session": "0.0.3",
+    "berro": "0.0.1",
+    "grown": "^1.1.1",
+    "json-schema-to": "0.0.12",
+    "mailor": "0.0.7",
+    "pg": "^7.9.0",
+    "rand-token": "^0.4.0"
+  }
+}

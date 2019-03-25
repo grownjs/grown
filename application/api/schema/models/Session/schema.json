@@ -1,0 +1,33 @@
+{
+  "id": "Session",
+  "options": {
+    "tableName": "sessions",
+    "paranoid": false
+  },
+  "properties": {
+    "id": {
+      "$ref": "dataTypes#/definitions/primaryKey"
+    },
+    "token": {
+      "type": "string"
+    },
+    "email": {
+      "type": "string"
+    },
+    "expirationDate": {
+      "type": "string",
+      "format": "datetime"
+    },
+    "role": {
+      "$ref": "userTypes#/definitions/accessRole"
+    },
+    "user": {
+      "$ref": "User",
+      "belongsTo": true
+    }
+  },
+  "required": [
+    "email",
+    "role"
+  ]
+}

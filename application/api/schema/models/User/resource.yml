@@ -1,0 +1,51 @@
+id: User
+
+service:
+  calls:
+  - set: updatePassword
+    resp: User
+    input: UpdatePasswordParams
+    params: UpdatePasswordRequest
+  - set: recoverPassword
+    resp: Success
+    input: RecoverPasswordParams
+    params: RecoverPasswordRequest
+
+definitions:
+  Success:
+    $ref: 'apiTypes#/definitions/SuccessfulResponse'
+  UpdatePasswordParams:
+    properties:
+      userId:
+        type: integer
+      oldPassword:
+        type: string
+      newPassword:
+        type: string
+      confirmPassword:
+        type: string
+    required:
+      - oldPassword
+      - newPassword
+      - confirmPassword
+  UpdatePasswordRequest:
+    properties:
+      params:
+        $ref: '#/definitions/UpdatePasswordParams'
+    required:
+      - params
+  RecoverPasswordParams:
+    properties:
+      email:
+        type: string
+    required:
+      - email
+  RecoverPasswordRequest:
+    properties:
+      guid:
+        type: string
+      params:
+        $ref: '#/definitions/RecoverPasswordParams'
+    required:
+      - guid
+      - params

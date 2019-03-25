@@ -1,0 +1,16 @@
+heml
+  head
+    block emailSubject
+      subject Test subject
+
+    style
+      include ../partials/style.css
+
+  body
+    .main-content
+      include ../partials/header
+
+      .content-body
+        block emailContent
+
+      include ../partials/footer

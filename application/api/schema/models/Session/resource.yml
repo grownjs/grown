@@ -1,0 +1,57 @@
+id: Session
+
+service:
+  calls:
+  - get: info
+    resp: Me
+    input: TokenParams
+    params: TokenRequest
+  - set: login
+    resp: Me
+    input: LoginParams
+    params: LoginRequest
+  - set: logout
+    resp: Success
+    params: TokenRequest
+  - get: checkToken
+    resp: Me
+    input: TokenParams
+    params: TokenRequest
+
+definitions:
+  Me:
+    properties:
+      token:
+        type: string
+      expirationDate:
+        type: string
+      user:
+        $ref: User
+  Success:
+    $ref: 'apiTypes#/definitions/SuccessfulResponse'
+  TokenParams:
+    properties:
+      token:
+        type: string
+      expirationDate:
+        type: string
+    required:
+      - token
+  TokenRequest:
+    properties:
+      params:
+        $ref: '#/definitions/TokenParams'
+    required:
+      - params
+  LoginParams:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+  LoginRequest:
+    properties:
+      params:
+        $ref: '#/definitions/LoginParams'
+    required:
+      - params

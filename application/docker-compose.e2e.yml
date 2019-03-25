@@ -1,0 +1,11 @@
+version: "3.2"
+
+services:
+  chrome:
+    volumes:
+      - ./chrome/:/data
+  app:
+    entrypoint: bash
+    command: -c "echo e2e"
+    depends_on:
+      - chrome

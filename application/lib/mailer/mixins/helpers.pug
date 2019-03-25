@@ -1,0 +1,9 @@
+mixin link(href, name)
+  a.btn(href=href, target='_blank') #{name}
+
+mixin regards(message, about)
+  p.foot
+    span
+      | #{message || 'Best Regards'},
+      br
+    b= about || 'YourCompany.com'

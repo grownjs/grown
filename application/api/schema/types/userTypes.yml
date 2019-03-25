@@ -1,0 +1,14 @@
+id: userTypes
+
+definitions:
+  accessRole:
+    type: string
+    enum:
+      - ADMIN
+      - USER
+      - GUEST
+  accessType:
+    type: string
+    enum:
+      - VERIFY_EMAIL
+      - RECOVER_PASSWORD

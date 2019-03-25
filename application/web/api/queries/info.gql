@@ -1,0 +1,10 @@
+query {
+  info {
+    expirationDate
+    token
+    user {
+      id
+      email
+    }
+  }
+}

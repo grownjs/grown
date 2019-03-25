@@ -1,0 +1,8 @@
+**
+!api
+!db
+!lib
+!web
+!main.js
+!Makefile
+!package*.json
