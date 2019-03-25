@@ -32,10 +32,5 @@
   },
   "devDependencies": {
     "lerna": "^2.8.0"
-  },
-  "bundleDependencies": [
-    "@grown/bud",
-    "@grown/cli",
-    "@grown/server"
-  ]
+  }
 }
