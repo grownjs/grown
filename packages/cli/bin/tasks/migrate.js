@@ -72,7 +72,7 @@ module.exports = {
       .then(() => run(x => x.connect()))
       .then(() => {
         if (cmd === 'migrate' || cmd === 'backup') {
-          return run(x => Grown.Model.CLI.execute(Grown.argv, x));
+          return run(x => Grown.Model.CLI.execute(x, cmd));
         }
 
         Grown.Logger.getLogger()
