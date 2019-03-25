@@ -97,7 +97,7 @@ provision: ## Env for production or staging servers  (docker)
 	@echo "Please wait while the server is provisioned..."
 	@echo "Once done, it will be available at http://$(shell hostname):$(PORT)/"
 
-!%: ## Kill services by name with pkill  (host)
+%!: ## Kill services by name with pkill  (host)
 	@(pkill -9 $(subst !,,$@) > /dev/null 2>&1) || true
 
 ci: dependencies ## Run tests and report coverage results! :wink:  (host)
@@ -115,7 +115,7 @@ rm: ## Remove installed dependencies  (host)
 
 dev: dependencies ## Single-shot development workspace  (host)
 	@make -s up service=db
-	@make -s database && make -s templates
+	@make -s schema templates database
 	@npm run dev & npm run watch & npm run watch:mail
 
 dist: dependencies ## Build artifacts for production  (host)
@@ -137,7 +137,7 @@ prune: ## Remove schema files and migrations  (host)
 check: ## Find duplicated code on the project  (host)
 	@jscpd . -g -i '**/migrations/**,**/scripts/**' -t 10
 
-remove: ## Delete all node_modules and more  (host)
+clean: ## Delete all node_modules and more  (host)
 	@rm -rf $(PWD)/node_modules
 	@rm -rf $(PWD)/pgdata
 	@rm -rf $(PWD)/build
@@ -145,6 +145,9 @@ remove: ## Delete all node_modules and more  (host)
 	@rm -rf $(PWD)/.tarima
 	@rm -rf $(PWD)/lib/mailer/generated
 	@rm -rf $(PWD)/api/schema/generated
+
+schema: dependencies ## Generate sources from given schemas  (host)
+	@npm run schema
 
 database: dependencies ## Start database for development  (host)
 	@make -s migrate reset
@@ -166,5 +169,4 @@ templates: dependencies ## Regenerate mailing templates  (host)
 # Ensure dependencies are installed before
 .PHONY: help env dev
 dependencies: ## Check node_modules for updates  (host)
-	@echo FIXME
-#@(((ls node_modules | grep . && npm ls --depth=0 | grep 'UNMET DEPENDENCY') > /dev/null 2>&1) || npm info grown) || true
+	@(((ls $(PWD)/node_modules | grep .) > /dev/null 2>&1) || npm i) || true
