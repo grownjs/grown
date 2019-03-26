@@ -3,30 +3,19 @@ PWD=$(shell pwd)
 
 # default settings
 run := unit
-exec := /bin/bash
-from := lib/models
 report := html
-target := grown-dev
+models := lib/models
 profile := $(notdir $(PWD))
 
 # common ports
-PORT := 4001
-WEBMAIL := 1080
-POSTGRES := 5431
+PORT := 3001
 
 # environment
 NODE_ENV ?= development
-EXEC_FLAGS ?= --rcfile /etc/profile
-ENV_FLAGS ?= --name $(profile) --hostname $(profile)
-ENV_VARS ?= -e DB_HOST=db -e POSTGRES_PASSWORD=*secret*
-PORTS ?= $(PORT):4000,$(WEBMAIL):1080,$(POSTGRES):5432,9505:9505,9506:9506,35729:35729
-
-ifneq ($(service),)
-	ENV_FLAGS=--name $(service) --hostname $(service)
-endif
+PORTS ?= $(PORT):3000,9505:9505,9506:9506,35729:35729
 
 ifneq ($(PORTS),)
-	PORT_FLAGS=-p $(subst $(shell echo ','), -p ,$(PORTS))
+	PORT_FLAGS = -p $(subst $(shell echo ','), -p ,$(PORTS))
 endif
 
 # export common vars
@@ -36,35 +25,21 @@ export NODE_ENV
 # dotenv support
 ifneq ($(wildcard .env),)
 	include .env
-	ENV_FLAGS+= --env-file $(PWD)/.env
+	ENV_FLAGS += --env-file $(PWD)/.env
 endif
 
 # docker-compose configuration
-BASE_COMPOSE=-f $(PWD)/docker-compose.yml
-TEST_COMPOSE=$(BASE_COMPOSE) -f $(PWD)/docker-compose.test.yml
-DEV_COMPOSE=$(TEST_COMPOSE) -f $(PWD)/docker-compose.dev.yml
-E2E_COMPOSE=$(DEV_COMPOSE) -f $(PWD)/docker-compose.e2e.yml
+BASE_COMPOSE = -f docker-compose.yml
+TEST_COMPOSE = $(BASE_COMPOSE) -f docker-compose.test.yml
+DEV_COMPOSE = $(TEST_COMPOSE) -f docker-compose.dev.yml
+E2E_COMPOSE = $(DEV_COMPOSE) -f docker-compose.e2e.yml
+
+define iif
+  @(($(1) > /dev/null 2>&1) && echo "$(2)") || echo "$(3)"
+endef
 
 help: Makefile
-	@awk -F':.*?##' '/^[a-z\\%!:-]+:.*##/{gsub("%","*",$$1);gsub("\\\\",":*",$$1);printf "\033[36m%13s\033[0m %s\n",$$1,$$2}' $<
-
-vm: Dockerfile ## Build base images from Dockerfile  (docker)
-	@printf "Building vm image '$(target)' from $< ...\r"
-
-	@docker build --target $(target) -t $(target) -q $(PWD) && \
-		echo "Type \`make dev\` inside to spawn all services at once! ;-)"
-
-env: vm ## Spin into development container  (docker)
-	@docker run -it -v /var/run/docker.sock:/var/run/docker.sock \
-		-v $(PWD):/home/dev/src -v $(HOME)/.gitconfig:/home/dev/.gitconfig \
-		-v $(HOME)/.ssh:/home/dev/.ssh -v $(HOME)/.config:/home/dev/.config -v $(HOME)/.npm:/home/dev/.npm \
-		-e VM=YES $(ENV_VARS) $(ENV_FLAGS) --privileged --rm -P $(PORT_FLAGS) $(target) $(exec) $(EXEC_FLAGS)
-
-e2e: ## Headlessly run E2E tests  (docker)
-	@docker-compose $(E2E_COMPOSE) exec -T web bash -c "wait-for-it -t 0 web:4000 && npm run test:e2e:ci -- e2e/cases"
-
-all: ## Build all or single services  (docker)
-	@docker-compose $(BASE_COMPOSE) build $(service)
+	@awk -F':.*?##' '/^[^@:]+:.*##/{gsub("%","*",$$1);gsub("\\\\",":*",$$1);printf "\033[36m%13s\033[0m %s\n",$$1,$$2}' $<
 
 up: ## Start service in the background  (docker)
 	@docker-compose $(DEV_COMPOSE) up -d --no-deps --force-recreate $(service)
@@ -84,9 +59,15 @@ stop: ## Stop single services  (docker)
 down: ## Destroy test environment  (docker)
 	@docker-compose $(TEST_COMPOSE) down
 
+e2e: ## Headlessly run E2E tests  (docker)
+	@docker-compose $(E2E_COMPOSE) exec -T web bash -c "wait-for-it -t 0 web:4000 && npm run test:e2e:ci -- e2e/cases"
+
 test: ## Test current build of a service  (docker)
 	@$(AWSSE) -- \
-		docker-compose $(TEST_COMPOSE) -f $(PWD)/services/$(service)/docker-compose.test.yml run -T $(service)
+		docker-compose $(TEST_COMPOSE) -f services/$(service)/docker-compose.test.yml run -T $(service)
+
+build: ## Build all or single services  (docker)
+	@docker-compose $(BASE_COMPOSE) build $(service)
 
 integration: ## Env for frontend-development and QA  (docker)
 	@$(AWSSE) -- docker-compose $(E2E_COMPOSE) run --rm -d -P $(PORT_FLAGS) $(service)
@@ -101,11 +82,11 @@ provision: ## Env for production or staging servers  (docker)
 %!: ## Kill services by name with pkill  (host)
 	@(pkill -9 $(subst !,,$@) > /dev/null 2>&1) || true
 
-ci: dependencies ## Run tests and report coverage results! :wink:  (host)
+ci: deps ## Run tests and report coverage results! :wink:  (host)
 	@mkdir -p $(run)_coverage
 	@make -s ci output="text-lcov > $(run)_coverage/lcov.info"
 
-cov: dependencies ## Report coverage after tests  (host)
+cov: deps ## Report coverage after tests  (host)
 	@npm run test:report -- -r $(report)
 
 add: ## Setup dependencies  (host)
@@ -114,60 +95,57 @@ add: ## Setup dependencies  (host)
 rm: ## Remove installed dependencies  (host)
 	@npm un $(pkg)
 
-dev: dependencies ## Single-shot development workspace  (host)
+dev: deps ## Single-shot development workspace  (host)
 	@make -s up service=db
 	@make -s schema templates database
 	@npm run dev & npm run watch & npm run watch:mail
 
-dist: dependencies ## Build artifacts for production  (host)
+dist: deps ## Build artifacts for production  (host)
 	@npm run build:mail && npm run schema && npm run dist
 
-seed: dependencies ## Run custom seeders  (host)
-	@npm run grown -- backup --models $(from) --load $(PWD)/db/seeders/$(NODE_ENV)
+seed: deps ## Run custom seeders  (host)
+	@npm run grown -- backup --models $(models) --load db/seeders/$(NODE_ENV)
 
-reset: dependencies ## Run integration_seeds  (host)
-	@node $(PWD)/db/integration_seeds
+reset: deps ## Run integration_seeds  (host)
+	@node db/integration_seeds
 
-clear: dependencies ## Run integration_seeds with --clear  (host)
-	@node $(PWD)/db/integration_seeds --clear
+clear: deps ## Run integration_seeds with --clear  (host)
+	@node db/integration_seeds --clear
+
+clean: ## Remove cache and generated artifacts  (host)
+	@rm -f .tarima || true
+	@rm -rf pgdata build log || true
+	@rm -rf lib/mailer/generated api/schema/generated || true
 
 prune: ## Remove schema files and migrations  (host)
-	@((rm $(PWD)/db/schema* > /dev/null 2>&1) && echo "Schema deleted") || echo "Schema already deleted"
-	@((rm $(PWD)/db/migrations/*.js > /dev/null 2>&1) && echo "Migrations deleted") || echo "Migrations already deleted"
+	@$(call iif,rm -rf db/schema*,Schema deleted,Schema already deleted)
+	@$(call iif,rm -rf db/migrations/*.js,Migrations deleted,Migrations already deleted)
 
-check: ## Find duplicated code on the project  (host)
-	@jscpd . -g -i '**/migrations/**,**/scripts/**' -t 10
+purge: ## Remove all from node_modules/*  (host)
+	@rm -rf node_modules/.{bin,cache} || true
+	@rm -rf node_modules/* || true
 
-clean: ## Delete all node_modules and more  (host)
-	@rm -rf $(PWD)/node_modules
-	@rm -rf $(PWD)/pgdata
-	@rm -rf $(PWD)/build
-	@rm -rf $(PWD)/log
-	@rm -rf $(PWD)/.tarima
-	@rm -rf $(PWD)/lib/mailer/generated
-	@rm -rf $(PWD)/api/schema/generated
-
-schema: dependencies ## Generate sources from given schemas  (host)
+schema: deps ## Generate sources from given schemas  (host)
 	@npm run schema
 
-database: dependencies ## Start database for development  (host)
+database: deps ## Start database for development  (host)
 	@make -s migrate reset
 
-migrate: dependencies ## Execute pending migrations  (host)
-	@npm run grown -- migrate --models $(from) --up
+migrate: deps ## Execute pending migrations  (host)
+	@npm run grown -- migrate --models $(models) --up
 
-rollback: dependencies ## Rollback executed migrations  (host)
-	@npm run grown -- migrate --models $(from) --down
+rollback: deps ## Rollback executed migrations  (host)
+	@npm run grown -- migrate --models $(models) --down
 
-migration: dependencies ## Autogenerate new migration files  (host)
-	@npm run grown -- migrate --models $(from) --make
-	@npm run grown -- migrate --models $(from) --up
-	@npm run grown -- migrate --models $(from) --apply
+migration: deps ## Autogenerate new migration files  (host)
+	@npm run grown -- migrate --models $(models) --make
+	@npm run grown -- migrate --models $(models) --up
+	@npm run grown -- migrate --models $(models) --apply
 
-templates: dependencies ## Regenerate mailing templates  (host)
+templates: deps ## Regenerate mailing templates  (host)
 	@npm run build:mail
 
 # Ensure dependencies are installed before
 .PHONY: help env dev
-dependencies: ## Check node_modules for updates  (host)
-	@(((ls $(PWD)/node_modules | grep .) > /dev/null 2>&1) || npm i) || true
+deps: ## Check for installed dependencies  (host)
+	@(((ls node_modules | grep .) > /dev/null 2>&1) || npm i) || true
