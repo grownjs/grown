@@ -1,8 +1,9 @@
 # development utilities
 FROM mhart/alpine-node:11 as nodejs
-  RUN apk update && apk add make bash-completion curl git sudo postgresql-client python-dev py-pip jq
+  RUN apk update && apk add make git sudo python-dev py-pip curl jq
   RUN npm i -g npm@latest new-port-cli node-wait-for-it
   RUN pip install awscli
+
 
 # install docker and setup environment
 FROM nodejs as develop
@@ -16,3 +17,5 @@ FROM nodejs as develop
 
   USER dev
   WORKDIR /home/dev/src
+
+  RUN apk add bash-completion postgresql-client

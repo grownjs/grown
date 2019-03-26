@@ -7,11 +7,11 @@ help:
 	@echo "  make [SEARCH|:SUBMAKE] [...]"
 	@echo
 	@echo "Examples:"
-	@echo "  make :help       -- To display all $(src) commands "
-	@echo "  make :clean:dev  -- Run more commands separated by ':'"
+	@echo "  make :\033[36mhelp\033[0m       -- To display all $(src) commands "
+	@echo "  make :\033[36mclean\033[0m:\033[36mdev\033[0m  -- Run more commands separated by ':'"
 
 %:
-	@make -sC $(src) | grep $*
+	@make -sC $(src) | grep -i "$*"
 
 \:%:
 	@make -sC $(src) $(subst :, ,$@)
