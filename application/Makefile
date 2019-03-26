@@ -6,7 +6,7 @@ run := unit
 exec := /bin/bash
 from := lib/models
 report := html
-target := develop
+target := grown-dev
 profile := $(notdir $(PWD))
 
 # common ports
@@ -36,6 +36,7 @@ export NODE_ENV
 # dotenv support
 ifneq ($(wildcard .env),)
 	include .env
+	ENV_FLAGS+= --env-file $(PWD)/.env
 endif
 
 # docker-compose configuration
@@ -57,7 +58,7 @@ env: vm ## Spin into development container  (docker)
 	@docker run -it -v /var/run/docker.sock:/var/run/docker.sock \
 		-v $(PWD):/home/dev/src -v $(HOME)/.gitconfig:/home/dev/.gitconfig \
 		-v $(HOME)/.ssh:/home/dev/.ssh -v $(HOME)/.config:/home/dev/.config -v $(HOME)/.npm:/home/dev/.npm \
-		--env-file $(PWD)/.env -e VM=YES $(ENV_VARS) $(ENV_FLAGS) --privileged --rm -P $(PORT_FLAGS) $(target) $(exec) $(EXEC_FLAGS)
+		-e VM=YES $(ENV_VARS) $(ENV_FLAGS) --privileged --rm -P $(PORT_FLAGS) $(target) $(exec) $(EXEC_FLAGS)
 
 e2e: ## Headlessly run E2E tests  (docker)
 	@docker-compose $(E2E_COMPOSE) exec -T web bash -c "wait-for-it -t 0 web:4000 && npm run test:e2e:ci -- e2e/cases"
