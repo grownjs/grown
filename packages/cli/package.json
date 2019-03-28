@@ -4,9 +4,6 @@
   "main": "index.js",
   "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
   "license": "MIT",
-  "bin": {
-    "grown": "bin/grown"
-  },
   "dependencies": {
     "@grown/bud": "^0.0.13",
     "@grown/logger": "^0.0.6",

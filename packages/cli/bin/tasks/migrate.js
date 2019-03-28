@@ -42,7 +42,7 @@ module.exports = {
       throw new Error(`Missing --models to load, given '${use || ''}'`);
     }
 
-    if (!(Grown.Model && Grown.Model.CLI)) {
+    if (Grown.Model && !Grown.Model.CLI) {
       Grown.use(require('@grown/model/cli'));
     }
 
