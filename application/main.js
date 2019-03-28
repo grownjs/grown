@@ -31,6 +31,9 @@ const initServer = module.exports = () => {
 if (require.main === module) {
   initServer()
     .listen(Application.argv.flags.port || 8080)
+    .then(server => {
+      console.log('Ready at', server.location.href);
+    })
     .catch(e => {
       console.log('[E_FATAL]', e);
       process.exit(1);

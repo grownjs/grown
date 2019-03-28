@@ -9,10 +9,12 @@ profile := $(notdir $(PWD))
 
 # common ports
 PORT := 3001
+WEBMAIL := 1080
+POSTGRES := 5431
 
 # environment
 NODE_ENV ?= development
-PORTS ?= $(PORT):3000,9505:9505,9506:9506,35729:35729
+PORTS ?= $(PORT):3000,$(WEBMAIL):1080,$(POSTGRES):5432,9505:9505,9506:9506,35729:35729
 
 ifneq ($(PORTS),)
 	PORT_FLAGS = -p $(subst $(shell echo ','), -p ,$(PORTS))
@@ -43,9 +45,14 @@ define iif
   @(($(1) > /dev/null 2>&1) && printf "\r* $(2)\n") || printf "\r* $(3)\n"
 endef
 
+define fig
+	@(figlet $(1)! 2> /dev/null) || printf "\n  Welcome to $(1)!\n  -- get http://www.figlet.org/ to see a nice fig ;-)\n\n"
+endef
+
 ?: Makefile
-	@(figlet $(profile)! 2> /dev/null) || printf "\n  Welcome to $(profile)!\n  -- get http://www.figlet.org/ to see a nice banner ;-)\n\n"
-	@awk -F':.*?##' '/^[^@:]+:.*##/{gsub("%","*",$$1);gsub("\\\\",":*",$$1);printf "\033[36m%13s\033[0m %s\n",$$1,$$2}' $<
+	@$(call fig,$(profile))
+	@awk -F':.*?##' '/^[^ @:]+:.*##/{gsub("%","*",$$1);gsub("\\\\",":*",$$1);printf "\033[36m%13s\033[0m %s\n",$$1,$$2}' $<
+
 	@printf "\n  Examples:"
 	@printf "\n    make provision service=nginx"
 	@printf "\n    make migrate:destroy"
@@ -56,10 +63,10 @@ up: ## Start service in the background  (docker)
 	@docker-compose $(DEV_COMPOSE) up -d --no-deps --force-recreate $(service)
 
 run: ## Execute from single service  (docker)
-	@docker-compose $(BASE_COMPOSE) run --rm --no-deps -P $(PORT_FLAGS) $(service)
+	@docker-compose $(BASE_COMPOSE) run --rm --no-deps $(PORT_FLAGS) $(service)
 
 bash: ## SSH into services with /bin/bash  (docker)
-	@docker-compose $(BASE_COMPOSE) exec $(service) /bin/bash --rcfile /etc/profile
+	@docker-compose $(BASE_COMPOSE) exec $(service) /bin/bash
 
 logs: ## Display logs for given service  (docker)
 	@docker-compose $(BASE_COMPOSE) logs -f $(service)
@@ -74,21 +81,22 @@ e2e: ## Headlessly run E2E tests  (docker)
 	@docker-compose $(E2E_COMPOSE) exec -T web bash -c "wait-for-it -t 0 web:4000 && npm run test:e2e:ci -- e2e/cases"
 
 test: ## Test current build of a service  (docker)
-	@$(AWSSE) -- \
-		docker-compose $(TEST_COMPOSE) -f services/$(service)/docker-compose.test.yml run -T $(service)
+	@docker-compose $(TEST_COMPOSE) -f services/$(service)/docker-compose.test.yml run -T $(service)
 
 build: ## Build all or single services  (docker)
 	@docker-compose $(BASE_COMPOSE) build $(service)
 
 integration: ## Env for frontend-development and QA  (docker)
-	@$(AWSSE) -- docker-compose $(E2E_COMPOSE) run --rm -d -P $(PORT_FLAGS) $(service)
+	@docker-compose $(E2E_COMPOSE) run --rm -d $(PORT_FLAGS) $(service)
 
 provision: ## Env for production or staging servers  (docker)
-	@$(AWSSE) -- \
-		docker-compose $(BASE_COMPOSE) run --rm -p $(PORT):80 -d $(service)
+	@$(call fig,$(service))
+	@docker-compose $(BASE_COMPOSE) run --rm -p $(PORT):80 -d $(service)
 
-	@echo "Please wait while the server is provisioned..."
-	@echo "Once done, it will be available at http://$(shell hostname):$(PORT)/"
+	@printf "\nPlease wait while the server is being provisioned... "
+	@printf "\nOnce done, it will be available at http://$(shell hostname):$(PORT)/"
+	@printf "\n\nIf takes longer, execute \`make logs\` to understand what's going on."
+	@printf "\n\n"
 
 %!: ## Kill services by name with pkill  (host)
 	@(pkill -9 $(subst !,,$@) > /dev/null 2>&1) || true

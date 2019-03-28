@@ -32,7 +32,7 @@ services:
       DB_NAME: ${DB_NAME:-user_dev}
       DB_PORT: ${DB_PORT:-5432}
       DB_HOST: ${DB_HOST:-db}
-      USER_PORT: ${USER_PORT:-80}
+      USER_PORT: ${USER_PORT:-50051}
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-*secret*}
       WITHOUT_SEEDS: ${WITHOUT_SEEDS}
