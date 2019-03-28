@@ -1,4 +1,4 @@
-version: "3.2"
+version: "3.4"
 
 services:
   chrome:
@@ -14,8 +14,8 @@ services:
       - app
   db:
     image: postgres:11
-    #volumes:
-    #  - ./scripts/postgres:/docker-entrypoint-initdb.d
+    volumes:
+     - ./docker/postgres:/docker-entrypoint-initdb.d
     environment:
       POSTGRES_DB: ${DB_NAME:-user_dev}
       POSTGRES_USER: ${POSTGRES_USER:-postgres}

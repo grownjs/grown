@@ -1,6 +1,8 @@
+include ../mixins/helpers
+
 heml
   head
-    block emailSubject
+    block head
       subject Test subject
 
     style
@@ -11,6 +13,6 @@ heml
       include ../partials/header
 
       .content-body
-        block emailContent
+        block body
 
       include ../partials/footer

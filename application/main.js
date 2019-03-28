@@ -1,11 +1,11 @@
 const { Application } = require('./lib');
 
-Application.use(require('@grown/server'));
-Application.use(require('@grown/graphql'));
-Application.use(require('@grown/parsers'));
-Application.use(require('@grown/session/auth'));
-
 const initServer = module.exports = () => {
+  Application.use(require('@grown/server'));
+  Application.use(require('@grown/graphql'));
+  Application.use(require('@grown/parsers'));
+  Application.use(require('@grown/session/auth'));
+
   const server = new Application();
 
   server.plug([
@@ -18,7 +18,7 @@ const initServer = module.exports = () => {
   server.mount('/', Application.GraphQL.setup([
     path.join(__dirname, 'api/schema/common.gql'),
     path.join(__dirname, 'api/schema/generated/index.gql'),
-  ], Application.load(path.join(__dirname, 'web/api/graphql'))),);
+  ], Application.load(path.join(__dirname, 'web/api/graphql'))));
 
   server.on('start', () => {
     return Application.Models.connect()
@@ -32,7 +32,7 @@ if (require.main === module) {
   initServer()
     .listen(Application.argv.flags.port || 8080)
     .then(server => {
-      console.log('Ready at', server.location.href);
+      console.log('API ready at', server.location.href);
     })
     .catch(e => {
       console.log('[E_FATAL]', e);

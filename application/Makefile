@@ -14,7 +14,11 @@ POSTGRES := 5431
 
 # environment
 NODE_ENV ?= development
-PORTS ?= $(PORT):3000,$(WEBMAIL):1080,$(POSTGRES):5432,9505:9505,9506:9506,35729:35729
+
+# FIXME: instead of port-hacking, just export real XXX_PORT values, and then remap here
+# this is because logs from started services are pointing to internal ports...
+# it would be useful to display real-ports used on the host?
+PORTS ?= $(PORT):3000,$(WEBMAIL):1080,$(shell echo $$(($(WEBMAIL) + 1))):1081,$(POSTGRES):5432,9505:9505,9506:9506,35729:35729
 
 ifneq ($(PORTS),)
 	PORT_FLAGS = -p $(subst $(shell echo ','), -p ,$(PORTS))
@@ -29,6 +33,9 @@ ifneq ($(wildcard .env),)
 	include .env
 	ENV_FLAGS += --env-file $(PWD)/.env
 endif
+
+# execution flags
+EXEC_FLAGS=/bin/sh
 
 # docker-compose configuration
 BASE_COMPOSE = -f docker-compose.yml
@@ -65,8 +72,8 @@ up: ## Start service in the background  (docker)
 run: ## Execute from single service  (docker)
 	@docker-compose $(BASE_COMPOSE) run --rm --no-deps $(PORT_FLAGS) $(service)
 
-bash: ## SSH into services with /bin/bash  (docker)
-	@docker-compose $(BASE_COMPOSE) exec $(service) /bin/bash
+exec: ## SSH into services with /bin/bash  (docker)
+	@docker-compose $(BASE_COMPOSE) exec $(service) $(EXEC_FLAGS)
 
 logs: ## Display logs for given service  (docker)
 	@docker-compose $(BASE_COMPOSE) logs -f $(service)
@@ -91,7 +98,7 @@ integration: ## Env for frontend-development and QA  (docker)
 
 provision: ## Env for production or staging servers  (docker)
 	@$(call fig,$(service))
-	@docker-compose $(BASE_COMPOSE) run --rm -p $(PORT):80 -d $(service)
+	@echo docker-compose $(BASE_COMPOSE) run --rm -p $(PORT):80 -d $(service)
 
 	@printf "\nPlease wait while the server is being provisioned... "
 	@printf "\nOnce done, it will be available at http://$(shell hostname):$(PORT)/"
@@ -132,12 +139,12 @@ clear: deps ## Run integration_seeds with --clear  (host)
 	@node db/integration_seeds --clear
 
 clean: ## Remove cache and generated artifacts  (host)
-	@$(call iif,rm -r pgdata build log **/generated,Built artifacts were deleted,Artifacts already deleted)
+	@$(call iif,rm -r pgdata build log api/schema/generated lib/mailer/generated,Built artifacts were deleted,Artifacts already deleted)
 	@$(call iif,unlink .tarima,Cache file was deleted,Cache file already deleted)
 
 prune: ## Remove schema files and migrations  (host)
-	@$(call iif,rm -rf db/schema*,Schema deleted,Schema already deleted)
-	@$(call iif,rm -rf db/migrations/*.js,Migrations deleted,Migrations already deleted)
+	@$(call iif,rm -r db/migrations/*.js,Migrations deleted,Migrations already deleted)
+	@$(call iif,rm -r db/schema*,Schema deleted,Schema already deleted)
 
 deps: ## Check for installed dependencies  (host)
 	@(((ls node_modules | grep .) > /dev/null 2>&1) || npm i) || true

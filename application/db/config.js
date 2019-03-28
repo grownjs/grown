@@ -1,9 +1,11 @@
 /* istanbul ignore */
 
+const isDocker = process.cwd() === '/app';
+
 const env = process.env.NODE_ENV || 'development';
 const database = process.env.DB_NAME || 'user_dev';
 const username = process.env.POSTGRES_USER || 'postgres';
-const logging = env === 'test' || process.env.REMOVE_LOG === 'YES' ? false : console.log; // eslint-ignore
+const logging = env === 'test' || process.env.REMOVE_LOG === 'YES' ? false : require('logro').logger; // eslint-ignore
 
 const config = module.exports = {
   env,
@@ -23,7 +25,7 @@ if (env === 'test') {
   config.database = database;
   config.username = username;
   config.password = process.env.POSTGRES_PASSWORD || '*secret*';
-  config.host = process.env.DB_HOST || 'localhost';
+  config.host = process.env.DB_HOST || (isDocker ? 'db' : 'localhost');
   config.port = process.env.DB_PORT || 5432;
   config.dialect = 'postgres';
 }
