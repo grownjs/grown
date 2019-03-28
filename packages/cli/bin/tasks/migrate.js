@@ -2,30 +2,30 @@
 
 const USAGE_INFO = `
 
-Manage your database
+  Manage your database
 
---models   Entry file exporting models
+  --models   Entry file exporting models
 
---only     Optional. Filter out specific models
---db       Optional. Database to be used, identifier
+  --only     Optional. Filter out specific models
+  --db       Optional. Database to be used, identifier
 
---make     Optional. Take an snapshot from your models
---apply    Optional. Save changes from executed migrations
+  --make     Optional. Take an snapshot from your models
+  --apply    Optional. Save changes from executed migrations
 
---create   Optional. Create database from your schema
---destroy  Optional. Drop the database entirely
+  --create   Optional. Create database from your schema
+  --destroy  Optional. Drop the database entirely
 
---up       Optional. Apply all pending migrations
---down     Optional. Revert all applied migrations
---next     Optional. Apply the latest pending migration
---prev     Optional. Revert the latest applied migration
+  --up       Optional. Apply all pending migrations
+  --down     Optional. Revert all applied migrations
+  --next     Optional. Apply the latest pending migration
+  --prev     Optional. Revert the latest applied migration
 
---from     Optional. Apply migrations from this offset
---to       Optional. Apply migrations up to this offset
+  --from     Optional. Apply migrations from this offset
+  --to       Optional. Apply migrations up to this offset
 
-Examples:
-  grown migrate --make
-  grown migrate --apply "migration description"
+  Examples:
+    grown migrate --models path/to/models --make
+    grown migrate --models db/models --apply "migration description"
 
 `;
 

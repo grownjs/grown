@@ -4,16 +4,16 @@ const path = require('path');
 
 const USAGE_INFO = `
 
-Start the server
+  Start the server
 
--p, --port   Optional. Server's port (default: 8080)
--h, --host   Optional. Server's host name (default: 0.0.0.0)
-    --https  Optional. Force HTTPS
+  -p, --port   Optional. Server's port (default: 8080)
+  -h, --host   Optional. Server's host name (default: 0.0.0.0)
+      --https  Optional. Force HTTPS
 
-Examples:
-  grown up 8081            # Use port 8081
-  grown up --https         # Use https:// protocol
-  grown up 127.0.0.1:8081  # Custom host name and port
+  Examples:
+    grown up 8081            # Use port 8081
+    grown up --https         # Use https:// protocol
+    grown up 127.0.0.1:8081  # Custom host name and port
 
 `;
 

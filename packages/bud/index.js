@@ -64,7 +64,7 @@ module.exports = (cwd, argv) => {
   };
 
   // defaults
-  process.name = 'Grown';
+  process.name = process.name || 'Grown';
 
   require('./environment')(_argv);
   require('./configure')($, cwd || process.cwd(), _argv, util);

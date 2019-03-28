@@ -15,6 +15,14 @@ const GROWN_TXT = `
        \u001b[32m░    ░         ░ ░      ░            ░\u001b[39m
 `;
 
+const ARGV_FLAGS = `
+  -V, --verbose  # Used with --debug to enable DEBUG='*' and disable logs
+  -d, --debug    # Used to expand error details during failures
+  -e, --env      # Custom NODE_ENV for the current process
+
+  Add --help to any command for usage info.
+`;
+
 const spawn = require('child_process').spawn;
 const path = require('path');
 const fs = require('fs');
@@ -24,7 +32,6 @@ module.exports = (Grown, util) => {
 
   const logger = util.getLogger();
 
-  const thisPkg = require('./package.json');
   const mainPkg = path.join(Grown.cwd, 'package.json');
   const appPkg = fs.existsSync(mainPkg)
     ? require(mainPkg)
@@ -114,8 +121,7 @@ module.exports = (Grown, util) => {
   }
 
   function _showTasks(taskName) {
-    logger.printf('{% gray Grown CLI v%s (node %s ─ %s) %}\n',
-      thisPkg.version, process.version, process.env.NODE_ENV);
+    logger.printf('{% gray %s (node %s ─ %s) %}\n', process.name, process.version, process.env.NODE_ENV);
 
     this._findAvailableTasks();
 
@@ -149,7 +155,7 @@ module.exports = (Grown, util) => {
 
   function _showHelp(taskName) {
     if (!taskName) {
-      logger.printf('\n {% gray Tasks: %}\n');
+      logger.printf('\n  {% gray Tasks: %}\n');
 
       let maxLength = 0;
 
@@ -167,14 +173,13 @@ module.exports = (Grown, util) => {
           const desc = (task.description || '').trim().split('\n')[0];
           const pad = new Array((maxLength + 1) - x.length).join(' ');
 
-          logger.printf('   {% gray %s %s # %s %}\n', x, pad, desc);
+          logger.printf('    {% green %s %} %s {% gray # %s %}\n', x, pad, desc);
         });
+
+      logger.printf('\n  {% gray  %s %}\n', ARGV_FLAGS.trim());
     } else {
-      logger.printf('\n {% green %s %} {% gray ─ %s %}\n', taskName,
-        require(this._tasks[taskName]).description
-          .split('\n')
-          .join('\n ')
-          .trim());
+      logger.printf('\n  {% green %s %} {% gray ─ %s %}\n', taskName,
+        require(this._tasks[taskName]).description.trim());
     }
 
     logger.write('\n');
