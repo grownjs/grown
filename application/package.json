@@ -1,12 +1,9 @@
 {
-  "name": "web",
+  "name": "grown-app",
   "version": "0.0.1",
   "private": true,
-  "description": "Web service",
-  "author": "Agave Lab <oss@agavelab.com> (https://agavelab.com/)",
-  "maintainers": [
-    "Alvaro Cabrera <pateketrueke@gmail.com> (https://soypache.co)"
-  ],
+  "description": "Grown application skeleton",
+  "author": "Alvaro Cabrera <pateketrueke@gmail.com> (https://soypache.co)",
   "license": "MIT",
   "main": "main.js",
   "engines": {

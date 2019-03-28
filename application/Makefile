@@ -34,12 +34,23 @@ TEST_COMPOSE = $(BASE_COMPOSE) -f docker-compose.test.yml
 DEV_COMPOSE = $(TEST_COMPOSE) -f docker-compose.dev.yml
 E2E_COMPOSE = $(DEV_COMPOSE) -f docker-compose.e2e.yml
 
+# targets
+.PHONY: ? up run bash logs stop down e2e test build integration provision ci cov add rm dev dist
+.PHONY: seed reset clear clean prune deps purge schema database migration templates
+
+# utils
 define iif
-  @(($(1) > /dev/null 2>&1) && echo "$(2)") || echo "$(3)"
+  @(($(1) > /dev/null 2>&1) && printf "\r* $(2)\n") || printf "\r* $(3)\n"
 endef
 
-help: Makefile
+?: Makefile
+	@(figlet $(profile)! 2> /dev/null) || printf "\n  Welcome to $(profile)!\n  -- get http://www.figlet.org/ to see a nice banner ;-)\n\n"
 	@awk -F':.*?##' '/^[^@:]+:.*##/{gsub("%","*",$$1);gsub("\\\\",":*",$$1);printf "\033[36m%13s\033[0m %s\n",$$1,$$2}' $<
+	@printf "\n  Examples:"
+	@printf "\n    make provision service=nginx"
+	@printf "\n    make migrate:destroy"
+	@printf "\n    make clean dev"
+	@printf "\n\n"
 
 up: ## Start service in the background  (docker)
 	@docker-compose $(DEV_COMPOSE) up -d --no-deps --force-recreate $(service)
@@ -113,29 +124,30 @@ clear: deps ## Run integration_seeds with --clear  (host)
 	@node db/integration_seeds --clear
 
 clean: ## Remove cache and generated artifacts  (host)
-	@rm -f .tarima || true
-	@rm -rf pgdata build log || true
-	@rm -rf lib/mailer/generated api/schema/generated || true
+	@$(call iif,rm -r pgdata build log **/generated,Built artifacts were deleted,Artifacts already deleted)
+	@$(call iif,unlink .tarima,Cache file was deleted,Cache file already deleted)
 
 prune: ## Remove schema files and migrations  (host)
 	@$(call iif,rm -rf db/schema*,Schema deleted,Schema already deleted)
 	@$(call iif,rm -rf db/migrations/*.js,Migrations deleted,Migrations already deleted)
 
+deps: ## Check for installed dependencies  (host)
+	@(((ls node_modules | grep .) > /dev/null 2>&1) || npm i) || true
+
 purge: ## Remove all from node_modules/*  (host)
-	@rm -rf node_modules/.{bin,cache} || true
-	@rm -rf node_modules/* || true
+	@printf "\r* Removing all dependencies... "
+	@rm -rf node_modules/.{bin,cache}
+	@rm -rf node_modules/*
+	@echo "OK"
 
 schema: deps ## Generate sources from given schemas  (host)
 	@npm run schema
 
 database: deps ## Start database for development  (host)
-	@make -s migrate reset
+	@make -s migrate:up reset
 
-migrate: deps ## Execute pending migrations  (host)
-	@npm run grown -- migrate --models $(models) --up
-
-rollback: deps ## Rollback executed migrations  (host)
-	@npm run grown -- migrate --models $(models) --down
+migrate\:%: deps ## Execute pending migrations  (host)
+	@npm run grown -- migrate --models $(models) --$(subst :, --,$*)
 
 migration: deps ## Autogenerate new migration files  (host)
 	@npm run grown -- migrate --models $(models) --make
@@ -144,8 +156,3 @@ migration: deps ## Autogenerate new migration files  (host)
 
 templates: deps ## Regenerate mailing templates  (host)
 	@npm run build:mail
-
-# Ensure dependencies are installed before
-.PHONY: help env dev
-deps: ## Check for installed dependencies  (host)
-	@(((ls node_modules | grep .) > /dev/null 2>&1) || npm i) || true
