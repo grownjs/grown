@@ -42,15 +42,19 @@ module.exports = {
       throw new Error(`Missing --models to load, given '${use || ''}'`);
     }
 
-    if (Grown.Model && !Grown.Model.CLI) {
-      Grown.use(require('@grown/model/cli'));
-    }
-
     const path = require('path');
 
     const Models = !CACHED[use]
       ? (CACHED[use] = Grown.use(require(path.resolve(Grown.cwd, use))))
       : CACHED[use];
+
+    if (!Grown.Model) {
+      throw new Error('Missing Grown.Model');
+    }
+
+    if (!Grown.Model.CLI) {
+      Grown.use(require('@grown/model/cli'));
+    }
 
     const DB = Models._getDB(db);
     const cmd = Grown.argv._[0] || 'migrate';
