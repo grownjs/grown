@@ -1,33 +1,11 @@
 'use strict';
 
 const qs = require('querystring');
-const url = require('url');
 const typeIs = require('type-is');
 const accepts = require('accepts');
 
 module.exports = (Grown, util) => {
-  function _fixURL(location) {
-    const _uri = url.parse(location);
-
-    let _query = '';
-
-    /* istanbul ignore else */
-    if (_uri.query) {
-      _query = qs.stringify(qs.parse(_uri.query));
-    }
-
-    return [
-      _uri.protocol ? `${_uri.protocol}//` : '',
-      _uri.hostname ? _uri.hostname : '',
-      _uri.port ? `:${_uri.port}` : '',
-      _uri.pathname ? _uri.pathname : '',
-      _query ? `?${_query}` : '',
-    ].join('');
-  }
-
   return Grown('Conn.Request', {
-    _fixURL,
-
     $mixins() {
       function _accepts(req) {
         if (!_accepts.fn) {
@@ -70,7 +48,7 @@ module.exports = (Grown, util) => {
           },
 
           port() {
-            return (this.req.headers.host && this.req.headers.host.split(':')[1]) || process.env.PORT || '8080';
+            return (this.req.headers.host && this.req.headers.host.split(':')[1]) || process.env.PORT || '80';
           },
 
           remote_ip() {

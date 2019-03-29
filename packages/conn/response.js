@@ -3,6 +3,8 @@
 const debug = require('debug')('grown:conn:response');
 
 const statusCodes = require('http').STATUS_CODES;
+const qs = require('querystring');
+const url = require('url');
 const mime = require('mime');
 const send = require('send');
 const path = require('path');
@@ -105,10 +107,30 @@ module.exports = (Grown, util) => {
       : value;
   }
 
+  function _fixURL(location) {
+    const _uri = url.parse(location);
+
+    let _query = '';
+
+    /* istanbul ignore else */
+    if (_uri.query) {
+      _query = qs.stringify(qs.parse(_uri.query));
+    }
+
+    return [
+      _uri.protocol ? `${_uri.protocol}//` : '',
+      _uri.hostname ? _uri.hostname : '',
+      _uri.port ? `:${_uri.port}` : '',
+      _uri.pathname ? _uri.pathname : '',
+      _query ? `?${_query}` : '',
+    ].join('');
+  }
+
   return Grown('Conn.Response', {
     _finishRequest,
     _endRequest,
     _cutBody,
+    _fixURL,
 
     $before_render(ctx, template) {
       util.extendValues(template.locals, ctx.state);
