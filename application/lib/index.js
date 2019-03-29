@@ -1,5 +1,5 @@
 const path = require('path');
-const Application = require('@grown/bud')();
+const Application = require('grown')();
 
 const GRPC = Application.use(require('@grown/grpc'));
 const Models = Application.use(require('./models'));

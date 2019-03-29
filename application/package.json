@@ -104,12 +104,10 @@
     "uglify-es": "^3.3.9"
   },
   "dependencies": {
-    "@grown/bud": "0.0.14",
     "@grown/graphql": "0.0.4",
     "@grown/grpc": "0.0.3",
     "@grown/model": "0.0.10",
     "@grown/parsers": "0.0.3",
-    "@grown/server": "0.0.6",
     "@grown/session": "0.0.3",
     "berro": "0.0.1",
     "grown": "^1.1.1",
