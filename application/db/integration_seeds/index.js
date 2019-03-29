@@ -1,3 +1,5 @@
+const log = require('logro').createLogger(__filename);
+
 const CleanUpSeeds = require('./cleanup');
 const UserSeeds = require('./user');
 
@@ -11,7 +13,8 @@ async function integrationSeeds(tasks) {
       return prev.then(() => run.call(Application, sequelize));
     }, Promise.resolve());
   } catch (err) {
-    console.log(err); // eslint-ignore
+    log.exception(err, 'E_FATAL');
+    process.exit(1);
   }
 }
 

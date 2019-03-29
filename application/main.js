@@ -1,3 +1,5 @@
+const log = require('logro').createLogger(__filename);
+
 const { Application } = require('./lib');
 
 const initServer = module.exports = () => {
@@ -32,10 +34,10 @@ if (require.main === module) {
   initServer()
     .listen(Application.argv.flags.port || 8080)
     .then(server => {
-      console.log('API ready at', server.location.href);
+      log.info('API started', { url: server.location.href });
     })
     .catch(e => {
-      console.log('[E_FATAL]', e);
+      log.exception(e, 'E_FATAL');
       process.exit(1);
     });
 }
