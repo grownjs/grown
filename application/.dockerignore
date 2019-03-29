@@ -1,4 +1,6 @@
 **
+!.eslintrc
+!docker
 !api
 !db
 !lib

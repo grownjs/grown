@@ -1,4 +1,4 @@
-FROM pateketrueke/nodejs:latest
+FROM grown-app/nodejs:latest
 
 COPY ./package*.json /app/
 WORKDIR /app

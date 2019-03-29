@@ -14,10 +14,6 @@ POSTGRES := 5431
 
 # environment
 NODE_ENV ?= development
-
-# FIXME: instead of port-hacking, just export real XXX_PORT values, and then remap here
-# this is because logs from started services are pointing to internal ports...
-# it would be useful to display real-ports used on the host?
 PORTS ?= $(PORT):3000,$(WEBMAIL):1080,$(shell echo $$(($(WEBMAIL) + 1))):1081,$(POSTGRES):5432,9505:9505,9506:9506,35729:35729
 
 ifneq ($(PORTS),)
@@ -34,14 +30,11 @@ ifneq ($(wildcard .env),)
 	ENV_FLAGS += --env-file $(PWD)/.env
 endif
 
-# execution flags
-EXEC_FLAGS=/bin/sh
-
 # docker-compose configuration
-BASE_COMPOSE = -f docker-compose.yml
-TEST_COMPOSE = $(BASE_COMPOSE) -f docker-compose.test.yml
-DEV_COMPOSE = $(TEST_COMPOSE) -f docker-compose.dev.yml
-E2E_COMPOSE = $(DEV_COMPOSE) -f docker-compose.e2e.yml
+BASE_COMPOSE = -f docker/docker-compose.yml
+TEST_COMPOSE = $(BASE_COMPOSE) -f docker/docker-compose.test.yml
+DEV_COMPOSE = $(TEST_COMPOSE) -f docker/docker-compose.dev.yml
+E2E_COMPOSE = $(DEV_COMPOSE) -f docker/docker-compose.e2e.yml
 
 # targets
 .PHONY: ? up run bash logs stop down e2e test build integration provision ci cov add rm dev dist
@@ -66,14 +59,14 @@ endef
 	@printf "\n    make clean dev"
 	@printf "\n\n"
 
+sh: ## SSH into services with current SHELL  (docker)
+	@docker-compose $(BASE_COMPOSE) exec $(service) $(SHELL) $(SHELL_FLAGS)
+
 up: ## Start service in the background  (docker)
 	@docker-compose $(DEV_COMPOSE) up -d --no-deps --force-recreate $(service)
 
 run: ## Execute from single service  (docker)
 	@docker-compose $(BASE_COMPOSE) run --rm --no-deps $(PORT_FLAGS) $(service)
-
-exec: ## SSH into services with /bin/bash  (docker)
-	@docker-compose $(BASE_COMPOSE) exec $(service) $(EXEC_FLAGS)
 
 logs: ## Display logs for given service  (docker)
 	@docker-compose $(BASE_COMPOSE) logs -f $(service)
@@ -98,7 +91,7 @@ integration: ## Env for frontend-development and QA  (docker)
 
 provision: ## Env for production or staging servers  (docker)
 	@$(call fig,$(service))
-	@echo docker-compose $(BASE_COMPOSE) run --rm -p $(PORT):80 -d $(service)
+	@docker-compose $(BASE_COMPOSE) run --rm -p $(PORT):80 -d $(service)
 
 	@printf "\nPlease wait while the server is being provisioned... "
 	@printf "\nOnce done, it will be available at http://$(shell hostname):$(PORT)/"
@@ -154,6 +147,12 @@ purge: ## Remove all from node_modules/*  (host)
 	@rm -rf node_modules/.{bin,cache}
 	@rm -rf node_modules/*
 	@echo "OK"
+
+push:
+	@docker puch grown-app/nodejs
+
+image:
+	@docker build --target nodejs -t grown-app/nodejs .
 
 schema: deps ## Generate sources from given schemas  (host)
 	@npm run schema

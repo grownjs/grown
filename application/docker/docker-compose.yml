@@ -6,9 +6,9 @@ services:
     image: martinsthiago/chrome:64.0.3282.186
   nginx:
     build:
-      context: .
-      dockerfile: ./web/Dockerfile.nginx
-    image: pateketrueke/nginx
+      context: ..
+      dockerfile: ./docker/Dockerfile.nginx
+    image: grown-app/nginx
     command: "bash -c 'nginx; tail -f /var/log/nginx/error.log'"
     depends_on:
       - app
@@ -22,9 +22,9 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-*secret*}
   app:
     build:
-      context: .
-      dockerfile: ./web/Dockerfile.app
-    image: pateketrueke/web
+      context: ..
+      dockerfile: ./docker/Dockerfile.app
+    image: grown-app/web
     depends_on:
       - db
     environment:
