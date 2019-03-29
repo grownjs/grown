@@ -1,3 +1,5 @@
+const start = new Date();
+
 const log = require('logro').createLogger(__filename);
 
 const { Application } = require('./lib');
@@ -34,7 +36,7 @@ if (require.main === module) {
   initServer()
     .listen(Application.argv.flags.port || 8080)
     .then(server => {
-      log.info('API started', { url: server.location.href });
+      log.info(`API started after ${(new Date() - start) / 1000} seconds`, { endpoint: server.location.href });
     })
     .catch(e => {
       log.exception(e, 'E_FATAL');
