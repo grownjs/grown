@@ -11,6 +11,7 @@
   },
   "scripts": {
     "grown": "grown",
+    "start": "node .",
     "debug": "ndb npm run watch --",
     "watch": "nodemon --ignore build --ignore web --ignore log --ignore bin --ignore Makefile --ignore",
     "watch:mail": "mailor watch lib/mailer/templates -d lib/mailer/generated --no-open",
@@ -21,7 +22,7 @@
     "schema-to:graphql": "json-schema-to -tw api/schema -pc index --graphql",
     "schema-to:protobuf": "json-schema-to -tw api/schema -pc index --protobuf -br ../common -k API",
     "dev": "tarima watch -p 4000 -P '/api/v1/graphql -> http://localhost:8080'",
-    "dist": "tarima -mfqe production",
+    "dist": "tarima -mqe $NODE_ENV",
     "test": "npm run test:unit && npm run test:functional --",
     "test:e2e": "BASE_URL=http://localhost:4000 testcafe",
     "test:e2e:ci": "BASE_URL=http://web:4000/ testcafe --ports 9505,9506 remote:1",
