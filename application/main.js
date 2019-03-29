@@ -5,7 +5,6 @@ const log = require('logro').createLogger(__filename);
 const { Application } = require('./lib');
 
 const initServer = module.exports = () => {
-  Application.use(require('@grown/server'));
   Application.use(require('@grown/graphql'));
   Application.use(require('@grown/parsers'));
   Application.use(require('@grown/session/auth'));
