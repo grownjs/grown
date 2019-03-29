@@ -132,7 +132,7 @@ module.exports = (Grown, util) => {
         services.push([Proto, name]);
       });
 
-      map.start = () => {
+      map.start = _port => {
         if (!server.started) {
           services.forEach(([Proto, name]) => {
             try {
@@ -144,7 +144,7 @@ module.exports = (Grown, util) => {
             }
           });
 
-          server.bind(`0.0.0.0:${port}`, _server);
+          server.bind(`0.0.0.0:${_port || port}`, _server);
           server.start();
         }
 
