@@ -62,7 +62,7 @@ function _grownFactory($, util, options) {
       halt(cb) {
         /* istanbul ignore else */
         if (this.res && this.res._halted) {
-          throw new Error('Connection already halted!');
+          return cb(this, scope._options);
         }
 
         /* istanbul ignore else */
