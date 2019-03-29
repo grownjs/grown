@@ -14,18 +14,24 @@ module.exports = (Grown, util) => {
       const query = ctx.req.query || {};
 
       const _query = body.query || query.body;
-      const data = body.variables || query.data;
+      const data = body.variables || query.data || {};
+
+      ctx.res.setHeader('Content-Type', 'application/json');
+
+      if (!_query) {
+        ctx.res.statusCode = 422;
+        return ctx.res.end('{}');
+      }
 
       return gql.graphql(_schema, _query, null, ctx, data)
         .then(result => {
           if (result.errors && Grown.env === 'development') {
             result.errors.forEach(e => {
               e.message = e.message.replace(/^\d+ [_A-Z]+: /, '');
-              e.description = e.stack.toString().replace(e.message, '').replace(/[: ]+$/m, '').trim();
+              e.description = e.stack.toString();
             });
           }
 
-          ctx.res.setHeader('Content-Type', 'application/json');
           ctx.res.end(JSON.stringify(result));
         });
     };
