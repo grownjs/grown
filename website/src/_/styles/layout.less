@@ -54,13 +54,26 @@
 
 @media screen and (max-width: 639px) {
   #sidebar > .body > ul > li {
-    ul ul {
-      display: flex;
-      flex-wrap: wrap;
-      margin-bottom: .5em;
+    ul {
+      padding-left: 0;
+
+      a + ul {
+        margin-top: 5px;
+      }
 
       li {
-        margin-right: 1em;
+        margin-top: 0;
+        margin-bottom: 5px;
+      }
+
+      ul {
+        display: flex;
+        flex-wrap: wrap;
+        margin-bottom: .5em;
+
+        li {
+          margin-right: 1em;
+        }
       }
     }
   }
