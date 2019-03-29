@@ -7,14 +7,9 @@ report := html
 models := lib/models
 profile := $(notdir $(PWD))
 
-# common ports
-PORT := 3001
-WEBMAIL := 1080
-POSTGRES := 5431
-
 # environment
+PORT ?= 3001
 NODE_ENV ?= development
-PORTS ?= $(PORT):3000,$(WEBMAIL):1080,$(shell echo $$(($(WEBMAIL) + 1))):1081,$(POSTGRES):5432,9505:9505,9506:9506,35729:35729
 
 ifneq ($(PORTS),)
 	PORT_FLAGS = -p $(subst $(shell echo ','), -p ,$(PORTS))
@@ -66,7 +61,7 @@ up: ## Start service in the background  (docker)
 	@docker-compose $(DEV_COMPOSE) up -d --no-deps --force-recreate $(service)
 
 run: ## Execute from single service  (docker)
-	@docker-compose $(BASE_COMPOSE) run --rm --no-deps $(PORT_FLAGS) $(service)
+	@docker-compose $(BASE_COMPOSE) run -T --rm --no-deps $(PORT_FLAGS) $(service)
 
 logs: ## Display logs for given service  (docker)
 	@docker-compose $(BASE_COMPOSE) logs -f $(service)
@@ -81,7 +76,7 @@ e2e: ## Headlessly run E2E tests  (docker)
 	@docker-compose $(E2E_COMPOSE) exec -T web bash -c "wait-for-it -t 0 web:4000 && npm run test:e2e:ci -- e2e/cases"
 
 test: ## Test current build of a service  (docker)
-	@docker-compose $(TEST_COMPOSE) -f services/$(service)/docker-compose.test.yml run -T $(service)
+	@docker-compose $(TEST_COMPOSE) -f services/$(service)/docker-compose.test.yml run -T --rm $(service)
 
 build: ## Build all or single services  (docker)
 	@docker-compose $(BASE_COMPOSE) build $(service)
@@ -90,7 +85,7 @@ integration: ## Env for frontend-development and QA  (docker)
 	@docker-compose $(E2E_COMPOSE) run --rm -d $(PORT_FLAGS) $(service)
 
 provision: ## Env for production or staging servers  (docker)
-	@$(call fig,$(service))
+	@$(call fig,$(service) up)
 	@docker-compose $(BASE_COMPOSE) run --rm -p $(PORT):80 -d $(service)
 
 	@printf "\nPlease wait while the server is being provisioned... "
