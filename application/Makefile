@@ -96,18 +96,15 @@ provision: ## Env for production or staging servers  (docker)
 %!: ## Kill services by name with pkill  (host)
 	@(pkill -9 $(subst !,,$@) > /dev/null 2>&1) || true
 
+npm\:%: ## Invoke NPM commands  (host)
+	@npm $(subst :, ,$(subst npm:,:,$*)) $(NPM_FLAGS)
+
 ci: deps ## Run tests and report coverage results! :wink:  (host)
-	@mkdir -p $(run)_coverage
-	@make -s ci output="text-lcov > $(run)_coverage/lcov.info"
+	@mkdir -p $(run)_coverage && npm run test:coverage:$(run)
+	@make -s cov report="text-lcov > $(run)_coverage/lcov.info"
 
 cov: deps ## Report coverage after tests  (host)
 	@npm run test:report -- -r $(report)
-
-add: ## Setup dependencies  (host)
-	@npm i $(pkg) --save
-
-rm: ## Remove installed dependencies  (host)
-	@npm un $(pkg)
 
 dev: deps ## Single-shot development workspace  (host)
 	@make -s up service=db

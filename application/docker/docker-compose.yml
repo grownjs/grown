@@ -9,15 +9,15 @@ services:
       context: ..
       dockerfile: ./docker/Dockerfile.nginx
     image: grown-app/nginx
-    depends_on:
-      - web
+    #ports:
+    #  - 80:80
+    links:
+     - web
   web:
     build:
       context: ..
       dockerfile: ./docker/Dockerfile.web
     image: grown-app/web
-    depends_on:
-      - db
     environment:
       NODE_ENV: ${NODE_ENV:-development}
       DB_NAME: ${DB_NAME:-user_dev}
@@ -27,6 +27,10 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-*secret*}
       WITHOUT_SEEDS: ${WITHOUT_SEEDS}
       REMOVE_LOG: ${REMOVE_LOG}
+    #expose:
+    #  - "8080"
+    links:
+      - db
   db:
     image: postgres:11
     volumes:

@@ -8,5 +8,4 @@ COPY . /app/
 RUN make dist
 
 EXPOSE 80
-ENTRYPOINT ["node"]
-CMD ["."]
+ENTRYPOINT ["make"]
