@@ -18,7 +18,7 @@ services:
       context: ..
       dockerfile: ./docker/Dockerfile.web
     image: grown-app/web
-    command: "npm:start"
+    command: "migrate:up npm:start"
     environment:
       NODE_ENV: ${NODE_ENV:-development}
       DB_NAME: ${DB_NAME:-user_dev}

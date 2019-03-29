@@ -140,11 +140,11 @@ purge: ## Remove all from node_modules/*  (host)
 	@rm -rf node_modules/*
 	@echo "OK"
 
-push:
-	@docker puch grown-app/nodejs
-
-image:
+image: ## Build base docker-image  (host)
 	@docker build --target nodejs -t grown-app/nodejs .
+
+push: ## Publish base docker-image  (host)
+	@docker puch grown-app/nodejs
 
 schema: deps ## Generate sources from given schemas  (host)
 	@npm run schema
