@@ -22,7 +22,6 @@ export NODE_ENV
 # dotenv support
 ifneq ($(wildcard .env),)
 	include .env
-	ENV_FLAGS += --env-file $(PWD)/.env
 endif
 
 # docker-compose configuration
