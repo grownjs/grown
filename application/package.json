@@ -110,7 +110,7 @@
     "@grown/parsers": "0.0.3",
     "@grown/session": "0.0.3",
     "berro": "0.0.1",
-    "grown": "^1.1.1",
+    "grown": "^1.1.2",
     "json-schema-to": "0.0.12",
     "logro": "0.0.8",
     "mailor": "0.0.7",
