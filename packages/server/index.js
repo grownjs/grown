@@ -1,5 +1,7 @@
 'use strict';
 
+process.env.NODE_ENV = process.env.NODE_ENV || 'development';
+
 const debug = require('debug')('grown:server');
 
 const _pkg = require('./package.json');
