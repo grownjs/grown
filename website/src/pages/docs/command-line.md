@@ -3,7 +3,7 @@ title: Command line
 $render: ../../_/layouts/default.pug
 ---
 
-Make sure you write a script like the shown below, e.g. **your-app/application.js**
+Make sure you write a script like the shown below, e.g. **your-app/server.js**
 
 ```js
 // require and create a Grown-container
@@ -18,7 +18,7 @@ const initServer = module.exports = () => {
   return server;
 };
 
-// e.g. `node ./your-app/application.js`
+// e.g. `node ./your-app/server.js`
 if (require.main === module) {
   initServer()
     .listen(Grown.argv.flags.port || 8080)
@@ -29,14 +29,16 @@ if (require.main === module) {
 }
 ```
 
-> Now you can start the server manually, or use the `CLI` extension...
+Run your server manually with `node your-app/server.js` or with `npm start`.
 
-Get `@grown/cli` globally to run your application:
+For the latter add the following settings to your `package.json` file:
 
-```bash
-$ npm install -g @grown/cli
-$ cd your-app
-$ grown up
+```json
+{
+  "scripts": {
+    "start": "grown up"
+  }
+}
 ```
 
 Try `grown --help` to get more usage info.
