@@ -9,7 +9,6 @@ services:
       context: ..
       dockerfile: ./docker/Dockerfile.nginx
     image: grown-app/nginx
-    command: "bash -c 'nginx; tail -f /var/log/nginx/error.log'"
     depends_on:
       - web
   web:
