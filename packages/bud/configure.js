@@ -7,7 +7,7 @@ module.exports = ($, cwd, argv, util) => {
   // props
   $('Grown.argv', () => argv, false);
   $('Grown.cwd', () => cwd, false);
-  $('Grown.env', () => process.env.NODE_ENV, false);
+  $('Grown.env', () => process.env.NODE_ENV || 'development', false);
 
   // methods
   $('Grown.load', (_cwd, hooks) => util.scanDir(_cwd, def => def($.Grown, hooks || {})), false);
