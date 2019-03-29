@@ -25,29 +25,28 @@ module.exports = (Grown, util) => {
 
   function _sendView(ctx, conn) {
     return this.bundle(ctx.entry || path.join(ctx.cwd, ctx.opts.content, ctx.src), ctx.data)
-      .then(partial =>
-        this._sendHeaders(ctx, conn).then(() => {
-          if (!partial.render) {
-            debug('#%s Wait. Sending raw content', conn.pid);
+      .then(partial => this._sendHeaders(ctx, conn).then(() => {
+        if (!partial.render) {
+          debug('#%s Wait. Sending raw content', conn.pid);
 
-            if (typeof conn.end === 'function') {
-              return conn.end(partial.result);
-            }
-
-            conn.res.write(partial.result);
-            conn.res.end();
-          } else if (typeof conn.render === 'function' && typeof partial.render === 'function') {
-            debug('#%s Wait. Rendering content through views', conn.pid);
-
-            return conn.render(partial.render, conn.state);
-          } else if (conn.res) {
-            debug('#%s Wait. Sending raw content', conn.pid);
-
-            conn.res.setHeader('Content-Length', partial.result.length);
-            conn.res.write(partial.result);
-            conn.res.end();
+          if (typeof conn.end === 'function') {
+            return conn.end(partial.result);
           }
-        }))
+
+          conn.res.write(partial.result);
+          conn.res.end();
+        } else if (typeof conn.render === 'function' && typeof partial.render === 'function') {
+          debug('#%s Wait. Rendering content through views', conn.pid);
+
+          return conn.render(partial.render, conn.state);
+        } else if (conn.res) {
+          debug('#%s Wait. Sending raw content', conn.pid);
+
+          conn.res.setHeader('Content-Length', partial.result.length);
+          conn.res.write(partial.result);
+          conn.res.end();
+        }
+      }))
       .catch(e => {
         /* istanbul ignore else */
         if (ctx.opts.fallthrough !== true) {

@@ -132,21 +132,20 @@ module.exports = (Grown, util) => {
 
     /* istanbul ignore else */
     if (taskName && !Grown.argv.flags.help) {
-      return logger(taskName, () =>
-        new Promise((cb, reject) => {
-          /* istanbul ignore else */
-          if (!Grown.argv.flags.app && taskName === 'up') {
-            Grown.argv.flags.app = this._findApplication();
-          }
+      return logger(taskName, () => new Promise((cb, reject) => {
+        /* istanbul ignore else */
+        if (!Grown.argv.flags.app && taskName === 'up') {
+          Grown.argv.flags.app = this._findApplication();
+        }
 
-          this._exec(Grown.argv.raw, () => {
-            try {
-              cb(this.run(taskName));
-            } catch (e) {
-              reject(e);
-            }
-          });
-        }))
+        this._exec(Grown.argv.raw, () => {
+          try {
+            cb(this.run(taskName));
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }))
         .catch(e => this._onError(e));
     }
 

@@ -33,7 +33,7 @@ const CACHED = {};
 
 module.exports = {
   description: USAGE_INFO,
-  callback(Grown, util) {
+  callback(Grown) {
     const use = Grown.argv.flags.models;
     const db = Grown.argv.flags.db;
 

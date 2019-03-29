@@ -64,8 +64,7 @@ function _buildvNode(tag, data) {
 }
 
 function _buildCSS(style) {
-  return Object.keys(style).map(prop =>
-    `${prop.replace(RE_UPPERCASE, '-$&').toLowerCase()}:${style[prop]}`)
+  return Object.keys(style).map(prop => `${prop.replace(RE_UPPERCASE, '-$&').toLowerCase()}:${style[prop]}`)
     .join(';');
 }
 
@@ -219,8 +218,7 @@ module.exports = (Grown, util) => {
 
         /* istanbul ignore else */
         if (!view.data.render) {
-          util.hiddenProperty(view.data, 'render', (tpl, state) =>
-            this.render({ src: tpl, data: state || {} }, cached, options));
+          util.hiddenProperty(view.data, 'render', (tpl, state) => this.render({ src: tpl, data: state || {} }, cached, options));
         }
 
         /* istanbul ignore else */

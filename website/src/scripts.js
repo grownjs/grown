@@ -19,7 +19,7 @@
       mode: isEndpoint && 'endpoint',
       title: snippet.title,
       preamble: snippet.preamble,
-      onLoad(e) {
+      onLoad() {
         target.style = 'display:block;overflow:hidden';
         source.parentNode.parentNode.removeChild(source.parentNode);
       },

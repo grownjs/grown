@@ -23,8 +23,7 @@ module.exports = (Grown, util) => {
     _opts.rollup.format = format;
 
     // redirect messages
-    _opts.rollup.onwarn = x =>
-      debug(`Warn: ${x.message}`);
+    _opts.rollup.onwarn = x => debug(`Warn: ${x.message}`);
 
     // explicit support for render() calls
     _opts.buble = _opts.buble || {};
@@ -171,10 +170,8 @@ module.exports = (Grown, util) => {
         return Promise.resolve()
           .then(() => (
             RE_BUNDLE_EXTENSIONS.test(src)
-              ? this._bundleCache(_cwd, src, () =>
-                this._bundleRender(src, this._bundleOptions(_cwd, 'iife', data, this.bundle_options)))
-              : this._bundleCache(_cwd, src, () =>
-                this._bundleView(src, this._bundleOptions(_cwd, 'cjs', data, this.bundle_options)))
+              ? this._bundleCache(_cwd, src, () => this._bundleRender(src, this._bundleOptions(_cwd, 'iife', data, this.bundle_options)))
+              : this._bundleCache(_cwd, src, () => this._bundleView(src, this._bundleOptions(_cwd, 'cjs', data, this.bundle_options)))
           ));
       };
 

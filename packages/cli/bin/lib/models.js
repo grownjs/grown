@@ -4,7 +4,6 @@ const path = require('path');
 
 module.exports = (Grown, util, ctx) => {
   const use = (ctx && ctx._ && ctx._[0]) || Grown.argv.flags.models;
-  const dbName = (ctx && ctx._ && (ctx.flags.db || ctx.params.db)) || Grown.argv.flags.db || 'default';
 
   /* istanbul ignore else */
   if (!use || typeof use !== 'string') {
