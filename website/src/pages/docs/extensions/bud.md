@@ -6,8 +6,10 @@ runkit:
     const fs = require('fs');
     const assert = require('assert');
     fs.mkdirSync('./exts');
-    fs.writeFileSync('./exts/TestHandler.js',
-      'module.exports = $ => $("TestHandler");');
+    fs.mkdirSync('./exts/Test');
+    fs.mkdirSync('./exts/Test/handler');
+    fs.writeFileSync('./exts/Test/handler/index.js',
+      'module.exports = function () { return 42; };');
 ---
 
 The foundation of the whole framework is this, it provides the DSL
@@ -21,7 +23,7 @@ const Util = require('@grown/bud/util');
 // extends the Grown-container
 Grown.use(($, util) => {
   assert($ === Grown);
-  assert(Util === util);
+  assert(util === Util);
 });
 
 // build a promise-guard for callbacks
@@ -40,31 +42,22 @@ const cb = Grown.do(rescue => {
 
 cb();
 
-// ./exts/TestHandler.js
-// module.exports = Grown => {
-//   return Grown('TestHandler');
+// ./exts/Test/handler/index.js
+// module.exports = function () {
+//   return 42;
 // };
 
 // load additional definitions
-const extsDir = `${__dirname}/exts`;
-const Exts = Grown.load(extsDir, 'Handler');
+const Exts = Grown.load(`${__dirname}/exts`);
 
-// define a new extension
-Grown('Handlers', {
-  include: [
-    Exts,
-  ],
-});
+// locate the dependency
+assert(Exts.get('Test').handler() === 42);
 
-// all definitions are equivalent
-const Test = Grown('Handlers.TestHandler');
-
-assert(Test.name === 'TestHandler');
-assert(Test.name === Exts.Test.name);
-assert(Test.name === Grown.TestHandler.name);
+// don't do this!
+// new Grown();
 ```
 
-> Note that invoking `new Grown` will throw an error because `Server` is not available
+> Invoking `new Grown()` will throw an error if `Server` is not available!
 
 ---
 
@@ -76,11 +69,12 @@ assert(Test.name === Grown.TestHandler.name);
 
 ### Public methods <var>static</var>
 
-- `do(body)` &mdash; Wraps code into promises.
-- `use(module)` &mdash; Register custom extensions.
+- `do(body)` &mdash; Wraps code into promises with `rescue` abilities.
+- `use(module)` &mdash; Register custom extensions from external modules.
 - `new([options])` &mdash; Shortcut for `new Grown(...)` constructor.
-- `load(cwd[, suffix[, callback]])` &mdash; Allow to collect extensions.
-  If `callback` is given, found modules will be passed to it, so they can be
+- `defn(name, value)` &mdash; Set static values into the `Grown` container, once.
+- `load(cwd[, hooks])` &mdash; Build module definitions from this directory.
+  If `hooks` are given, found modules will be passed to them, so they can be
   extended or completely replaced.
 
 ---

@@ -21,7 +21,6 @@ runkit:
 
 Manage your database setup, start or interact with your application, etc.
 
-
 ```js
 /* @runkit */
 // require and create a Grown-container
@@ -60,8 +59,7 @@ Grown.CLI.start(taskName)
   });
 ```
 
-> Use this technique if you don't want to install `@grown/cli` globally, or
-> if you want to overload its default behavior, etc.
+> Use this technique if you want to define your own `CLI` behavior, etc.
 
 ---
 
@@ -72,16 +70,16 @@ Task files are defined as modules, e.g. **tasks/words.js**
 ```js
 const USAGE_INFO = `
 
-It will print messages
+  It will print messages
 
-Given any arguments, this task will print them
-back as they were received, or reversed, etc.
+  Given any arguments, this task will print them
+  back as they were received, or reversed, etc.
 
---mirror   Invert whole output before print
---reverse  Invert words before print
+  --mirror   Invert whole output before print
+  --reverse  Invert words before print
 
-Examples:
-  node script.js example hello world
+  Examples:
+    node script.js example hello world
 
 `;
 
@@ -111,6 +109,8 @@ module.exports = {
 
 Now you can invoke this task using `grown words` or `node script.js words` depending on your installation.
 
+Formatting for task descriptions is enouraged to have its body indented with two spaces, to help readability.
+
 See: [built-in tasks](https://github.com/pateketrueke/grown/tree/master/packages/cli/bin/tasks) from CLI module
 
 ---
@@ -123,7 +123,7 @@ See: [built-in tasks](https://github.com/pateketrueke/grown/tree/master/packages
 
 ### Private* props <var>static</var>
 
-- `_start` &mdash; Initialization date, e.g. `new Date`.
+- `_start` &mdash; Initialization date, e.g. `new Date()`.
 - `_tasks` &mdash; Collected tasks by name.
 
 ### Private* methods <var>static</var>
