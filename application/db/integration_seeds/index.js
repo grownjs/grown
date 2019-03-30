@@ -3,9 +3,10 @@ const log = require('logro').createLogger(__filename);
 const CleanUpSeeds = require('./cleanup');
 const UserSeeds = require('./user');
 
-const { Application, Models } = require('../../lib');
+const Application = require('../../lib');
 
-const { connect, sequelize } = Models._getDB(Models.connection.identifier);
+const { connect, sequelize } = Application.Models
+  ._getDB(Application.Models.connection.identifier);
 
 async function integrationSeeds(tasks) {
   try {

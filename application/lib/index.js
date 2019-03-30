@@ -1,4 +1,5 @@
 const path = require('path');
+
 const Application = require('grown')();
 
 const GRPC = Application.use(require('@grown/grpc'));
@@ -17,9 +18,9 @@ Application('Services', {
   getMailer() {
     return require('./mailer');
   },
+  getModel(name) {
+    return Models.get(name);
+  },
 });
 
-module.exports = {
-  Application,
-  Models,
-};
+module.exports = Application;
