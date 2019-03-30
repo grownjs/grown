@@ -77,9 +77,9 @@ module.exports = (Grown, util) => {
         extend: Grown('Model.Repo', {
           _getModels: () => Object.keys(DB[name].models).map(get),
           _getDB: () => DB[name],
+          get: _name => get(_name),
           connect: DB[name].connect,
           disconnect: DB[name].close,
-          getModel: _name => get(_name),
         }),
       });
     },
