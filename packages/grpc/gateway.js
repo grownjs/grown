@@ -68,9 +68,24 @@ module.exports = (Grown, util) => {
     return controller;
   }
 
+  function _onError(e) {
+    const originalError = e.metadata && e.metadata.get('originalError');
+
+    try {
+      if (originalError && typeof originalError[0] === 'string') {
+        e.original = JSON.parse(originalError[0]);
+      }
+    } catch (_e) {
+      throw new Error(`Failed to deserialize error. ${e.message}`);
+    }
+
+    throw e;
+  }
+
   return Grown('GRPC.Gateway', {
     _callService,
     _getService,
+    _onError,
 
     setup(controllers) {
       const _server = grpc.ServerCredentials.createInsecure();
@@ -107,20 +122,7 @@ module.exports = (Grown, util) => {
             _client = new Proto(`${host}:${port}`, _channel);
           }
 
-          return this._callService(_client, method, data)
-            .catch(e => {
-              const originalError = e.metadata && e.metadata.get('originalError');
-
-              try {
-                if (originalError && typeof originalError[0] === 'string') {
-                  e.original = JSON.parse(originalError[0]);
-                }
-              } catch (_e) {
-                throw new Error(`Failed to deserialize error. ${e.message}`);
-              }
-
-              throw e;
-            });
+          return this._callService(_client, method, data).catch(this._onError);
         };
 
         Object.keys(Proto.service).forEach(method => {
