@@ -31,6 +31,15 @@ Build high-level endpoints for your API consumers.
 // register extension
 Grown.use(require('@grown/graphql'));
 
+// ./index.gql
+// type Mutation { noop: Int }
+// type Query { truth: Int }
+
+// ./handlers/Test/Query/truth/index.js
+// module.exports = function () {
+//   return 42;
+// };
+
 // body-parsers are required too
 Grown.use(require('@grown/parsers'));
 
@@ -38,15 +47,6 @@ server.plug([
   Grown.Parsers.JSON,
   Grown.Parsers.URLENCODED,
 ]);
-
-// ./handlers/Test/Query/truth/index.js
-// module.exports = function () {
-//   return 42;
-// };
-
-// ./index.gql
-// type Mutation { noop: Int }
-// type Query { truth: Int }
 
 // mount our GraphQL API
 server.mount('/', Grown.GraphQL
