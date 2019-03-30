@@ -34,8 +34,8 @@ const CACHED = {};
 module.exports = {
   description: USAGE_INFO,
   callback(Grown) {
-    const use = Grown.argv.flags.models;
-    const db = Grown.argv.flags.db;
+    const use = Grown.argv.params.models;
+    const db = Grown.argv.params.db;
 
     /* istanbul ignore else */
     if (!use || typeof use !== 'string') {

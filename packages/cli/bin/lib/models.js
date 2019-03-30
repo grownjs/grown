@@ -3,7 +3,7 @@
 const path = require('path');
 
 module.exports = (Grown, util, ctx) => {
-  const use = (ctx && ctx._ && ctx._[0]) || Grown.argv.flags.models;
+  const use = (ctx && ctx._ && ctx._[0]) || Grown.argv.params.models;
 
   /* istanbul ignore else */
   if (!use || typeof use !== 'string') {

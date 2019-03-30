@@ -166,7 +166,7 @@ module.exports = (Grown, util) => {
 
       util.readOnlyProperty(this, 'repl', repl);
 
-      const hooks = Object.keys(Grown.argv.flags);
+      const hooks = Object.keys(Grown.argv.params);
 
       hooks.forEach(x => {
         /* istanbul ignore else */
