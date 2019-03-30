@@ -10,6 +10,10 @@ module.exports = (Grown, util) => {
     const _schema = gqltools.makeExecutableSchema({ typeDefs, resolvers });
 
     return ctx => {
+      if ((!ctx.req.baseUrl && ctx.req.url !== '/') || ctx.req.baseUrl !== ctx.req.originalUrl) {
+        return;
+      }
+
       const body = ctx.req.body || {};
       const query = ctx.req.query || {};
 
@@ -20,7 +24,7 @@ module.exports = (Grown, util) => {
 
       if (!_query) {
         ctx.res.statusCode = 422;
-        return ctx.res.end('{}');
+        return ctx.res.end('{"errors":["Missing input body or query"]}');
       }
 
       return gql.graphql(_schema, _query, null, ctx, data)
