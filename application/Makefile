@@ -107,7 +107,9 @@ cov: deps ## Report coverage after tests  (host)
 
 dev: deps ## Single-shot development workspace  (host)
 	@make -s up service=db
-	@make -s schema templates database
+	@make -s schema templates database node
+
+node: deps ## Develop NodeJS application only  (host)
 	@npm run dev & npm run watch & npm run watch:mail
 
 dist: deps ## Build artifacts for production  (host)
