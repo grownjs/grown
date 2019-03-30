@@ -26,15 +26,19 @@ module.exports = function $mount(name, handler, callback) {
 
       /* istanbul ignore else */
       if (ctx.req.url.indexOf(name) === 0) {
+        let url = ctx.req.url;
+
         if (name !== '/') {
-          ctx.req.originalUrl = ctx.req.url.replace(/\/$/, '');
-          ctx.req.baseUrl = name;
-          ctx.req.url = ctx.req.url.replace(name, '') || '/';
+          url = url.replace(name, '') || '/';
         }
 
-        if (ctx.req.url.charAt() !== '/') {
+        if (url.charAt() !== '/') {
           return false;
         }
+
+        ctx.req.originalUrl = ctx.req.url;
+        ctx.req.baseUrl = name;
+        ctx.req.url = url;
 
         return typeof callback === 'function'
           ? callback(ctx, options)
