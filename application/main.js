@@ -24,7 +24,7 @@ const initServer = module.exports = () => {
     path.join(__dirname, 'api/schema/generated/index.gql'),
   ], Application.load(path.join(__dirname, 'web/api/graphql'))));
 
-  server.mount('/db', Application.Model.Resource.bind(Application.Models));
+  server.mount('/db', Application.Model.Resource.bind(Application.Model.DB.default));
 
   server.on('start', () => {
     return Application.Models.connect().then(() => Application.Services.start());
