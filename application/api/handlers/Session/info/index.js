@@ -1,6 +1,6 @@
 const {
   SessionNotFoundError,
-} = require('../../../errors');
+} = require('~/api/errors');
 
 module.exports = ({ Session }) => async function info({ request }) {
   const { params } = request;

@@ -24,4 +24,7 @@ module.exports = ($, cwd, argv, util) => {
   // cleanup
   delete process.env.error;
   delete env.error;
+
+  // setup loader
+  require('global-or-local').bind('~/', cwd);
 };

@@ -1,6 +1,6 @@
 const {
   UserNotFoundError,
-} = require('../../../../../errors');
+} = require('~/api/errors');
 
 module.exports = ({ User, bcrypt }) => async function verify(email, password, userId) {
   const query = {
