@@ -110,7 +110,7 @@ dev: deps ## Single-shot development workspace  (host)
 	@make -s schema templates database node
 
 node: deps ## Develop NodeJS application only  (host)
-	@npm run dev & npm run watch & npm run watch:mail
+	@npm run watch & npm run watch:mail & npm run dev
 
 dist: deps ## Build artifacts for production  (host)
 	@npm run build:mail && npm run schema && npm run dist
