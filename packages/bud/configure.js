@@ -4,6 +4,9 @@ const _env = require('dotenv');
 const path = require('path');
 
 module.exports = ($, cwd, argv, util) => {
+  // setup loader
+  require('global-or-local').bind('~/', cwd);
+
   // props
   $('Grown.argv', () => argv, false);
   $('Grown.cwd', () => cwd, false);
@@ -24,7 +27,4 @@ module.exports = ($, cwd, argv, util) => {
   // cleanup
   delete process.env.error;
   delete env.error;
-
-  // setup loader
-  require('global-or-local').bind('~/', cwd);
 };
