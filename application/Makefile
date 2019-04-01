@@ -116,7 +116,7 @@ dist: deps ## Build artifacts for production  (host)
 	@npm run build:mail && npm run schema && npm run dist
 
 seed: deps ## Run custom seeders  (host)
-	@npm run grown -- backup --models $(models) --load db/seeders/$(NODE_ENV)
+	@npm run grown -- backup models:$(models) --load db/seeders/$(NODE_ENV)
 
 reset: deps ## Run integration_seeds  (host)
 	@node db/integration_seeds
@@ -154,12 +154,12 @@ database: deps ## Start database for development  (host)
 	@make -s migrate:up reset
 
 migrate\:%: deps ## Execute pending migrations  (host)
-	@npm run grown -- migrate --models $(models) --$(subst :, --,$*)
+	@npm run grown -- migrate models:$(models) --$(subst :, --,$*)
 
 migration: deps ## Autogenerate new migration files  (host)
-	@npm run grown -- migrate --models $(models) --make
-	@npm run grown -- migrate --models $(models) --up
-	@npm run grown -- migrate --models $(models) --apply
+	@npm run grown -- migrate models:$(models) --make
+	@npm run grown -- migrate models:$(models) --up
+	@npm run grown -- migrate models:$(models) --apply
 
 templates: deps ## Regenerate mailing templates  (host)
 	@npm run build:mail

@@ -7,7 +7,7 @@ module.exports = (Grown, util, ctx) => {
 
   /* istanbul ignore else */
   if (!use || typeof use !== 'string') {
-    throw new Error(`Missing --models to load, given '${use || ''}'`);
+    throw new Error(`Missing models:PATH to load, given '${use || ''}'`);
   }
 
   return Grown.use(require(path.resolve(Grown.cwd, use)));

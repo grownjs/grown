@@ -7,8 +7,8 @@ const USAGE_INFO = `
   --load  Optional. Run scripts into the REPL
 
   Hooks:
-    import   # Load symbols into the session
-    models   # Load models into the session
+    import=PATH   # Load symbols into the session
+    models=PATH   # Load models into the session
 
   All hooks can be invoked inside the REPL,
   just prefix them with '.', e.g. \`.import lib\`
