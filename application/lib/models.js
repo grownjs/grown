@@ -2,6 +2,7 @@ const path = require('path');
 
 module.exports = Application => {
   Application.use(require('@grown/model/db'));
+  Application.use(require('@grown/model/cli'));
 
   return Application('Models', {
     include: [
