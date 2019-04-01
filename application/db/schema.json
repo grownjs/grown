@@ -1,0 +1,204 @@
+{
+  "description": "Migration from 2019-04-01T08:43:47.655Z",
+  "definitions": {
+    "apiTypes": {
+      "SuccessfulResponse": {
+        "properties": {
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "id": "Success"
+      }
+    },
+    "dataTypes": {
+      "primaryKey": {
+        "type": "integer",
+        "primaryKey": true,
+        "autoIncrement": true
+      }
+    },
+    "userTypes": {
+      "accessRole": {
+        "type": "string",
+        "enum": [
+          "ADMIN",
+          "USER",
+          "GUEST"
+        ]
+      },
+      "accessType": {
+        "type": "string",
+        "enum": [
+          "VERIFY_EMAIL",
+          "RECOVER_PASSWORD"
+        ]
+      }
+    },
+    "Session": {
+      "id": "Session",
+      "options": {
+        "tableName": "sessions",
+        "paranoid": false
+      },
+      "properties": {
+        "id": {
+          "type": "integer",
+          "primaryKey": true,
+          "autoIncrement": true
+        },
+        "token": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "expirationDate": {
+          "type": "string",
+          "format": "datetime"
+        },
+        "role": {
+          "type": "string",
+          "enum": [
+            "ADMIN",
+            "USER",
+            "GUEST"
+          ]
+        },
+        "user": {
+          "id": "User",
+          "options": {
+            "tableName": "users",
+            "paranoid": true
+          },
+          "properties": {
+            "id": {
+              "type": "integer",
+              "primaryKey": true,
+              "autoIncrement": true
+            },
+            "firstName": {
+              "type": "string"
+            },
+            "lastName": {
+              "type": "string"
+            },
+            "email": {
+              "type": "string"
+            },
+            "role": {
+              "type": "string",
+              "enum": [
+                "ADMIN",
+                "USER",
+                "GUEST"
+              ]
+            },
+            "password": {
+              "type": "string"
+            },
+            "verified": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          "required": [
+            "firstName",
+            "lastName",
+            "email",
+            "role"
+          ]
+        },
+        "userId": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "email",
+        "role"
+      ]
+    },
+    "Token": {
+      "id": "Token",
+      "options": {
+        "tableName": "tokens",
+        "paranoid": false
+      },
+      "properties": {
+        "id": {
+          "type": "integer",
+          "primaryKey": true,
+          "autoIncrement": true
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "VERIFY_EMAIL",
+            "RECOVER_PASSWORD"
+          ]
+        },
+        "token": {
+          "type": "string"
+        },
+        "userId": {
+          "type": "integer"
+        },
+        "expirationDate": {
+          "type": "string",
+          "format": "datetime"
+        }
+      },
+      "required": [
+        "type",
+        "userId"
+      ]
+    },
+    "User": {
+      "id": "User",
+      "options": {
+        "tableName": "users",
+        "paranoid": true
+      },
+      "properties": {
+        "id": {
+          "type": "integer",
+          "primaryKey": true,
+          "autoIncrement": true
+        },
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string",
+          "enum": [
+            "ADMIN",
+            "USER",
+            "GUEST"
+          ]
+        },
+        "password": {
+          "type": "string"
+        },
+        "verified": {
+          "type": "boolean",
+          "default": false
+        }
+      },
+      "required": [
+        "firstName",
+        "lastName",
+        "email",
+        "role"
+      ]
+    }
+  }
+}
