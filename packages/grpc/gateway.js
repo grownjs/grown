@@ -72,7 +72,8 @@ module.exports = (Grown, util) => {
     const originalError = e.metadata && e.metadata.get('originalError');
 
     try {
-      if (originalError && typeof originalError[0] === 'string') {
+      if (originalError && typeof originalError[0] === 'string'
+        && (originalError[0].charAt() === '{' && originalError[0].charAt(originalError[0].length - 1) === '}')) {
         e.original = JSON.parse(originalError[0]);
       }
     } catch (_e) {
