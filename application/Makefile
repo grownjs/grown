@@ -35,6 +35,10 @@ E2E_COMPOSE = $(DEV_COMPOSE) -f docker/docker-compose.e2e.yml
 .PHONY: seed reset clear clean prune deps purge schema database migration templates
 
 # utils
+define ls
+	@(((ls $(1) | grep .) > /dev/null 2>&1) || $(2)) || true
+endef
+
 define iif
   @(($(1) > /dev/null 2>&1) && printf "\r* $(2)\n") || printf "\r* $(3)\n"
 endef
@@ -133,7 +137,7 @@ prune: ## Remove schema files and migrations  (host)
 	@$(call iif,rm -r db/schema*,Schema deleted,Schema already deleted)
 
 deps: ## Check for installed dependencies  (host)
-	@(((ls node_modules | grep .) > /dev/null 2>&1) || npm i) || true
+	@$(call ls,node_modules,npm i)
 
 purge: ## Remove all from node_modules/*  (host)
 	@printf "\r* Removing all dependencies... "
@@ -145,10 +149,13 @@ image: ## Build base docker-image  (host)
 	@docker build --target nodejs -t grown-app/nodejs .
 
 push: ## Publish base docker-image  (host)
-	@docker puch grown-app/nodejs
+	@docker push grown-app/nodejs
 
 schema: deps ## Generate sources from given schemas  (host)
-	@npm run schema
+	@$(call ls,api/schema/generated,npm run schema)
+
+templates: deps ## Regenerate mailing templates  (host)
+	@$(call ls,lib/mailer/generated,npm run build:mail)
 
 database: deps ## Start database for development  (host)
 	@make -s migrate:up reset
@@ -157,9 +164,4 @@ migrate\:%: deps ## Execute pending migrations  (host)
 	@npm run grown -- migrate models:$(models) --$(subst :, --,$*)
 
 migration: deps ## Autogenerate new migration files  (host)
-	@npm run grown -- migrate models:$(models) --make
-	@npm run grown -- migrate models:$(models) --up
-	@npm run grown -- migrate models:$(models) --apply
-
-templates: deps ## Regenerate mailing templates  (host)
-	@npm run build:mail
+	@make -s migrate:make:up:apply
