@@ -104,16 +104,16 @@
     "uglify-es": "^3.3.9"
   },
   "dependencies": {
-    "@grown/graphql": "0.0.4",
-    "@grown/grpc": "0.0.3",
-    "@grown/model": "0.0.10",
-    "@grown/parsers": "0.0.3",
-    "@grown/session": "0.0.3",
-    "berro": "0.0.1",
-    "grown": "^1.1.2",
-    "json-schema-to": "0.0.12",
-    "logro": "0.0.8",
-    "mailor": "0.0.7",
+    "@grown/graphql": "latest",
+    "@grown/grpc": "latest",
+    "@grown/model": "latest",
+    "@grown/parsers": "latest",
+    "@grown/session": "latest",
+    "berro": "latest",
+    "grown": "latest",
+    "json-schema-to": "latest",
+    "logro": "latest",
+    "mailor": "latest",
     "pg": "^7.9.0",
     "rand-token": "^0.4.0"
   }
