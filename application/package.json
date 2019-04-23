@@ -109,6 +109,7 @@
     "@grown/model": "latest",
     "@grown/parsers": "latest",
     "@grown/session": "latest",
+    "@grown/schema": "latest",
     "berro": "latest",
     "grown": "latest",
     "json-schema-to": "latest",
