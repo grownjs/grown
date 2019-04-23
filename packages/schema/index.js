@@ -1,8 +1,14 @@
 'use strict';
 
 module.exports = (Grown, util) => {
-  const validator = require('is-my-json-valid');
+  const Ajv = require('ajv');
   const jsf = require('json-schema-faker');
+
+  const ajv = new Ajv({
+    validateSchema: true,
+    jsonPointers: true,
+    schemaId: 'auto',
+  });
 
   const defaults = {
     random: Math.random,
@@ -22,45 +28,23 @@ module.exports = (Grown, util) => {
   }
 
   function _assertFrom(schema, refs, data) {
-    const copy = util.extendValues({}, schema);
-
-    const validate = validator(copy, {
-      schemas: refs,
-      verbose: true,
-      greedy: true,
-    });
+    const valid = ajv.validate(refs[schema], data);
 
     /* istanbul ignore else */
-    if (!validate(data)) {
-      const err = new Error(copy.id
-        ? `Invalid input for ${copy.id}`
-        : 'Invalid input for given schema');
+    if (!valid) {
+      const err = new Error(`Invalid input for ${schema}`);
 
       err.sample = data;
-      err.schema = copy;
-      err.errors = validate.errors.map(e => {
-        e.field = e.field !== 'data'
-          ? e.field.substr(5)
-          : e.field;
-
-        return e;
-      });
+      err.schema = refs[schema];
+      err.errors = ajv.errors;
 
       throw err;
     }
+
+    return valid;
   }
 
   function _fakeAll(schema, refs, opts) {
-    jsf.option(util.extendValues(opts, defaults));
-
-    return jsf({
-      type: 'array',
-      items: schema,
-      minItems: 1,
-    }, refs);
-  }
-
-  function _fake(schema, refs, opts) {
     jsf.option(util.extendValues(opts, defaults));
 
     return jsf(schema, refs);
@@ -70,24 +54,26 @@ module.exports = (Grown, util) => {
     _validateFrom,
     _assertFrom,
     _fakeAll,
-    _fake,
 
-    load(repository) {
-      const refs = repository._getSchemas();
+    load(db) {
+      if (!(db && db.repository)) {
+        throw new Error(`Expecting database, given '${db}'`);
+      }
 
-      repository._getModels().forEach(model => {
-        const _schema = (model.options || model).$schema;
-        const schema = refs[_schema.id];
+      const map = {};
+      const refs = db.repository.schemas;
 
-        this[_schema.id] = {
-          fake: opts => this._fake(schema, refs, opts),
-          fakeAll: opts => this._fakeAll(schema, refs, opts),
-          assert: data => this._assertFrom(schema, refs, data),
-          validate: data => this._validateFrom(schema, refs, data),
+      Object.keys(refs).forEach(id => {
+        map[id] = {
+          fake: (nth, opts) => this._fakeAll(nth !== 1
+            ? { type: 'array', items: { $ref: id }, minItems: nth || 0 }
+            : { $ref: id }, refs, opts),
+          assert: data => this._assertFrom(id, refs, data),
+          validate: data => this._validateFrom(id, refs, data),
         };
       });
 
-      return this;
+      return map;
     },
   });
 };
