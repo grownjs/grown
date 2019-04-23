@@ -16,7 +16,7 @@
     },
     "expirationDate": {
       "type": "string",
-      "format": "datetime"
+      "format": "date-time"
     },
     "role": {
       "$ref": "userTypes#/definitions/accessRole"

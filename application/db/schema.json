@@ -58,7 +58,7 @@
         },
         "expirationDate": {
           "type": "string",
-          "format": "datetime"
+          "format": "date-time"
         },
         "role": {
           "type": "string",
@@ -148,7 +148,7 @@
         },
         "expirationDate": {
           "type": "string",
-          "format": "datetime"
+          "format": "date-time"
         }
       },
       "required": [
