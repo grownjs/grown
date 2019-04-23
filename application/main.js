@@ -33,15 +33,16 @@ const initServer = module.exports = () => {
     return Application.Models.connect().then(() => Application.Services.start());
   });
 
+  server.on('listen', ctx => {
+    log.info(`API started after ${(new Date() - start) / 1000} seconds`, { endpoint: ctx.location.href });
+  });
+
   return server;
 };
 
 if (require.main === module) {
   initServer()
     .listen(Application.argv.flags.port || 8080)
-    .then(server => {
-      log.info(`API started after ${(new Date() - start) / 1000} seconds`, { endpoint: server.location.href });
-    })
     .catch(e => {
       log.exception(e, 'E_FATAL');
       process.exit(1);
