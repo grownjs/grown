@@ -8,13 +8,18 @@ const initServer = module.exports = () => {
   Application.use(require('@grown/graphql'));
   Application.use(require('@grown/parsers'));
   Application.use(require('@grown/session/auth'));
-  Application.use(require('@grown/model/resource'));
+  Application.use(require('@grown/model/formator'));
 
   const server = new Application();
 
   server.plug([
     Application.Parsers.JSON,
     Application.Parsers.URLENCODED,
+    Application.Model.Formator({
+      prefix: '/db',
+      options: { attributes: false },
+      database: Application.Model.DB.default,
+    }),
   ]);
 
   const path = require('path');
@@ -23,8 +28,6 @@ const initServer = module.exports = () => {
     path.join(__dirname, 'api/schema/common.gql'),
     path.join(__dirname, 'api/schema/generated/index.gql'),
   ], Application.load(path.join(__dirname, 'web/api/graphql'))));
-
-  server.mount('/db', Application.Model.Resource.bind(Application.Model.DB.default));
 
   server.on('start', () => {
     return Application.Models.connect().then(() => Application.Services.start());
