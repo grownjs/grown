@@ -1,3 +1,2 @@
-package-lock.json binary
-build/** binary
-public/** binary
+package-lock.json -diff
+public -diff

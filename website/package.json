@@ -2,41 +2,54 @@
   "name": "grown",
   "version": "1.0.0",
   "description": "Experimental DSL for web-apps",
-  "repository": "git@github.com:pateketrueke/grown.git",
-  "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tacoss/plate.git",
+    "issues": "https://github.com/tacoss/plate/issues"
+  },
+  "author": {
+    "url": "https://soypache.co",
+    "name": "Alvaro Cabrera",
+    "email": "pateketrueke@gmail.com"
+  },
   "license": "MIT",
+  "private": true,
   "scripts": {
-    "dev": "tarima watch -dp 3001",
-    "dist": "tarima -fqe"
+    "dev": "tarima watch -d",
+    "dist": "tarima -mqe $NODE_ENV",
+    "check": "eslint 'src/**/*.{js,pug}'",
+    "predist": "npm run check"
   },
   "tarima": {
-    "cwd": ".",
     "from": "src",
     "public": "build",
-    "watching": [
-      ".env",
-      "package.json"
-    ],
+    "copy": {
+      "public": "."
+    },
     "filter": [
-      "!_*",
-      "!**/_*",
-      "!**/_*/**"
+      "!**/lib/**"
     ],
     "bundle": [
       "**/index.js"
     ],
     "rename": [
-      "**:{fullpath/1}",
-      "**/pages/**/*.html:{basedir/1}/{name}/index.html"
+      "**/pages/!(index).html:{basedir}/{name}/index.html",
+      "**/{pages,resources}/**:{fullpath/1}",
+      "**/index.(css|js):{basedir}.{ext}",
+      "**:{fullpath/1}"
+    ],
+    "watching": [
+      ".env",
+      "package.json"
     ],
     "ignoreFiles": [
       ".gitignore"
     ],
-    "devPlugins": [
-      "tarima-lr"
-    ],
     "plugins": [
       "talavera"
+    ],
+    "devPlugins": [
+      "tarima-lr"
     ],
     "bundleOptions": {
       "extensions": {
@@ -65,8 +78,9 @@
     "less-plugin-autoprefix": "^2.0.0",
     "pug": "^2.0.0-beta11",
     "rollup": "^1.1.2",
-    "talavera": "^0.6.2",
-    "tarima": "^4.2.8",
-    "tarima-lr": "^0.4.1"
+    "talavera": "^0.7.4",
+    "tarima": "^4.4.4",
+    "tarima-lr": "^0.4.1",
+    "terser": "^3.17.0"
   }
 }

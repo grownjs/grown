@@ -1,10 +1,8 @@
-.DS_Store
-.tarima
-.env
-*~
 *.log
-/build
-/coverage
-/packages
-/node_modules
-/bower_components
+*.todo
+.env
+.tarima
+.DS_Store
+build
+generated
+node_modules
