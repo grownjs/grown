@@ -3,6 +3,9 @@ title: Installation
 $render: lib/layouts/default.pug
 runkit:
   endpoint: true
+  preamble: |
+    require('@grown/bud');
+    require('@grown/server');
 ---
 
 I suggest you installing NodeJS through NVM, using `v6.13.x` or higher is fine.
