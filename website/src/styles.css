@@ -1,3 +1,3 @@
-@import '_/styles/colors';
-@import '_/styles/layout';
-@import '_/styles/global';
+@import 'lib/styles/colors';
+@import 'lib/styles/layout';
+@import 'lib/styles/global';

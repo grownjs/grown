@@ -1,7 +1,7 @@
 ---
 title: Conn
-$render: ../../../_/layouts/default.pug
-runkit: !include ../../../_/shared/runkit/server.yml
+$render: ../../../lib/layouts/default.pug
+runkit: !include ../../../lib/shared/runkit/server.yml
 ---
 
 High level details of the current connection.

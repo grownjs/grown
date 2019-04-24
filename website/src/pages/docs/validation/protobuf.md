@@ -1,6 +1,6 @@
 ---
 title: Protocol Buffers
-$render: ../../../_/layouts/default.pug
+$render: ../../../lib/layouts/default.pug
 ---
 
 ---

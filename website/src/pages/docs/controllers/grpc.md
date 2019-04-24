@@ -1,6 +1,6 @@
 ---
 title: GRPC
-$render: ../../../_/layouts/default.pug
+$render: ../../../lib/layouts/default.pug
 ---
 
 ---

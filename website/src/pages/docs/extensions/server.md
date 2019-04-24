@@ -1,6 +1,6 @@
 ---
 title: Server
-$render: ../../../_/layouts/default.pug
+$render: ../../../lib/layouts/default.pug
 ---
 
 When you invoke the `new Grown()` constructor an instance of `Server` is born.

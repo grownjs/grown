@@ -1,7 +1,7 @@
 ---
 title: Access
-$render: ../../../_/layouts/default.pug
-runkit: !include ../../../_/shared/runkit/server.yml
+$render: ../../../lib/layouts/default.pug
+runkit: !include ../../../lib/shared/runkit/server.yml
 ---
 
 Allow or deny access on certain resources from your application, e.g.
