@@ -9,7 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no"><!--[if lt IE 9]>
     <script src="https://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <script src="https://css3-mediaqueries-js.googlecode.com/svn/trunk/css3-mediaqueries.js"></script><![endif]-->
-    <title>Grown // The interface</title>
+    <title>Grown // Test</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://unpkg.com/highlight.js/styles/default.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Sorts+Mill+Goudy">
@@ -17,36 +17,9 @@
   <body class="reset">
     <main id="wrapper">
       <div class="body" id="content">
-        <main><a id="menu" href="/docs/#sidebar">&#9776;</a>
-          <h1>The interface <small><a href="//github.com/pateketrueke/grown/blob/master/website/src/pages/docs.md" target="_blank">✎</a></small></h1><p>Our main module is a factory which takes two optional arguments:</p>
-<pre class="hljs"><code class="lang-js"><span class="hljs-keyword">const</span> cwd = process.cwd();
-<span class="hljs-keyword">const</span> argv = process.argv.slice(<span class="hljs-number">2</span>);
-
-<span class="hljs-keyword">const</span> Grown = <span class="hljs-built_in">require</span>(<span class="hljs-string">'grown'</span>)(cwd, argv);
-</code></pre>
-<blockquote>
-<p>If no arguments are given both values will be taken from the current <code>process</code></p>
-</blockquote>
-<h2 id="extensions">Extensions</h2>
-<p>Once created, the <code>Grown</code> function behaves like a container, it can be called to
-store and retrieve definitions from it.</p>
-<pre class="hljs"><code class="lang-js"><span class="hljs-comment">// register an extension</span>
-Grown(<span class="hljs-string">'Application'</span>, {
-  <span class="hljs-attr">name</span>: <span class="hljs-string">'Example'</span>,
-});
-
-<span class="hljs-comment">// both calls are equivalent</span>
-<span class="hljs-built_in">console</span>.log(Grown.Application.name);
-<span class="hljs-built_in">console</span>.log(Grown(<span class="hljs-string">'Application.name'</span>));
-</code></pre>
-<h2 id="instances">Instances</h2>
-<p>Invoking <code>new Grown()</code> will return a <a href="./docs/extensions/server">Server</a> instance.</p>
-<blockquote>
-<p>Actually, the <a href="https://github.com/pateketrueke/grown/blob/master/index.js">main module</a>
-<code>grown</code> is a wrapper of <code>@grown/bud</code> and <code>@grown/server</code></p>
-</blockquote>
-<hr>
-<p>➯ Next: <a href="./docs/command-line">APIs &rangle; Command line</a></p>
+        <main><a id="menu" href="/docs/extensions/test/#sidebar">&#9776;</a>
+          <h1>Test <small><a href="//github.com/pateketrueke/grown/blob/master/website/src/pages/docs/extensions/test.md" target="_blank">✎</a></small></h1><hr>
+<p>➯ Next: <a href="./docs/extensions/upload">Extensions &rangle; Upload</a></p>
 
         </main>
       </div>
@@ -62,7 +35,7 @@ Grown(<span class="hljs-string">'Application'</span>, {
               <ul class="pl reset">
                 <li><a href="/">Installation</a>
                 </li>
-                <li><strong><a class="here" href="/docs">The interface</a></strong>
+                <li><a href="/docs">The interface</a>
                 </li>
                 <li><a href="/docs/command-line">Command line</a>
                 </li>
@@ -72,6 +45,46 @@ Grown(<span class="hljs-string">'Application'</span>, {
               <h3 class="reset">Add-ons</h3>
               <ul class="pl reset">
                 <li><a href="/docs/extensions">Extensions</a>
+                  <ul class="pl reset">
+                    <li><a href="/docs/extensions/access">Access</a>
+                    </li>
+                    <li><a href="/docs/extensions/bud">Bud</a>
+                    </li>
+                    <li><a href="/docs/extensions/cli">CLI</a>
+                    </li>
+                    <li><a href="/docs/extensions/conn">Conn</a>
+                    </li>
+                    <li><a href="/docs/extensions/graphql">GraphQL</a>
+                    </li>
+                    <li><a href="/docs/extensions/grpc">GRPC</a>
+                    </li>
+                    <li><a href="/docs/extensions/logger">Logger</a>
+                    </li>
+                    <li><a href="/docs/extensions/model">Model</a>
+                    </li>
+                    <li><a href="/docs/extensions/parsers">Parsers</a>
+                    </li>
+                    <li><a href="/docs/extensions/render">Render</a>
+                    </li>
+                    <li><a href="/docs/extensions/repl">REPL</a>
+                    </li>
+                    <li><a href="/docs/extensions/router">Router</a>
+                    </li>
+                    <li><a href="/docs/extensions/schema">Schema</a>
+                    </li>
+                    <li><a href="/docs/extensions/server">Server</a>
+                    </li>
+                    <li><a href="/docs/extensions/session">Session</a>
+                    </li>
+                    <li><a href="/docs/extensions/static">Static</a>
+                    </li>
+                    <li><a href="/docs/extensions/tarima">Tarima</a>
+                    </li>
+                    <li><strong><a class="here" href="/docs/extensions/test">Test</a></strong>
+                    </li>
+                    <li><a href="/docs/extensions/upload">Upload</a>
+                    </li>
+                  </ul>
                 </li>
                 <li><a href="/docs/connection">Connection</a>
                 </li>

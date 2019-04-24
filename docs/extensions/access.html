@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base href="/">
+    <meta lang="en">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="HandheldFriendly" content="true">
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no"><!--[if lt IE 9]>
+    <script src="https://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <script src="https://css3-mediaqueries-js.googlecode.com/svn/trunk/css3-mediaqueries.js"></script><![endif]-->
+    <title>Grown // Access</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://unpkg.com/highlight.js/styles/default.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Sorts+Mill+Goudy">
+  </head>
+  <body class="reset">
+    <main id="wrapper">
+      <div class="body" id="content">
+        <main><a id="menu" href="/docs/extensions/access/#sidebar">&#9776;</a>
+          <h1>Access <small><a href="//github.com/pateketrueke/grown/blob/master/website/src/pages/docs/extensions/access.md" target="_blank">✎</a></small></h1><p>Allow or deny access on certain resources from your application, e.g.</p>
+<pre class="hljs"><code class="lang-js"><span class="hljs-comment">/* @runkit */</span>
+<span class="hljs-comment">// register extension</span>
+Grown.use(<span class="hljs-built_in">require</span>(<span class="hljs-string">'@grown/access'</span>));
+
+<span class="hljs-comment">// overload definition</span>
+Grown(<span class="hljs-string">'Access'</span>, {
+  <span class="hljs-attr">access_filter</span>: <span class="hljs-function"><span class="hljs-params">ctx</span> =&gt;</span> {
+    <span class="hljs-comment">// retrieve role from the URL</span>
+    <span class="hljs-keyword">const</span> matches = ctx.req.url.match(<span class="hljs-regexp">/[&amp;?]role=(\w+)/</span>);
+
+    <span class="hljs-keyword">if</span> (matches) {
+      <span class="hljs-keyword">return</span> matches[<span class="hljs-number">1</span>];
+    }
+  },
+});
+
+<span class="hljs-comment">// setup rules</span>
+server.plug([
+  Grown.Access.rules({
+    <span class="hljs-attr">roles</span>: [
+      <span class="hljs-string">'Guest.User.Admin'</span>,
+    ],
+    <span class="hljs-attr">resources</span>: {
+      <span class="hljs-comment">// this rule will block all requests</span>
+      Website: <span class="hljs-string">'/**'</span>,
+
+      <span class="hljs-comment">// but only these requests will be allowed</span>
+      Public: <span class="hljs-regexp">/^\/(?:login|logout|public)/</span>,
+    },
+    <span class="hljs-attr">permissions</span>: {
+      <span class="hljs-attr">Website</span>: {
+        <span class="hljs-comment">// User and its parents' roles get access too!</span>
+        User: <span class="hljs-string">'allow'</span>,
+      },
+      <span class="hljs-attr">Public</span>: <span class="hljs-string">'allow'</span>,
+    },
+  }),
+]);
+
+<span class="hljs-comment">// once Access is plugged on the server</span>
+<span class="hljs-comment">// all new middleware gets protected by default</span>
+server.mount(<span class="hljs-function"><span class="hljs-params">ctx</span> =&gt;</span> {
+  ctx.res.write(<span class="hljs-string">'You are welcome!'</span>);
+
+  <span class="hljs-comment">// validate against undefined rules</span>
+  <span class="hljs-keyword">return</span> ctx.check(<span class="hljs-string">'Foo'</span>, <span class="hljs-string">'Bar'</span>, <span class="hljs-string">'baz'</span>)
+    .catch(<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+      ctx.res.write(<span class="hljs-string">'\nNot here...'</span>);
+    });
+});
+</code></pre>
+<blockquote>
+<p>Try loading different URLs like <code>/etc</code> or <code>/login</code> in your browser</p>
+</blockquote>
+<hr>
+<h3 id="methods-var-mixin-var">Methods <var>mixin</var></h3>
+<ul>
+<li><code>check(role, resource[, action])</code> &mdash; Validate given rules through the current connection, returns a promise.
+If no <code>role</code> is given it&#39;ll try to call <code>access_filter</code> to retrieve one.</li>
+</ul>
+<h3 id="public-props-var-static-var">Public props <var>static</var></h3>
+<ul>
+<li><code>resources</code> &mdash; Collected resources from <code>rules</code> calls.</li>
+<li><code>permissions</code> &mdash; Collected permissions from <code>rules</code> calls.</li>
+</ul>
+<h3 id="public-methods-var-static-var">Public methods <var>static</var></h3>
+<ul>
+<li><code>$install(ctx)</code> &mdash; Used by <code>server.plug</code> calls.</li>
+<li><code>$mixins()</code> &mdash; Extra <code>Grown.Conn.Builder</code> definitions.</li>
+<li><code>rules(config)</code> &mdash; Compile given <code>config</code> into access rules.</li>
+</ul>
+<h3 id="private-props-var-static-var">Private* props <var>static</var></h3>
+<ul>
+<li><code>_groups</code> &mdash; Graph from collected roles.</li>
+<li><code>_ruleset</code> &mdash; Collection of compiled rules.</li>
+</ul>
+<h3 id="private-methods-var-static-var">Private* methods <var>static</var></h3>
+<ul>
+<li><code>_reduceHandler(handler, permissions)</code> &mdash; Check if <code>handler</code> exists within <code>permissions</code>, returns <code>null</code> otherwise.</li>
+<li><code>_compileMatch(rule)</code> &mdash; Turns a single <code>rule</code> into a middleware callback.</li>
+<li><code>_makeMatcher(ruleset)</code> &mdash; Iterates the given <code>ruleset</code> and compile each one. It returns a middleware callback.</li>
+<li><code>_makeTree(role, groups, property)</code> &mdash; Returns a flat representation of the given <code>role</code> in the <code>groups</code> graph, <code>property</code> can be <code>children</code> or <code>parent</code>.</li>
+<li><code>_runACL(ctx, role, handlers)</code> &mdash; Validate <code>role</code> access through <code>ctx</code>. Given <code>handlers</code> should be an array of single resources and actions. It returns a promise.</li>
+</ul>
+<hr>
+<p>➯ Next: <a href="./docs/extensions/bud">Extensions &rangle; Bud</a></p>
+
+        </main>
+      </div>
+      <aside class="inverted" id="sidebar">
+        <div class="body">
+          <h1><a href="/">Grown</a>
+          </h1>
+          <p>Experimental DSL for web-apps</p>
+          <div class="sp"><a href="//travis-ci.org/pateketrueke/grown" target="_blank"><img src="//api.travis-ci.org/pateketrueke/grown.svg"></a><a href="//codecov.io/gh/pateketrueke/grown" target="_blank"><img src="//codecov.io/gh/pateketrueke/grown/branch/master/graph/badge.svg"></a></div>
+          <ul class="mt reset">
+            <li>
+              <h3 class="reset">APIs</h3>
+              <ul class="pl reset">
+                <li><a href="/">Installation</a>
+                </li>
+                <li><a href="/docs">The interface</a>
+                </li>
+                <li><a href="/docs/command-line">Command line</a>
+                </li>
+              </ul>
+            </li>
+            <li>
+              <h3 class="reset">Add-ons</h3>
+              <ul class="pl reset">
+                <li><a href="/docs/extensions">Extensions</a>
+                  <ul class="pl reset">
+                    <li><strong><a class="here" href="/docs/extensions/access">Access</a></strong>
+                    </li>
+                    <li><a href="/docs/extensions/bud">Bud</a>
+                    </li>
+                    <li><a href="/docs/extensions/cli">CLI</a>
+                    </li>
+                    <li><a href="/docs/extensions/conn">Conn</a>
+                    </li>
+                    <li><a href="/docs/extensions/graphql">GraphQL</a>
+                    </li>
+                    <li><a href="/docs/extensions/grpc">GRPC</a>
+                    </li>
+                    <li><a href="/docs/extensions/logger">Logger</a>
+                    </li>
+                    <li><a href="/docs/extensions/model">Model</a>
+                    </li>
+                    <li><a href="/docs/extensions/parsers">Parsers</a>
+                    </li>
+                    <li><a href="/docs/extensions/render">Render</a>
+                    </li>
+                    <li><a href="/docs/extensions/repl">REPL</a>
+                    </li>
+                    <li><a href="/docs/extensions/router">Router</a>
+                    </li>
+                    <li><a href="/docs/extensions/schema">Schema</a>
+                    </li>
+                    <li><a href="/docs/extensions/server">Server</a>
+                    </li>
+                    <li><a href="/docs/extensions/session">Session</a>
+                    </li>
+                    <li><a href="/docs/extensions/static">Static</a>
+                    </li>
+                    <li><a href="/docs/extensions/tarima">Tarima</a>
+                    </li>
+                    <li><a href="/docs/extensions/test">Test</a>
+                    </li>
+                    <li><a href="/docs/extensions/upload">Upload</a>
+                    </li>
+                  </ul>
+                </li>
+                <li><a href="/docs/connection">Connection</a>
+                </li>
+                <li><a href="/docs/middlewares">Middlewares</a>
+                </li>
+              </ul>
+            </li>
+            <li>
+              <h3 class="reset">Data-layer</h3>
+              <ul class="pl reset">
+                <li><a href="/docs/database">Models</a>
+                </li>
+                <li><a href="/docs/validation">Schemas</a>
+                </li>
+              </ul>
+            </li>
+            <li>
+              <h3 class="reset">Controllers</h3>
+              <ul class="pl reset">
+                <li><a href="/docs/controllers">Web</a>
+                </li>
+                <li><a href="/docs/controllers/grpc">GRPC</a>
+                </li>
+                <li><a href="/docs/controllers/graphql">GraphQL</a>
+                </li>
+              </ul>
+            </li>
+            <li>
+              <h3 class="reset">Unit-testing</h3>
+              <ul class="pl reset">
+                <li><a href="/docs/testing">Server</a>
+                </li>
+                <li><a href="/docs/testing/schema">Schema</a>
+                </li>
+                <li><a href="/docs/testing/handlers">Handlers</a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </aside>
+    </main>
+    <script>window.__runkit__ = {"endpoint":true,"preamble":"const Grown = require('@grown/bud')();\nGrown.use(require('@grown/server'));\nconst server = new Grown();\nprocess.nextTick(() => server.listen(8080));\n"};</script>
+    <script src="https://embed.runkit.com"></script>
+    <script src="scripts.js"></script>
+  </body>
+</html>
