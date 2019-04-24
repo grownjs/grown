@@ -1,6 +1,6 @@
 {
   "name": "grown",
-  "version": "1.1.2",
+  "version": "1.1.3",
   "homepage": "https://grown.fun",
   "description": "Experimental DSL for web-apps",
   "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
@@ -26,9 +26,9 @@
     "url": "git+https://github.com/pateketrueke/grown.git"
   },
   "dependencies": {
-    "@grown/bud": "^0.0.15",
-    "@grown/cli": "^0.0.21",
-    "@grown/server": "^0.0.8"
+    "@grown/bud": "^0.0.16",
+    "@grown/cli": "^0.0.22",
+    "@grown/server": "^0.0.9"
   },
   "devDependencies": {
     "lerna": "^2.8.0"
