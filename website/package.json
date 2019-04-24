@@ -33,7 +33,7 @@
       "**/index.js"
     ],
     "rename": [
-      "**/pages/!(index).html:{basedir}/{name}/index.html",
+      "**/pages/**/!(index).html:{basedir}/{name}/index.html",
       "**/{pages,resources}/**:{fullpath/1}",
       "**/index.(css|js):{basedir}.{ext}",
       "**:{fullpath/1}"
