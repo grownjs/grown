@@ -97,7 +97,7 @@
     "rollup-plugin-commonjs": "^9.1.6",
     "rollup-plugin-node-resolve": "^4.0.0",
     "svelte": "^2.13.4",
-    "tarima": "^4.2.8",
+    "tarima": "^4.4.7",
     "tarima-lr": "^0.4.3",
     "terser": "^3.10.12",
     "testcafe": "^1.0.1",
