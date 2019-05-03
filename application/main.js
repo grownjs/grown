@@ -1,5 +1,4 @@
 const log = require('logro').createLogger(__filename);
-
 const Application = require('./lib');
 
 const start = new Date();
@@ -29,13 +28,8 @@ const initServer = module.exports = () => {
     path.join(__dirname, 'api/schema/generated/index.gql'),
   ], Application.load(path.join(__dirname, 'web/api/graphql'))));
 
-  server.on('start', () => {
-    return Application.Models.connect().then(() => Application.Services.start());
-  });
-
-  server.on('listen', ctx => {
-    log.info(`API started after ${(new Date() - start) / 1000} seconds`, { endpoint: ctx.location.href });
-  });
+  server.on('start', () => Application.Models.connect().then(() => Application.Services.start()));
+  server.on('listen', ctx => log.info(`API started after ${(new Date() - start) / 1000} seconds`, { endpoint: ctx.location.href }));
 
   return server;
 };
