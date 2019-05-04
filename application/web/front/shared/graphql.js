@@ -14,6 +14,5 @@ const $ = graphqlClient('/api/v1/graphql', {
   },
 });
 
-export const store = $.store;
 export const query = $.query;
 export const mutation = $.mutation;

@@ -1,3 +1,10 @@
+<script>
+
+export let label = null;
+export let errors = null;
+
+</script>
+
 <h3>{label || 'An error has ocurred.'}</h3>
 
 {#if errors}<ul>

@@ -1,13 +1,11 @@
 import FetchQL from 'fetchql';
-import { Store } from 'svelte/store';
+import store from '../shared/stores';
 
-export default (url, options, defaults) => {
-  const store = new Store(defaults);
-
+export default (url, options) => {
   const client = new FetchQL({
     url,
-    onStart(x) { store.set({ loading: x > 0 }); },
-    onEnd(x) { store.set({ loading: x > 0 }); },
+    onStart(x) { console.log('store.set({ loading: x > 0 })', x > 0); },
+    onEnd(x) { console.log('store.set({ loading: x > 0 })', x > 0); },
     ...options,
   });
 
@@ -34,7 +32,6 @@ export default (url, options, defaults) => {
 
   return {
     client,
-    store,
     query,
     mutation,
   };
