@@ -12,18 +12,6 @@ let email = null;
 let password = null;
 
 onMount(() => {
-  // FIXME: use subscriptions on <App> to globally handle this, or inside store?
-  // store.on('state', ({ changed, current }) => {
-  //   if (changed.loggedIn && current.loggedIn) {
-  //     localStorage.setItem('session', JSON.stringify(current.login));
-  //     location.reload();
-  //   } else if (changed.info && !current.loading) {
-  //     store.set({
-  //       loggedIn: true,
-  //     });
-  //   }
-  // });
-
   session.set({
     info: query(ME_INFO),
   });
@@ -33,10 +21,14 @@ function cancel(e) {
   e.preventDefault();
 }
 
-const doLogin = mutation(LOGIN_REQUEST, commit => function login$() {
+const doLogin = mutation(LOGIN_REQUEST, commit => function login$(e) {
+  e.target.disabled = true;
+
   session.set({
-    login: commit({ email, password }, () => {
+    login: commit({ email, password }, data => {
+      localStorage.setItem('session', JSON.stringify(data.login));
       session.set({ loggedIn: true });
+      location.reload();
     }),
   });
 });
@@ -54,7 +46,7 @@ const doLogout = mutation(LOGOUT_REQUEST, commit => function logout$(e) {
 
 </script>
 
-{#if $session.logout}
+<!-- {#if $session.logout}
   {#await $session.logout}
     <p>Deleting current session...</p>
   {:then}
@@ -72,13 +64,14 @@ const doLogout = mutation(LOGOUT_REQUEST, commit => function logout$(e) {
   {:catch errors}
     <Catch {errors} />
   {/await}
-{/if}
+{/if} -->
 
 {#if $session.info}
   {#await $session.info}
     <h3>Verifying session...</h3>
   {:then data}
     <h3>Welcome</h3>
+
     <p>E-mail: {data.user.email}</p>
     <p>Expires: {data.expirationDate}</p>
 

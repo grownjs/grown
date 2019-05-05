@@ -1,5 +1,5 @@
 import FetchQL from 'fetchql';
-import { state } from '../shared/stores';
+import { session, state } from '../shared/stores';
 
 export default (url, options) => {
   const client = new FetchQL({
@@ -9,10 +9,14 @@ export default (url, options) => {
     ...options,
   });
 
-  function resp(result) {
-    if (result.data) {
-      state.set(result.data);
+  function resp(result, callback) {
+    const retval = typeof callback === 'function' && callback(result.data);
+
+    if (!retval && result.data) {
+      session.set(result.data);
     }
+
+    return retval;
   }
 
   function query(gql, data, callback) {
@@ -23,7 +27,7 @@ export default (url, options) => {
 
     return client
       .query({ query: gql, variables: data })
-      .then(resp).then(() => typeof callback === 'function' && setTimeout(callback));
+      .then(result => resp(result, callback));
   }
 
   function mutation(gql, cb = done => done()) {
