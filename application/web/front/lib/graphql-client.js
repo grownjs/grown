@@ -1,17 +1,17 @@
 import FetchQL from 'fetchql';
-import store from '../shared/stores';
+import { state } from '../shared/stores';
 
 export default (url, options) => {
   const client = new FetchQL({
     url,
-    onStart(x) { console.log('store.set({ loading: x > 0 })', x > 0); },
-    onEnd(x) { console.log('store.set({ loading: x > 0 })', x > 0); },
+    onStart(x) { state.set({ loading: x > 0 }); },
+    onEnd(x) { state.set({ loading: x > 0 }); },
     ...options,
   });
 
   function resp(result) {
     if (result.data) {
-      store.set(result.data);
+      state.set(result.data);
     }
   }
 

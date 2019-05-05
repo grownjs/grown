@@ -1,7 +1,5 @@
 <script>
-
 import Login from '../Login';
-
 </script>
 
 <Login>

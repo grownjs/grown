@@ -1,14 +1,11 @@
 <script>
-
 import { onMount } from 'svelte';
-
 import Catch from '../Catch';
 // import Password from '../Password';
 // import PasswordRecovery from '../PasswordRecovery';
 
-import store from '../../shared/stores';
+import { session, state } from '../../shared/stores';
 import { query, mutation } from '../../shared/graphql';
-
 import { ME_INFO, LOGIN_REQUEST, LOGOUT_REQUEST } from '../../shared/queries';
 
 let email = null;
@@ -27,7 +24,7 @@ onMount(() => {
   //   }
   // });
 
-  store.set({
+  session.set({
     info: query(ME_INFO),
   });
 });
@@ -37,9 +34,9 @@ function cancel(e) {
 }
 
 const doLogin = mutation(LOGIN_REQUEST, commit => function login$() {
-  store.set({
+  session.set({
     login: commit({ email, password }, () => {
-      store.set({ loggedIn: true });
+      session.set({ loggedIn: true });
     }),
   });
 });
@@ -47,7 +44,7 @@ const doLogin = mutation(LOGIN_REQUEST, commit => function login$() {
 const doLogout = mutation(LOGOUT_REQUEST, commit => function logout$(e) {
   e.target.disabled = true;
 
-  store.set({
+  session.set({
     logout: commit(() => {
       localStorage.clear();
       location.reload();
@@ -57,28 +54,37 @@ const doLogout = mutation(LOGOUT_REQUEST, commit => function logout$(e) {
 
 </script>
 
+{#if $session.logout}
+  {#await $session.logout}
+    <p>Deleting current session...</p>
+  {:then}
+    OK
+  {:catch errors}
+    <Catch {errors} />
+  {/await}
+{/if}
 
-{#if $store.info}
-  {#await $store.info}
+{#if $session.login}
+  {#await $session.login}
+    <p>Requesting a new session...</p>
+  {:then}
+    OK
+  {:catch errors}
+    <Catch {errors} />
+  {/await}
+{/if}
+
+{#if $session.info}
+  {#await $session.info}
     <h3>Verifying session...</h3>
-  {:then session}
+  {:then data}
     <h3>Welcome</h3>
-    <p>E-mail: {session.user.email}</p>
-    <p>Expires: {session.expirationDate}</p>
+    <p>E-mail: {data.user.email}</p>
+    <p>Expires: {data.expirationDate}</p>
 
     <button on:click={doLogout}>Log out</button>
 
     <!-- <Password /> -->
-
-    {#if $store.logout}
-      {#await $store.logout}
-        <p>Deleting current session...</p>
-      {:then}
-        OK
-      {:catch errors}
-        <Catch {errors} />
-      {/await}
-    {/if}
 
     <slot />
   {:catch errors}
@@ -86,8 +92,8 @@ const doLogout = mutation(LOGOUT_REQUEST, commit => function logout$(e) {
   {/await}
 {/if}
 
-{#if !$store.loggedIn}
-  <form on:submit={cancel} class:loading={$store.loading}>
+{#if !$session.loggedIn}
+  <form on:submit={cancel} class:loading={$state.loading}>
     <label>
       Email: <input type="email" bind:value={email} />
     </label>
@@ -98,14 +104,4 @@ const doLogout = mutation(LOGOUT_REQUEST, commit => function logout$(e) {
   </form>
 
   <!-- <PasswordRecovery /> -->
-
-  {#if $store.login}
-    {#await $store.login}
-      <p>Requesting a new session...</p>
-    {:then}
-      OK
-    {:catch errors}
-      <Catch {errors} />
-    {/await}
-  {/if}
 {/if}

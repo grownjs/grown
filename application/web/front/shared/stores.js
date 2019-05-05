@@ -1,9 +1,17 @@
 import { writable } from 'svelte/store';
 
-export default writable({
+export const session = writable({
   info: null,
   login: null,
   logout: null,
-  loading: false,
   loggedIn: false,
 });
+
+export const state = writable({
+  loading: false,
+});
+
+export default {
+  session,
+  state,
+};
