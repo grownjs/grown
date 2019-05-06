@@ -2,31 +2,26 @@
 import { onMount } from 'svelte';
 import Catch from '../Catch';
 import Status from '../Status';
-// import Password from '../Password';
+import Password from '../Password';
 // import PasswordRecovery from '../PasswordRecovery';
 
 import { session, state } from '../../shared/stores';
 import { query, mutation } from '../../shared/graphql';
 import { ME_INFO, LOGIN_REQUEST, LOGOUT_REQUEST } from '../../shared/queries';
 
+let login;
+let logout;
 let email = null;
 let password = null;
 
 onMount(() => {
-  const teardown = session.subscribe(data => {
+  session.subscribe(data => {
     if (data.info && !(data.info instanceof Promise)) {
-      teardown();
-
-      session.set({
-        loggedIn: true,
-        info: data.info,
-      });
+      $session.loggedIn = true;
     }
   });
 
-  session.set({
-    info: query(ME_INFO),
-  });
+  $session.info = query(ME_INFO);
 });
 
 function cancel(e) {
@@ -34,21 +29,17 @@ function cancel(e) {
 }
 
 const doLogin = mutation(LOGIN_REQUEST, commit => function login$() {
-  session.set({
-    login: commit({ email, password }, data => {
-      localStorage.setItem('session', JSON.stringify(data.login));
-      session.set({ loggedIn: true });
-      location.reload();
-    }),
+  login = commit({ email, password }, data => {
+    localStorage.setItem('session', JSON.stringify(data.login));
+    $session.loggedIn = true;
+    location.reload();
   });
 });
 
 const doLogout = mutation(LOGOUT_REQUEST, commit => function logout$() {
-  session.set({
-    logout: commit(() => {
-      localStorage.clear();
-      location.reload();
-    }),
+  logout = commit(() => {
+    localStorage.clear();
+    location.reload();
   });
 });
 
@@ -56,13 +47,13 @@ const doLogout = mutation(LOGOUT_REQUEST, commit => function logout$() {
 
 <!-- move login/logout into a component -->
 <Status
-  from={$session.logout}
+  from={logout}
   pending="Deleting current session..."
   otherwise="Successfully logged out..."
 />
 
 <Status
-  from={$session.login}
+  from={login}
   pending="Requesting a new session..."
   otherwise="Welcome, plase wait..."
 />
@@ -79,7 +70,7 @@ const doLogout = mutation(LOGOUT_REQUEST, commit => function logout$() {
 
     <button on:click={doLogout}>Log out</button>
 
-    <!-- <Password /> -->
+    <Password />
 
     <slot />
   {:catch errors}
