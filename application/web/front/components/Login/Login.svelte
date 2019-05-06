@@ -1,6 +1,7 @@
 <script>
 import { onMount } from 'svelte';
 import Catch from '../Catch';
+import Status from '../Status';
 // import Password from '../Password';
 // import PasswordRecovery from '../PasswordRecovery';
 
@@ -12,9 +13,9 @@ let email = null;
 let password = null;
 
 onMount(() => {
-  const unsubscribe = session.subscribe(data => {
+  const teardown = session.subscribe(data => {
     if (data.info && !(data.info instanceof Promise)) {
-      unsubscribe();
+      teardown();
 
       session.set({
         loggedIn: true,
@@ -37,9 +38,7 @@ const doLogin = mutation(LOGIN_REQUEST, commit => function login$() {
     login: commit({ email, password }, data => {
       localStorage.setItem('session', JSON.stringify(data.login));
       session.set({ loggedIn: true });
-      setTimeout(() => {
-        location.reload();
-      });
+      location.reload();
     }),
   });
 });
@@ -48,9 +47,7 @@ const doLogout = mutation(LOGOUT_REQUEST, commit => function logout$() {
   session.set({
     logout: commit(() => {
       localStorage.clear();
-      setTimeout(() => {
-        location.reload();
-      });
+      location.reload();
     }),
   });
 });
@@ -58,25 +55,17 @@ const doLogout = mutation(LOGOUT_REQUEST, commit => function logout$() {
 </script>
 
 <!-- move login/logout into a component -->
-{#if $session.logout}
-  {#await $session.logout}
-    <p>Deleting current session...</p>
-  {:then}
-    <p>Welcome, plase wait...</p>
-  {:catch errors}
-    <Catch {errors} />
-  {/await}
-{/if}
+<Status
+  from={$session.logout}
+  pending="Deleting current session..."
+  otherwise="Successfully logged out..."
+/>
 
-{#if $session.login}
-  {#await $session.login}
-    <p>Requesting a new session...</p>
-  {:then}
-    <p>Successfully logged out...</p>
-  {:catch errors}
-    <Catch {errors} />
-  {/await}
-{/if}
+<Status
+  from={$session.login}
+  pending="Requesting a new session..."
+  otherwise="Welcome, plase wait..."
+/>
 
 <!-- once the user is logged in -->
 {#if $session.info}
@@ -98,7 +87,7 @@ const doLogout = mutation(LOGOUT_REQUEST, commit => function logout$() {
   {/await}
 {/if}
 
-{#if !$session.loggedIn && !$session.logout && !$session.login}
+{#if !$session.loggedIn}
   <form on:submit={cancel} class:loading={$state.loading}>
     <label>
       Email: <input type="email" bind:value={email} />
