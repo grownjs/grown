@@ -15,9 +15,9 @@ let email = null;
 let password = null;
 
 onMount(() => {
-  session.subscribe(data => {
+  const done = session.subscribe(data => {
     if (data.info && !(data.info instanceof Promise)) {
-      $session.loggedIn = true;
+      $session.loggedIn = done() || true;
     }
   });
 

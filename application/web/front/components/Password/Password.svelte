@@ -10,17 +10,20 @@ let password = null;
 let newPassword = null;
 let confirmPassword = null;
 
+function clear() {
+  editing = false;
+  password = null;
+  newPassword = null;
+  confirmPassword = null;
+}
+
 function cancel(e) {
   e.preventDefault();
 }
 
 function closeMe(e) {
   e.preventDefault();
-
-  editing = false;
-  password = null;
-  newPassword = null;
-  confirmPassword = null;
+  clear();
 }
 
 function changeMe(e) {
@@ -37,7 +40,7 @@ const doUpdate = mutation(UPDATE_PASSWORD_REQUEST, commit => function update$() 
   };
 
   update = commit(payload, () => {
-    editing = false;
+    clear();
   });
 });
 </script>
