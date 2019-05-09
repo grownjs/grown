@@ -1,9 +1,65 @@
+<script>
+function changeMe(e) {
+  e.preventDefault();
+}
+
+// import { mutation } from '../../shared/store';
+// import { RECOVER_PASSWORD_REQUEST } from '../../shared/queries';
+
+// export default {
+//   components: {
+//     Catch: '../Catch',
+//   },
+//   data() {
+//     return {
+//       email: null,
+//     };
+//   },
+//   methods: {
+//     cancel(e) {
+//       e.preventDefault();
+//     },
+//     closeMe(e) {
+//       e.preventDefault();
+
+//       this.set({
+//         editing: false,
+//       });
+//     },
+//     changeMe(e) {
+//       e.preventDefault();
+
+//       this.set({
+//         editing: true,
+//       });
+//     },
+//     doUpdate: mutation(RECOVER_PASSWORD_REQUEST, commit => function update$() {
+//       const { email } = this.get();
+
+//       const payload = {
+//         email,
+//       };
+
+//       this.store.set({
+//         update: commit(payload, () => {
+//           this.set({
+//             editing: false,
+//           });
+//         }),
+//       });
+//     }),
+//   },
+// };
+
+</script>
+
 <h3>Can't remember your password?</h3>
 
 <p>
-  <a href="#" on:click="changeMe(event)">Request a password recovery</a>
+  <a href="#" on:click={changeMe}>Request a password recovery</a>
 </p>
 
+<!--
 {#if editing}
   <form on:submit="cancel(event)" class:loading="$loading">
     <label>
@@ -22,4 +78,4 @@
   {/if}
 {/if}
 
-<script src="script.js"></script>
+-->

@@ -3,7 +3,7 @@ import { onMount } from 'svelte';
 import Catch from '../Catch';
 import Status from '../Status';
 import Password from '../Password';
-// import PasswordRecovery from '../PasswordRecovery';
+import PasswordRecovery from '../PasswordRecovery';
 
 import { session, state } from '../../shared/stores';
 import { query, mutation } from '../../shared/graphql';
@@ -45,20 +45,6 @@ const doLogout = mutation(LOGOUT_REQUEST, commit => function logout$() {
 
 </script>
 
-<!-- move login/logout into a component -->
-<Status
-  from={logout}
-  pending="Deleting current session..."
-  otherwise="Successfully logged out..."
-/>
-
-<Status
-  from={login}
-  pending="Requesting a new session..."
-  otherwise="Welcome, plase wait..."
-/>
-
-<!-- once the user is logged in -->
 {#if $session.info}
   {#await $session.info}
     <h3>Verifying session...</h3>
@@ -69,6 +55,12 @@ const doLogout = mutation(LOGOUT_REQUEST, commit => function logout$() {
     <p>Expires: {data.expirationDate}</p>
 
     <button on:click={doLogout}>Log out</button>
+
+    <Status
+      from={logout}
+      pending="Deleting current session..."
+      otherwise="Successfully logged out..."
+    />
 
     <Password />
 
@@ -89,5 +81,11 @@ const doLogout = mutation(LOGOUT_REQUEST, commit => function logout$() {
     <button on:click={doLogin}>Log in</button>
   </form>
 
-  <!--<PasswordRecovery />-->
+  <Status
+    from={login}
+    pending="Requesting a new session..."
+    otherwise="Welcome, plase wait..."
+  />
+
+  <PasswordRecovery />
 {/if}
