@@ -110,6 +110,7 @@ cov: deps ## Report coverage after tests  (host)
 	@npm run test:report -- -r $(report)
 
 dev: deps ## Single-shot development workspace  (host)
+	@make -s node! npm!
 	@make -s up service=db
 	@make -s schema templates database node
 
