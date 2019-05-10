@@ -1,5 +1,5 @@
 <script>
-import Catch from '../Catch';
+import Catch from './Catch';
 
 export let from = null;
 export let pending = null;

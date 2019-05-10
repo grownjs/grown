@@ -1,5 +1,5 @@
 <script>
-import Login from '../Login';
+import Login from './Session/Login';
 </script>
 
 <Login>

@@ -2,8 +2,8 @@
 import { onMount } from 'svelte';
 import Catch from '../Catch';
 import Status from '../Status';
-import Password from '../Password';
-import PasswordRecovery from '../PasswordRecovery';
+import Password from './Password';
+import PasswordRecovery from './PasswordRecovery';
 
 import { session, state } from '../../shared/stores';
 import { query, mutation } from '../../shared/graphql';
