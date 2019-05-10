@@ -5,11 +5,11 @@ export const session = writable({
   loggedIn: false,
 });
 
-export const state = writable({
+export const conn = writable({
   loading: false,
 });
 
 export default {
   session,
-  state,
+  conn,
 };

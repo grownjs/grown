@@ -1,11 +1,11 @@
 import FetchQL from 'fetchql';
-import { session, state } from '../shared/stores';
+import { session, conn } from '../shared/stores';
 
 export default (url, options) => {
   const client = new FetchQL({
     url,
-    onStart(x) { state.set({ loading: x > 0 }); },
-    onEnd(x) { state.set({ loading: x > 0 }); },
+    onStart(x) { conn.set({ loading: x > 0 }); },
+    onEnd(x) { conn.set({ loading: x > 0 }); },
     ...options,
   });
 

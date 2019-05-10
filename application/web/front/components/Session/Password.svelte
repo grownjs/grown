@@ -1,6 +1,6 @@
 <script>
 import Status from '../Status';
-import { state } from '../../shared/stores';
+import { conn } from '../../shared/stores';
 import { mutation } from '../../shared/graphql';
 import { UPDATE_PASSWORD_REQUEST } from '../../shared/queries';
 
@@ -47,7 +47,7 @@ const doUpdate = mutation(UPDATE_PASSWORD_REQUEST, commit => function update$() 
 </p>
 
 {#if editing}
-  <form on:submit={cancel} class:loading={$state.loading}>
+  <form on:submit={cancel} class:loading={$conn.loading}>
     <label>
       Current password: <input type="password" bind:value={password} />
     </label>

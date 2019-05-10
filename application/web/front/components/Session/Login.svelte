@@ -5,7 +5,7 @@ import Status from '../Status';
 import Password from './Password';
 import PasswordRecovery from './PasswordRecovery';
 
-import { session, state } from '../../shared/stores';
+import { session, conn } from '../../shared/stores';
 import { query, mutation } from '../../shared/graphql';
 import { ME_INFO, LOGIN_REQUEST, LOGOUT_REQUEST } from '../../shared/queries';
 
@@ -71,7 +71,7 @@ const doLogout = mutation(LOGOUT_REQUEST, commit => function logout$() {
 {/if}
 
 {#if !$session.loggedIn}
-  <form on:submit={cancel} class:loading={$state.loading}>
+  <form on:submit={cancel} class:loading={$conn.loading}>
     <label>
       Email: <input type="email" bind:value={email} />
     </label>
