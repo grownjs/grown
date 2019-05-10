@@ -9,14 +9,11 @@ export default (url, options) => {
     ...options,
   });
 
-  const defaults = {};
-
   function resp(result, callback) {
     const retval = typeof callback === 'function' && callback(result.data);
 
-    // FIXME: seems like set() is actually overriding, not merging
     if (!retval && result.data) {
-      session.set(Object.assign(defaults, result.data));
+      session.update(old => Object.assign(old, result.data));
     }
 
     return retval;

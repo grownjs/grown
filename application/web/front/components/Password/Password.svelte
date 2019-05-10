@@ -22,34 +22,25 @@ function cancel(e) {
 }
 
 function closeMe(e) {
-  e.preventDefault();
+  cancel(e);
   clear();
 }
 
 function changeMe(e) {
-  e.preventDefault();
-
+  cancel(e);
   editing = true;
 }
 
 const doUpdate = mutation(UPDATE_PASSWORD_REQUEST, commit => function update$() {
-  const payload = {
+  update = commit({
     oldPassword: password,
     newPassword,
     confirmPassword,
-  };
-
-  update = commit(payload, () => {
+  }, () => {
     clear();
   });
 });
 </script>
-
-<Status
-  from={update}
-  pending="Updating your password..."
-  otherwise="Password was successfully set..."
-/>
 
 <p>
   <a href="#" on:click={changeMe}>Change my password?</a>
@@ -69,3 +60,9 @@ const doUpdate = mutation(UPDATE_PASSWORD_REQUEST, commit => function update$() 
     <button on:click={doUpdate}>Update</button> or <a href="#" on:click={closeMe}>cancel</a>
   </form>
 {/if}
+
+<Status
+  from={update}
+  pending="Updating your password..."
+  otherwise="Password was successfully set..."
+/>

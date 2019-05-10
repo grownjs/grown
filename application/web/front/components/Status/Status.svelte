@@ -11,7 +11,7 @@ export let otherwise = null;
     <p>{pending}</p>
   {:then}
     <p>{otherwise}</p>
-  {:catch errors}
-    <Catch {errors} />
+  {:catch error}
+    <Catch {error} />
   {/await}
 {/if}

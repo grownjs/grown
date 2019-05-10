@@ -65,8 +65,8 @@ const doLogout = mutation(LOGOUT_REQUEST, commit => function logout$() {
     <Password />
 
     <slot />
-  {:catch errors}
-    <Catch label="Hey, please log in." {errors} />
+  {:catch error}
+    <Catch label="Hey, please log in." {error} />
   {/await}
 {/if}
 

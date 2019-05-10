@@ -1,56 +1,39 @@
 <script>
-function changeMe(e) {
+import Status from '../Status';
+import { state } from '../../shared/stores';
+import { mutation } from '../../shared/graphql';
+import { RECOVER_PASSWORD_REQUEST } from '../../shared/queries';
+
+let email = null;
+let update = null;
+let editing = null;
+
+function clear() {
+  email = null;
+  editing = false;
+}
+
+function cancel(e) {
   e.preventDefault();
 }
 
-// import { mutation } from '../../shared/store';
-// import { RECOVER_PASSWORD_REQUEST } from '../../shared/queries';
+function closeMe(e) {
+  cancel(e);
+  clear();
+}
 
-// export default {
-//   components: {
-//     Catch: '../Catch',
-//   },
-//   data() {
-//     return {
-//       email: null,
-//     };
-//   },
-//   methods: {
-//     cancel(e) {
-//       e.preventDefault();
-//     },
-//     closeMe(e) {
-//       e.preventDefault();
+function changeMe(e) {
+  cancel(e);
+  editing = true;
+}
 
-//       this.set({
-//         editing: false,
-//       });
-//     },
-//     changeMe(e) {
-//       e.preventDefault();
-
-//       this.set({
-//         editing: true,
-//       });
-//     },
-//     doUpdate: mutation(RECOVER_PASSWORD_REQUEST, commit => function update$() {
-//       const { email } = this.get();
-
-//       const payload = {
-//         email,
-//       };
-
-//       this.store.set({
-//         update: commit(payload, () => {
-//           this.set({
-//             editing: false,
-//           });
-//         }),
-//       });
-//     }),
-//   },
-// };
-
+const doUpdate = mutation(RECOVER_PASSWORD_REQUEST, commit => function update$() {
+  update = commit({
+    email,
+  }, () => {
+    clear();
+  });
+});
 </script>
 
 <h3>Can't remember your password?</h3>
@@ -59,23 +42,17 @@ function changeMe(e) {
   <a href="#" on:click={changeMe}>Request a password recovery</a>
 </p>
 
-<!--
 {#if editing}
-  <form on:submit="cancel(event)" class:loading="$loading">
+  <form on:submit={cancel} class:loading={$state.loading}>
     <label>
-      E-mail address: <input type="email" bind:value="email" />
+      E-mail address: <input type="email" bind:value={email} />
     </label>
-    <button on:click="doUpdate()">Request change</button> or <a href="#" on:click="closeMe(event)">cancel</a>
+    <button on:click={doUpdate}>Request change</button> or <a href="#" on:click={closeMe}>cancel</a>
   </form>
-
-  {#if $update}
-    {#await $update}
-      <p>Sending password-recovery request...</p>
-    {:then}
-    {:catch errors}
-      <Catch {errors} />
-    {/await}
-  {/if}
 {/if}
 
--->
+<Status
+  from={update}
+  pending="Sending password-recovery request..."
+  otherwise="Password recovery was successfully sent..."
+/>
