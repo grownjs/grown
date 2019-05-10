@@ -13,17 +13,7 @@ function clear() {
   editing = false;
 }
 
-function cancel(e) {
-  e.preventDefault();
-}
-
-function closeMe(e) {
-  cancel(e);
-  clear();
-}
-
-function changeMe(e) {
-  cancel(e);
+function changeMe() {
   editing = true;
 }
 
@@ -43,11 +33,11 @@ const doUpdate = mutation(RECOVER_PASSWORD_REQUEST, commit => function update$()
 </p>
 
 {#if editing}
-  <form on:submit={cancel} class:loading={$conn.loading}>
+  <form on:submit|preventDefault class:loading={$conn.loading}>
     <label>
-      E-mail address: <input type="email" bind:value={email} />
+      E-mail address: <input type="email" bind:value={email} autocomplete="current-email" />
     </label>
-    <button on:click={doUpdate}>Request change</button> or <a href="#" on:click={closeMe}>cancel</a>
+    <button on:click={doUpdate}>Request change</button> or <a href="#" on:click|preventDefault={clear}>cancel</a>
   </form>
 {/if}
 

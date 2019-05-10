@@ -8,9 +8,9 @@ export let otherwise = null;
 
 {#if from}
   {#await from}
-    <p>{pending}</p>
+    <h3>{pending}</h3>
   {:then}
-    <p>{otherwise}</p>
+    <h3>{otherwise}</h3>
   {:catch error}
     <Catch {error} />
   {/await}

@@ -75,6 +75,12 @@
               "module",
               "main"
             ]
+          },
+          "rollup-plugin-commonjs": {
+            "extensions": [
+              ".js",
+              ".svelte"
+            ]
           }
         },
         "globals": {
@@ -102,11 +108,12 @@
     "nyc": "^14.1.0",
     "pug": "^2.0.3",
     "rollup": "^1.1.2",
+    "rollup-plugin-commonjs": "^9.3.4",
     "rollup-plugin-node-resolve": "^4.2.3",
     "size-limit": "^1.3.1",
     "svelte": "^3.1.0",
     "tarima": "^4.4.7",
-    "tarima-lr": "^0.4.3",
+    "tarima-lr": "^0.4.7",
     "terser": "^3.10.12",
     "testcafe": "^1.0.1",
     "uglify-es": "^3.3.9"
@@ -124,6 +131,7 @@
     "logro": "0.0.9",
     "mailor": "latest",
     "pg": "^7.9.0",
-    "rand-token": "^0.4.0"
+    "rand-token": "^0.4.0",
+    "svero": "^0.4.3"
   }
 }

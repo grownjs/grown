@@ -17,17 +17,7 @@ function clear() {
   confirmPassword = null;
 }
 
-function cancel(e) {
-  e.preventDefault();
-}
-
-function closeMe(e) {
-  cancel(e);
-  clear();
-}
-
-function changeMe(e) {
-  cancel(e);
+function changeMe() {
   editing = true;
 }
 
@@ -47,17 +37,17 @@ const doUpdate = mutation(UPDATE_PASSWORD_REQUEST, commit => function update$() 
 </p>
 
 {#if editing}
-  <form on:submit={cancel} class:loading={$conn.loading}>
+  <form on:submit|preventDefault class:loading={$conn.loading}>
     <label>
-      Current password: <input type="password" bind:value={password} />
+      Current password: <input type="password" bind:value={password} autocomplete="current-password" />
     </label>
     <label>
-      New password: <input type="password" bind:value={newPassword} />
+      New password: <input type="password" bind:value={newPassword} autocomplete="new-password" />
     </label>
     <label>
-      Confirm new password: <input type="password" bind:value={confirmPassword} />
+      Confirm new password: <input type="password" bind:value={confirmPassword} autocomplete="confirm-password" />
     </label>
-    <button on:click={doUpdate}>Update</button> or <a href="#" on:click={closeMe}>cancel</a>
+    <button on:click={doUpdate}>Update</button> or <a href="#" on:click|preventDefault={clear}>cancel</a>
   </form>
 {/if}
 

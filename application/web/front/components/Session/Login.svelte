@@ -24,10 +24,6 @@ onMount(() => {
   $session.info = query(ME_INFO);
 });
 
-function cancel(e) {
-  e.preventDefault();
-}
-
 const doLogin = mutation(LOGIN_REQUEST, commit => function login$() {
   login = commit({ email, password }, data => {
     localStorage.setItem('session', JSON.stringify(data.login));
@@ -71,12 +67,12 @@ const doLogout = mutation(LOGOUT_REQUEST, commit => function logout$() {
 {/if}
 
 {#if !$session.loggedIn}
-  <form on:submit={cancel} class:loading={$conn.loading}>
+  <form on:submit|preventDefault class:loading={$conn.loading}>
     <label>
-      Email: <input type="email" bind:value={email} />
+      Email: <input type="email" bind:value={email} autocomplete="current-email" />
     </label>
     <label>
-      Password: <input type="password" bind:value={password} />
+      Password: <input type="password" bind:value={password} autocomplete="current-password" />
     </label>
     <button on:click={doLogin}>Log in</button>
   </form>
