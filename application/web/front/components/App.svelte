@@ -1,6 +1,7 @@
 <script>
   import { Router, Route, Link } from 'svero';
 
+  import ResetPassword from './pages/ResetPassword.svelte';
   import NotFound from './pages/Error.svelte';
   import Home from './pages/Home.svelte';
 
@@ -24,5 +25,6 @@
   <Router>
     <Route path="*" component={NotFound} />
     <Route path="/" component={Home} />
+    <Route path="/reset-password/:token" component={ResetPassword} />
   </Router>
 </main>
