@@ -1,29 +1,30 @@
 <script>
-  import Status from '../Status.svelte';
+  import Block from '../Block.svelte';
 
   import { conn } from '../../shared/stores';
   import { mutation } from '../../shared/graphql';
   import { UPDATE_PASSWORD_REQUEST } from '../../shared/queries';
 
-  let update = null;
-  let editing = null;
+  let updating = null;
+  let isEditing = null;
+
   let password = null;
   let newPassword = null;
   let confirmPassword = null;
 
   function clear() {
-    editing = false;
+    isEditing = false;
     password = null;
     newPassword = null;
     confirmPassword = null;
   }
 
   function changeMe() {
-    editing = true;
+    isEditing = true;
   }
 
-  const doUpdate = mutation(UPDATE_PASSWORD_REQUEST, commit => function update$() {
-    update = commit({
+  const doUpdate = mutation(UPDATE_PASSWORD_REQUEST, commit => function updatePasswordRequest$() {
+    updating = commit({
       oldPassword: password,
       newPassword,
       confirmPassword,
@@ -34,11 +35,16 @@
 </script>
 
 <p>
-  <a href="#" on:click={changeMe}>Change my password?</a>
+  <a href="#password-change" on:click|preventDefault={changeMe}>Change my password?</a>
 </p>
 
-{#if editing}
-  <form on:submit|preventDefault class:loading={$conn.loading}>
+<Block
+  from={updating}
+  active={isEditing}
+  pending="Updating your password..."
+  otherwise="Password was successfully set..."
+>
+  <form id="password-change" on:submit|preventDefault class:loading={$conn.loading}>
     <label>
       Current password: <input type="password" bind:value={password} autocomplete="current-password" />
     </label>
@@ -48,12 +54,6 @@
     <label>
       Confirm new password: <input type="password" bind:value={confirmPassword} autocomplete="confirm-password" />
     </label>
-    <button on:click={doUpdate}>Update</button> or <a href="#" on:click|preventDefault={clear}>cancel</a>
+    <button on:click={doUpdate}>Update</button> or <a href="#password-change" on:click|preventDefault={clear}>cancel</a>
   </form>
-{/if}
-
-<Status
-  from={update}
-  pending="Updating your password..."
-  otherwise="Password was successfully set..."
-/>
+</Block>

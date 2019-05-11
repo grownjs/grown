@@ -2,6 +2,7 @@
   import Catch from './Catch.svelte';
 
   export let from = null;
+  export let label = null;
   export let pending = null;
   export let otherwise = null;
 </script>
@@ -12,6 +13,6 @@
   {:then}
     <h3>{otherwise}</h3>
   {:catch error}
-    <Catch {error} />
+    <Catch {label} {error} />
   {/await}
 {/if}
