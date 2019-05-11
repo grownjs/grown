@@ -2,7 +2,7 @@
   import { Router, Route, Link } from 'svero';
 
   import ResetPassword from './pages/ResetPassword.svelte';
-  import NotFound from './pages/Error.svelte';
+  import NotFound from './pages/NotFound.svelte';
   import Home from './pages/Home.svelte';
 
   import Auth from './session/Auth.svelte';
