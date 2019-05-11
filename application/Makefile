@@ -10,6 +10,7 @@ profile := $(notdir $(PWD))
 # environment
 PORT ?= 3001
 NODE_ENV ?= development
+BASE_URL ?= http://localhost:4001
 
 ifneq ($(PORTS),)
 	PORT_FLAGS = -p $(subst $(shell echo ','), -p ,$(PORTS))
@@ -18,6 +19,7 @@ endif
 # export common vars
 export PORT
 export NODE_ENV
+export BASE_URL
 
 # dotenv support
 ifneq ($(wildcard .env),)

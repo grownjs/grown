@@ -25,7 +25,7 @@
     "dist": "tarima -mqe $NODE_ENV",
     "size": "npm run dist && size-limit",
     "test": "npm run test:unit && npm run test:functional --",
-    "test:e2e": "BASE_URL=http://localhost:4001 testcafe",
+    "test:e2e": "testcafe",
     "test:e2e:ci": "BASE_URL=http://web:4001/ testcafe --ports 9505,9506 remote:1",
     "test:unit": "npm run mocha -- -bR spec 'api/**/*.test.js'",
     "test:functional": "npm run mocha -- -t 180000 -bR spec 'testing/**/*.test.js'",
