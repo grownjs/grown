@@ -38,7 +38,7 @@
     <p>E-mail: {data.user.email}</p>
     <p>Expires: {data.expirationDate}</p>
 
-    <button on:click={doLogout}>Log out</button>
+    <button on:click|preventDefault={doLogout}>Log out</button>
 
     <Status
       from={logout}

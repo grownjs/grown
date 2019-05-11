@@ -11,6 +11,7 @@
 
   function clear() {
     email = null;
+    updating = null;
     isEditing = false;
   }
 
@@ -19,10 +20,8 @@
   }
 
   const doUpdate = mutation(RECOVER_PASSWORD_REQUEST, commit => function recoverPasswordRequest$() {
-    updating = commit({
-      email,
-    }, () => {
-      clear();
+    updating = commit({ email }, () => {
+      email = null;
     });
   });
 </script>

@@ -14,6 +14,7 @@
 
   function clear() {
     isEditing = false;
+    updating = null;
     password = null;
     newPassword = null;
     confirmPassword = null;
@@ -29,7 +30,9 @@
       newPassword,
       confirmPassword,
     }, () => {
-      clear();
+      password = null;
+      newPassword = null;
+      confirmPassword = null;
     });
   });
 </script>
