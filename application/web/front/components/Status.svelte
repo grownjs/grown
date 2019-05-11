@@ -1,9 +1,9 @@
 <script>
-import Catch from './Catch';
+  import Catch from './Catch.svelte';
 
-export let from = null;
-export let pending = null;
-export let otherwise = null;
+  export let from = null;
+  export let pending = null;
+  export let otherwise = null;
 </script>
 
 {#if from}

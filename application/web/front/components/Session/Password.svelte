@@ -1,35 +1,36 @@
 <script>
-import Status from '../Status';
-import { conn } from '../../shared/stores';
-import { mutation } from '../../shared/graphql';
-import { UPDATE_PASSWORD_REQUEST } from '../../shared/queries';
+  import Status from '../Status.svelte';
 
-let update = null;
-let editing = null;
-let password = null;
-let newPassword = null;
-let confirmPassword = null;
+  import { conn } from '../../shared/stores';
+  import { mutation } from '../../shared/graphql';
+  import { UPDATE_PASSWORD_REQUEST } from '../../shared/queries';
 
-function clear() {
-  editing = false;
-  password = null;
-  newPassword = null;
-  confirmPassword = null;
-}
+  let update = null;
+  let editing = null;
+  let password = null;
+  let newPassword = null;
+  let confirmPassword = null;
 
-function changeMe() {
-  editing = true;
-}
+  function clear() {
+    editing = false;
+    password = null;
+    newPassword = null;
+    confirmPassword = null;
+  }
 
-const doUpdate = mutation(UPDATE_PASSWORD_REQUEST, commit => function update$() {
-  update = commit({
-    oldPassword: password,
-    newPassword,
-    confirmPassword,
-  }, () => {
-    clear();
+  function changeMe() {
+    editing = true;
+  }
+
+  const doUpdate = mutation(UPDATE_PASSWORD_REQUEST, commit => function update$() {
+    update = commit({
+      oldPassword: password,
+      newPassword,
+      confirmPassword,
+    }, () => {
+      clear();
+    });
   });
-});
 </script>
 
 <p>

@@ -1,44 +1,44 @@
 <script>
-import { onMount } from 'svelte';
-import Catch from '../Catch';
-import Status from '../Status';
-import Password from './Password';
-import PasswordRecovery from './PasswordRecovery';
+  import { onMount } from 'svelte';
 
-import { session, conn } from '../../shared/stores';
-import { query, mutation } from '../../shared/graphql';
-import { ME_INFO, LOGIN_REQUEST, LOGOUT_REQUEST } from '../../shared/queries';
+  import Catch from '../Catch.svelte';
+  import Status from '../Status.svelte';
+  import Password from './Password.svelte';
+  import PasswordRecovery from './PasswordRecovery.svelte';
 
-let login;
-let logout;
-let email = null;
-let password = null;
+  import { session, conn } from '../../shared/stores';
+  import { query, mutation } from '../../shared/graphql';
+  import { ME_INFO, LOGIN_REQUEST, LOGOUT_REQUEST } from '../../shared/queries';
 
-onMount(() => {
-  const done = session.subscribe(data => {
-    if (data.info && !(data.info instanceof Promise)) {
-      $session.loggedIn = done() || true;
-    }
+  let login;
+  let logout;
+  let email = null;
+  let password = null;
+
+  onMount(() => {
+    const done = session.subscribe(data => {
+      if (data.info && !(data.info instanceof Promise)) {
+        $session.loggedIn = done() || true;
+      }
+    });
+
+    $session.info = query(ME_INFO);
   });
 
-  $session.info = query(ME_INFO);
-});
-
-const doLogin = mutation(LOGIN_REQUEST, commit => function login$() {
-  login = commit({ email, password }, data => {
-    localStorage.setItem('session', JSON.stringify(data.login));
-    $session.loggedIn = true;
-    location.reload();
+  const doLogin = mutation(LOGIN_REQUEST, commit => function login$() {
+    login = commit({ email, password }, data => {
+      localStorage.setItem('session', JSON.stringify(data.login));
+      $session.loggedIn = true;
+      location.reload();
+    });
   });
-});
 
-const doLogout = mutation(LOGOUT_REQUEST, commit => function logout$() {
-  logout = commit(() => {
-    localStorage.clear();
-    location.reload();
+  const doLogout = mutation(LOGOUT_REQUEST, commit => function logout$() {
+    logout = commit(() => {
+      localStorage.clear();
+      location.reload();
+    });
   });
-});
-
 </script>
 
 {#if $session.info}
@@ -59,8 +59,6 @@ const doLogout = mutation(LOGOUT_REQUEST, commit => function logout$() {
     />
 
     <Password />
-
-    <slot />
   {:catch error}
     <Catch label="Hey, please log in." {error} />
   {/await}

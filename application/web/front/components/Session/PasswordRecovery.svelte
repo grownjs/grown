@@ -1,29 +1,30 @@
 <script>
-import Status from '../Status';
-import { conn } from '../../shared/stores';
-import { mutation } from '../../shared/graphql';
-import { RECOVER_PASSWORD_REQUEST } from '../../shared/queries';
+  import Status from '../Status.svelte';
 
-let email = null;
-let update = null;
-let editing = null;
+  import { conn } from '../../shared/stores';
+  import { mutation } from '../../shared/graphql';
+  import { RECOVER_PASSWORD_REQUEST } from '../../shared/queries';
 
-function clear() {
-  email = null;
-  editing = false;
-}
+  let email = null;
+  let update = null;
+  let editing = null;
 
-function changeMe() {
-  editing = true;
-}
+  function clear() {
+    email = null;
+    editing = false;
+  }
 
-const doUpdate = mutation(RECOVER_PASSWORD_REQUEST, commit => function update$() {
-  update = commit({
-    email,
-  }, () => {
-    clear();
+  function changeMe() {
+    editing = true;
+  }
+
+  const doUpdate = mutation(RECOVER_PASSWORD_REQUEST, commit => function update$() {
+    update = commit({
+      email,
+    }, () => {
+      clear();
+    });
   });
-});
 </script>
 
 <h3>Can't remember your password?</h3>

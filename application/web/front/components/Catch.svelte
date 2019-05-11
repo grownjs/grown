@@ -1,6 +1,6 @@
 <script>
-export let label = null;
-export let error = null;
+  export let label = null;
+  export let error = null;
 </script>
 
 {#if error instanceof Error}
