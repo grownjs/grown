@@ -41,6 +41,6 @@
     <label>
       E-mail address: <input type="email" bind:value={email} autocomplete="current-email" />
     </label>
-    <button on:click={doUpdate}>Request password change</button> or <Link href="" on:click={clear}>cancel</Link>
+    <button on:click={doUpdate}>Request change</button> or <Link href="" on:click={clear}>cancel</Link>
   </Form>
 </Route>

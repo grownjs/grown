@@ -72,7 +72,6 @@
         "plugins": {
           "rollup-plugin-node-resolve": {
             "mainFields": [
-              "module",
               "main"
             ]
           },
