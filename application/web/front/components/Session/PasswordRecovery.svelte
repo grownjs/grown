@@ -24,15 +24,15 @@
   });
 </script>
 
+<Status
+  from={updating}
+  pending="Sending password-recovery request..."
+  otherwise="Password recovery was successfully sent..."
+/>
+
 <Link href="#password-recovery">{label}</Link>
 <Route path="#password-recovery">
   <Form modal id="password-recovery">
-    <Status
-      from={updating}
-      pending="Sending password-recovery request..."
-      otherwise="Password recovery was successfully sent..."
-    />
-
     <label>
       E-mail address: <input type="email" bind:value={email} autocomplete="current-email" />
     </label>

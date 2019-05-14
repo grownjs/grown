@@ -17,7 +17,8 @@
   onMount(() => {
     const done = session.subscribe(data => {
       if (data.info && !(data.info instanceof Promise)) {
-        $session.loggedIn = done() || true;
+        $session.isLogged = done() || true;
+        $session.info = data.info;
       }
     });
 
@@ -26,11 +27,23 @@
 
   const doLogout = mutation(LOGOUT_REQUEST, commit => function logout$() {
     logout = commit(() => {
+      $session.isLogged = false;
+      $session.info = null;
+
       localStorage.clear();
-      location.href = '/';
+
+      setTimeout(() => {
+        location.href = '/';
+      }, 100);
     });
   });
 </script>
+
+<Status
+  from={logout}
+  pending="Deleting current session..."
+  otherwise="Successfully logged out..."
+/>
 
 {#if $session.info}
   {#await $session.info}
@@ -40,12 +53,6 @@
 
     <p>E-mail: {data.user.email}</p>
     <p>Expires: {data.expirationDate}</p>
-
-    <Status
-      from={logout}
-      pending="Deleting current session..."
-      otherwise="Successfully logged out..."
-    />
 
     <button on:click|preventDefault={doLogout}>Log out</button> or <Password />
   {:catch error}

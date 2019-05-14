@@ -25,22 +25,26 @@
   const doLogin = mutation(LOGIN_REQUEST, commit => function login$() {
     login = commit({ email, password }, data => {
       localStorage.setItem('session', JSON.stringify(data.login));
-      $session.loggedIn = true;
-      location.href = '/';
+
+      $session.isLogged = true;
+
+      setTimeout(() => {
+        location.href = '/';
+      }, 100);
     });
   });
 </script>
 
-{#if !$session.loggedIn}
+<Status
+  from={login}
+  pending="Requesting a new session..."
+  otherwise="Welcome, plase wait..."
+/>
+
+{#if !$session.isLogged}
   <Link href="#login">{label}</Link> or <PasswordRecovery />
   <Route path="#login">
     <Form modal id="login">
-      <Status
-        from={login}
-        pending="Requesting a new session..."
-        otherwise="Welcome, plase wait..."
-      />
-
       <label>
         Email: <input type="email" bind:value={email} autocomplete="current-email" />
       </label>
