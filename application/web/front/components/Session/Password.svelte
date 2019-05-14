@@ -1,8 +1,9 @@
 <script>
   import { Route, Link } from 'svero';
+
+  import Form from './Form.svelte';
   import Status from '../Status.svelte';
 
-  import { conn } from '../../shared/stores';
   import { mutation } from '../../shared/graphql';
   import { UPDATE_PASSWORD_REQUEST } from '../../shared/queries';
 
@@ -42,7 +43,7 @@
 />
 
 <Route path="#password-change">
-  <form id="password-change" on:submit|preventDefault class:loading={$conn.loading}>
+  <Form id="password-change">
     <label>
       Current password: <input type="password" bind:value={password} autocomplete="current-password" />
     </label>
@@ -53,5 +54,5 @@
       Confirm new password: <input type="password" bind:value={confirmPassword} autocomplete="confirm-password" />
     </label>
     <button on:click={doUpdate}>Update</button> or <Link href="" on:click={clear}>cancel</Link>
-  </form>
+  </Form>
 </Route>

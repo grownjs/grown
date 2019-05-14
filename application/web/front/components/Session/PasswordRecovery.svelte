@@ -1,8 +1,9 @@
 <script>
   import { Route, Link } from 'svero';
+
+  import Form from './Form.svelte';
   import Status from '../Status.svelte';
 
-  import { conn } from '../../shared/stores';
   import { mutation } from '../../shared/graphql';
   import { RECOVER_PASSWORD_REQUEST } from '../../shared/queries';
 
@@ -34,10 +35,10 @@
 />
 
 <Route path="#password-recovery">
-  <form id="password-recovery" on:submit|preventDefault class:loading={$conn.loading}>
-   <label>
-     E-mail address: <input type="email" bind:value={email} autocomplete="current-email" />
-   </label>
-   <button on:click={doUpdate}>Request change</button> or <Link href="" on:click={clear}>cancel</Link>
-  </form>
+  <Form id="password-recovery">
+    <label>
+      E-mail address: <input type="email" bind:value={email} autocomplete="current-email" />
+    </label>
+    <button on:click={doUpdate}>Request change</button> or <Link href="" on:click={clear}>cancel</Link>
+  </Form>
 </Route>

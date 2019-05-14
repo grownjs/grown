@@ -1,8 +1,9 @@
 <script>
+  import Form from './Form.svelte';
   import Status from '../Status.svelte';
   import PasswordRecovery from './PasswordRecovery.svelte';
 
-  import { session, conn } from '../../shared/stores';
+  import { session } from '../../shared/stores';
   import { mutation } from '../../shared/graphql';
   import { LOGIN_REQUEST } from '../../shared/queries';
 
@@ -26,7 +27,7 @@
 />
 
 {#if !$session.loggedIn}
-  <form on:submit|preventDefault class:loading={$conn.loading}>
+  <Form id="login">
     <label>
       Email: <input type="email" bind:value={email} autocomplete="current-email" />
     </label>
@@ -34,7 +35,7 @@
       Password: <input type="password" bind:value={password} autocomplete="current-password" />
     </label>
     <button on:click={doLogin}>Log in</button>
-  </form>
+  </Form>
 
   <PasswordRecovery />
 {/if}
