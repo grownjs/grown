@@ -19,6 +19,7 @@
       if (data.info && !(data.info instanceof Promise)) {
         $session.isLogged = done() || true;
         $session.info = data.info;
+        $session.me = data.info.user;
       }
     });
 
@@ -29,6 +30,7 @@
     logout = commit(() => {
       $session.isLogged = false;
       $session.info = null;
+      $session.me = null;
 
       localStorage.clear();
 

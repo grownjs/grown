@@ -1,6 +1,7 @@
 import { writable } from 'svelte/store';
 
 export const session = writable({
+  me: null,
   info: null,
   loggedIn: false,
 });
