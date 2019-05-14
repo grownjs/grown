@@ -1,8 +1,8 @@
 <script>
   import { onMount } from 'svelte';
 
-  import Catch from '../Catch.svelte';
-  import Status from '../Status.svelte';
+  import Catch from '../async/Catch.svelte';
+  import Status from '../async/Status.svelte';
   import Password from './Password.svelte';
 
   import { session } from '../../shared/stores';

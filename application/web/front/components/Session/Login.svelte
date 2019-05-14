@@ -1,8 +1,8 @@
 <script>
   import { Route, Link } from 'svero';
 
-  import Form from '../Form.svelte';
-  import Status from '../Status.svelte';
+  import Form from '../async/Form.svelte';
+  import Status from '../async/Status.svelte';
   import PasswordRecovery from './PasswordRecovery.svelte';
 
   import { session } from '../../shared/stores';
