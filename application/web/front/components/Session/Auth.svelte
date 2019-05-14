@@ -3,11 +3,14 @@
 
   import Catch from '../async/Catch.svelte';
   import Status from '../async/Status.svelte';
+
   import Password from './Password.svelte';
 
   import { session } from '../../shared/stores';
   import { query, mutation } from '../../shared/graphql';
   import { ME_INFO, LOGOUT_REQUEST } from '../../shared/queries';
+
+  export let label = 'Hey, please log in.';
 
   let logout;
 
@@ -48,6 +51,6 @@
 
     <Password />
   {:catch error}
-    <Catch label="Hey, please log in." {error} />
+    <Catch {label} {error} />
   {/await}
 {/if}

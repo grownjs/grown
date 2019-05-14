@@ -3,11 +3,14 @@
 
   import Form from '../async/Form.svelte';
   import Status from '../async/Status.svelte';
+
   import PasswordRecovery from './PasswordRecovery.svelte';
 
   import { session } from '../../shared/stores';
   import { mutation } from '../../shared/graphql';
   import { LOGIN_REQUEST } from '../../shared/queries';
+
+  export let label = 'Login';
 
   let login;
   let email = null;
@@ -30,7 +33,7 @@
 
 {#if !$session.loggedIn}
   <p>
-    <Link href="#login">Login</Link>
+    <Link href="#login">{label}</Link>
   </p>
 
   <Route path="#login">

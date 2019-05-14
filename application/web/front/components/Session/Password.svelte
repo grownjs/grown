@@ -7,6 +7,8 @@
   import { mutation } from '../../shared/graphql';
   import { UPDATE_PASSWORD_REQUEST } from '../../shared/queries';
 
+  export let label = 'Change my password?';
+
   let updating = null;
   let password = null;
   let newPassword = null;
@@ -33,7 +35,7 @@
 </script>
 
 <p>
-  <Link href="#password-change">Change my password?</Link>
+  <Link href="#password-change">{label}</Link>
 </p>
 
 <Route path="#password-change">

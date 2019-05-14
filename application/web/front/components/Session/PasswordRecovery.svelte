@@ -7,6 +7,8 @@
   import { mutation } from '../../shared/graphql';
   import { RECOVER_PASSWORD_REQUEST } from '../../shared/queries';
 
+  export let label = 'Request a password recovery';
+
   let email = null;
   let updating = null;
 
@@ -25,7 +27,7 @@
 <h3>Can't remember your password?</h3>
 
 <p>
-  <Link href="#password-recovery">Request a password recovery</Link>
+  <Link href="#password-recovery">{label}</Link>
 </p>
 
 <Route path="#password-recovery">
@@ -39,6 +41,6 @@
     <label>
       E-mail address: <input type="email" bind:value={email} autocomplete="current-email" />
     </label>
-    <button on:click={doUpdate}>Request change</button> or <Link href="" on:click={clear}>cancel</Link>
+    <button on:click={doUpdate}>Request password change</button> or <Link href="" on:click={clear}>cancel</Link>
   </Form>
 </Route>
