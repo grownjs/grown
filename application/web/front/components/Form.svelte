@@ -1,5 +1,5 @@
 <script>
-  import { conn } from '../../shared/stores';
+  import { conn } from '../shared/stores';
 
   let cssClass = '';
   let fixedClass = '';

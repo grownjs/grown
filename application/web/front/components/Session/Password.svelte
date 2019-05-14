@@ -1,7 +1,7 @@
 <script>
   import { Route, Link } from 'svero';
 
-  import Form from './Form.svelte';
+  import Form from '../Form.svelte';
   import Status from '../Status.svelte';
 
   import { mutation } from '../../shared/graphql';
