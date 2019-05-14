@@ -1,5 +1,5 @@
 <script>
-  import Block from '../Block.svelte';
+  import Status from '../Status.svelte';
   import PasswordRecovery from './PasswordRecovery.svelte';
 
   import { session, conn } from '../../shared/stores';
@@ -19,12 +19,13 @@
   });
 </script>
 
-<Block
+<Status
   from={login}
-  active={!$session.loggedIn}
   pending="Requesting a new session..."
   otherwise="Welcome, plase wait..."
->
+/>
+
+{#if !$session.loggedIn}
   <form on:submit|preventDefault class:loading={$conn.loading}>
     <label>
       Email: <input type="email" bind:value={email} autocomplete="current-email" />
@@ -34,5 +35,6 @@
     </label>
     <button on:click={doLogin}>Log in</button>
   </form>
+
   <PasswordRecovery />
-</Block>
+{/if}

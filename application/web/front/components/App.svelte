@@ -15,8 +15,10 @@
       <Link href="/">Home</Link>
     </li>
     <li>
-      <Auth />
-      <Login />
+      <Router>
+        <Auth />
+        <Login />
+      </Router>
     </li>
   </ul>
 </nav>
