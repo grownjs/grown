@@ -24,7 +24,7 @@
   const doLogout = mutation(LOGOUT_REQUEST, commit => function logout$() {
     logout = commit(() => {
       localStorage.clear();
-      location.reload();
+      location.href = '/';
     });
   });
 </script>

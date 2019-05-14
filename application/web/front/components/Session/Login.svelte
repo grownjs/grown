@@ -14,7 +14,7 @@
     login = commit({ email, password }, data => {
       localStorage.setItem('session', JSON.stringify(data.login));
       $session.loggedIn = true;
-      location.reload();
+      location.href = '/';
     });
   });
 </script>
