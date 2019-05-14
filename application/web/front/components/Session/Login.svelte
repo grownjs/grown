@@ -32,10 +32,7 @@
 </script>
 
 {#if !$session.loggedIn}
-  <p>
-    <Link href="#login">{label}</Link>
-  </p>
-
+  <Link href="#login">{label}</Link> or <PasswordRecovery />
   <Route path="#login">
     <Form modal id="login">
       <Status
@@ -53,6 +50,4 @@
       <button on:click={doLogin}>Log in</button> or <Link href="" on:click={clear}>cancel</Link>
     </Form>
   </Route>
-
-  <PasswordRecovery />
 {/if}

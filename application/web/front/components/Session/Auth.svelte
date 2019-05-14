@@ -41,15 +41,13 @@
     <p>E-mail: {data.user.email}</p>
     <p>Expires: {data.expirationDate}</p>
 
-    <button on:click|preventDefault={doLogout}>Log out</button>
-
     <Status
       from={logout}
       pending="Deleting current session..."
       otherwise="Successfully logged out..."
     />
 
-    <Password />
+    <button on:click|preventDefault={doLogout}>Log out</button> or <Password />
   {:catch error}
     <Catch {label} {error} />
   {/await}

@@ -1,4 +1,6 @@
 <script>
+  import { navigateTo } from 'svero';
+
   import { conn } from '../../shared/stores';
 
   let cssClass = '';
@@ -12,6 +14,12 @@
   /* eslint-disable */
   $: fixedClass = modal ? 'overlay' : 'inline';
   /* eslint-enable */
+
+  function checkEscape(e) {
+    if (e.keyCode === 27 && window.location.hash) {
+      navigateTo(window.location.pathname);
+    }
+  }
 </script>
 
 <style>
@@ -37,6 +45,8 @@
     display: inline-block;
   }
 </style>
+
+<svelte:window on:keyup={checkEscape} />
 
 <div class={fixedClass}>
   <form {id} class="{className || cssClass}" on:submit|preventDefault class:loading={$conn.loading}>

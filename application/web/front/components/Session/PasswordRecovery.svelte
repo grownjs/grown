@@ -7,7 +7,7 @@
   import { mutation } from '../../shared/graphql';
   import { RECOVER_PASSWORD_REQUEST } from '../../shared/queries';
 
-  export let label = 'Request a password recovery';
+  export let label = 'request a password recovery';
 
   let email = null;
   let updating = null;
@@ -24,12 +24,7 @@
   });
 </script>
 
-<h3>Can't remember your password?</h3>
-
-<p>
-  <Link href="#password-recovery">{label}</Link>
-</p>
-
+<Link href="#password-recovery">{label}</Link>
 <Route path="#password-recovery">
   <Form modal id="password-recovery">
     <Status
