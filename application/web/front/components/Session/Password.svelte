@@ -36,14 +36,14 @@
   <Link href="#password-change">Change my password?</Link>
 </p>
 
-<Status
-  from={updating}
-  pending="Updating your password..."
-  otherwise="Password was successfully set..."
-/>
-
 <Route path="#password-change">
-  <Form id="password-change">
+  <Form modal id="password-change">
+    <Status
+      from={updating}
+      pending="Updating your password..."
+      otherwise="Password was successfully set..."
+    />
+
     <label>
       Current password: <input type="password" bind:value={password} autocomplete="current-password" />
     </label>

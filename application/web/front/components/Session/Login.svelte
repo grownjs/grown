@@ -1,4 +1,6 @@
 <script>
+  import { Route, Link } from 'svero';
+
   import Form from './Form.svelte';
   import Status from '../Status.svelte';
   import PasswordRecovery from './PasswordRecovery.svelte';
@@ -11,6 +13,12 @@
   let email = null;
   let password = null;
 
+  function clear() {
+    login = null;
+    email = null;
+    password = null;
+  }
+
   const doLogin = mutation(LOGIN_REQUEST, commit => function login$() {
     login = commit({ email, password }, data => {
       localStorage.setItem('session', JSON.stringify(data.login));
@@ -20,22 +28,28 @@
   });
 </script>
 
-<Status
-  from={login}
-  pending="Requesting a new session..."
-  otherwise="Welcome, plase wait..."
-/>
-
 {#if !$session.loggedIn}
-  <Form id="login">
-    <label>
-      Email: <input type="email" bind:value={email} autocomplete="current-email" />
-    </label>
-    <label>
-      Password: <input type="password" bind:value={password} autocomplete="current-password" />
-    </label>
-    <button on:click={doLogin}>Log in</button>
-  </Form>
+  <p>
+    <Link href="#login">Login</Link>
+  </p>
+
+  <Route path="#login">
+    <Form modal id="login">
+      <Status
+        from={login}
+        pending="Requesting a new session..."
+        otherwise="Welcome, plase wait..."
+      />
+
+      <label>
+        Email: <input type="email" bind:value={email} autocomplete="current-email" />
+      </label>
+      <label>
+        Password: <input type="password" bind:value={password} autocomplete="current-password" />
+      </label>
+      <button on:click={doLogin}>Log in</button> or <Link href="" on:click={clear}>cancel</Link>
+    </Form>
+  </Route>
 
   <PasswordRecovery />
 {/if}

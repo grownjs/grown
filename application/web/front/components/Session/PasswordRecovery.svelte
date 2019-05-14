@@ -28,14 +28,14 @@
   <Link href="#password-recovery">Request a password recovery</Link>
 </p>
 
-<Status
-  from={updating}
-  pending="Sending password-recovery request..."
-  otherwise="Password recovery was successfully sent..."
-/>
-
 <Route path="#password-recovery">
-  <Form id="password-recovery">
+  <Form modal id="password-recovery">
+    <Status
+      from={updating}
+      pending="Sending password-recovery request..."
+      otherwise="Password recovery was successfully sent..."
+    />
+
     <label>
       E-mail address: <input type="email" bind:value={email} autocomplete="current-email" />
     </label>
