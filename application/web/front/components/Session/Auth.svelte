@@ -18,7 +18,6 @@
     const done = session.subscribe(data => {
       if (data.info && !(data.info instanceof Promise)) {
         $session.isLogged = done() || true;
-        $session.info = data.info;
         $session.me = data.info.user;
       }
     });
