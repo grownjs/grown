@@ -10,7 +10,7 @@
 </script>
 
 <nav>
-  <ul>
+  <ul class="reset inline">
     <li>
       <Link href="/">Home</Link>
     </li>
