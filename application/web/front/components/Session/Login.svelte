@@ -27,6 +27,8 @@
       localStorage.setItem('session', JSON.stringify(data.login));
 
       $session.isLogged = true;
+      $session.info = data.login;
+      $session.me = data.login.user;
 
       setTimeout(() => {
         location.href = '/';
@@ -42,9 +44,14 @@
 />
 
 {#if !$session.isLogged}
-  <Link href="#login">{label}</Link> or <PasswordRecovery />
+  <Link href="#login">{label}</Link>
+
+  <PasswordRecovery class="menu">
+    or
+  </PasswordRecovery>
+
   <Route path="#login">
-    <Form modal id="login">
+    <Form modal id="login" on:cancel={clear}>
       <label>
         Email: <input type="email" bind:value={email} autocomplete="current-email" />
       </label>

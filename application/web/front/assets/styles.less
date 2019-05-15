@@ -42,6 +42,38 @@ label {
   padding: 0;
 }
 
-.inline > * {
-  display: inline-block;
+.flex {
+  display: flex;
+}
+
+.auto {
+  flex: 1 1 auto;
+}
+
+.menu {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .1);
+
+  > ul > li {
+    position: relative;
+    padding: 10px;
+
+    &:hover {
+      > .menu {
+        display: block;
+      }
+    }
+
+    > .menu {
+      background-color: white;
+      position: fixed;
+      min-width: 10em;
+      padding: 10px;
+      display: none;
+      right: 0;
+    }
+  }
+}
+
+.body {
+  padding: 10px;
 }

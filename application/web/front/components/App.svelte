@@ -7,24 +7,26 @@
 
   import Auth from './session/Auth.svelte';
   import Login from './session/Login.svelte';
+  import Logout from './session/Logout.svelte';
 </script>
 
-<nav>
-  <ul class="reset inline">
-    <li>
-      <Link href="/">Home</Link>
-    </li>
-    <li>
-      <Router>
-        <Auth />
+<nav class="menu">
+  <Router>
+    <ul class="flex reset">
+      <li class="auto">
+        <Link href="/">Home</Link>
+      </li>
+      <li>
         <Login />
-      </Router>
-    </li>
-  </ul>
+        <Logout />
+      </li>
+    </ul>
+  </Router>
 </nav>
 
-<main>
+<main class="body">
   <Router>
+    <Auth />
     <Route path="*" component={NotFound} />
     <Route path="/" component={Home} />
     <Route path="/reset-password/:token" component={ResetPassword} />

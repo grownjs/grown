@@ -1,4 +1,5 @@
 <script>
+  import { createEventDispatcher } from 'svelte';
   import { navigateTo } from 'svero';
 
   import { conn } from '../../shared/stores';
@@ -6,7 +7,7 @@
   let cssClass = '';
   let fixedClass = '';
 
-  export let id = null;
+  export let id = '';
   export let modal = false;
   export let className = '';
   export { cssClass as class };
@@ -15,9 +16,12 @@
   $: fixedClass = modal ? 'overlay' : 'inline';
   /* eslint-enable */
 
+  const dispatch = createEventDispatcher();
+
   function checkEscape(e) {
     if (e.keyCode === 27 && window.location.hash) {
       navigateTo(window.location.pathname);
+      dispatch('cancel', e);
     }
   }
 </script>
@@ -29,7 +33,7 @@
     width: 100%;
     height: 100%;
     display: flex;
-    position: absolute;
+    position: fixed;
     align-items: center;
     justify-content: center;
     background-color: rgba(0, 0, 0, .3);

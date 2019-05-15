@@ -7,6 +7,12 @@
   import { mutation } from '../../shared/graphql';
   import { UPDATE_PASSWORD_REQUEST } from '../../shared/queries';
 
+  let cssClass = '';
+
+  export let id = '';
+  export let className = '';
+  export { cssClass as class };
+
   export let label = 'change your password';
 
   let updating = null;
@@ -40,9 +46,13 @@
   otherwise="Password was successfully set..."
 />
 
-<Link href="#password-change">{label}</Link>
+<div {id} class={className || cssClass}>
+  <slot />
+  <Link href="#password-change">{label}</Link>
+</div>
+
 <Route path="#password-change">
-  <Form modal id="password-change">
+  <Form modal id="password-change" on:cancel={clear}>
     <label>
       Current password: <input type="password" bind:value={password} autocomplete="current-password" />
     </label>

@@ -7,6 +7,12 @@
   import { mutation } from '../../shared/graphql';
   import { RECOVER_PASSWORD_REQUEST } from '../../shared/queries';
 
+  let cssClass = '';
+
+  export let id = '';
+  export let className = '';
+  export { cssClass as class };
+
   export let label = 'request a password recovery';
 
   let email = null;
@@ -30,9 +36,13 @@
   otherwise="Password recovery was successfully sent..."
 />
 
-<Link href="#password-recovery">{label}</Link>
+<div {id} class={className || cssClass}>
+  <slot />
+  <Link href="#password-recovery">{label}</Link>
+</div>
+
 <Route path="#password-recovery">
-  <Form modal id="password-recovery">
+  <Form modal id="password-recovery" on:cancel={clear}>
     <label>
       E-mail address: <input type="email" bind:value={email} autocomplete="current-email" />
     </label>
