@@ -1,4 +1,4 @@
-FROM grown-app/nodejs:latest
+FROM application/nodejs:latest
 
 COPY ./package*.json /app/
 WORKDIR /app

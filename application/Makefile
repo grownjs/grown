@@ -86,6 +86,9 @@ test: ## Test current build of a service  (docker)
 build: ## Build all or single services  (docker)
 	@docker-compose $(BASE_COMPOSE) build $(service)
 
+backend: ## Build base docker-image  (host)
+	@docker build -t application/nodejs --target nodejs -f docker/Dockerfile.backend .
+
 integration: ## Env for frontend-development and QA  (docker)
 	@docker-compose $(E2E_COMPOSE) run --rm -d $(PORT_FLAGS) $(service)
 
@@ -147,12 +150,6 @@ purge: ## Remove all from node_modules/*  (host)
 	@rm -rf node_modules/.{bin,cache}
 	@rm -rf node_modules/*
 	@echo "OK"
-
-image: ## Build base docker-image  (host)
-	@docker build --target nodejs -t grown-app/nodejs .
-
-push: ## Publish base docker-image  (host)
-	@docker push grown-app/nodejs
 
 schema: deps ## Generate sources from given schemas  (host)
 	@$(call ls,api/schema/generated,npm run schema)

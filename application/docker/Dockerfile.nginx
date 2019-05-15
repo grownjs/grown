@@ -1,6 +1,6 @@
 FROM nginx:stable
 
-COPY --from=grown-app/web /app/build /var/www
+COPY --from=application/web /app/build /var/www
 COPY ./docker/nginx.conf /etc/nginx/conf.d/default.conf
 
 ENTRYPOINT ["nginx"]

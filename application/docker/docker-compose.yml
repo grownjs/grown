@@ -8,14 +8,14 @@ services:
     build:
       context: ..
       dockerfile: ./docker/Dockerfile.nginx
-    image: grown-app/nginx
+    image: application/nginx
     links:
      - web
   web:
     build:
       context: ..
       dockerfile: ./docker/Dockerfile.web
-    image: grown-app/web
+    image: application/web
     command: "migrate:up seed npm:start"
     environment:
       NODE_ENV: ${NODE_ENV:-development}
