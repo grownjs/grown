@@ -10,7 +10,7 @@ services:
       dockerfile: ./docker/Dockerfile.nginx
     image: application/nginx
     links:
-     - web
+      - web
   web:
     build:
       context: ..
