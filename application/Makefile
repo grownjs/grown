@@ -101,8 +101,8 @@ provision: ## Env for production or staging servers  (docker)
 	@printf "\n\nIf takes longer, execute \`make logs\` to understand what's going on."
 	@printf "\n\n"
 
-%!: ## Kill services by name with pkill  (host)
-	@(pkill -9 $(subst !,,$@) > /dev/null 2>&1) || true
+%!: ## Kill services by name or port number with fkill  (host)
+	@npx fkill $*
 
 %\:%: ## Invoke tasks by service name  (host)
 %\:sh %\:up %\:run %\:logs %\:stop %\:down %\:test %\:build %\:provision:
