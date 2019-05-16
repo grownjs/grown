@@ -54,7 +54,7 @@ endef
 	@awk -F':.*?##' '/^[^ @:]+:.*##/{gsub("%","*",$$1);gsub("\\\\",":*",$$1);printf "\033[36m%13s\033[0m %s\n",$$1,$$2}' $<
 
 	@printf "\n  Examples:"
-	@printf "\n    make provision service=nginx"
+	@printf "\n    make web:build nginx:provision"
 	@printf "\n    make migrate:destroy"
 	@printf "\n    make clean dev"
 	@printf "\n\n"
@@ -104,8 +104,12 @@ provision: ## Env for production or staging servers  (docker)
 %!: ## Kill services by name with pkill  (host)
 	@(pkill -9 $(subst !,,$@) > /dev/null 2>&1) || true
 
+%\:%: ## Invoke tasks by service name  (host)
+%\:sh %\:up %\:run %\:logs %\:stop %\:down %\:test %\:build %\:provision:
+	@make -s service=$(subst :, ,$@)
+
 npm\:%: ## Invoke NPM commands  (host)
-	@npm $(subst :, ,$(subst npm:,:,$*)) $(NPM_FLAGS)
+	@npm $(subst :, ,$*) $(NPM_FLAGS)
 
 ci: deps ## Run tests and report coverage results! :wink:  (host)
 	@mkdir -p $(run)_coverage && npm run test:coverage:$(run)
