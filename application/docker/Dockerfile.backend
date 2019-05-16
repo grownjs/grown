@@ -1,5 +1,4 @@
-# development utilities
 FROM mhart/alpine-node:11 as nodejs
-  RUN apk update && apk add make git sudo python-dev py-pip curl jq
-  RUN npm i -g npm@latest new-port-cli node-wait-for-it
-  RUN pip install awscli
+RUN apk update && apk add make git sudo python-dev py-pip curl jq
+RUN npm i -g npm@latest new-port-cli node-wait-for-it
+RUN pip install awscli

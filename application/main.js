@@ -36,7 +36,7 @@ const initServer = module.exports = () => {
 
 if (require.main === module) {
   initServer()
-    .listen(Application.argv.flags.port || 8080)
+    .listen(Application.argv.flags.port || 3000)
     .catch(e => {
       log.exception(e, 'E_FATAL');
       process.exit(1);

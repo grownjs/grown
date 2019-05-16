@@ -10,7 +10,7 @@ services:
       PGDATA: /var/lib/postgresql/data/pgdata
   web:
     ports:
-      - "8080:8080"
+      - "3000:3000"
       - "4000:4000"
       - "9505:9505"
       - "9506:9506"

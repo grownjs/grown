@@ -8,9 +8,9 @@ models := lib/models
 profile := $(notdir $(PWD))
 
 # environment
-PORT ?= 3001
+PORT ?= 4001
 NODE_ENV ?= development
-BASE_URL ?= http://localhost:4001
+BASE_URL ?= http://localhost:$(PORT)
 
 ifneq ($(PORTS),)
 	PORT_FLAGS = -p $(subst $(shell echo ','), -p ,$(PORTS))
@@ -86,7 +86,7 @@ test: ## Test current build of a service  (docker)
 build: ## Build all or single services  (docker)
 	@docker-compose $(BASE_COMPOSE) build $(service)
 
-backend: ## Build base docker-image  (host)
+backend: ## Build base docker-image  (docker)
 	@docker build -t application/nodejs --target nodejs -f docker/Dockerfile.backend .
 
 integration: ## Env for frontend-development and QA  (docker)

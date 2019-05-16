@@ -1,5 +1,5 @@
 {
-  "name": "grown-app",
+  "name": "application",
   "version": "0.0.1",
   "private": true,
   "description": "Grown application skeleton",
@@ -21,7 +21,7 @@
     "schema-to:json": "json-schema-to -tw api/schema -pbc index --json",
     "schema-to:graphql": "json-schema-to -tw api/schema -pc index --graphql",
     "schema-to:protobuf": "json-schema-to -tw api/schema -pc index --protobuf -br ../common -k API",
-    "dev": "tarima watch -p 4001 -P '/api/v1/graphql -> http://localhost:8080'",
+    "dev": "tarima watch -p 4001 -P '/api/v1/graphql -> http://localhost:3000'",
     "dist": "tarima -mqe $NODE_ENV",
     "size": "npm run dist && size-limit",
     "test": "npm run test:unit && npm run test:functional --",
