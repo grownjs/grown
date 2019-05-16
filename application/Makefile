@@ -60,7 +60,7 @@ endef
 	@printf "\n\n"
 
 sh: ## SSH into services with current SHELL  (docker)
-	@docker-compose $(BASE_COMPOSE) exec $(service) $(SHELL) $(SHELL_FLAGS)
+	@docker exec -it $(shell docker ps | grep $(service) | awk '/.*/{print $$1}') $(SHELL) $(SHELL_FLAGS)
 
 up: ## Start service in the background  (docker)
 	@docker-compose $(DEV_COMPOSE) up -d --no-deps --force-recreate $(service)
