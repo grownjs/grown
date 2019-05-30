@@ -102,7 +102,7 @@ provision: ## Env for production or staging servers  (docker)
 	@printf "\n\n"
 
 %!: ## Kill services by name or port number with fkill  (host)
-	@npx fkill $*
+	@npx fkill -s $*
 
 %\:%: ## Invoke tasks by service name  (host)
 %\:sh %\:up %\:run %\:logs %\:stop %\:down %\:test %\:build %\:provision:
@@ -162,10 +162,10 @@ templates: deps ## Regenerate mailing templates  (host)
 	@$(call ls,lib/mailer/generated,npm run build:mail)
 
 database: deps ## Start database for development  (host)
-	@make -s migrate:up reset
+	@make -s migrate-up reset
 
-migrate\:%: deps ## Execute pending migrations  (host)
+migrate-%: deps ## Execute pending migrations  (host)
 	@npm run grown -- migrate models:$(models) --$(subst :, --,$*)
 
 migration: deps ## Autogenerate new migration files  (host)
-	@make -s migrate:make:up:apply
+	@make -s migrate-make:up:apply
