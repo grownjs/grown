@@ -11,7 +11,7 @@
 </script>
 
 <nav class="menu">
-  <Router>
+  <Router nofallback>
     <ul class="flex reset">
       <li class="auto">
         <Link href="/">Home</Link>
@@ -27,6 +27,7 @@
 <main class="body">
   <Router>
     <Auth />
+    <Route path="#*" component={NotFound} />
     <Route path="*" component={NotFound} />
     <Route path="/" component={Home} />
     <Route path="/reset-password/:token" component={ResetPassword} />
