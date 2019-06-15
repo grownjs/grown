@@ -124,7 +124,7 @@ dev: deps ## Single-shot development workspace  (host)
 	@make -s schema templates database node
 
 node: deps ## Develop NodeJS application only  (host)
-	@npm run watch:mail & npm run watch & npm run dev
+	@npm run watch:mail & npm run watch & npm run dev & npm run logs
 
 dist: deps ## Build artifacts for production  (host)
 	@npm run build:mail && npm run schema && npm run dist
@@ -139,8 +139,9 @@ clear: deps ## Run integration_seeds with --clear  (host)
 	@node db/integration_seeds --clear
 
 clean: ## Remove cache and generated artifacts  (host)
-	@$(call iif,rm -r pgdata build log api/schema/generated lib/mailer/generated,Built artifacts were deleted,Artifacts already deleted)
+	@$(call iif,rm -r pgdata build api/schema/generated lib/mailer/generated,Built artifacts were deleted,Artifacts already deleted)
 	@$(call iif,unlink .tarima,Cache file was deleted,Cache file already deleted)
+	@$(call iif,rm -f logs/*.log,Logs were deleted,Logs already deleted)
 
 prune: ## Remove schema files and migrations  (host)
 	@$(call iif,rm -r db/migrations/*.js,Migrations deleted,Migrations already deleted)

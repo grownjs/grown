@@ -11,6 +11,8 @@ const initServer = module.exports = () => {
 
   const server = new Application();
 
+  server.mount(require('logro').getExpressLogger());
+
   server.plug([
     Application.Parsers.JSON,
     Application.Parsers.URLENCODED,
