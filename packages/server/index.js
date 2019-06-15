@@ -159,6 +159,12 @@ function _grownFactory($, util, options) {
 
       plug() {
         util.flattenArgs(arguments).forEach(p => {
+          if (typeof p === 'function' && p.length >= 2 && !(p.extensions || p.$install || p.$mixins || p.class)) {
+            debug('#%s Mount <%s>', process.pid, p.class || p.name);
+            this.mount(p);
+            return;
+          }
+
           try {
             if (typeof p === 'function') {
               debug('#%s Install <%s>', process.pid, p.class || p.name);
