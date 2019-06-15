@@ -12,9 +12,9 @@
   "scripts": {
     "grown": "grown",
     "start": "node .",
+    "logs": "logrof --",
     "debug": "ndb npm run watch --",
-    "logs": "touch logs/dev.log && tail -f $_ | logrof",
-    "watch": "nodemon --ignore '{build,docker,logs,web}/**' --ignore '**/generated/**' --ignore Makefile 2> logs/dev.log",
+    "watch": "nodemon --ignore '{build,docker,logs,web}/**' --ignore '**/generated/**' --ignore Makefile",
     "watch:mail": "mailor watch lib/mailer/templates -d lib/mailer/generated --no-open",
     "build:mail": "mailor build lib/mailer/templates -d lib/mailer/generated",
     "mocha": "NODE_ENV=test _mocha -c --exit --recursive",
