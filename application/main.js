@@ -11,11 +11,11 @@ const initServer = module.exports = () => {
 
   const server = new Application();
 
-  server.mount(require('logro').getExpressLogger());
-
   server.plug([
-    Application.Parsers.JSON,
     Application.Parsers.URLENCODED,
+    Application.Parsers.JSON,
+    require('express-useragent').express(),
+    require('logro').getExpressLogger(),
     Application.Model.Formator({
       prefix: '/db',
       options: { attributes: false },

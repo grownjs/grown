@@ -70,22 +70,11 @@
       },
       "rollup": {
         "context": "window",
-        "plugins": {
-          "rollup-plugin-node-resolve": {
-            "mainFields": [
-              "main"
-            ]
-          },
-          "rollup-plugin-commonjs": {
-            "extensions": [
-              ".js",
-              ".svelte"
-            ]
-          }
-        },
-        "globals": {
-          "node-fetch": "fetch"
-        }
+        "plugins": [
+          "rollup-plugin-node-resolve",
+          "rollup-plugin-commonjs",
+          "rollup-plugin-svelte"
+        ]
       },
       "buble": {
         "objectAssign": "Object.assign"
@@ -109,6 +98,7 @@
     "rollup": "^1.1.2",
     "rollup-plugin-commonjs": "^9.3.4",
     "rollup-plugin-node-resolve": "^4.2.3",
+    "rollup-plugin-svelte": "^5.1.0",
     "svelte": "^3.3.0",
     "svero": "github:pateketrueke/svero#feature/hash-router",
     "svql": "0.0.5",
@@ -126,6 +116,7 @@
     "@grown/schema": "latest",
     "@grown/session": "latest",
     "berro": "latest",
+    "express-useragent": "^1.0.12",
     "grown": "latest",
     "json-schema-to": "latest",
     "logro": "0.0.9",
