@@ -118,6 +118,7 @@
     "berro": "^0.0.1",
     "express-useragent": "^1.0.12",
     "grown": "^1.1.4",
+    "json-schema-sequelizer": "^0.20.3",
     "json-schema-to": "^0.0.16",
     "logro": "^0.1.1",
     "mailor": "^0.0.9",

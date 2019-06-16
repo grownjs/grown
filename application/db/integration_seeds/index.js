@@ -33,4 +33,8 @@ async function runTasks() {
 Promise.resolve()
   .then(() => connect())
   .then(() => runTasks())
-  .then(() => sequelize.close());
+  .then(() => sequelize.close())
+  .then(() => {
+    console.log('Done.');
+    process.exit();
+  });
