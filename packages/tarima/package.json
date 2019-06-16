@@ -6,7 +6,7 @@
   "license": "MIT",
   "dependencies": {
     "debug": "^3.1.0",
-    "tarima": "^4.4.7"
+    "tarima": "^4.5.0"
   },
   "publishConfig": {
     "access": "public"
