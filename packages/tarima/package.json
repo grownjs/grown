@@ -1,6 +1,6 @@
 {
   "name": "@grown/tarima",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "main": "index.js",
   "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
   "license": "MIT",
