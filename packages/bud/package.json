@@ -30,7 +30,7 @@
     "object-new": "^0.4.0",
     "sastre": "^0.2.1",
     "source-map-support": "^0.5.3",
-    "wargs": "^0.8.1"
+    "wargs": "^0.8.2"
   },
   "devDependencies": {
     "chai": "^4.2.0",
