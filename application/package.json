@@ -120,7 +120,7 @@
     "grown": "^1.1.4",
     "json-schema-sequelizer": "^0.20.3",
     "json-schema-to": "^0.0.16",
-    "logro": "^0.1.1",
+    "logro": "^0.1.2",
     "mailor": "^0.0.9",
     "pg": "^7.9.0",
     "rand-token": "^0.4.0"
