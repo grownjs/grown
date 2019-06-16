@@ -32,7 +32,7 @@ module.exports = (Grown, util) => {
 
   function _msgLog(text) {
     if (text.charAt() === '-') {
-      _logger.printf('\r\r{% item %s %}\n', text);
+      _logger.printf('\r\r{% item %s %}\n', text.substr(1).trim());
     } else if (text.indexOf('read ') === 0 || text.indexOf('write ') === 0) {
       _logger(text.split(' ').shift(1), text.split(' ').slice(1).join(' '));
     } else {
