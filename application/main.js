@@ -9,7 +9,9 @@ const initServer = module.exports = () => {
   Application.use(require('@grown/session/auth'));
   Application.use(require('@grown/model/formator'));
 
-  const server = new Application();
+  const server = new Application({
+    cors: Application.env !== 'production',
+  });
 
   server.plug([
     Application.Parsers.URLENCODED,

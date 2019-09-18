@@ -131,6 +131,22 @@ function _grownFactory($, util, options) {
 
       this.once('begin', () => this.emit('start'));
       this.once('listen', () => this.emit('start'));
+
+      if (options.cors) {
+        this.mount((req, res, next) => {
+          res.setHeader('Access-Control-Allow-Origin', '*');
+          res.setHeader('Access-Control-Allow-Headers', 'Authorization, X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Allow-Request-Method');
+          res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
+          res.setHeader('Allow', 'GET, POST, OPTIONS, PUT, DELETE');
+
+          if (req.method === 'OPTIONS') {
+            res.end();
+            return;
+          }
+
+          next();
+        });
+      }
     },
     methods: {
       run(request, callback) {
