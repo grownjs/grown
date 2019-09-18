@@ -3,7 +3,7 @@
     In, Status, mutation,
   } from 'svql';
 
-  import { Route, Link } from 'svero';
+  import { Route, Link, navigateTo } from 'svero';
 
   import { UPDATE_PASSWORD_REQUEST } from '../../shared/queries';
 
@@ -40,7 +40,7 @@
 
       setTimeout(() => {
         location.href = '/';
-      }, 100);
+      }, 1000);
     });
   });
 </script>

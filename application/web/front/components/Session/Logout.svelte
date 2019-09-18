@@ -13,15 +13,11 @@
 
   const doLogout = mutation(LOGOUT_REQUEST, commit => function logout$() {
     logout = commit(() => {
-      $state.isLogged = false;
-      $state.info = null;
-      $state.me = null;
-
       localStorage.clear();
 
       setTimeout(() => {
         location.href = '/';
-      }, 100);
+      }, 1000);
     });
   });
 </script>

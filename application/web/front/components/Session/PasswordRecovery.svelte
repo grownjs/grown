@@ -4,7 +4,7 @@
     mutation,
   } from 'svql';
 
-  import { Route, Link } from 'svero';
+  import { Route, Link, navigateTo } from 'svero';
 
   import { RECOVER_PASSWORD_REQUEST } from '../../shared/queries';
 
@@ -22,6 +22,7 @@
   function clear() {
     email = null;
     updating = null;
+    navigateTo('/');
   }
 
   const doUpdate = mutation(RECOVER_PASSWORD_REQUEST, commit => function recoverPasswordRequest$() {

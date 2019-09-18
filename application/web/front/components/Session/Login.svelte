@@ -30,13 +30,9 @@
     login = commit({ email, password }, data => {
       localStorage.setItem('session', JSON.stringify(data.login));
 
-      $state.isLogged = data.login !== null;
-      $state.info = data.login;
-      $state.me = data.login.user;
-
       setTimeout(() => {
         location.href = '/';
-      }, 100);
+      }, 1000);
     });
   });
 </script>

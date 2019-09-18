@@ -4,17 +4,13 @@
     mutation, state, query,
   } from 'svql';
 
-  import { onMount } from 'svelte';
-
   import { ME_INFO } from '../../shared/queries';
 
   export let label = 'Hey, please log in.';
 
-  onMount(() => {
-    $state.info = query(ME_INFO, result => {
-      $state.me = result.info && result.info.user;
-      $state.isLogged = true;
-    });
+  $state.info = query(ME_INFO, result => {
+    $state.me = result.info && result.info.user;
+    $state.isLogged = true;
   });
 </script>
 
