@@ -25,7 +25,7 @@
     password = null;
     newPassword = null;
     confirmPassword = null;
-    history.back(-1);
+    navigateTo('/');
   }
 
   const doUpdate = mutation(UPDATE_PASSWORD_REQUEST, commit => function updatePasswordRequest$() {

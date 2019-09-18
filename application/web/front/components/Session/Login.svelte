@@ -23,7 +23,7 @@
     login = null;
     email = null;
     password = null;
-    history.back(-1);
+    navigateTo('/');
   }
 
   const doLogin = mutation(LOGIN_REQUEST, commit => function login$() {
