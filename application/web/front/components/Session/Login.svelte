@@ -48,7 +48,7 @@
   </PasswordRecovery>
 
   <Route path="/login">
-    <In modal id="login" on:cancel={clear}>
+    <In modal autofocus id="login" on:cancel={clear}>
       <h2>Login</h2>
       <label>
         Email: <input type="email" bind:value={email} autocomplete="current-email" />

@@ -40,7 +40,7 @@
 </div>
 
 <Route path="/password-recovery">
-  <In modal id="password-recovery" on:cancel={clear}>
+  <In modal autofocus id="password-recovery" on:cancel={clear}>
     <h2>Password recovery</h2>
     <label>
       E-mail address: <input type="email" bind:value={email} autocomplete="current-email" />
