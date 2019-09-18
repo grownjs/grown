@@ -1,8 +1,5 @@
 <script>
-  import {
-    Route, Link,
-    navigateTo,
-  } from 'svero';
+  import { Route, Link, navigateTo } from 'svero';
 
   import {
     In, Status,
@@ -10,7 +7,6 @@
   } from 'svql';
 
   import PasswordRecovery from './PasswordRecovery.svelte';
-
   import { LOGIN_REQUEST } from '../../shared/queries';
 
   export let label = 'Login';
@@ -53,6 +49,7 @@
 
   <Route path="/login">
     <In modal id="login" on:cancel={clear}>
+      <h2>Login</h2>
       <label>
         Email: <input type="email" bind:value={email} autocomplete="current-email" />
       </label>

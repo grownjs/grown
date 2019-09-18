@@ -1,12 +1,7 @@
 <script>
   import { navigateTo } from 'svero';
-
-  import {
-    Status, mutation, state,
-  } from 'svql';
-
+  import { Status, mutation, state } from 'svql';
   import Password from './Password.svelte';
-
   import { LOGOUT_REQUEST } from '../../shared/queries';
 
   let logout;

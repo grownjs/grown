@@ -52,28 +52,31 @@ label {
 
 .menu {
   box-shadow: 0 1px 3px rgba(0, 0, 0, .1);
+  transition: opacity .5s;
 
   > ul > li {
     position: relative;
 
-    > span,
-    > a {
+    > * {
       display: inline-block;
       padding: 10px;
     }
 
     &:hover {
       > .menu {
-        display: block;
+        visibility: visible;
+        opacity: 1;
       }
     }
 
     > .menu {
       background-color: white;
+      visibility: hidden;
       position: fixed;
       min-width: 10em;
       padding: 10px;
-      display: none;
+      display: block;
+      opacity: 0;
       right: 0;
 
       &::before {

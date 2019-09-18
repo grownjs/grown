@@ -1,10 +1,6 @@
 <script>
-  import {
-    In, Status, mutation,
-  } from 'svql';
-
+  import { In, Status, mutation } from 'svql';
   import { Route, Link, navigateTo } from 'svero';
-
   import { UPDATE_PASSWORD_REQUEST } from '../../shared/queries';
 
   let cssClass = '';
@@ -59,6 +55,7 @@
 
 <Route path="/password-change">
   <In modal id="password-change" on:cancel={clear}>
+    <h2>Change password</h2>
     <label>
       Current password: <input type="password" bind:value={password} autocomplete="current-password" />
     </label>

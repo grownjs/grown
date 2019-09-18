@@ -1,11 +1,6 @@
 <script>
-  import {
-    In, Status,
-    mutation,
-  } from 'svql';
-
+  import { In, Status, mutation } from 'svql';
   import { Route, Link, navigateTo } from 'svero';
-
   import { RECOVER_PASSWORD_REQUEST } from '../../shared/queries';
 
   let cssClass = '';
@@ -46,6 +41,7 @@
 
 <Route path="/password-recovery">
   <In modal id="password-recovery" on:cancel={clear}>
+    <h2>Password recovery</h2>
     <label>
       E-mail address: <input type="email" bind:value={email} autocomplete="current-email" />
     </label>
