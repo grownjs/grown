@@ -1,5 +1,6 @@
 <script>
   import { Router, Route, Link } from 'svero';
+  import { setupClient } from 'svql';
 
   import ResetPassword from './pages/ResetPassword.svelte';
   import NotFound from './pages/NotFound.svelte';
@@ -8,6 +9,10 @@
   import Auth from './session/Auth.svelte';
   import Login from './session/Login.svelte';
   import Logout from './session/Logout.svelte';
+
+  setupClient({
+    url: '/api/v1/graphql',
+  });
 </script>
 
 <nav class="menu">

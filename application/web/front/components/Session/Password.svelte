@@ -1,10 +1,10 @@
 <script>
+  import {
+    In, Status, mutation,
+  } from 'svql';
+
   import { Route, Link } from 'svero';
 
-  import Form from '../async/Form.svelte';
-  import Status from '../async/Status.svelte';
-
-  import { mutation } from '../../shared/graphql';
   import { UPDATE_PASSWORD_REQUEST } from '../../shared/queries';
 
   let cssClass = '';
@@ -25,6 +25,7 @@
     password = null;
     newPassword = null;
     confirmPassword = null;
+    history.back(-1);
   }
 
   const doUpdate = mutation(UPDATE_PASSWORD_REQUEST, commit => function updatePasswordRequest$() {
@@ -36,11 +37,16 @@
       password = null;
       newPassword = null;
       confirmPassword = null;
+
+      setTimeout(() => {
+        navigateTo('/');
+      }, 100);
     });
   });
 </script>
 
 <Status
+  fixed
   from={updating}
   pending="Updating your password..."
   otherwise="Password was successfully set..."
@@ -48,11 +54,11 @@
 
 <div {id} class={className || cssClass}>
   <slot />
-  <Link href="#password-change">{label}</Link>
+  <Link href="/password-change">{label}</Link>
 </div>
 
-<Route path="#password-change">
-  <Form modal id="password-change" on:cancel={clear}>
+<Route path="/password-change">
+  <In modal id="password-change" on:cancel={clear}>
     <label>
       Current password: <input type="password" bind:value={password} autocomplete="current-password" />
     </label>
@@ -63,5 +69,5 @@
       Confirm new password: <input type="password" bind:value={confirmPassword} autocomplete="confirm-password" />
     </label>
     <button on:click={doUpdate}>Update</button> or <Link href="" on:click={clear}>cancel</Link>
-  </Form>
+  </In>
 </Route>

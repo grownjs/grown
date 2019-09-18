@@ -1,10 +1,10 @@
 <script>
-  import { session } from '../../shared/stores';
+  import { state } from 'svql';
 </script>
 
 <h1>HOME</h1>
 
-{#if $session.me}
+{#if $state.me}
   <p>Glad you're back!</p>
-  <pre>{JSON.stringify($session.me, null, 2)}</pre>
+  <pre>{JSON.stringify($state.me, null, 2)}</pre>
 {/if}

@@ -1,13 +1,16 @@
 <script>
-  import { Route, Link } from 'svero';
+  import {
+    Route, Link,
+    navigateTo,
+  } from 'svero';
 
-  import Form from '../async/Form.svelte';
-  import Status from '../async/Status.svelte';
+  import {
+    In, Status,
+    mutation, state,
+  } from 'svql';
 
   import PasswordRecovery from './PasswordRecovery.svelte';
 
-  import { session } from '../../shared/stores';
-  import { mutation } from '../../shared/graphql';
   import { LOGIN_REQUEST } from '../../shared/queries';
 
   export let label = 'Login';
@@ -20,45 +23,47 @@
     login = null;
     email = null;
     password = null;
+    history.back(-1);
   }
 
   const doLogin = mutation(LOGIN_REQUEST, commit => function login$() {
     login = commit({ email, password }, data => {
       localStorage.setItem('session', JSON.stringify(data.login));
 
-      $session.isLogged = true;
-      $session.info = data.login;
-      $session.me = data.login.user;
+      $state.isLogged = data.login !== null;
+      $state.info = data.login;
+      $state.me = data.login.user;
 
       setTimeout(() => {
-        location.href = '/';
+        navigateTo('/');
       }, 100);
     });
   });
 </script>
 
 <Status
+  fixed
   from={login}
   pending="Requesting a new session..."
   otherwise="Welcome, plase wait..."
 />
 
-{#if !$session.isLogged}
-  <Link href="#login">{label}</Link>
+{#if !$state.isLogged}
+  <Link href="/login">{label}</Link>
 
   <PasswordRecovery class="menu">
     or
   </PasswordRecovery>
 
-  <Route path="#login">
-    <Form modal id="login" on:cancel={clear}>
+  <Route path="/login">
+    <In modal id="login" on:cancel={clear}>
       <label>
         Email: <input type="email" bind:value={email} autocomplete="current-email" />
       </label>
       <label>
         Password: <input type="password" bind:value={password} autocomplete="current-password" />
       </label>
-      <button on:click={doLogin}>Log in</button> or <Link href="" on:click={clear}>cancel</Link>
-    </Form>
+      <button on:click={doLogin}>Log in</button> or <Link href="/" on:click={clear}>cancel</Link>
+    </In>
   </Route>
 {/if}
