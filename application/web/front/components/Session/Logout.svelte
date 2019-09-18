@@ -20,7 +20,7 @@
       localStorage.clear();
 
       setTimeout(() => {
-        navigateTo('/');
+        location.href = '/';
       }, 100);
     });
   });

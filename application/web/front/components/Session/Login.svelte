@@ -35,7 +35,7 @@
       $state.me = data.login.user;
 
       setTimeout(() => {
-        navigateTo('/');
+        location.href = '/';
       }, 100);
     });
   });

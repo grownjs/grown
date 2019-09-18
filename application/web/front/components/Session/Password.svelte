@@ -39,7 +39,7 @@
       confirmPassword = null;
 
       setTimeout(() => {
-        navigateTo('/');
+        location.href = '/';
       }, 100);
     });
   });
