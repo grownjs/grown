@@ -34,12 +34,14 @@ module.exports = (ctx, cb) => {
     const authorization = req.headers.authorization || '';
     const token = authorization.split(' ').pop() || '';
 
-    if (!token) {
+    if (!token && authorization) {
       throw new Error('Token not given?');
     }
 
-    req.token = token;
+    if (token) {
+      req.token = token;
 
-    return authenticate(req);
+      return authenticate(req);
+    }
   };
 };
