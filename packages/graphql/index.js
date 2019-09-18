@@ -36,6 +36,10 @@ module.exports = (Grown, util) => {
             });
           }
 
+          if (result.errors && result.errors.length > 0) {
+            ctx.res.statusCode = ctx.res.statusCode !== 200 ? ctx.res.statusCode : 400;
+          }
+
           ctx.res.end(JSON.stringify(result));
         });
     };
