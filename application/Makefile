@@ -119,11 +119,11 @@ cov: deps ## Report coverage after tests  (host)
 	@npm run test:report -- -r $(report)
 
 dev: deps ## Single-shot development workspace  (host)
-	@make -s node! npm!
 	@make -s up service=db
 	@make -s schema templates database node
 
 node: deps ## Develop NodeJS application only  (host)
+	@npm run kill-all
 	@(npm run watch 2>&1 | npm run logs) & npm run watch:mail & npm run dev
 
 dist: deps ## Build artifacts for production  (host)
