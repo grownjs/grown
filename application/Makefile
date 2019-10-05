@@ -102,7 +102,7 @@ provision: ## Env for production or staging servers  (docker)
 	@printf "\n\n"
 
 %!: ## Kill services by name or port number with fkill  (host)
-	@npx fkill -s $*
+	@fkill -s $*
 
 %\:%: ## Invoke tasks by service name  (host)
 %\:sh %\:up %\:run %\:logs %\:stop %\:down %\:test %\:build %\:provision:
@@ -123,7 +123,7 @@ dev: deps ## Single-shot development workspace  (host)
 	@make -s schema templates database node
 
 node: deps ## Develop NodeJS application only  (host)
-	@npm run kill-all
+	@fkill -s :4001 :3000 :1080 :1081 :1025
 	@(npm run watch 2>&1 | npm run logs) & npm run watch:mail & npm run dev
 
 dist: deps ## Build artifacts for production  (host)
@@ -155,6 +155,9 @@ purge: ## Remove all from node_modules/*  (host)
 	@rm -rf node_modules/.{bin,cache}
 	@rm -rf node_modules/*
 	@echo "OK"
+
+install: ## Install global dependencies  (host)
+	@npm i -g fkill-cli nodemon ndb
 
 schema: deps ## Generate sources from given schemas  (host)
 	@$(call ls,api/schema/generated,npm run schema)
