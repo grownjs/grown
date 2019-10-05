@@ -16,7 +16,7 @@
   ],
   "scripts": {
     "pretest": "lerna bootstrap",
-    "test": "lerna run test --scope @grown/bud --scope @grown/server"
+    "test": "lerna run test --scope '@grown/*'"
   },
   "bugs": {
     "url": "https://github.com/pateketrueke/grown/issues"
