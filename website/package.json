@@ -77,6 +77,7 @@
     "less": "^3.9.0",
     "less-plugin-autoprefix": "^2.0.0",
     "lodash": "^4.17.15",
+    "lodash.template": ">=4.5.0",
     "pug": "^2.0.0-beta11",
     "rollup": "^1.1.2",
     "talavera": "^0.7.4",
