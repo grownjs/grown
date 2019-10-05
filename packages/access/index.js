@@ -107,19 +107,7 @@ module.exports = (Grown, util) => {
           }
 
           /* istanbul ignore else */
-          if (typeof test === 'boolean') {
-            ok.push([handler, test]);
-            test = {};
-          }
-
-          /* istanbul ignore else */
-          if (typeof test === 'string') {
-            ok.push([handler, test]);
-            test = {};
-          }
-
-          /* istanbul ignore else */
-          if (typeof test === 'function') {
+          if (typeof test === 'boolean' || typeof test === 'string' || typeof test === 'function') {
             ok.push([handler, test]);
             test = {};
           }
