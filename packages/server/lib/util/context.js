@@ -111,7 +111,8 @@ function endCallback(err, conn, options) {
           if (err) {
             const failure = this._.cleanError(err, options('cwd'));
 
-            conn.res.statusCode = failure.code;
+            conn.res.statusMessage = failure.statusMessage;
+            conn.res.statusCode = failure.statusCode;
             conn.res.write(failure.message);
             conn.res.end();
           }
