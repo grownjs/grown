@@ -33,10 +33,7 @@ module.exports = (Grown, util) => {
   const logger = util.getLogger();
 
   const mainPkg = path.join(Grown.cwd, 'package.json');
-  const appPkg = fs.existsSync(mainPkg)
-    ? require(mainPkg)
-    : {};
-
+  const appPkg = (fs.existsSync(mainPkg) && require(mainPkg)) || {};
   const baseDir = path.resolve(Grown.cwd, path.dirname(appPkg.main || mainPkg));
 
   function _findAvailableTasks() {
@@ -93,11 +90,6 @@ module.exports = (Grown, util) => {
       throw new Error(`Missing application script (e.g: ${files.join(', ')})`);
     }
 
-    /* istanbul ignore else */
-    if (!fs.existsSync(mainFile)) {
-      throw new Error(`Missing ${mainFile}`);
-    }
-
     return mainFile;
   }
 
@@ -126,27 +118,15 @@ module.exports = (Grown, util) => {
     this._findAvailableTasks();
 
     /* istanbul ignore else */
-    if (taskName && !this._tasks[taskName]) {
-      throw new Error(`Unknown task '${taskName}'`);
-    }
-
-    /* istanbul ignore else */
     if (taskName && !Grown.argv.flags.help) {
-      return logger(taskName, () => new Promise((cb, reject) => {
-        /* istanbul ignore else */
-        if (!Grown.argv.flags.app && taskName === 'up') {
-          Grown.argv.flags.app = this._findApplication();
-        }
+      /* istanbul ignore else */
+      if (!Grown.argv.flags.app && taskName === 'up') {
+        Grown.argv.flags.app = this._findApplication();
+      }
 
-        this._exec(Grown.argv.raw, () => {
-          try {
-            cb(this.run(taskName));
-          } catch (e) {
-            reject(e);
-          }
-        });
-      }))
-        .catch(e => this._onError(e));
+      return logger(taskName, () => new Promise(next => {
+        this._exec(Grown.argv.raw, () => next(this.run(taskName)));
+      })).catch(e => this._onError(e, taskName));
     }
 
     logger.write(GROWN_TXT);
@@ -184,7 +164,7 @@ module.exports = (Grown, util) => {
     logger.write('\n');
   }
 
-  function _onError(e) {
+  function _onError(e, task) {
     /* istanbul ignore else */
     if (e.errors) {
       e.errors.forEach(err => {
@@ -206,7 +186,13 @@ module.exports = (Grown, util) => {
       logger.printf('{% failure %s %}\r\n', e.original.message);
     }
 
-    logger.printf('\r{% error %s %}\r\n', (e.stack || e.message).replace(/\b(\w+):/, '($1)'));
+    const message = (e.stack || e.message).replace(/\b(\w+):/, '($1)');
+
+    if (task) {
+      logger.printf('\r{% error [%s] %s %}\r\n', task, message);
+    } else {
+      logger.printf('\r{% error %s %}\r\n', message);
+    }
     process.exit(1);
   }
 
@@ -231,7 +217,10 @@ module.exports = (Grown, util) => {
       child.stdout.pipe(process.stdout);
       child.stderr.pipe(process.stderr);
 
-      child.on(process.version.split('.')[1] === '6' ? 'exit' : 'close', exitCode => {
+      /* istanbul ignore next */
+      const _close = process.version.split('.')[1] === '6' ? 'exit' : 'close';
+
+      child.on(_close, exitCode => {
         if (exitCode !== 0) {
           process.exit(1);
         } else {
@@ -260,18 +249,14 @@ module.exports = (Grown, util) => {
     start(taskName) {
       return Promise.resolve()
         .then(() => {
-          try {
-            const promise = Grown.CLI._showTasks(taskName);
+          const promise = Grown.CLI._showTasks(taskName);
 
-            /* istanbul ignore else */
-            if (!promise) {
-              Grown.CLI._showHelp(taskName);
-            }
-
-            return promise;
-          } catch (e) {
-            throw new Error(`Task '${taskName}': ${e.message}`);
+          /* istanbul ignore else */
+          if (!promise) {
+            Grown.CLI._showHelp(taskName);
           }
+
+          return promise;
         });
     },
 
