@@ -192,7 +192,7 @@ module.exports = (Grown, util) => {
         if (result === false || result[1] === false) {
           debug('#%s Skip. No rules were defined', ctx.pid);
 
-          return ctx.raise(403);
+          return ctx.raise(403, `Access denied for role: ${role}`);
         }
 
         debug('#%s Got access <%s> %s', ctx.pid, result[0], result[1]);
@@ -247,7 +247,7 @@ module.exports = (Grown, util) => {
       };
     },
 
-    rules(config) {
+    rules(config = {}) {
       util.extendValues(this.permissions, config.permissions);
 
       Object.keys(config.resources || {}).forEach(key => {
@@ -298,6 +298,16 @@ module.exports = (Grown, util) => {
 
           return cur;
         }, null));
+
+      /* istanbul ignore else */
+      if (!Object.keys(this._groups).length) {
+        throw new Error('No role-groups were defined');
+      }
+
+      /* istanbul ignore else */
+      if (!this._ruleset.length) {
+        throw new Error('Ruleset cannot be empty');
+      }
 
       return this;
     },
