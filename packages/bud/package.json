@@ -12,7 +12,7 @@
     "test:all": "npm run test:run tests && npm run report -- -r html",
     "test:run": "NODE_ENV=test _mocha --exit --recursive -bR spec --colors",
     "test:unit": "npm run test:run tests --",
-    "coverage": "nyc -x '**/tests/**' -x '**/*.test.js'",
+    "coverage": "nyc -s -x '**/tests/**' -x '**/*.test.js'",
     "coverage:all": "npm run coverage -- npm run test:all",
     "coverage:unit": "npm run coverage -- npm run test:unit",
     "codecov": "codecov --file=coverage/lcov.info -e TRAVIS_NODE_VERSION",
@@ -38,9 +38,10 @@
     "eslint": "^5.9.0",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-import": "^2.14.0",
+    "lodash": ">=4.17.11",
     "mocha": "^5.2.0",
     "nyc": "^13.1.0",
-    "lodash": ">=4.17.11",
-    "std-mocks": "^1.0.1"
+    "std-mocks": "^1.0.1",
+    "testdouble": "^3.12.4"
   }
 }

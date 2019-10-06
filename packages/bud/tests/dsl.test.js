@@ -2,6 +2,7 @@
 const { expect } = require('chai');
 
 const stdMocks = require('std-mocks');
+const td = require('testdouble');
 
 const procExit = process.exit;
 
@@ -19,7 +20,106 @@ describe('Grown', () => {
     expect(typeof Grown.new).to.eql('function');
   });
 
-  describe('#module', () => {
+  describe('environment', () => {
+    it('should load env-vars from given DATA', () => {
+      require('../index')(null, ['foo=bar', 'BAZ=BUZZ']);
+      expect(process.env.foo).to.be.undefined;
+      expect(process.env.BAZ).to.eql('BUZZ');
+    });
+
+    it('should setup NODE_ENV=ci when testing on CI', () => {
+      const copy = process.env;
+
+      require('../index')(null, ['CI=1', 'NODE_ENV=test']);
+      expect(process.env.NODE_ENV).to.eql('ci');
+
+      process.env = copy;
+    });
+
+    it('should enable debug with verbosity', () => {
+      stdMocks.use();
+      require('../index')(null, ['--debug', '--verbose']);
+
+      const wasEnabled = require('debug').enabled('*');
+
+      require('debug').disable('*');
+      stdMocks.restore();
+
+      expect(wasEnabled).to.be.true;
+    });
+  });
+
+  describe('configure', () => {
+    const dotenv = require('dotenv');
+
+    beforeEach(() => {
+      td.replace(dotenv, 'config');
+    });
+
+    afterEach(() => {
+      td.reset();
+    });
+
+    it('should throw when dotenv fails', () => {
+      const failure = new Error();
+
+      failure.code = 'UNDEF';
+
+      td.when(dotenv.config({ path: td.matchers.isA(String) }))
+        .thenReturn({ error: failure });
+
+      expect(require('../index')).to.throw();
+    });
+
+    it('should ignore ENOENT errors', () => {
+      td.when(dotenv.config({ path: td.matchers.isA(String) }))
+        .thenReturn({ error: { code: 'ENOENT' } });
+
+      expect(require('../index')).not.to.throw();
+    });
+  });
+
+  describe('instance', () => {
+    it('should fail on missing Server module', () => {
+      expect(() => new Grown()).to.throw('Missing Grown.Server');
+    });
+
+    it('should return a server-instance', () => {
+      Grown('Server', {
+        create() {
+          return {
+            props: {
+              truth: () => 42,
+            },
+          };
+        },
+      });
+
+      expect(new Grown().truth).to.eql(42);
+    });
+  });
+
+  describe('logger', () => {
+    it('should fail on missing Logger module', () => {
+      Grown.use((_, util) => {
+        expect(() => util.getLogger()).to.throw('Missing Grown.Logger');
+      });
+    });
+
+    it('should return a logger instance', () => {
+      Grown('Logger', {
+        getLogger() {
+          return 42;
+        },
+      });
+
+      Grown.use((_, util) => {
+        expect(util.getLogger()).to.eql(42);
+      });
+    });
+  });
+
+  describe('callable()', () => {
     it('can access its module definition', () => {
       expect(Grown.Dummy).to.be.undefined;
 
@@ -30,6 +130,36 @@ describe('Grown', () => {
       });
 
       expect(Grown.Dummy.new().value).to.eql(42);
+    });
+  });
+
+  describe('#argv', () => {
+    it('should return any given arguments', () => {
+      const test = require('../index')(null, ['--foo', 'bar', 'baz:buzz']);
+
+      expect(test.argv.flags.foo).to.eql('bar');
+      expect(test.argv.params).to.eql({ baz: 'buzz' });
+    });
+  });
+
+  describe('#cwd', () => {
+    it('should return any given CWD', () => {
+      expect(require('../index')('./foo').cwd).to.eql('./foo');
+    });
+  });
+
+  describe('#env', () => {
+    it('should return the current NODE_ENV', () => {
+      expect(require('../index')(null, ['-e', 'fixed']).env).to.eql('fixed');
+    });
+  });
+
+  describe('#defn', () => {
+    it('should allow to register custom methods', () => {
+      const test = require('../index')();
+
+      test.defn('foo', () => 'bar');
+      expect(test.foo).to.eql('bar');
     });
   });
 
@@ -80,7 +210,7 @@ describe('Grown', () => {
         expect(result.stdout.length).to.eql(1);
         process.stdout.write(result.stdout.join('\n'));
 
-        expect(result.stderr[0]).to.contain('Error: OK');
+        expect(result.stderr.join('\n')).to.contain('Error: OK');
         expect(calls).to.eql(['guard', 'rescue', 'exit']);
       });
 

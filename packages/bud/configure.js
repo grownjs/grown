@@ -20,6 +20,7 @@ module.exports = ($, cwd, argv, util) => {
 
   const env = _env.config({ path: path.join(cwd, '.env') });
 
+  /* istanbul ignore else */
   if (env.error && env.error.code !== 'ENOENT') {
     throw env.error;
   }
