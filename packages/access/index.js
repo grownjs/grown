@@ -60,6 +60,7 @@ module.exports = (Grown, util) => {
   function _makeMatcher(ruleset) {
     const matches = ruleset.map(rule => this._compileMatch(rule));
 
+    /* istanbul ignore next */
     debug('%s handler%s %s compiled',
       ruleset.length,
       ruleset.length === 1 ? '' : 's',
@@ -88,6 +89,7 @@ module.exports = (Grown, util) => {
     const children = this._makeTree(role, this._groups, 'children');
     const parents = this._makeTree(role, this._groups, 'parents');
 
+    /* istanbul ignore next */
     debug('#%s Checking access for %s <%s>', ctx.pid, role, handlers.join(', ') || '...');
 
     return Promise.resolve()
@@ -239,9 +241,7 @@ module.exports = (Grown, util) => {
               ? [action ? `${resource}.${action}` : resource]
               : resource;
 
-            return Promise.resolve()
-              .then(() => role || (self.access_filter && self.access_filter(this)) || 'Unknown')
-              .then(x => self._runACL(this, x, _handlers));
+            return self._runACL(this, role, _handlers);
           },
         },
       };
