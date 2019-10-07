@@ -77,17 +77,18 @@ module.exports = (Grown, util) => {
       message = code;
     }
 
+    /* istanbul ignore else */
     if (code instanceof Error) {
       message = code.message || code.toString();
       _code = code.statusCode || 500;
     }
 
-    // normalize output
+    /* istanbul ignore else */
     if (!ctx.has_body) {
       ctx.resp_body = typeof _code === 'string' ? _code : message || ctx.resp_body;
     }
 
-    // normalize response
+    /* istanbul ignore else */
     if (!ctx.has_status) {
       ctx.status_code = typeof _code === 'number' ? _code : ctx.status_code;
     }
@@ -96,6 +97,7 @@ module.exports = (Grown, util) => {
   }
 
   function _cutBody(value) {
+    /* istanbul ignore else */
     if (typeof value !== 'string') {
       value = util.inspect(value);
     }
