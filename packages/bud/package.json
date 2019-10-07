@@ -17,7 +17,9 @@
     "coverage:unit": "npm run coverage -- npm run test:unit",
     "codecov": "codecov --file=coverage/lcov.info -e TRAVIS_NODE_VERSION",
     "report": "nyc report",
-    "pretest": "npm run lint"
+    "pretest": "npm run lint",
+    "pretest:ci": "npm run lint",
+    "posttest:ci": "npm run codecov"
   },
   "publishConfig": {
     "access": "public"
