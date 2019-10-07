@@ -41,6 +41,21 @@ module.exports = Grown => {
       },
     });
 
+    Object.defineProperty(res, 'ok', {
+      value: (err, body = '', status = 200, message = '') => {
+        if (typeof body === 'number') {
+          status = body;
+          message = '';
+          body = '';
+        }
+
+        if (message && res.statusMessage !== message) throw new Error(`Unexpected message: ${message}`);
+        if (res.statusCode !== status) throw new Error(`Unexpected status: ${status}`);
+        if (res.body !== body) throw new Error(`Unexpected body: ${body}`);
+        if (err !== null) throw new Error(`Unexpected error: ${err}`);
+      },
+    });
+
     return res;
   }
 
