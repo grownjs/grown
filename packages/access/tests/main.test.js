@@ -8,7 +8,7 @@ Grown.use(require('..'));
 
 /* global beforeEach, describe, it */
 
-describe('Supported access rules', () => {
+describe('Grown.Access', () => {
   let server;
 
   beforeEach(() => {

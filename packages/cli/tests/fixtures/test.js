@@ -16,4 +16,4 @@ if (process.argv.slice(2).indexOf('wait') !== -1) {
 
 setTimeout(() => {
   process.stdout.write('DONE\n');
-}, 100);
+}, 50);

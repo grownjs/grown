@@ -25,7 +25,7 @@ const cmd = (cwd, argv, sigkill) => new Promise(next => {
     execCommand.exitStatus = code;
   });
 
-  if (sigkill) setTimeout(() => child.kill('SIGINT'), 200);
+  if (sigkill) setTimeout(() => child.kill('SIGINT'), 250);
 });
 
 const bin = argv => ['node', require('path').resolve(__dirname, 'fixtures/cli.js')].concat(argv || []).join(' ');

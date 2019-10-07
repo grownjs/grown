@@ -7,14 +7,14 @@ let g;
 
 /* global beforeEach, describe, it */
 
-describe('Grown', () => {
+describe('Grown.Server', () => {
   beforeEach(() => {
     Grown = require('../../bud')();
     Grown.use(require('../'));
     Grown.use(require('../../test'));
   });
 
-  describe('Test', () => {
+  describe('Integration tests', () => {
     beforeEach(() => {
       g = Grown.new();
       g.plug(Grown.Test);

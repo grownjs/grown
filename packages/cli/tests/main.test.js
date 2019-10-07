@@ -5,7 +5,7 @@ const { cmd, bin } = require('./helpers');
 
 /* global describe, it */
 
-describe('Integration process', () => {
+describe('Grown.CLI', () => {
   it('should handle no-package.json', () => {
     return cmd('empty', bin()).then(({ stdout, stderr, failure }) => {
       expect(failure).to.be.null;
@@ -137,9 +137,10 @@ describe('Integration process', () => {
 
     it('should report SIGINT-calls', () => {
       return cmd('sample', bin(`example -- node ${TEST_JS} wait`), true).then(({ stdout, stderr, failure }) => {
-        expect(failure).not.to.be.null;
+        expect(failure).to.be.null;
         expect(stderr).to.eql('');
-        expect(stdout).to.eql('');
+        expect(stdout).not.to.eql('');
+        expect(stdout).not.to.contain('DONE');
       });
     });
 

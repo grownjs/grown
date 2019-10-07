@@ -8,7 +8,7 @@ Grown.use(require('..'));
 
 /* global beforeEach, describe, it */
 
-describe('Supported body-parsers', () => {
+describe('Grown.Parsers', () => {
   let server;
 
   beforeEach(() => {

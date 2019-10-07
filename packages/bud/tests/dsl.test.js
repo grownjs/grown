@@ -10,7 +10,7 @@ let Grown;
 
 /* global beforeEach, afterEach, describe, it */
 
-describe('Grown', () => {
+describe('Grown (bud)', () => {
   beforeEach(() => {
     Grown = require('../index')();
   });
