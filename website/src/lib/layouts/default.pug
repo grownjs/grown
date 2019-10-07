@@ -5,18 +5,19 @@
 - var gitUrl = `//${gitBase}${(url === '/' ? '/index' : '/pages' + url) + '.md'}`
 
 mixin linkTo(href, title)
+  - var fixedUrl = href.charAt() === '/' ? `.${href}` : href;
   if href === url
     strong
-      a.here(href=href)= title
+      a.here(href=fixedUrl)= title
   else if !block
-    a(href=href)= title
+    a(href=fixedUrl)= title
   if block
     block
 
 doctype html
 html
   head
-    base(href=ROOT || '/')
+    base(href='/')
     meta(lang='en')
     meta(charset='utf-8')
 
@@ -54,7 +55,7 @@ html
             summary= error.message
 
         main
-          a#menu(href=`${url !== '/' ? url : ''}/#sidebar`) &#9776;
+          a#menu(href=`.${url !== '/' ? url : ''}/#sidebar`) &#9776;
 
           if title
             h1 #{title} #[small: a(href=gitUrl target='_blank') ✎]
