@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base href="/">
+    <meta lang="en">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="HandheldFriendly" content="true">
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no"><!--[if lt IE 9]>
+    <script src="https://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <script src="https://css3-mediaqueries-js.googlecode.com/svn/trunk/css3-mediaqueries.js"></script><![endif]-->
+    <title>Grown // CLI</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://unpkg.com/highlight.js/styles/default.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Sorts+Mill+Goudy">
+  </head>
+  <body class="reset">
+    <main id="wrapper">
+      <div class="body" id="content">
+        <main><a id="menu" href="/docs/extensions/cli/#sidebar">&#9776;</a>
+          <h1>CLI <small><a href="//github.com/pateketrueke/grown/blob/master/website/src/pages/docs/extensions/cli.md" target="_blank">✎</a></small></h1><p>Manage your database setup, start or interact with your application, etc.</p>
+<pre class="hljs"><code class="lang-js"><span class="hljs-comment">/* @runkit */</span>
+<span class="hljs-comment">// require and create a Grown-container</span>
+<span class="hljs-keyword">const</span> Grown = <span class="hljs-built_in">require</span>(<span class="hljs-string">'@grown/bud'</span>)();
+
+<span class="hljs-comment">// register extension</span>
+Grown.use(<span class="hljs-built_in">require</span>(<span class="hljs-string">'@grown/cli'</span>));
+
+<span class="hljs-comment">// overload definition</span>
+Grown(<span class="hljs-string">'CLI'</span>, {
+  <span class="hljs-attr">task_folders</span>: [
+    <span class="hljs-string">`<span class="hljs-subst">${__dirname}</span>/tasks`</span>,
+  ],
+});
+
+<span class="hljs-comment">// e.g. ./tasks/example.js</span>
+<span class="hljs-comment">// module.exports = {</span>
+<span class="hljs-comment">//   description: 'Example task',</span>
+<span class="hljs-comment">//   callback() {</span>
+<span class="hljs-comment">//     console.log('It works.')</span>
+<span class="hljs-comment">//   },</span>
+<span class="hljs-comment">// };</span>
+
+<span class="hljs-comment">// e.g. `node script.js example -- ls tasks`</span>
+Grown.argv._ = [<span class="hljs-string">'example'</span>];
+Grown.argv.raw = [<span class="hljs-string">'ls'</span>, <span class="hljs-string">'tasks'</span>];
+
+<span class="hljs-comment">// take the first non-param value</span>
+<span class="hljs-keyword">const</span> taskName = Grown.argv._.shift();
+
+<span class="hljs-comment">// invoke raw args and then run</span>
+Grown.CLI.start(taskName)
+  .then(<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+    <span class="hljs-comment">// these tasks are invoked synchronously</span>
+    Grown.CLI.run(taskName);
+  });
+</code></pre>
+<blockquote>
+<p>Use this technique if you want to define your own <code>CLI</code> behavior, etc.</p>
+</blockquote>
+<hr>
+<h2 id="how-it-works">How it works?</h2>
+<p>Task files are defined as modules, e.g. <strong>tasks/words.js</strong></p>
+<pre class="hljs"><code class="lang-js"><span class="hljs-keyword">const</span> USAGE_INFO = <span class="hljs-string">`
+
+  It will print messages
+
+  Given any arguments, this task will print them
+  back as they were received, or reversed, etc.
+
+  --mirror   Invert whole output before print
+  --reverse  Invert words before print
+
+  Examples:
+    node script.js example hello world
+
+`</span>;
+
+<span class="hljs-built_in">module</span>.exports = {
+  <span class="hljs-attr">description</span>: USAGE_INFO,
+  callback(Grown) {
+    <span class="hljs-keyword">const</span> words = Grown.argv._.slice();
+
+    <span class="hljs-keyword">if</span> (!words.length) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'Missing words'</span>);
+    }
+
+    <span class="hljs-keyword">let</span> output = words.join(<span class="hljs-string">' '</span>);
+
+    <span class="hljs-keyword">if</span> (Grown.argv.flags.mirror) {
+      output = output.split(<span class="hljs-string">''</span>).reverse().join(<span class="hljs-string">''</span>);
+    }
+
+    <span class="hljs-keyword">if</span> (Grown.argv.flags.reverse) {
+      output = words.reverse().join(<span class="hljs-string">' '</span>);
+    }
+
+    Grown.Logger.message(output);
+  },
+};
+</code></pre>
+<p>Now you can invoke this task using <code>grown words</code> or <code>node script.js words</code> depending on your installation.</p>
+<p>Formatting for task descriptions is enouraged to have its body indented with two spaces, to help readability.</p>
+<p>See: <a href="https://github.com/pateketrueke/grown/tree/master/packages/cli/bin/tasks">built-in tasks</a> from CLI module</p>
+<hr>
+<h3 id="public-methods-var-static-var">Public methods <var>static</var></h3>
+<ul>
+<li><code>start([taskName])</code> &mdash; Invoke a single task by name, otherwise it&#39;ll list them all.
+Additional args after <code>--</code> are executed as a shell command, returns a promise.</li>
+<li><code>run(taskName)</code> &mdash; Invoke a single task by name, returns the task&#39;s <code>callback</code> result.</li>
+</ul>
+<h3 id="private-props-var-static-var">Private* props <var>static</var></h3>
+<ul>
+<li><code>_start</code> &mdash; Initialization date, e.g. <code>new Date()</code>.</li>
+<li><code>_tasks</code> &mdash; Collected tasks by name.</li>
+</ul>
+<h3 id="private-methods-var-static-var">Private* methods <var>static</var></h3>
+<ul>
+<li><code>_findAvailableTasks()</code> &mdash; Scan and register file tasks once.</li>
+<li><code>_findApplication()</code> &mdash; Scan for a initialization script.</li>
+<li><code>_collectTasks(...fromDirs)</code> &mdash; Scan and return file tasks from given directories.</li>
+<li><code>_showTasks([taskName])</code> &mdash; Test and <code>run</code> if the given <code>taskName</code> is registered. Returns a promise if it exists.</li>
+<li><code>_showHelp([taskName])</code> &mdash; Display the usage info for a the given <code>taskName</code>.</li>
+<li><code>_onError(errObj)</code> &mdash; Default error handler.</li>
+<li><code>_onExit(statusCode)</code> &mdash; Default exit handler.</li>
+<li><code>_exec(argv, callback)</code> &mdash; Invoke a shell command from the given <code>argv</code>, then <code>callback</code> when finished.</li>
+</ul>
+<hr>
+<p>➯ Next: <a href="./docs/extensions/conn">Extensions &rangle; Conn</a></p>
+
+        </main>
+      </div>
+      <aside class="inverted" id="sidebar">
+        <div class="body">
+          <h1><a href="/">Grown</a>
+          </h1>
+          <p>Experimental DSL for web-apps</p>
+          <div class="sp"><a href="//travis-ci.org/pateketrueke/grown" target="_blank"><img src="//api.travis-ci.org/pateketrueke/grown.svg"></a><a href="//codecov.io/gh/pateketrueke/grown" target="_blank"><img src="//codecov.io/gh/pateketrueke/grown/branch/master/graph/badge.svg"></a></div>
+          <ul class="mt reset">
+            <li>
+              <h3 class="reset">APIs</h3>
+              <ul class="pl reset">
+                <li><a href="/">Installation</a>
+                </li>
+                <li><a href="/docs">The interface</a>
+                </li>
+                <li><a href="/docs/command-line">Command line</a>
+                </li>
+              </ul>
+            </li>
+            <li>
+              <h3 class="reset">Add-ons</h3>
+              <ul class="pl reset">
+                <li><a href="/docs/extensions">Extensions</a>
+                  <ul class="pl reset">
+                    <li><a href="/docs/extensions/access">Access</a>
+                    </li>
+                    <li><a href="/docs/extensions/bud">Bud</a>
+                    </li>
+                    <li><strong><a class="here" href="/docs/extensions/cli">CLI</a></strong>
+                    </li>
+                    <li><a href="/docs/extensions/conn">Conn</a>
+                    </li>
+                    <li><a href="/docs/extensions/graphql">GraphQL</a>
+                    </li>
+                    <li><a href="/docs/extensions/grpc">GRPC</a>
+                    </li>
+                    <li><a href="/docs/extensions/logger">Logger</a>
+                    </li>
+                    <li><a href="/docs/extensions/model">Model</a>
+                    </li>
+                    <li><a href="/docs/extensions/parsers">Parsers</a>
+                    </li>
+                    <li><a href="/docs/extensions/render">Render</a>
+                    </li>
+                    <li><a href="/docs/extensions/repl">REPL</a>
+                    </li>
+                    <li><a href="/docs/extensions/router">Router</a>
+                    </li>
+                    <li><a href="/docs/extensions/schema">Schema</a>
+                    </li>
+                    <li><a href="/docs/extensions/server">Server</a>
+                    </li>
+                    <li><a href="/docs/extensions/session">Session</a>
+                    </li>
+                    <li><a href="/docs/extensions/static">Static</a>
+                    </li>
+                    <li><a href="/docs/extensions/tarima">Tarima</a>
+                    </li>
+                    <li><a href="/docs/extensions/test">Test</a>
+                    </li>
+                    <li><a href="/docs/extensions/upload">Upload</a>
+                    </li>
+                  </ul>
+                </li>
+                <li><a href="/docs/connection">Connection</a>
+                </li>
+                <li><a href="/docs/middlewares">Middlewares</a>
+                </li>
+              </ul>
+            </li>
+            <li>
+              <h3 class="reset">Data-layer</h3>
+              <ul class="pl reset">
+                <li><a href="/docs/database">Models</a>
+                </li>
+                <li><a href="/docs/validation">Schemas</a>
+                </li>
+              </ul>
+            </li>
+            <li>
+              <h3 class="reset">Controllers</h3>
+              <ul class="pl reset">
+                <li><a href="/docs/controllers">Web</a>
+                </li>
+                <li><a href="/docs/controllers/grpc">GRPC</a>
+                </li>
+                <li><a href="/docs/controllers/graphql">GraphQL</a>
+                </li>
+              </ul>
+            </li>
+            <li>
+              <h3 class="reset">Unit-testing</h3>
+              <ul class="pl reset">
+                <li><a href="/docs/testing">Server</a>
+                </li>
+                <li><a href="/docs/testing/schema">Schema</a>
+                </li>
+                <li><a href="/docs/testing/handlers">Handlers</a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </aside>
+    </main>
+    <script>window.__runkit__ = {"preamble":"const fs = require('fs');\nconst assert = require('assert');\nfs.mkdirSync('./tasks');\nfs.writeFileSync('./tasks/example.js',\n  `module.exports = {\n    description: 'Example task',\n    callback() {\n      console.log('It works.')\n    },\n  };`);\nconst stripAnsi = require('strip-ansi');\nconst toString = value => String(Buffer.from(value));\nconst normalizeText = msg => stripAnsi(msg.replace(/[\\r\\n\\b]/g, ''));\nprocess.stdout.write = msg => console.log(normalizeText(toString(msg)));\n"};</script>
+    <script src="https://embed.runkit.com"></script>
+    <script src="scripts.js"></script>
+  </body>
+</html>
