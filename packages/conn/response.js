@@ -30,9 +30,11 @@ module.exports = (Grown, util) => {
           ctx.res.writeHead(ctx.res.statusCode);
         }
 
-        body.pipe(ctx.res);
-
-        return;
+        return new Promise((resolve, reject) => {
+          body.on('close', resolve);
+          body.on('error', reject);
+          body.pipe(ctx.res);
+        });
       }
 
       /* istanbul ignore else */
@@ -85,7 +87,7 @@ module.exports = (Grown, util) => {
 
     /* istanbul ignore else */
     if (!ctx.has_body) {
-      ctx.resp_body = typeof _code === 'string' ? _code : message || ctx.resp_body;
+      ctx.resp_body = message || ctx.resp_body;
     }
 
     /* istanbul ignore else */

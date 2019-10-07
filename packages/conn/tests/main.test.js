@@ -199,14 +199,97 @@ describe('Grown.Conn', () => {
       });
     });
 
+    it('should handle send() as buffer', () => {
+      server.mount(conn => conn.send(Buffer.from('OSOM')));
+
+      return server.request('/', (err, conn) => {
+        expect(conn.res.body).to.eql('OSOM');
+        expect(err).to.be.null;
+      });
+    });
+
+    it('should handle send() as stream', () => {
+      server.mount(conn => conn.send(require('fs').createReadStream(__filename)));
+
+      return server.request('/', (err, conn) => {
+        expect(conn.res.body).to.contain('should handle send() as stream');
+        expect(err).to.be.null;
+      });
+    });
+
+    it('should handle send() failures', () => {
+      server.mount(conn => {
+        conn.res.finished = true;
+
+        return conn.send().catch(e => {
+          expect(e.message).to.match(/Already finished/);
+        });
+      });
+
+      return server.request('/', (err, conn) => conn.res.ok(err));
+    });
+
     it('should handle end()', () => {
       server.mount(conn => conn.end(201));
 
-      return server.request('/', (err, conn) => {
-        expect(conn.status_code).to.eql(201);
-        expect(conn.res.body).to.eql('');
-        expect(err).to.be.null;
+      return server.request('/', (err, conn) => conn.res.ok(err, '', 201));
+    });
+
+    it('should handle end() with text', () => {
+      server.mount(conn => conn.end('OSOM'));
+
+      return server.request('/', (err, conn) => conn.res.ok(err, 'OSOM', 200));
+    });
+
+    it('should handle end() with error', () => {
+      server.mount(conn => {
+        const e = new Error('Unexpected');
+
+        e.toString = () => 'FAILURE';
+        delete e.message;
+        return conn.end(e);
       });
+
+      return server.request('/', (err, conn) => conn.res.ok(err, 'FAILURE', 500));
+    });
+
+    it('should handle end() with message', () => {
+      server.mount(conn => conn.end(400, 'Invalid input'));
+
+      return server.request('/', (err, conn) => conn.res.ok(err, 'Invalid input', 400));
+    });
+
+    it('should handle end() failures', () => {
+      server.mount(conn => {
+        conn.res.finished = true;
+        expect(() => conn.end()).to.throw(/Already finished/);
+      });
+
+      return server.request('/', (err, conn) => conn.res.ok(err, 200));
+    });
+
+    it('should handle shared state', () => {
+      const template = {
+        locals: {
+          foo: 'bar',
+        },
+      };
+
+      let emit;
+
+      server.plug({
+        $install(ctx) {
+          emit = (evt, _ctx, opts) => ctx.emit(evt, _ctx, opts);
+        },
+      });
+
+      server.mount(conn => {
+        conn.state.title = 'Untitled';
+
+        return emit('before_render', conn, template);
+      });
+
+      return server.request('/', (err, conn) => conn.res.ok(err, 200));
     });
   });
 });
