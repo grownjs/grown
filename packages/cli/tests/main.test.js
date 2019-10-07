@@ -139,7 +139,7 @@ describe('Grown.CLI', () => {
       return cmd('sample', bin(`example -- node ${TEST_JS} wait`), true).then(({ stdout, stderr, failure }) => {
         expect(stderr).to.eql('');
         expect(stdout).not.to.contain('DONE');
-        // expect(failure).to.be.null;
+        expect(failure).to.be.null;
       });
     });
 
