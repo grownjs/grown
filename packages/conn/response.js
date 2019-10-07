@@ -102,7 +102,7 @@ module.exports = (Grown, util) => {
 
     value = value.replace(/\s+/g, ' ').trim();
 
-    return value.length > 100
+    return value.length > 99
       ? `${value.substr(0, 100)}...`
       : value;
   }
@@ -121,7 +121,7 @@ module.exports = (Grown, util) => {
       _uri.protocol ? `${_uri.protocol}//` : '',
       _uri.hostname ? _uri.hostname : '',
       _uri.port ? `:${_uri.port}` : '',
-      _uri.pathname ? _uri.pathname : '',
+      _uri.pathname && _uri.pathname !== '/' ? _uri.pathname : '',
       _query ? `?${_query}` : '',
     ].join('');
   }
@@ -174,7 +174,7 @@ module.exports = (Grown, util) => {
 
           set status_code(code) {
             /* istanbul ignore else */
-            if (!(code && statusCodes[code])) {
+            if (!(code && typeof code === 'number' && statusCodes[code])) {
               throw new Error(`Invalid status_code: ${code}`);
             }
 
@@ -189,7 +189,7 @@ module.exports = (Grown, util) => {
 
           set resp_body(value) {
             /* istanbul ignore else */
-            if (!(typeof value === 'string' || typeof value === 'object'
+            if (!(typeof value === 'string' || (typeof value === 'object' && !Array.isArray(value))
               || (value && typeof value.pipe === 'function') || (value instanceof Buffer))) {
               throw new Error(`Invalid resp_body: ${value}`);
             }
@@ -204,16 +204,35 @@ module.exports = (Grown, util) => {
           },
 
           set resp_charset(value) {
+            /* istanbul ignore else */
+            if (typeof value !== 'string') {
+              throw new Error(`Invalid charset: ${value}`);
+            }
+
             _response.charset = value || 'utf8';
           },
-        },
-        methods: {
-          resp_headers() {
+
+          get resp_headers() {
             return this.res.getHeaders();
           },
 
+          set resp_headers(value) {
+            /* istanbul ignore else */
+            if (Object.prototype.toString.call(value) !== '[object Object]') {
+              throw new Error(`Invalid headers: ${value}`);
+            }
+
+            this.res._headers = value;
+          },
+        },
+        methods: {
           // response headers
           get_resp_header(name) {
+            /* istanbul ignore else */
+            if (!(name && typeof name === 'string')) {
+              throw new Error(`Invalid resp_header: '${name}'`);
+            }
+
             return this.res.getHeader(name);
           },
 

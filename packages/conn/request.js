@@ -8,19 +8,12 @@ module.exports = (Grown, util) => {
   return Grown('Conn.Request', {
     $mixins() {
       function _accepts(req) {
+        /* istanbul ignore else */
         if (!_accepts.fn) {
           _accepts.fn = accepts(req);
         }
 
         return _accepts.fn;
-      }
-
-      function _is(req, types) {
-        if (!_is.fn) {
-          _is.fn = typeIs(req);
-        }
-
-        return _is.fn(types);
       }
 
       return {
@@ -36,10 +29,6 @@ module.exports = (Grown, util) => {
 
           is_json() {
             return typeIs.is(this.req.headers['content-type'], ['json']) === 'json';
-          },
-
-          has_type() {
-            return _is(this.req, Array.prototype.slice.call(arguments));
           },
 
           // current connection
@@ -117,6 +106,10 @@ module.exports = (Grown, util) => {
           },
         },
         methods: {
+          has_type() {
+            return typeIs(this.req, Array.prototype.slice.call(arguments));
+          },
+
           get_req_header(name, defvalue) {
             /* istanbul ignore else */
             if (!(name && typeof name === 'string')) {
