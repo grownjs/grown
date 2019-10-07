@@ -20,7 +20,7 @@ filepath=$(patsubst $(_base),,$(_dir))
 NODE_ENV := development
 
 # export vars
-export NODE_ENV
+export NODE_ENV ROOT
 
 # targets
 .PHONY: ? deps purge dev dist clean deploy has_body
