@@ -6,6 +6,7 @@ module.exports = Grown => {
   function _mockResponse() {
     const res = new MockRes();
 
+    res._header = null;
     res.cookies = {};
     res.clearCookie = k => { delete res.cookies[k]; };
     res.cookie = (k, v, o) => { res.cookies[k] = { value: v, opts: o || {} }; };
@@ -13,6 +14,8 @@ module.exports = Grown => {
     const _setHeader = res.setHeader;
 
     res.setHeader = (k, v) => {
+      res._header = true;
+
       if (k === 'set-cookie') {
         v.forEach(x => {
           const parts = x.split(';')[0].split('=');
