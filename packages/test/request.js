@@ -77,6 +77,12 @@ module.exports = Grown => {
               method = undefined;
             }
 
+            if (typeof method === 'object') {
+              callback = options;
+              options = method;
+              method = options.method || 'GET';
+            }
+
             if (typeof options === 'function') {
               callback = options;
               options = undefined;

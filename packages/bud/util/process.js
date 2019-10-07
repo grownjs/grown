@@ -90,6 +90,11 @@ function cleanError(e, cwd) {
     _e.code = e.statusCode || 500;
   }
 
+  /* istanbul ignore else */
+  if (e.original) {
+    _e.original = e.original;
+  }
+
   const message = (e.stack || _e.message || _e.name).match(RE_ERR_MESSAGE);
 
   _e.stack = `${message ? message[0].trim() : _e.name}\n    ${_stack.split('\n')
