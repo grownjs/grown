@@ -1,39 +1,7 @@
 /* eslint-disable no-unused-expressions */
 const { expect } = require('chai');
 
-const { exec } = require('child_process');
-
-const _close = process.version.split('.')[1] === '6' ? 'exit' : 'close';
-
-const cmd = (cwd, argv, sigkill) => new Promise(next => {
-  const execCommand = {
-    stdout: '',
-    stderr: '',
-    exitStatus: null,
-  };
-
-  const child = exec(argv, { cwd: `${__dirname}/fixtures/${cwd}` }, (error, out, err) => {
-    execCommand.failure = error || null;
-    execCommand.stdout += out;
-    execCommand.stderr += err;
-
-    if ((error != null ? error.code : void 0) != null) {
-      execCommand.exitStatus = error.code;
-    }
-
-    next(execCommand);
-  });
-
-  const _close = process.version.split('.')[1] === '6' ? 'exit' : 'close';
-
-  child.on(_close, code => {
-    execCommand.exitStatus = code;
-  });
-
-  if (sigkill) setTimeout(() => child.kill('SIGINT'), 100);
-});
-
-const bin = argv => ['node', require('path').resolve(__dirname, 'fixtures/cli.js')].concat(argv || []).join(' ');
+const { cmd, bin } = require('./helpers');
 
 /* global describe, it */
 
@@ -115,6 +83,32 @@ describe('Integration process', () => {
         expect(stdout).to.contain('─ [up] NO_STACK');
       });
     });
+
+    it('should handle subtasks', () => {
+      return cmd('sample', bin('subtest')).then(({ stdout, stderr, failure }) => {
+        expect(failure).to.be.null;
+        expect(stderr).to.eql('');
+        expect(stdout).to.contain('subtest');
+        expect(stdout).to.contain('DONE');
+      });
+    });
+
+    it('should report rejections', () => {
+      return cmd('sample', bin('subtest throw')).then(({ stdout, stderr, failure }) => {
+        expect(failure).not.to.be.null;
+        expect(stderr).to.eql('');
+        expect(stdout).to.contain('subtest');
+        expect(stdout).to.contain('─ (Error) UNHANDLED_REJECTION');
+      });
+    });
+
+    it('should report errors', () => {
+      return cmd('sample', bin('subtest error')).then(({ stdout, stderr, failure }) => {
+        expect(failure).not.to.be.null;
+        expect(stdout).to.contain('subtest');
+        expect(stderr).to.contain('FAILED');
+      });
+    });
   });
 
   describe('Subshell', () => {
@@ -126,17 +120,22 @@ describe('Integration process', () => {
         expect(stderr).to.eql('');
         expect(stdout).to.contain('DONE');
         expect(stdout).to.contain('OSOM');
+        expect(stdout).to.contain('example');
+        expect(stdout).to.contain('Done');
       });
     });
 
-    it('should handle missed-rejections', () => {
+    it('should report missed-rejections', () => {
       return cmd('sample', bin(`example -- node ${TEST_JS} throw`)).then(({ stdout, stderr, failure }) => {
         expect(failure).to.be.null;
         expect(stderr).to.include('Error: UNHANDLED_REJECTION');
+        expect(stdout).to.contain('OSOM');
+        expect(stdout).to.contain('example');
+        expect(stdout).to.contain('Done');
       });
     });
 
-    it('should handle SIGINT-calls', () => {
+    it('should report SIGINT-calls', () => {
       return cmd('sample', bin(`example -- node ${TEST_JS} wait`), true).then(({ stdout, stderr, failure }) => {
         expect(failure).not.to.be.null;
         expect(stderr).to.eql('');
@@ -144,7 +143,7 @@ describe('Integration process', () => {
       });
     });
 
-    it('should trap errors', () => {
+    it('should report trap errors', () => {
       return cmd('sample', bin(`example -- node ${TEST_JS} error`)).then(({ stdout, stderr, failure }) => {
         expect(failure).not.to.be.null;
         expect(stderr).to.contain('FAILED');

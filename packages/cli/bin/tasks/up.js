@@ -1,5 +1,7 @@
 'use strict';
 
+/* istanbul ignore file */
+
 const path = require('path');
 
 const USAGE_INFO = `

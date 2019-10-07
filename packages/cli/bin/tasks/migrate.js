@@ -1,5 +1,7 @@
 'use strict';
 
+/* istanbul ignore file */
+
 const USAGE_INFO = `
 
   Manage your database

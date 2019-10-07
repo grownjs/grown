@@ -204,10 +204,6 @@ module.exports = (Grown, util) => {
   }
 
   function _exec(argv, callback) {
-    process.on('unhandledRejection', err => _onError(err));
-    process.on('SIGINT', () => process.exit());
-    process.on('exit', this._onExit);
-
     if (argv.length) {
       const child = spawn(argv[0], argv.slice(1));
 
@@ -247,6 +243,13 @@ module.exports = (Grown, util) => {
     _tasks: {},
 
     start(taskName) {
+      /* istanbul ignore next */
+      if (!this._start) {
+        process.on('unhandledRejection', err => _onError(err));
+        process.on('SIGINT', () => process.exit());
+        process.on('exit', this._onExit);
+      }
+
       return Promise.resolve()
         .then(() => {
           const promise = Grown.CLI._showTasks(taskName);

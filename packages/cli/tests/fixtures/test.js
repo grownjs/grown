@@ -1,19 +1,19 @@
-if (process.argv[2] === 'throw') {
+if (process.argv.slice(2).indexOf('throw') !== -1) {
   process.nextTick(() => Promise.reject(new Error('UNHANDLED_REJECTION')));
   return;
 }
 
-if (process.argv[2] === 'error') {
+if (process.argv.slice(2).indexOf('error') !== -1) {
   process.stderr.write('FAILED\n');
   process.exit(2);
   return;
 }
 
-if (process.argv[2] === 'wait') {
-  setTimeout(() => process.exit(), 1000);
+if (process.argv.slice(2).indexOf('wait') !== -1) {
+  setTimeout(() => process.exit(), 500);
   return;
 }
 
 setTimeout(() => {
   process.stdout.write('DONE\n');
-}, 200);
+}, 100);
