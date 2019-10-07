@@ -15,10 +15,7 @@
     "index.js"
   ],
   "scripts": {
-    "pretest": "lerna bootstrap",
-    "pretest:ci": "lerna bootstrap",
-    "test": "lerna run test --scope '@grown/*'",
-    "test:ci": "lerna run test:ci --scope '@grown/*'"
+    "lerna": "lerna"
   },
   "bugs": {
     "url": "https://github.com/pateketrueke/grown/issues"
