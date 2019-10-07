@@ -1,7 +1,7 @@
 {
   "name": "grown",
   "version": "1.1.4",
-  "homepage": "https://grown.fun",
+  "homepage": "https://soypache.co/grown/",
   "description": "Experimental DSL for web-apps",
   "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
   "license": "MIT",
@@ -16,7 +16,8 @@
   ],
   "scripts": {
     "pretest": "lerna bootstrap",
-    "test": "lerna run test --scope '@grown/*'"
+    "test": "lerna run test --scope '@grown/*'",
+    "test:ci": "lerna run test:ci --scope '@grown/*'"
   },
   "bugs": {
     "url": "https://github.com/pateketrueke/grown/issues"
