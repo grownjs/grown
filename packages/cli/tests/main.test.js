@@ -140,7 +140,7 @@ describe('Grown.CLI', () => {
         expect(stderr).to.eql('');
         expect(stdout).not.to.contain('DONE');
         // expect(failure).not.to.be.null;
-        console.log(process.version, typeof failure);
+        console.log(process.version, typeof failure, failure);
       });
     });
 
