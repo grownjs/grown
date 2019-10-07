@@ -41,6 +41,12 @@ module.exports = Grown => {
       },
     });
 
+    function assert(actual, expected, description) {
+      if (actual && actual !== expected) {
+        throw new Error(`Response failure:\n${description}\n- actual: ${actual}\n- expected: ${expected}`);
+      }
+    }
+
     Object.defineProperty(res, 'ok', {
       value: (err, body = '', status = 200, message = '') => {
         if (typeof body === 'number') {
@@ -49,10 +55,11 @@ module.exports = Grown => {
           body = '';
         }
 
-        if (message && res.statusMessage !== message) throw new Error(`Unexpected message: ${message}`);
-        if (res.statusCode !== status) throw new Error(`Unexpected status: ${status}`);
-        if (res.body !== body) throw new Error(`Unexpected body: ${body}`);
-        if (err !== null) throw new Error(`Unexpected error: ${err}`);
+        if (message) assert(res.statusMessage, message, 'Invalid status message');
+
+        assert(res.statusCode, status, 'Invalid status code');
+        assert(res.body, body, 'Body is invalid');
+        assert(err, null, 'Unexpected failure');
       },
     });
 
