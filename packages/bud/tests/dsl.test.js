@@ -3,6 +3,7 @@ const { expect } = require('chai');
 
 const stdMocks = require('std-mocks');
 const td = require('testdouble');
+const path = require('path');
 
 const procExit = process.exit;
 
@@ -144,7 +145,7 @@ describe('Grown (bud)', () => {
 
   describe('#cwd', () => {
     it('should return any given CWD', () => {
-      expect(require('../index')('./foo').cwd).to.eql('./foo');
+      expect(require('../index')('./foo').cwd).to.eql(path.resolve('./foo'));
     });
   });
 
