@@ -53,13 +53,20 @@ function buildError(code, description) {
 function buildPubsub() {
   const _events = {};
 
-  function ee(e) {
+  function ee(e, sent) {
+    const key = e.toLowerCase();
+
     /* istanbul ignore else */
-    if (!_events[e.toLowerCase()]) {
-      _events[e.toLowerCase()] = [];
+    if (!_events[key]) {
+      _events[key] = [];
     }
 
-    return _events[e.toLowerCase()];
+    /* istanbul ignore else */
+    if (sent) {
+      _events[key]._sent = true;
+    }
+
+    return _events[key];
   }
 
   return {
@@ -84,6 +91,11 @@ function buildPubsub() {
     once(e, cb) {
       let k;
 
+      /* istanbul ignore else */
+      if (ee(e)._sent) {
+        throw new Error(`Event '${e}' already emitted`);
+      }
+
       function $once() {
         try {
           return cb.apply(null, arguments);
@@ -102,7 +114,7 @@ function buildPubsub() {
     emit(e) {
       const args = Array.prototype.slice.call(arguments, 1);
 
-      return ee(e)
+      return ee(e, true)
         .reduce((prev, cur) => prev.then(() => cur.apply(null, args)), Promise.resolve()).then(() => this);
     },
   };
