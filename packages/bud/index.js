@@ -27,6 +27,8 @@ require('global-or-local')
     'pg',
   ]);
 
+const path = require('path');
+
 const util = require('./util');
 
 // Grown-container barebones
@@ -41,6 +43,8 @@ module.exports = (cwd, argv) => {
       e: 'env',
     },
   });
+
+  const _cwd = path.resolve(cwd || process.cwd());
 
   // private container
   const $ = util.newContainer();
@@ -67,7 +71,7 @@ module.exports = (cwd, argv) => {
   process.name = process.name || 'Grown';
 
   require('./environment')(_argv);
-  require('./configure')($, cwd || process.cwd(), _argv, util);
+  require('./configure')($, _cwd, _argv, util);
 
   return Grown;
 };
