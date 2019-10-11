@@ -1,8 +1,28 @@
 'use strict';
 
 const debug = require('debug')('grown:context');
+const util = require('util');
 
 const STATUS_CODES = require('http').STATUS_CODES;
+
+function die(conn, error, options) {
+  const failure = this._.cleanError(error, options('cwd'));
+
+  /* istanbul ignore else */
+  if (options('env') !== 'production' && failure.code > 499) {
+    process.stderr.write(`${util.format('#%s Fatal. %s', conn.pid, error.stack)}\n`);
+  }
+
+  /* istanbul ignore else */
+  if (failure.summary) {
+    conn.res.setHeader('X-Failure', `${failure.summary} (${failure.message})`);
+  }
+
+  conn.res.statusMessage = failure.statusMessage || STATUS_CODES[failure.code];
+  conn.res.statusCode = failure.statusCode || failure.code;
+  conn.res.write(conn.res.statusMessage);
+  conn.res.end();
+}
 
 function buildSettings(data) {
   return (key, defvalue) => {
@@ -100,25 +120,15 @@ function endCallback(err, conn, options) {
             }
           })
           .catch(e => {
-            debug('#%s Fatal. %s', conn.pid, e.stack);
+            die.call(this, conn, e, options);
           });
       }
 
       /* istanbul ignore else */
       if (conn.res && !conn.halted) {
-        try {
-          /* istanbul ignore else */
-          if (err) {
-            const failure = this._.cleanError(err, options('cwd'));
-
-            conn.res.setHeader('X-Failure', failure.message);
-            conn.res.statusMessage = failure.statusMessage;
-            conn.res.statusCode = failure.statusCode;
-            conn.res.write(failure.message);
-            conn.res.end();
-          }
-        } catch (e) {
-          debug('#%s Fatal. %s', conn.pid, e.stack);
+        /* istanbul ignore else */
+        if (err) {
+          die.call(this, conn, err, options);
         }
       }
     })
@@ -134,7 +144,7 @@ function endCallback(err, conn, options) {
       }
     })
     .catch(e => {
-      debug('#%s Fatal. %s', conn.pid, e.stack);
+      die.call(this, conn, e, options);
     });
 }
 
