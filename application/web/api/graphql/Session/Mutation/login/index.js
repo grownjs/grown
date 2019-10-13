@@ -1,13 +1,11 @@
 module.exports = ({ useEffect, API }) => async function login({ req, args }) {
-  await useEffect(({ input }) => input(args, 'Session.LoginParams'));
-
-  const { input } = args;
+  await useEffect(({ input }) => input(req, args, 'Session.LoginParams'));
 
   return API.Session.login({
     guid: req.guid,
     params: {
-      email: input.email,
-      password: input.password,
+      email: args.input.email,
+      password: args.input.password,
     },
   });
 };

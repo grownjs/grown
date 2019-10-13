@@ -1,5 +1,5 @@
-module.exports = ({ useEffect, API }) => async function info({ req }) {
-  await useEffect(({ session }) => session(req));
+module.exports = ({ useEffect, API }) => async function info({ req, args }) {
+  await useEffect(({ input }) => input.session(req, args, 'Session.TokenParams'));
 
   return API.Session.info({
     guid: req.guid,
