@@ -13,7 +13,7 @@ module.exports = ({ bcrypt, User }) => async function updatePassword(userId, old
   }
 
   if (newPassword !== confirmPassword) {
-    throw new PasswordMismatchError('Your input is not valid');
+    throw new PasswordMismatchError('Wrong password confirmation');
   }
 
   const encrypted = await bcrypt.encode(newPassword);

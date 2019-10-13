@@ -21,7 +21,7 @@ module.exports = ({ bcrypt, User }) => async function verify(email, password, us
     : false;
 
   if (!(user && result)) {
-    throw new UserNotFoundError('Your input is invalid');
+    throw new UserNotFoundError('User not found');
   }
 
   return user;

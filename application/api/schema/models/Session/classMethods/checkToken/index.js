@@ -10,7 +10,7 @@ module.exports = ({ Session }) => async function checkToken(token) {
   });
 
   if (!session || (new Date() >= session.expirationDate)) {
-    throw new SessionExpiredError('Your session does not exists');
+    throw new SessionExpiredError('Session has been expired');
   }
 
   session.expirationDate = await session.defineExpiration(session.role);

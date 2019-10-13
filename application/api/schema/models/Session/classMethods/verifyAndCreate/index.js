@@ -7,20 +7,23 @@ module.exports = ({ Session, User }) => async function verifyAndCreate(email, pa
   const user = await User.verify(email, password);
 
   if (!user.verified) {
-    throw new UserNotVerifiedError('User is not verified yet');
+    throw new UserNotVerifiedError('User not allowed');
   }
 
-  const sessionData = {
-    userId: user.id,
-    email: user.email,
-    role: user.role,
-  };
+  let session;
 
   try {
-    const session = await Session.create(sessionData);
-
-    return { user, session };
+    session = await Session.create({
+      userId: user.id,
+      email: user.email,
+      role: user.role,
+    });
   } catch (err) {
     throw new PasswordMismatchError(err);
   }
+
+  return {
+    user,
+    session,
+  };
 };

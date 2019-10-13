@@ -7,7 +7,7 @@ module.exports = ({ bcrypt, User, Token }) => async function setPassword(token, 
   const { userId } = await Token.verify(token, 'RECOVER_PASSWORD');
 
   if (newPassword !== confirmPassword) {
-    throw new PasswordMismatchError('Your input is not valid');
+    throw new PasswordMismatchError('Wrong password confirmation');
   }
 
   const encrypted = await bcrypt.encode(newPassword);
