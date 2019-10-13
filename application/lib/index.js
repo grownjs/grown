@@ -8,16 +8,16 @@ const Models = Application.use(require('./models'));
 
 Application('GRPC.Gateway', {
   include: [
-    GRPC.Loader.scan(path.join(__dirname, 'api/schema/generated/index.proto')),
+    GRPC.Loader.scan(path.join(__dirname, '../api/schema/generated/index.proto')),
   ],
 });
 
 Application('Services', {
   include: [
-    GRPC.Gateway.setup(Application.load(path.join(__dirname, 'api/handlers'))),
+    GRPC.Gateway.setup(Application.load(path.join(__dirname, '../api/handlers'))),
   ],
   getSchema(ref) {
-    return Schema.get(ref, require('./api/schema/generated'));
+    return Schema.get(ref, require('../api/schema/generated'));
   },
   getMailer() {
     return require('./mailer');

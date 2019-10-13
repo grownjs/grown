@@ -1,7 +1,7 @@
 const {
   UserNotVerifiedError,
   PasswordMismatchError,
-} = require('~/lib/api/errors');
+} = require('~/api/errors');
 
 module.exports = ({ Session, User }) => async function verifyAndCreate(email, password) {
   const user = await User.verify(email, password);

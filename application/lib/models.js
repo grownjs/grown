@@ -7,10 +7,10 @@ module.exports = Application => {
   return Application('Models', {
     include: [
       Application.Model.DB.bundle({
-        models: path.join(__dirname, 'api/schema/models'),
+        models: path.join(__dirname, '../api/schema/models'),
         database: {
           config: require('../db/config'),
-          refs: require('./api/schema/generated/index.json'),
+          refs: require('../api/schema/generated/index.json'),
         },
       }),
     ],

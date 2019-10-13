@@ -2,6 +2,10 @@ id: User
 
 service:
   calls:
+  - set: resetPassword
+    resp: Success
+    input: ResetPasswordParams
+    params: ResetPasswordRequest
   - set: updatePassword
     resp: User
     input: UpdatePasswordParams
@@ -14,6 +18,24 @@ service:
 definitions:
   Success:
     $ref: 'apiTypes#/definitions/SuccessfulResponse'
+  ResetPasswordParams:
+    properties:
+      token:
+        type: string
+      newPassword:
+        type: string
+      confirmPassword:
+        type: string
+    required:
+      - token
+      - newPassword
+      - confirmPassword
+  ResetPasswordRequest:
+    properties:
+      params:
+        $ref: '#/definitions/ResetPasswordParams'
+    required:
+      - params
   UpdatePasswordParams:
     properties:
       userId:
@@ -25,6 +47,7 @@ definitions:
       confirmPassword:
         type: string
     required:
+      - userId
       - oldPassword
       - newPassword
       - confirmPassword

@@ -14,14 +14,14 @@
     "start": "node .",
     "logs": "logrof --",
     "debug": "ndb npm run watch --",
-    "watch": "nodemon --ignore '{build,docker,logs,web/front}/**' --ignore '**/generated/**' --ignore Makefile",
+    "watch": "nodemon --ignore '{build,docker,logs,web}/**' --ignore '**/generated/**' --ignore Makefile",
     "watch:mail": "mailor watch lib/mailer/templates -d lib/mailer/generated --no-open",
     "build:mail": "mailor build lib/mailer/templates -d lib/mailer/generated",
     "mocha": "NODE_ENV=test _mocha -c --exit --recursive",
     "schema": "npm run schema-to:json && npm run schema-to:graphql && npm run schema-to:protobuf",
-    "schema-to:json": "json-schema-to -tw lib/api/schema -pbc index --json",
-    "schema-to:graphql": "json-schema-to -tw lib/api/schema -pc index --graphql",
-    "schema-to:protobuf": "json-schema-to -tw lib/api/schema -pc index --protobuf -br ../common -k API",
+    "schema-to:json": "json-schema-to -tw api/schema -pbc index --json",
+    "schema-to:graphql": "json-schema-to -tw api/schema -pc index --graphql",
+    "schema-to:protobuf": "json-schema-to -tw api/schema -pc index --protobuf -br ../common -k API",
     "dev": "tarima watch -p 4001 -P '/api/v1/graphql -> http://localhost:3000'",
     "dist": "tarima -mqe $NODE_ENV",
     "size": "npm run dist && size-limit",
@@ -44,6 +44,9 @@
   "tarima": {
     "from": "web/front",
     "public": "build",
+    "copy": [
+      "web/public/**"
+    ],
     "rename": [
       "**/front/**:{fullpath/2}"
     ],
@@ -102,7 +105,7 @@
     "svelte": "^3.3.0",
     "svero": "^1.0.0",
     "svql": "^0.0.10",
-    "tarima": "^4.5.5",
+    "tarima": "^4.5.6",
     "tarima-lr": "^0.5.0",
     "terser": "^3.10.12",
     "testcafe": "^1.0.1",

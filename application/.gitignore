@@ -12,7 +12,6 @@ codecov.sh
 build
 pgdata
 chrome
-public
 *coverage
 generated
 asciidocfx*
