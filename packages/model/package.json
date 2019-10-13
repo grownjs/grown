@@ -7,7 +7,7 @@
   "dependencies": {
     "debug": "^3.1.0",
     "formator": "github:pateketrueke/formator#latest",
-    "json-schema-sequelizer": "^0.20.4"
+    "json-schema-sequelizer": "^0.20.5"
   },
   "publishConfig": {
     "access": "public"
