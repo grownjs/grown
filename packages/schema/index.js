@@ -4,22 +4,16 @@ module.exports = (Grown, util) => {
   const Ajv = require('ajv');
   const jsf = require('json-schema-faker');
 
-  const ajv = new Ajv({
-    validateSchema: true,
-    jsonPointers: true,
-    schemaId: 'auto',
-  });
-
   const defaults = {
     random: Math.random,
     useDefaultValue: false,
     alwaysFakeOptionals: false,
   };
 
-  function _validateFrom(schema, refs, data) {
+  function _validateFrom(id, ref, refs, data) {
     return new Promise((resolve, reject) => {
       try {
-        this._assertFrom(schema, refs, data);
+        this._assertFrom(id, ref, refs, data);
         resolve(data);
       } catch (e) {
         reject(e);
@@ -27,15 +21,24 @@ module.exports = (Grown, util) => {
     });
   }
 
-  function _assertFrom(schema, refs, data) {
-    const valid = ajv.validate(refs[schema], data);
+  function _assertFrom(id, ref, refs, data) {
+    const ajv = new Ajv({
+      validateSchema: true,
+      jsonPointers: true,
+      schemaId: 'auto',
+    });
+
+    refs.forEach(sub => {
+      ajv.addSchema(sub, sub.id);
+    });
+
+    const valid = ajv.validate({ $ref: ref }, data);
 
     /* istanbul ignore else */
     if (!valid) {
-      const err = new Error(`Invalid input for ${schema}`);
+      const err = new Error(`Invalid input for ${id}`);
 
       err.sample = data;
-      err.schema = refs[schema];
       err.errors = ajv.errors;
 
       throw err;
@@ -44,10 +47,10 @@ module.exports = (Grown, util) => {
     return valid;
   }
 
-  function _fakeAll(schema, refs, opts) {
+  function _fakeAll(ref, refs, opts) {
     jsf.option(util.extendValues(opts, defaults));
 
-    return jsf(schema, refs);
+    return jsf(ref, refs);
   }
 
   return Grown('Schema', {
@@ -55,25 +58,20 @@ module.exports = (Grown, util) => {
     _assertFrom,
     _fakeAll,
 
-    load(db) {
-      if (!(db && db.repository)) {
-        throw new Error(`Expecting database, given '${db}'`);
-      }
+    get(id, refs) {
+      const [entity, subpath] = id.split('.');
 
-      const map = {};
-      const refs = db.repository.schemas;
+      const ref = subpath
+        ? `${entity}#/definitions/${subpath}`
+        : entity;
 
-      Object.keys(refs).forEach(id => {
-        map[id] = {
-          fake: (nth, opts) => this._fakeAll(nth !== 1
-            ? { type: 'array', items: { $ref: id }, minItems: nth || 0 }
-            : { $ref: id }, refs, opts),
-          assert: data => this._assertFrom(id, refs, data),
-          validate: data => this._validateFrom(id, refs, data),
-        };
-      });
-
-      return map;
+      return {
+        fake: (nth, opts) => this._fakeAll(nth !== 1
+          ? { type: 'array', items: { $ref: ref }, minItems: nth || 0 }
+          : { $ref: ref }, refs, opts),
+        assert: data => this._assertFrom(id, ref, refs, data),
+        validate: data => this._validateFrom(id, ref, refs, data),
+      };
     },
   });
 };
