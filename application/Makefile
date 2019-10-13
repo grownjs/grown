@@ -129,6 +129,9 @@ all: deps ## Develop NodeJS application only  (host)
 dist: deps ## Build artifacts for production  (host)
 	@npm run build:mail && npm run schema && npm run dist
 
+repl: ## Interactive console  (host)
+	@npm run grown -- repl models:$(models)
+
 seed: deps ## Run custom seeders  (host)
 	@npm run grown -- backup models:$(models) --load db/seeders/$(NODE_ENV)
 
