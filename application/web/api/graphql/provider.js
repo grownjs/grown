@@ -4,6 +4,10 @@ module.exports = {
       this.Services.API.Session.checkToken({ params: { token } })
         .then(session => next(null, session))
         .catch(e => next(e, false));
+    }, {
+      input: () => {
+        console.log('VALIDATE INPUT');
+      },
     });
   },
   getAPI() {
