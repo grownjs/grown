@@ -1,8 +1,11 @@
 module.exports = ({ useEffect, API }) => async function updatePassword({ req, args }) {
-  // await useEffect(({ auth }) => auth.input(req, args, 'User.UpdatePasswordParams'));
-  await useEffect(({ session }) => session(req));
+  await useEffect(({ input }) => input.session(req, args, 'User.UpdatePasswordParams'));
 
-  const { input: { oldPassword, newPassword, confirmPassword } } = args;
+  const {
+    input: {
+      oldPassword, newPassword, confirmPassword,
+    },
+  } = args;
 
   return API.User.updatePassword({
     guid: req.guid,

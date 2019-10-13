@@ -1,5 +1,5 @@
 const {
-  TokenExpiredError,
+  SessionExpiredError,
 } = require('~/api/errors');
 
 module.exports = ({ Session }) => async function checkToken(token) {
@@ -10,7 +10,7 @@ module.exports = ({ Session }) => async function checkToken(token) {
   });
 
   if (!session || (new Date() >= session.expirationDate)) {
-    throw new TokenExpiredError('Your session does not exists');
+    throw new SessionExpiredError('Your session does not exists');
   }
 
   session.expirationDate = await session.defineExpiration(session.role);

@@ -47,7 +47,6 @@ definitions:
       confirmPassword:
         type: string
     required:
-      - userId
       - oldPassword
       - newPassword
       - confirmPassword

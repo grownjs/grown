@@ -1,16 +1,18 @@
-module.exports = ({ useEffect, API }) => async function updatePassword({ req, args }) {
-  // await useEffect(({ auth }) => auth.input(req, args, 'User.UpdatePasswordParams'));
-  // await useEffect(({ session }) => session(req));
+module.exports = ({ useEffect, API }) => async function resetPassword({ req, args }) {
+  await useEffect(({ input }) => input(req, args, 'User.ResetPasswordParams'));
 
-  // const { input: { oldPassword, newPassword, confirmPassword } } = args;
+  const {
+    input: {
+      token, newPassword, confirmPassword,
+    },
+  } = args;
 
-  // return API.User.updatePassword({
-  //   guid: req.guid,
-  //   params: {
-  //     userId: req.user.id,
-  //     oldPassword,
-  //     newPassword,
-  //     confirmPassword,
-  //   },
-  // });
+  return API.User.resetPassword({
+    guid: req.guid,
+    params: {
+      token,
+      newPassword,
+      confirmPassword,
+    },
+  });
 };

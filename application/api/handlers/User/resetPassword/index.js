@@ -1,11 +1,11 @@
-module.exports = ({ User }) => async function updatePassword({ request }) {
-  // const {
-  //   params: {
-  //     userId, oldPassword, newPassword, confirmPassword,
-  //   },
-  // } = request;
+module.exports = ({ User }) => async function resetPassword({ request }) {
+  const {
+    params: {
+      token, newPassword, confirmPassword,
+    },
+  } = request;
 
-  // await User.updatePassword(userId, oldPassword, newPassword, confirmPassword);
+  await User.resetPassword(token, newPassword, confirmPassword);
 
   return {
     success: true,

@@ -13,12 +13,18 @@ const UserErrors = {
   OldPasswordMismatchError: buildError('User.OLD_PASSWORD_MISMATCH', IS_FAILED_PRECONDITION, 400),
 };
 
+const TokenErrors = {
+  ResetPasswordExpiredError: buildError('Token.RESET_PASSWORD_EXPIRED', IS_RESOURCE_EXHAUSTED, 401),
+  TokenExpiredError: buildError('Token.RESET_PASSWORD_EXPIRED', IS_RESOURCE_EXHAUSTED, 401),
+};
+
 const SessionErrors = {
   SessionNotFoundError: buildError('Session.NOT_FOUND', IS_NOT_FOUND, 404),
-  TokenExpiredError: buildError('Session.TOKEN_EXPIRED', IS_RESOURCE_EXHAUSTED, 401),
+  SessionExpiredError: buildError('Session.TOKEN_EXPIRED', IS_RESOURCE_EXHAUSTED, 401),
 };
 
 module.exports = {
   ...UserErrors,
+  ...TokenErrors,
   ...SessionErrors,
 };

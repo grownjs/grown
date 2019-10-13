@@ -1,5 +1,60 @@
 <script>
+  import { In, Status, mutation } from 'svql';
+  import { Route, Link, navigateTo } from 'svero';
+  import { RESET_PASSWORD_REQUEST } from '../../shared/queries';
+
+  let cssClass = '';
+
+  export let id = '';
+  export let className = '';
+  export { cssClass as class };
+
   export let router = null;
+  export let label = 'change your password';
+
+  let updating = null;
+  let newPassword = null;
+  let confirmPassword = null;
+
+  function clear() {
+    updating = null;
+    newPassword = null;
+    confirmPassword = null;
+    navigateTo('/');
+  }
+
+  const doReset = mutation(RESET_PASSWORD_REQUEST, commit => function resetPasswordRequest$() {
+    updating = commit({
+      newPassword,
+      confirmPassword,
+      token: router.params.token,
+    }, () => {
+      newPassword = null;
+      confirmPassword = null;
+
+      setTimeout(() => {
+        location.href = '/';
+      }, 1000);
+    });
+  });
 </script>
 
-<h3>Your token: {router.params.token}</h3>
+<Status
+  fixed
+  from={updating}
+  pending="Updating your password..."
+  otherwise="Password was successfully set..."
+/>
+
+<div {id} class={className || cssClass}>
+  <In modal autofocus id="password-reset" on:cancel={clear}>
+    <h2>Set a new password</h2>
+    <label>
+      New password: <input type="password" bind:value={newPassword} autocomplete="new-password" />
+    </label>
+    <label>
+      Confirm new password: <input type="password" bind:value={confirmPassword} autocomplete="confirm-password" />
+    </label>
+    <button on:click={doReset}>Reset</button> or <Link href="" on:click={clear}>cancel</Link>
+  </In>
+</div>

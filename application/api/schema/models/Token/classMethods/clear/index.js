@@ -1,10 +1,8 @@
-module.exports = ({ Token }) => async function clear(user, type) {
-  const query = {
+module.exports = ({ Token }) => async function clear(userId, type) {
+  await Token.destroy({
     where: {
       type,
-      userId: user.id,
+      userId,
     },
-  };
-
-  return Token.destroy(query);
+  });
 };

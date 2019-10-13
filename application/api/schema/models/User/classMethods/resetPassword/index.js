@@ -1,24 +1,24 @@
-// const {
-//   PasswordMismatchError,
-//   OldPasswordMismatchError,
-// } = require('~/api/errors');
+const {
+  PasswordMismatchError,
+  ResetPasswordExpiredError,
+} = require('~/api/errors');
 
-module.exports = ({ User, bcrypt }) => async function updatePassword(userId, oldPassword, newPassword, confirmPassword) {
-  // let user;
+module.exports = ({ bcrypt, User, Token }) => async function setPassword(token, newPassword, confirmPassword) {
+  const { userId } = await Token.verify(token, 'RECOVER_PASSWORD');
 
-  // try {
-  //   user = await User.verify(null, oldPassword, userId);
-  // } catch (e) {
-  //   throw new OldPasswordMismatchError(e);
-  // }
+  if (newPassword !== confirmPassword) {
+    throw new PasswordMismatchError('Your input is not valid');
+  }
 
-  // if (newPassword !== confirmPassword) {
-  //   throw new PasswordMismatchError('Your input is not valid');
-  // }
+  const encrypted = await bcrypt.encode(newPassword);
 
-  // const encrypted = await bcrypt.encode(newPassword);
+  await Token.clear(userId, 'RECOVER_PASSWORD');
 
-  // user.password = encrypted;
-
-  // return user.save();
+  return User.update({
+    password: encrypted,
+  }, {
+    where: {
+      id: userId,
+    },
+  });
 };

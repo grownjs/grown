@@ -160,10 +160,10 @@ install: ## Install global dependencies  (host)
 	@npm i -g fkill-cli nodemon ndb
 
 schema: deps ## Generate sources from given schemas  (host)
-	@$(call ls,api/schema/generated,npm run schema)
+	@npm run schema
 
 templates: deps ## Regenerate mailing templates  (host)
-	@$(call ls,lib/mailer/generated,npm run build:mail)
+	@npm run build:mail
 
 database: deps ## Start database for development  (host)
 	@make -s migrate-up reset

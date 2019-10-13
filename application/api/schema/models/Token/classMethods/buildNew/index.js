@@ -1,12 +1,8 @@
-module.exports = ({ Token }) => async function buildNew(user, type) {
-  const userData = user || {};
+module.exports = ({ Token }) => async function buildNew(userId, type) {
+  await Token.clear(userId, type);
 
-  const data = {
-    userId: userData.id,
+  return Token.create({
+    userId,
     type,
-  };
-
-  await Token.clear(userData, type);
-
-  return Token.create(data);
+  });
 };
