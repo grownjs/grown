@@ -5,7 +5,9 @@ module.exports = ({ User }) => async function updatePassword({ request }) {
     },
   } = request;
 
-  const user = await User.updatePassword(userId, oldPassword, newPassword, confirmPassword);
+  await User.updatePassword(userId, oldPassword, newPassword, confirmPassword);
 
-  return user.getRaw();
+  return {
+    success: true,
+  };
 };

@@ -1,7 +1,7 @@
 <script>
   import { navigateTo } from 'svero';
   import { Status, mutation, state } from 'svql';
-  import Password from './Password.svelte';
+  import PasswordChange from './PasswordChange.svelte';
   import { LOGOUT_REQUEST } from '../../shared/queries';
 
   let logout;
@@ -26,7 +26,7 @@
 
 {#if $state.me}
   <span>Hello, {$state.me.email}</span>
-  <Password class="menu">
+  <PasswordChange class="menu">
     <button on:click|preventDefault={doLogout}>Log out</button> or
-  </Password>
+  </PasswordChange>
 {/if}

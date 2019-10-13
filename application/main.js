@@ -1,3 +1,11 @@
+if (process.env.NODE_ENV !== 'production') {
+  global.console.debug = (...args) => {
+    args.forEach(input => {
+      process.stdout.write(JSON.stringify({ level: 'INFO', ...input }));
+    });
+  };
+}
+
 const log = require('logro').createLogger(__filename);
 const Application = require('./lib');
 

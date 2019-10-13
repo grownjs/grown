@@ -115,7 +115,7 @@
     "@grown/parsers": "^0.0.3",
     "@grown/schema": "^0.0.4",
     "@grown/session": "^0.0.3",
-    "berro": "^0.0.1",
+    "berro": "^0.0.2",
     "express-useragent": "^1.0.12",
     "grown": "^1.1.4",
     "json-schema-sequelizer": "^0.20.3",

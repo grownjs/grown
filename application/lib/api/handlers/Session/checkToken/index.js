@@ -3,7 +3,7 @@ module.exports = ({ Session }) => async function checkToken({ request }) {
 
   const session = await Session.checkToken(params.token);
 
-  const response = {
+  return {
     token: session.token,
     expirationDate: session.expirationDate.toISOString(),
     user: {
@@ -12,6 +12,4 @@ module.exports = ({ Session }) => async function checkToken({ request }) {
       role: session.role,
     },
   };
-
-  return response;
 };

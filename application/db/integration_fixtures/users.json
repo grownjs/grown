@@ -1,7 +1,7 @@
 [
   {
     "firstName": "Valid name",
-    "lastName": "user",
+    "lastName": "User",
     "email": "admin@email.com",
     "password": "Password1$",
     "role": "ADMIN",
@@ -9,10 +9,18 @@
   },
   {
     "firstName": "Update password",
-    "lastName": "user",
+    "lastName": "User",
     "email": "update_password@email.com",
     "password": "Password1$",
     "role": "ADMIN",
     "verified": true
+  },
+  {
+    "firstName": "Non verified",
+    "lastName": "User",
+    "email": "non_verified@email.com",
+    "password": "Password1$",
+    "role": "USER",
+    "verified": false
   }
 ]

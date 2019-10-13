@@ -34,7 +34,7 @@
     <Auth />
     <Route path="#*" component={NotFound} />
     <Route path="*" component={NotFound} />
-    <Route path="/" component={Home} />
-    <Route path="/reset-password/:token" component={ResetPassword} />
+    <Route exact path="/" component={Home} />
+    <Route exact path="/reset-password/:token" component={ResetPassword} />
   </Router>
 </main>

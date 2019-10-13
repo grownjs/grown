@@ -1,4 +1,7 @@
 module.exports = {
+  mailer() {
+    return this.Services.getMailer();
+  },
   getUser() {
     return this.Services.getModel('User');
   },
@@ -7,8 +10,5 @@ module.exports = {
   },
   getSession() {
     return this.Services.getModel('Session');
-  },
-  mailer() {
-    return this.Services.getMailer();
   },
 };

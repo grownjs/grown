@@ -1,4 +1,4 @@
-module.exports = ({ User, Token, mailer }) => async function recoverPassword({ request }) {
+module.exports = ({ mailer, User, Token }) => async function recoverPassword({ request }) {
   const {
     guid,
     params: {

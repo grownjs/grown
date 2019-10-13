@@ -9,6 +9,9 @@ module.exports = ({ Session }) => async function info({ request }) {
     where: {
       token: params.token,
     },
+    include: [
+      Session.associations.user,
+    ],
   };
 
   const session = await Session.findOne(query);
@@ -17,15 +20,15 @@ module.exports = ({ Session }) => async function info({ request }) {
     throw new SessionNotFoundError('Your session does not exists');
   }
 
-  const response = {
+  return {
     user: {
       id: session.userId,
       email: session.email,
       role: session.role,
+      firstName: session.user.firstName,
+      lastName: session.user.lastName,
     },
     token: session.token,
     expirationDate: session.expirationDate.toISOString(),
   };
-
-  return response;
 };
