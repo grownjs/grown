@@ -3,6 +3,7 @@ const path = require('path');
 const Application = require('grown')();
 
 const GRPC = Application.use(require('@grown/grpc'));
+const Schema = Application.use(require('@grown/schema'));
 const Models = Application.use(require('./models'));
 
 Application('GRPC.Gateway', {
@@ -15,6 +16,9 @@ Application('Services', {
   include: [
     GRPC.Gateway.setup(Application.load(path.join(__dirname, 'api/handlers'))),
   ],
+  getSchema(ref) {
+    return Schema.get(ref, require('./api/schema/generated'));
+  },
   getMailer() {
     return require('./mailer');
   },

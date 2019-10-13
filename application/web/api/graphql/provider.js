@@ -5,8 +5,8 @@ module.exports = {
         .then(session => next(null, session))
         .catch(e => next(e, false));
     }, {
-      input: () => {
-        console.log('VALIDATE INPUT');
+      input: (data, ref) => {
+        return this.Services.getSchema(ref).validate(data.input);
       },
     });
   },

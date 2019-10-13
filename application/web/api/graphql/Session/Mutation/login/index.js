@@ -1,8 +1,5 @@
 module.exports = ({ useEffect, API }) => async function login({ req, args }) {
-  await useEffect(({ input }) => {
-    console.log(typeof input, { input });
-    // auth.input(req, args, "User.UpdatePasswordParams")
-  });
+  await useEffect(({ input }) => input(args, 'Session.LoginParams'));
 
   const { input } = args;
 
