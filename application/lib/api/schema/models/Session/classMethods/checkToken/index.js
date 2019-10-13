@@ -1,6 +1,6 @@
 const {
   TokenExpiredError,
-} = require('~/api/errors');
+} = require('~/lib/api/errors');
 
 module.exports = ({ Session }) => async function checkToken(token) {
   const session = await Session.findOne({

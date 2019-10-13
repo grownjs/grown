@@ -1,4 +1,9 @@
-module.exports = ({ API }) => function login({ req, args }) {
+module.exports = ({ useEffect, API }) => async function login({ req, args }) {
+  await useEffect(({ validate }) => {
+    console.log(validate);
+    // auth.input(req, args, "User.UpdatePasswordParams")
+  });
+
   const { input } = args;
 
   return API.Session.login({

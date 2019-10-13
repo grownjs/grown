@@ -28,8 +28,8 @@ const initServer = module.exports = () => {
   const path = require('path');
 
   server.mount('/', Application.GraphQL.setup([
-    path.join(__dirname, 'api/schema/common.gql'),
-    path.join(__dirname, 'api/schema/generated/index.gql'),
+    path.join(__dirname, 'lib/api/schema/common.gql'),
+    path.join(__dirname, 'lib/api/schema/generated/index.gql'),
   ], Application.load(path.join(__dirname, 'web/api/graphql'))));
 
   server.on('start', () => Application.Models.connect().then(() => Application.Services.start()));

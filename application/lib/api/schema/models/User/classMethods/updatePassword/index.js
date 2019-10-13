@@ -1,7 +1,7 @@
 const {
   PasswordMismatchError,
   OldPasswordMismatchError,
-} = require('~/api/errors');
+} = require('~/lib/api/errors');
 
 module.exports = ({ User, bcrypt }) => async function updatePassword(userId, oldPassword, newPassword, confirmPassword) {
   let user;

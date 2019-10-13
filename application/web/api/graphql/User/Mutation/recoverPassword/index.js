@@ -1,5 +1,5 @@
-module.exports = ({ use, API }) => async function recoverPassword({ req, args }) {
-  // await use(({ input }) => input(req, args, 'User.RecoverPasswordParams'));
+module.exports = ({ useEffect, API }) => async function recoverPassword({ req, args }) {
+  // await useEffect(({ input }) => input(req, args, 'User.RecoverPasswordParams'));
 
   const { input: { email } } = args;
 

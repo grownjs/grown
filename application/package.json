@@ -14,7 +14,7 @@
     "start": "node .",
     "logs": "logrof --",
     "debug": "ndb npm run watch --",
-    "watch": "nodemon --ignore '{build,docker,logs,web}/**' --ignore '**/generated/**' --ignore Makefile",
+    "watch": "nodemon --ignore '{build,docker,logs,web/front}/**' --ignore '**/generated/**' --ignore Makefile",
     "watch:mail": "mailor watch lib/mailer/templates -d lib/mailer/generated --no-open",
     "build:mail": "mailor build lib/mailer/templates -d lib/mailer/generated",
     "mocha": "NODE_ENV=test _mocha -c --exit --recursive",

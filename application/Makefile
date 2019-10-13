@@ -122,7 +122,7 @@ dev: deps ## Single-shot development workspace  (host)
 	@make -s up service=db
 	@make -s schema templates database node
 
-node: deps ## Develop NodeJS application only  (host)
+all: deps ## Develop NodeJS application only  (host)
 	@fkill -s :4001 :3000 :1080 :1081 :1025
 	@(npm run watch 2>&1 | npm run logs) & npm run watch:mail & npm run dev
 
