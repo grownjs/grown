@@ -278,7 +278,7 @@ module.exports = (Grown, util) => {
 
             return task.callback(Grown, util);
           } catch (e) {
-            _onError(e);
+            _onError(e, taskName);
           }
         });
     },

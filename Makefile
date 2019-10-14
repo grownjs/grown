@@ -14,10 +14,10 @@ install:
 	@npm i -g lerna
 
 setup:
-	@npm run lerna bootstrap
+	@lerna bootstrap
 
 test\:%:
 	@cd packages/$(subst test:,,$@) && npm run $(TASK)
 
 clean:
-	@npm run lerna clean -- -y
+	@lerna clean -y

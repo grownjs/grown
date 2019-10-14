@@ -15,7 +15,6 @@
     "index.js"
   ],
   "scripts": {
-    "lerna": "lerna",
     "test": "lerna run test:ci --scope '@grown/*'",
     "pretest": "lerna bootstrap"
   },
