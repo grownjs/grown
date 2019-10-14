@@ -1,9 +1,7 @@
 module.exports = {
-  useEffect() {
-    return this.Session.Auth.middleware((token, next) => {
-      this.Services.API.Session.checkToken({ params: { token } })
-        .then(session => next(null, session))
-        .catch(e => next(e, false));
+  useAuth() {
+    return this.Session.Auth.effect(token => {
+      return this.Services.API.Session.checkToken({ params: { token } });
     }, {
       input: (req, data, definition) => {
         return this.Services.getSchema(definition).validate(data.input);

@@ -1,6 +1,9 @@
 <script>
-  import { navigateTo } from 'svero';
-  import { Status, mutation, state } from 'svql';
+  import {
+    Status,
+    saveSession, mutation, state,
+  } from 'svql';
+
   import PasswordChange from './PasswordChange.svelte';
   import { LOGOUT_REQUEST } from '../../shared/queries';
 
@@ -8,8 +11,7 @@
 
   const doLogout = mutation(LOGOUT_REQUEST, commit => function logout$() {
     logout = commit(() => {
-      localStorage.clear();
-
+      saveSession();
       setTimeout(() => {
         location.href = '/';
       }, 1000);
@@ -27,6 +29,7 @@
 {#if $state.me}
   <span>Hello, {$state.me.email}</span>
   <PasswordChange class="menu">
-    <button on:click|preventDefault={doLogout}>Log out</button> or
+    <button on:click|preventDefault={doLogout}>Log out</button>
+    {#if !$state.me.platform} or {/if}
   </PasswordChange>
 {/if}

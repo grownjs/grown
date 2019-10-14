@@ -1,5 +1,9 @@
 <script>
-  import { In, Status, mutation } from 'svql';
+  import {
+    In, Status, mutation,
+    state,
+  } from 'svql';
+
   import { Route, Link, navigateTo } from 'svero';
   import { UPDATE_PASSWORD_REQUEST } from '../../shared/queries';
 
@@ -35,7 +39,7 @@
       confirmPassword = null;
 
       setTimeout(() => {
-        location.href = '/';
+        navigateTo('/');
       }, 1000);
     });
   });
@@ -50,7 +54,9 @@
 
 <div {id} class={className || cssClass}>
   <slot />
-  <Link href="/password-change">{label}</Link>
+  {#if !$state.me.platform}
+    <Link href="/password-change">{label}</Link>
+  {/if}
 </div>
 
 <Route path="/password-change">

@@ -13,7 +13,7 @@ module.exports = ({ Session }) => async function checkToken(token) {
     throw new SessionExpiredError('Session has been expired');
   }
 
-  session.expirationDate = await session.defineExpiration(session.role);
+  session.expirationDate = Session.defineExpiration(session.role);
 
   await session.save();
 

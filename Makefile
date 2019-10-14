@@ -8,10 +8,12 @@ test-all:
 	@make test:bud test:cli test:server test:parsers test:conn
 
 test-ci:
-	@make install test-all
+	@make test-all
 
 install:
-	@npm run lerna clean
+	@npm i -g lerna
+
+setup:
 	@npm run lerna bootstrap
 
 test\:%:

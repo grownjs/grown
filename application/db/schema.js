@@ -35,6 +35,12 @@ module.exports = {
           primaryKey: true,
           autoIncrement: true,
         },
+        platform: {
+          type: dataTypes.STRING,
+        },
+        identifier: {
+          type: dataTypes.STRING,
+        },
         firstName: {
           type: dataTypes.STRING,
         },
@@ -45,7 +51,7 @@ module.exports = {
           type: dataTypes.STRING,
         },
         role: {
-          type: dataTypes.ENUM('ADMIN', 'USER', 'GUEST'),
+          type: dataTypes.ENUM('ADMIN', 'GUEST', 'USER'),
         },
         password: {
           type: dataTypes.STRING,
@@ -80,7 +86,7 @@ module.exports = {
           type: dataTypes.DATE,
         },
         role: {
-          type: dataTypes.ENUM('ADMIN', 'USER', 'GUEST'),
+          type: dataTypes.ENUM('ADMIN', 'GUEST', 'USER'),
         },
         // user <User>
         userId: {

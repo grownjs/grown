@@ -3,32 +3,33 @@
 module.exports = {
   up: (queryInterface, dataTypes) => [
     () =>
-      queryInterface.createTable('users', {
+      queryInterface.createTable('sessions', {
         id: {
           type: dataTypes.INTEGER,
           primaryKey: true,
           autoIncrement: true,
         },
-        firstName: {
-          type: dataTypes.STRING,
-        },
-        lastName: {
+        token: {
           type: dataTypes.STRING,
         },
         email: {
           type: dataTypes.STRING,
         },
-        role: {
-          type: dataTypes.ENUM('ADMIN', 'USER', 'GUEST'),
-        },
-        password: {
-          type: dataTypes.STRING,
-        },
-        verified: {
-          type: dataTypes.BOOLEAN,
-        },
-        deletedAt: {
+        expirationDate: {
           type: dataTypes.DATE,
+        },
+        role: {
+          type: dataTypes.ENUM('ADMIN', 'GUEST', 'USER'),
+        },
+        // user <User>
+        userId: {
+          type: dataTypes.INTEGER,
+          references: {
+            model: 'users',
+            key: 'id',
+          },
+          onDelete: 'SET NULL',
+          onUpdate: 'CASCADE',
         },
         createdAt: {
           type: dataTypes.DATE,
@@ -40,7 +41,7 @@ module.exports = {
   ],
   down: (queryInterface, dataTypes) => [
     () =>
-      queryInterface.dropTable('users'),
+      queryInterface.dropTable('sessions'),
   ],
   change: (queryInterface, dataTypes) => [
   ],

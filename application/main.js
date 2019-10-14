@@ -9,6 +9,8 @@ const initServer = module.exports = () => {
   Application.use(require('@grown/session/auth'));
   Application.use(require('@grown/model/formator'));
 
+  const config = require('./api/config');
+
   const server = new Application({
     cors: Application.env !== 'production',
   });
@@ -23,11 +25,17 @@ const initServer = module.exports = () => {
       options: { attributes: false },
       database: Application.Model.DB.default,
     }),
+    Application.Session.Auth.use('/auth', {
+      facebook: {
+        enabled: true,
+        credentials: config.facebook,
+      },
+    }, (type, userInfo) => Application.Services.API.Session.checkLogin({ params: { type, auth: userInfo } })),
   ]);
 
   const path = require('path');
 
-  server.mount('/', Application.GraphQL.setup([
+  server.mount('/api/v1/graphql', Application.GraphQL.setup([
     path.join(__dirname, 'api/schema/common.gql'),
     path.join(__dirname, 'api/schema/generated/index.gql'),
   ], Application.load(path.join(__dirname, 'api/schema/graphql'))));

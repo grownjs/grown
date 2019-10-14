@@ -17,6 +17,10 @@ service:
     resp: Me
     input: TokenParams
     params: TokenRequest
+  - get: checkLogin
+    resp: Me
+    input: CheckParams
+    params: CheckRequest
 
 definitions:
   Me:
@@ -41,6 +45,32 @@ definitions:
     properties:
       params:
         $ref: '#/definitions/TokenParams'
+    required:
+      - params
+  CheckAuth:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      email:
+        type: string
+        format: email
+  CheckParams:
+    properties:
+      type:
+        type: string
+        enum:
+          - facebook
+      auth:
+        $ref: '#/definitions/CheckAuth'
+    required:
+      - type
+      - auth
+  CheckRequest:
+    properties:
+      params:
+        $ref: '#/definitions/CheckParams'
     required:
       - params
   LoginParams:

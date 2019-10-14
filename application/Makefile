@@ -175,4 +175,6 @@ migrate-%: deps ## Execute pending migrations  (host)
 	@npm run grown -- migrate models:$(models) --$(subst :, --,$*)
 
 migration: deps ## Autogenerate new migration files  (host)
-	@make -s migrate-make:up:apply
+	@make -s migrate-make
+	@make -s migrate-up
+	@make -s migrate-apply

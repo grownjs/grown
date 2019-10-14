@@ -1,6 +1,6 @@
 <script>
-  import { Router, Route, Link } from 'svero';
-  import { setupClient } from 'svql';
+  import { Router, Route, Link, navigateTo } from 'svero';
+  import { useToken, setupClient } from 'svql';
 
   import ResetPassword from './pages/ResetPassword.svelte';
   import NotFound from './pages/NotFound.svelte';
@@ -9,6 +9,17 @@
   import Auth from './session/Auth.svelte';
   import Login from './session/Login.svelte';
   import Logout from './session/Logout.svelte';
+
+  if (location.search) {
+    const matches = location.search.match(/token=([^=]+)/);
+
+    if (matches) {
+      useToken(matches[1]);
+      setTimeout(() => {
+        navigateTo('/');
+      });
+    }
+  }
 
   setupClient({
     url: '/api/v1/graphql',
@@ -34,7 +45,7 @@
     <Auth />
     <Route path="#*" component={NotFound} />
     <Route path="*" component={NotFound} />
-    <Route exact path="/" component={Home} />
+    <Route path="/" component={Home} />
     <Route exact path="/reset-password/:token" component={ResetPassword} />
   </Router>
 </main>

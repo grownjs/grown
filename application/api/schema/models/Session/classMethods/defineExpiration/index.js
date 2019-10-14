@@ -1,5 +1,7 @@
 const TIME = {
   ADMIN: 45,
+  GUEST: 15,
+  USER: 30,
 };
 
 function expirationTime(time) {
@@ -13,3 +15,4 @@ function expirationTime(time) {
 module.exports = function defineExpiration(role) {
   return expirationTime(TIME[role]);
 };
+

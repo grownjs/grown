@@ -24,7 +24,9 @@ function authenticate(req) {
 module.exports = (ctx, cb) => {
   passport.use(new bearer.Strategy((token, done) => {
     if (typeof cb === 'function') {
-      cb(token, done);
+      Promise.resolve().then(() => cb(token))
+        .then(session => done(null, session))
+        .catch(e => done(e, false));
     } else {
       done(null, false);
     }

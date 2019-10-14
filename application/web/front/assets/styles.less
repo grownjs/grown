@@ -17,17 +17,39 @@ html, body {
   margin: 0;
 }
 
+hr {
+  margin: 1em 0;
+  height: 1px;
+  border: 0;
+  border-bottom: 1px solid rgba(0, 0, 0, .1);
+}
+
 form {
   min-width: 20em;
+
+  > h2,
+  > label  {
+    margin-bottom: .5em;
+  }
+}
+
+button {
+  padding: 5px;
+  background-color: transparent;
 }
 
 label {
   position: relative;
   display: block;
+  min-height: 25px;
+  line-height: 25px;
 
   input {
     position: absolute;
+    padding: 5px;
     right: 0;
+    top: -1px;
+    width: 65%;
   }
 }
 
@@ -61,6 +83,20 @@ label {
       padding: 10px;
     }
 
+    > a ~ a {
+      position: relative;
+
+      &::before {
+        top: .3em;
+        bottom: .3em;
+        left: -3px;
+        width: 0;
+        border-left: 1px solid rgba(0, 0, 0, .1);
+        content: ' ';
+        position: absolute;
+      }
+    }
+
     &:hover {
       > .menu {
         visibility: visible;
@@ -72,7 +108,6 @@ label {
       background-color: white;
       visibility: hidden;
       position: fixed;
-      min-width: 10em;
       padding: 10px;
       display: block;
       opacity: 0;

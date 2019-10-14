@@ -3,7 +3,7 @@
 
   import {
     In, Status,
-    mutation, state,
+    saveSession, mutation, state,
   } from 'svql';
 
   import PasswordRecovery from './PasswordRecovery.svelte';
@@ -24,8 +24,7 @@
 
   const doLogin = mutation(LOGIN_REQUEST, commit => function login$() {
     login = commit({ email, password }, data => {
-      localStorage.setItem('session', JSON.stringify(data.login));
-
+      saveSession(data.login);
       setTimeout(() => {
         location.href = '/';
       }, 1000);
@@ -57,6 +56,10 @@
         Password: <input type="password" bind:value={password} autocomplete="current-password" />
       </label>
       <button on:click={doLogin}>Log in</button> or <Link href="/" on:click={clear}>cancel</Link>
+
+      <hr />
+
+      <a href="/auth/facebook">Login with Facebook</a>
     </In>
   </Route>
 {/if}

@@ -33,7 +33,7 @@
       confirmPassword = null;
 
       setTimeout(() => {
-        location.href = '/';
+        navigateTo('/');
       }, 1000);
     });
   });

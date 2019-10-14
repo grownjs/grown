@@ -22,7 +22,7 @@
     "schema-to:json": "json-schema-to -tw api/schema -pbc index --json",
     "schema-to:graphql": "json-schema-to -tw api/schema -pc index --graphql",
     "schema-to:protobuf": "json-schema-to -tw api/schema -pc index --protobuf -br ../common -k API",
-    "dev": "tarima watch -p 4001 -P '/api/v1/graphql -> http://localhost:3000'",
+    "dev": "tarima watch -p 4001 -P '/api,/auth -> 3000'",
     "dist": "tarima -mqe $NODE_ENV",
     "size": "npm run dist && size-limit",
     "test": "npm run test:unit && npm run test:functional --",
@@ -58,9 +58,6 @@
     ],
     "bundle": [
       "**/main.js"
-    ],
-    "devPlugins": [
-      "tarima-lr"
     ],
     "ignoreFiles": [
       ".gitignore"
@@ -99,15 +96,16 @@
     "nyc": "^14.1.0",
     "pug": "^2.0.3",
     "rollup": "^1.1.2",
-    "rollup-plugin-commonjs": "^9.3.4",
-    "rollup-plugin-node-resolve": "^4.2.3",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-svelte": "^5.1.0",
-    "svelte": "^3.3.0",
+    "svelte": "3.3.0",
     "svero": "^1.0.0",
-    "svql": "^0.0.10",
+    "svql": "0.0.11",
     "tarima": "^4.5.6",
-    "tarima-lr": "^0.5.0",
-    "terser": "^3.10.12",
+    "axios": ">=0.18.1",
+    "open": ">=6.0.0",
+    "terser": "^4.3.8",
     "testcafe": "^1.0.1",
     "uglify-es": "^3.3.9"
   },
@@ -122,10 +120,11 @@
     "express-useragent": "^1.0.12",
     "grown": "^1.1.4",
     "json-schema-sequelizer": "^0.20.3",
-    "json-schema-to": "^0.0.16",
+    "json-schema-to": "^0.0.17",
     "logro": "^0.1.4",
     "mailor": "^0.0.9",
     "pg": "^7.9.0",
-    "rand-token": "^0.4.0"
+    "rand-token": "^0.4.0",
+    "tarima": "^4.6.0"
   }
 }

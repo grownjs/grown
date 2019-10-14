@@ -4,8 +4,11 @@ module.exports = {
     password: {
       'ui:hidden': true,
     },
+    identifier: {
+      'ui:hidden': true,
+    },
   },
   $attributes: {
-    findAll: ['firstName', 'lastName', 'email', 'role', 'verified'],
+    findAll: ['firstName', 'lastName', 'email', 'role', 'verified', 'platform'],
   },
 };

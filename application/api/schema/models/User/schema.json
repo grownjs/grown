@@ -8,6 +8,12 @@
     "id": {
       "$ref": "dataTypes#/definitions/primaryKey"
     },
+    "platform": {
+      "type": "string"
+    },
+    "identifier": {
+      "type": "string"
+    },
     "firstName": {
       "type": "string"
     },
@@ -30,7 +36,6 @@
   },
   "required": [
     "firstName",
-    "lastName",
     "email",
     "role"
   ]
