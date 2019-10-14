@@ -1,6 +1,5 @@
 const {
   PasswordMismatchError,
-  ResetPasswordExpiredError,
 } = require('~/api/errors');
 
 module.exports = ({ bcrypt, User, Token }) => async function setPassword(token, newPassword, confirmPassword) {
