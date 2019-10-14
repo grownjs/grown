@@ -5,5 +5,4 @@ definitions:
     properties:
       success:
         type: boolean
-    required:
-      - success
+    required: [success]

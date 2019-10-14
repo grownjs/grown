@@ -18,6 +18,7 @@ service:
 definitions:
   Success:
     $ref: 'apiTypes#/definitions/SuccessfulResponse'
+
   ResetPasswordParams:
     properties:
       token:
@@ -26,16 +27,14 @@ definitions:
         type: string
       confirmPassword:
         type: string
-    required:
-      - token
-      - newPassword
-      - confirmPassword
+    required: [token, newPassword, confirmPassword]
+
   ResetPasswordRequest:
     properties:
       params:
         $ref: '#/definitions/ResetPasswordParams'
-    required:
-      - params
+    required: [guid, params]
+
   UpdatePasswordParams:
     properties:
       userId:
@@ -46,28 +45,24 @@ definitions:
         type: string
       confirmPassword:
         type: string
-    required:
-      - oldPassword
-      - newPassword
-      - confirmPassword
+    required: [oldPassword, newPassword, confirmPassword]
+
   UpdatePasswordRequest:
     properties:
       params:
         $ref: '#/definitions/UpdatePasswordParams'
-    required:
-      - params
+    required: [guid, params]
+
   RecoverPasswordParams:
     properties:
       email:
         type: string
-    required:
-      - email
+    required: [email]
+
   RecoverPasswordRequest:
     properties:
       guid:
         type: string
       params:
         $ref: '#/definitions/RecoverPasswordParams'
-    required:
-      - guid
-      - params
+    required: [guid, params]

@@ -31,22 +31,25 @@ definitions:
         type: string
       user:
         $ref: User
+    required: [token, expirationDate, user]
+
   Success:
     $ref: 'apiTypes#/definitions/SuccessfulResponse'
+
   TokenParams:
     properties:
       token:
         type: string
       expirationDate:
         type: string
-    required:
-      - token
+    required: [token]
+
   TokenRequest:
     properties:
       params:
         $ref: '#/definitions/TokenParams'
-    required:
-      - params
+    required: [params]
+
   CheckAuth:
     properties:
       id:
@@ -56,23 +59,22 @@ definitions:
       email:
         type: string
         format: email
+
   CheckParams:
     properties:
       type:
         type: string
-        enum:
-          - facebook
+        enum: [facebook]
       auth:
         $ref: '#/definitions/CheckAuth'
-    required:
-      - type
-      - auth
+    required: [type, auth]
+
   CheckRequest:
     properties:
       params:
         $ref: '#/definitions/CheckParams'
-    required:
-      - params
+    required: [params]
+
   LoginParams:
     properties:
       email:
@@ -80,9 +82,10 @@ definitions:
         format: email
       password:
         type: string
+    required: [email, password]
+
   LoginRequest:
     properties:
       params:
         $ref: '#/definitions/LoginParams'
-    required:
-      - params
+    required: [params]
