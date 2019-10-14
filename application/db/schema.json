@@ -1,5 +1,5 @@
 {
-  "description": "Migration from 2019-10-14T07:06:52.087Z",
+  "description": "Migration from 2019-10-14T18:20:45.820Z",
   "definitions": {
     "apiTypes": {
       "SuccessfulResponse": {
@@ -86,12 +86,6 @@
             "identifier": {
               "type": "string"
             },
-            "firstName": {
-              "type": "string"
-            },
-            "lastName": {
-              "type": "string"
-            },
             "email": {
               "type": "string"
             },
@@ -112,7 +106,6 @@
             }
           },
           "required": [
-            "firstName",
             "email",
             "role"
           ]
@@ -179,12 +172,6 @@
         "identifier": {
           "type": "string"
         },
-        "firstName": {
-          "type": "string"
-        },
-        "lastName": {
-          "type": "string"
-        },
         "email": {
           "type": "string"
         },
@@ -205,7 +192,6 @@
         }
       },
       "required": [
-        "firstName",
         "email",
         "role"
       ]

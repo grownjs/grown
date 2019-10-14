@@ -13,7 +13,6 @@ module.exports = ({ mailer, User, Token }) => async function recoverPassword({ r
     data: {
       token: token.token,
       email: user.email,
-      name: user.firstName,
     },
     email: user.email,
     subject: 'Password recovery request',

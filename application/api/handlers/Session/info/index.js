@@ -23,11 +23,9 @@ module.exports = ({ Session }) => async function info({ request }) {
   return {
     user: {
       id: session.userId,
-      email: session.email,
       role: session.role,
+      email: session.email,
       platform: session.user.platform,
-      firstName: session.user.firstName,
-      lastName: session.user.lastName,
     },
     token: session.token,
     expirationDate: session.expirationDate.toISOString(),

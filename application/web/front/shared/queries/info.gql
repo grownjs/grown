@@ -4,11 +4,9 @@ query {
     token
     user {
       id
-      email
       role
+      email
       platform
-      firstName
-      lastName
     }
   }
 }

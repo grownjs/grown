@@ -9,6 +9,6 @@ module.exports = {
     },
   },
   $attributes: {
-    findAll: ['firstName', 'lastName', 'email', 'role', 'verified', 'platform'],
+    findAll: ['email', 'role', 'verified', 'platform'],
   },
 };

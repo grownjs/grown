@@ -41,12 +41,6 @@ module.exports = {
         identifier: {
           type: dataTypes.STRING,
         },
-        firstName: {
-          type: dataTypes.STRING,
-        },
-        lastName: {
-          type: dataTypes.STRING,
-        },
         email: {
           type: dataTypes.STRING,
         },

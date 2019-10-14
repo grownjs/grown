@@ -7,7 +7,6 @@ module.exports = ({ User, Session }) => async function checkLogin({ request }) {
       identifier: auth.id,
     },
     defaults: {
-      firstName: auth.name,
       email: auth.email,
       role: 'GUEST',
       verified: true,

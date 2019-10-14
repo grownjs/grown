@@ -1,23 +1,17 @@
 [
   {
-    "firstName": "Valid name",
-    "lastName": "User",
     "email": "admin@email.com",
     "password": "Password1$",
     "role": "ADMIN",
     "verified": true
   },
   {
-    "firstName": "Update password",
-    "lastName": "User",
     "email": "update_password@email.com",
     "password": "Password1$",
     "role": "ADMIN",
     "verified": true
   },
   {
-    "firstName": "Non verified",
-    "lastName": "User",
     "email": "non_verified@email.com",
     "password": "Password1$",
     "role": "USER",

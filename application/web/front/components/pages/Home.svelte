@@ -5,5 +5,5 @@
 <h1>HOME</h1>
 
 {#if $state.me}
-  <h2>Glad you're back, {$state.me.firstName}!</h2>
+  <h2>Glad you're back!</h2>
 {/if}

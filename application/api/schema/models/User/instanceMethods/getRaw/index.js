@@ -1,10 +1,8 @@
 module.exports = function getRaw() {
   const response = {
     id: this.id,
-    firstName: this.firstName,
-    lastName: this.lastName,
-    email: this.email,
     role: this.role || '',
+    email: this.email,
     verified: this.verified,
   };
 
