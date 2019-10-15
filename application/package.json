@@ -26,7 +26,9 @@
     "dist": "tarima -mqe $NODE_ENV",
     "size": "npm run dist && size-limit",
     "test": "npm run test:unit && npm run test:functional --",
-    "test:e2e": "testcafe",
+    "test:ui": "npm run test:e2e e2e/cases && npm run test:bdd",
+    "test:bdd": "bdd-tc e2e/features -- npm run test:e2e",
+    "test:e2e": "testcafe --color ${BROWSER:-chrome:headless}",
     "test:e2e:ci": "BASE_URL=http://web:4001/ testcafe --ports 9505,9506 remote:1",
     "test:unit": "npm run mocha -- -bR spec 'api/**/*.test.js'",
     "test:functional": "npm run mocha -- -t 180000 -bR spec 'testing/**/*.test.js'",
@@ -87,12 +89,14 @@
     }
   },
   "devDependencies": {
+    "bdd-tc": "^0.0.1",
     "axios": ">=0.18.1",
     "buble": "^0.19.3",
     "chai": "^4.1.2",
     "csso": "^3.5.1",
     "less": "^3.8.1",
     "less-plugin-autoprefix": "^2.0.0",
+    "json-schema-to": "^0.0.18",
     "mocha": "^6.0.0",
     "nyc": "^14.1.0",
     "open": ">=6.0.0",
@@ -104,7 +108,7 @@
     "svelte": "3.3.0",
     "svero": "^1.0.0",
     "svql": "0.0.11",
-    "tarima": "^4.5.6",
+    "tarima": "^4.6.0",
     "terser": "^4.3.8",
     "testcafe": "^1.0.1",
     "uglify-es": "^3.3.9"
@@ -120,11 +124,9 @@
     "express-useragent": "^1.0.12",
     "grown": "^1.1.4",
     "json-schema-sequelizer": "^0.20.3",
-    "json-schema-to": "^0.0.18",
     "logro": "^0.1.4",
     "mailor": "^0.0.9",
     "pg": "^7.9.0",
-    "rand-token": "^0.4.0",
-    "tarima": "^4.6.0"
+    "rand-token": "^0.4.0"
   }
 }
