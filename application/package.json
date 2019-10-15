@@ -89,14 +89,14 @@
     }
   },
   "devDependencies": {
-    "bdd-tc": "^0.0.1",
     "axios": ">=0.18.1",
+    "bdd-tc": "^0.0.2",
     "buble": "^0.19.3",
     "chai": "^4.1.2",
     "csso": "^3.5.1",
+    "json-schema-to": "^0.0.18",
     "less": "^3.8.1",
     "less-plugin-autoprefix": "^2.0.0",
-    "json-schema-to": "^0.0.18",
     "mocha": "^6.0.0",
     "nyc": "^14.1.0",
     "open": ">=6.0.0",
