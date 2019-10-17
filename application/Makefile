@@ -77,11 +77,11 @@ stop: ## Stop single services  (docker)
 down: ## Destroy test environment  (docker)
 	@docker-compose $(TEST_COMPOSE) down
 
-e2e: ## Headlessly run E2E tests  (docker)
-	@docker-compose $(E2E_COMPOSE) exec -T web bash -c "wait-for-it -t 0 web:4000 && npm run test:e2e:ci -- e2e/cases"
+# FIXME: docker integration...
 
 test: ## Test current build of a service  (docker)
-	@docker-compose $(TEST_COMPOSE) -f services/$(service)/docker-compose.test.yml run -T --rm $(service)
+	@docker-compose $(TEST_COMPOSE) run -T --rm web
+	@docker-compose $(E2E_COMPOSE) exec -T --rm web bash -c "echo RUN E2E"
 
 build: ## Build all or single services  (docker)
 	@docker-compose $(BASE_COMPOSE) build $(service)
@@ -125,6 +125,9 @@ dev: deps ## Single-shot development workspace  (host)
 all: deps ## Develop NodeJS application only  (host)
 	@fkill -s :4001 :3000 :1080 :1081 :1025
 	@(npm run watch 2>&1 | npm run logs) & npm run watch:mail & npm run dev
+
+e2e: ## Headlessly run E2E tests  (host)
+	@npm run test:e2e -- e2e/cases && npm run test:bdd
 
 dist: deps ## Build artifacts for production  (host)
 	@npm run build:mail && npm run schema && npm run dist
