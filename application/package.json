@@ -26,7 +26,6 @@
     "dist": "tarima -mqe $NODE_ENV",
     "size": "npm run dist && size-limit",
     "test": "npm run test:unit && npm run test:functional --",
-    "test:ui": "npm run test:e2e e2e/cases && npm run test:bdd",
     "test:bdd": "bdd-tc e2e/features -- npm run test:e2e",
     "test:e2e": "testcafe --color ${BROWSER:-chrome:headless}",
     "test:e2e:ci": "BASE_URL=http://web:4001/ testcafe --ports 9505,9506 remote:1",
@@ -106,12 +105,12 @@
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-svelte": "^5.1.0",
     "svelte": "3.3.0",
-    "svero": "^1.0.0",
-    "svql": "0.0.11",
+    "svql": "^0.0.12",
     "tarima": "^4.6.0",
     "terser": "^4.3.8",
     "testcafe": "^1.0.1",
-    "uglify-es": "^3.3.9"
+    "uglify-es": "^3.3.9",
+    "yrv": "^0.0.1"
   },
   "dependencies": {
     "@grown/graphql": "^0.0.6",

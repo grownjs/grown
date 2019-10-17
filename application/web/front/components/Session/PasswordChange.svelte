@@ -4,7 +4,7 @@
     state,
   } from 'svql';
 
-  import { Route, Link, navigateTo } from 'svero';
+  import { Route, Link, navigateTo } from 'yrv';
   import { UPDATE_PASSWORD_REQUEST } from '../../shared/queries';
 
   let cssClass = '';

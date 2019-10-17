@@ -1,5 +1,5 @@
 <script>
-  import { Route, Link, navigateTo } from 'svero';
+  import { Route, Link, navigateTo } from 'yrv';
 
   import {
     In, Status,
