@@ -9,6 +9,7 @@
   export let className = '';
   export { cssClass as class };
 
+  export let back = '/';
   export let label = 'request a password recovery';
 
   let email = null;
@@ -17,7 +18,7 @@
   function clear() {
     email = null;
     updating = null;
-    navigateTo('/');
+    navigateTo(back);
   }
 
   const doUpdate = mutation(RECOVER_PASSWORD_REQUEST, commit => function recoverPasswordRequest$() {
@@ -45,6 +46,6 @@
     <label>
       E-mail address: <input type="email" bind:value={email} autocomplete="current-email" />
     </label>
-    <button on:click={doUpdate}>Request change</button> or <Link href="/" on:click={clear}>cancel</Link>
+    <button on:click={doUpdate}>Request change</button> or <Link href={back}>cancel</Link>
   </In>
 </Route>

@@ -13,6 +13,7 @@
   export let className = '';
   export { cssClass as class };
 
+  export let back = '/';
   export let label = 'change your password';
 
   let updating = null;
@@ -25,7 +26,7 @@
     password = null;
     newPassword = null;
     confirmPassword = null;
-    navigateTo('/');
+    navigateTo(back);
   }
 
   const doUpdate = mutation(UPDATE_PASSWORD_REQUEST, commit => function updatePasswordRequest$() {
@@ -39,7 +40,7 @@
       confirmPassword = null;
 
       setTimeout(() => {
-        navigateTo('/');
+        navigateTo(back);
       }, 1000);
     });
   });
@@ -71,6 +72,6 @@
     <label>
       Confirm new password: <input type="password" bind:value={confirmPassword} autocomplete="confirm-password" />
     </label>
-    <button on:click={doUpdate}>Update</button> or <Link href="" on:click={clear}>cancel</Link>
+    <button on:click={doUpdate}>Update</button> or <Link href={back}>cancel</Link>
   </In>
 </Route>

@@ -9,6 +9,7 @@
   export let className = '';
   export { cssClass as class };
 
+  export let back = '/';
   export let router = null;
   export let label = 'change your password';
 
@@ -20,7 +21,7 @@
     updating = null;
     newPassword = null;
     confirmPassword = null;
-    navigateTo('/');
+    navigateTo(back);
   }
 
   const doReset = mutation(RESET_PASSWORD_REQUEST, commit => function resetPasswordRequest$() {
@@ -33,7 +34,7 @@
       confirmPassword = null;
 
       setTimeout(() => {
-        navigateTo('/');
+        navigateTo(back);
       }, 1000);
     });
   });
@@ -55,6 +56,6 @@
     <label>
       Confirm new password: <input type="password" bind:value={confirmPassword} autocomplete="confirm-password" />
     </label>
-    <button on:click={doReset}>Reset</button> or <Link href="" on:click={clear}>cancel</Link>
+    <button on:click={doReset}>Reset</button> or <Link href={back}>cancel</Link>
   </In>
 </div>

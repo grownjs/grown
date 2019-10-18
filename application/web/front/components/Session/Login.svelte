@@ -9,24 +9,26 @@
   import PasswordRecovery from './PasswordRecovery.svelte';
   import { LOGIN_REQUEST } from '../../shared/queries';
 
+  export let back = '/';
   export let label = 'Login';
 
   let login;
   let email = null;
   let password = null;
 
+
   function clear() {
     login = null;
     email = null;
     password = null;
-    navigateTo('/');
+    navigateTo(back);
   }
 
   const doLogin = mutation(LOGIN_REQUEST, commit => function login$() {
     login = commit({ email, password }, data => {
       saveSession(data.login);
       setTimeout(() => {
-        location.href = '/';
+        location.href = back;
       }, 1000);
     });
   });
@@ -55,7 +57,7 @@
       <label>
         Password: <input type="password" bind:value={password} autocomplete="current-password" />
       </label>
-      <button on:click={doLogin}>Log in</button> or <Link href="/" on:click={clear}>cancel</Link>
+      <button on:click={doLogin}>Log in</button> or <Link href={back}>cancel</Link>
 
       <hr />
 
