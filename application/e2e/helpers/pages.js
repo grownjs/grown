@@ -1,7 +1,7 @@
-import { Selector } from 'testcafe';
+import { $ } from 'bdd-tc';
 
 export const loginPage = {
   url: '/login',
-  body: Selector('form#login'),
-  verify: Selector('h2').withText('Login'),
+  body: $('form#login'),
+  verify: $('h2').withText('Login'),
 };

@@ -1,21 +1,21 @@
-import { Selector } from 'testcafe';
-import { takeSnapshot } from 'bdd-tc';
+import {
+  takeSnapshot, useSelectors, useFixtures, getVal, getEl, $,
+} from 'bdd-tc';
 
-import config from '../config.js';
+import config from '../config';
+import * as data from '../fixtures';
+import * as elems from '../selectors';
 import * as pages from '../helpers/pages';
 import { getLocation } from '../helpers/client';
 
-function menuLink(innerText) {
-  return Selector('nav.menu').find('a').withText(innerText);
-}
+useFixtures(data);
+useSelectors(elems);
 
-const els = {
-  login: menuLink('Login'),
-};
+let page;
 
 export default {
   matchers: {
-    action: '(?:If|When)',
+    action: '(?:Then|When)',
     prelude: '(?:Given an initial|Then should I take an)',
   },
 
@@ -29,23 +29,33 @@ export default {
     return config.url + path;
   },
 
-  '$action I click on @$selector': selectorName => async t => {
-    await t.click(els[selectorName] || Selector(selectorName));
+  '$action I click on <$selector>': selectorName => async t => {
+    await t.click(getEl(selectorName));
+  },
+
+  '$action I fill <$selector> with "$value"': (selectorName, innerText) => async t => {
+    await t.typeText(getEl(selectorName), getVal(innerText));
   },
 
   '$prelude snapshot for $snapshot': snapId => async t => {
     await takeSnapshot(t, { as: snapId });
   },
 
-  'Then I should navigate to @$pageId': pageId => async t => {
+  'Then I should navigate to <$pageId>': pageId => async t => {
     if (!pages[pageId]) {
       throw new TypeError(`Page with id '${pageId}' is not defined`);
     }
 
     const { pathname } = await getLocation();
 
+    page = pages[pageId];
+
     await t
-      .expect(pages[pageId].url).eql(pathname)
-      .expect(pages[pageId].verify.visible).ok();
+      .expect(page.url).eql(pathname)
+      .expect(page.verify.visible).ok();
+  },
+
+  'Then I see "$message"': innerText => async t => {
+    await t.expect($('.body').innerText).contains(innerText);
   },
 };
