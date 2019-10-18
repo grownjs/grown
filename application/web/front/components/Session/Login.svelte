@@ -57,7 +57,7 @@
       <label>
         Password: <input type="password" bind:value={password} autocomplete="current-password" />
       </label>
-      <button on:click={doLogin}>Log in</button> or <Link href={back}>cancel</Link>
+      <button type="submit" on:click={doLogin}>Log in</button> or <Link href={back}>cancel</Link>
 
       <hr />
 
