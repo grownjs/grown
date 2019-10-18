@@ -110,7 +110,7 @@
     "terser": "^4.3.8",
     "testcafe": "^1.0.1",
     "uglify-es": "^3.3.9",
-    "yrv": "^0.0.4"
+    "yrv": "^0.0.5"
   },
   "dependencies": {
     "@grown/graphql": "^0.0.6",
