@@ -7,6 +7,7 @@
   import { Route, Link, navigateTo } from 'yrv';
   import { UPDATE_PASSWORD_REQUEST } from '../../shared/queries';
 
+  let disabled;
   let cssClass = '';
 
   export let id = '';
@@ -30,6 +31,7 @@
   }
 
   const doUpdate = mutation(UPDATE_PASSWORD_REQUEST, commit => function updatePasswordRequest$() {
+    disabled = true;
     updating = commit({
       oldPassword: password,
       newPassword,
@@ -39,15 +41,19 @@
       newPassword = null;
       confirmPassword = null;
 
+      navigateTo(back);
       setTimeout(() => {
-        navigateTo(back);
+        updating = null;
+        disabled = false;
       }, 1000);
+    }, () => {
+      disabled = false;
     });
   });
 </script>
 
 <Status
-  fixed
+  fixed nodebug
   from={updating}
   pending="Updating your password..."
   otherwise="Password was successfully set..."
@@ -72,6 +78,6 @@
     <label>
       Confirm new password: <input type="password" bind:value={confirmPassword} autocomplete="confirm-password" />
     </label>
-    <button on:click={doUpdate}>Update</button> or <Link href={back}>cancel</Link>
+    <button {disabled} on:click={doUpdate} type="submit">Update</button> or <Link href={back} on:click={clear}>cancel</Link>
   </In>
 </Route>

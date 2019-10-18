@@ -3,6 +3,7 @@
   import { Route, Link, navigateTo } from 'yrv';
   import { RECOVER_PASSWORD_REQUEST } from '../../shared/queries';
 
+  let disabled;
   let cssClass = '';
 
   export let id = '';
@@ -22,14 +23,23 @@
   }
 
   const doUpdate = mutation(RECOVER_PASSWORD_REQUEST, commit => function recoverPasswordRequest$() {
+    disabled = true;
     updating = commit({ email }, () => {
       email = null;
+
+      navigateTo(back);
+      setTimeout(() => {
+        updating = null;
+        disabled = false;
+      }, 1000);
+    }, () => {
+      disabled = false;
     });
   });
 </script>
 
 <Status
-  fixed
+  fixed nodebug
   from={updating}
   pending="Sending password-recovery request..."
   otherwise="Password recovery was successfully sent..."
@@ -44,8 +54,8 @@
   <In modal autofocus id="password-recovery" on:cancel={clear}>
     <h2>Password recovery</h2>
     <label>
-      E-mail address: <input type="email" bind:value={email} autocomplete="current-email" />
+      E-mail address: <input type="email" bind:value={email} required autocomplete="current-email" />
     </label>
-    <button on:click={doUpdate}>Request change</button> or <Link href={back}>cancel</Link>
+    <button {disabled} type="submit" on:click={doUpdate}>Request change</button> or <Link href={back} on:click={clear}>cancel</Link>
   </In>
 </Route>

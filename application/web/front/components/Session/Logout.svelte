@@ -4,16 +4,27 @@
     saveSession, mutation, state,
   } from 'svql';
 
+  import { navigateTo } from 'yrv';
+
   import PasswordChange from './PasswordChange.svelte';
   import { LOGOUT_REQUEST } from '../../shared/queries';
 
+  export let back = '/';
+
   let logout;
+  let disabled;
 
   const doLogout = mutation(LOGOUT_REQUEST, commit => function logout$() {
+    disabled = true;
     logout = commit(() => {
+      $state.me = null;
+      $state.isLogged = false;
+
       saveSession();
+      navigateTo(back);
       setTimeout(() => {
-        location.href = '/';
+        logout = null;
+        disabled = false;
       }, 1000);
     });
   });
@@ -29,7 +40,7 @@
 {#if $state.me}
   <span>Hello, {$state.me.email}</span>
   <PasswordChange class="menu">
-    <button on:click|preventDefault={doLogout}>Log out</button>
+    <button {disabled} on:click|preventDefault={doLogout}>Log out</button>
     {#if !$state.me.platform} or {/if}
   </PasswordChange>
 {/if}

@@ -7,6 +7,7 @@
   import { ME_INFO } from '../../shared/queries';
 
   export let label = 'Hey, please log in.';
+  export let nodebug = false;
 
   $state.info = query(ME_INFO, result => {
     $state.me = result.info && result.info.user;
@@ -20,6 +21,6 @@
   {:then data}
     <slot me={data.user} />
   {:catch error}
-    <Failure {label} {error} />
+    <Failure {nodebug} {label} {error} />
   {/await}
 {/if}
