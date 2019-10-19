@@ -1,0 +1,19 @@
+type Query {
+  dummy: [String]
+}
+schema {
+  query: Query
+}
+
+extend type Query {
+  example: Example
+  broken: Broken
+}
+
+type Example {
+  truth: Int
+}
+
+type Broken {
+  test: Boolean
+}

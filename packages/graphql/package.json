@@ -4,11 +4,40 @@
   "main": "index.js",
   "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
   "license": "MIT",
+  "scripts": {
+    "dev": "npm test -- -w",
+    "lint": "eslint tests *.js",
+    "test": "npm run test:unit --",
+    "test:ci": "npm run coverage:all && npm run report -- -r lcov",
+    "test:all": "npm run test:run tests/*.test.js && npm run report -- -r html",
+    "test:run": "NODE_ENV=test _mocha --exit --recursive -bR spec --colors",
+    "test:unit": "npm run test:run tests/*.test.js --",
+    "coverage": "nyc -s -x '**/tests/**' -x '**/*.test.js'",
+    "coverage:all": "npm run coverage -- npm run test:all",
+    "coverage:unit": "npm run coverage -- npm run test:unit",
+    "codecov": "codecov --file=coverage/lcov.info -e TRAVIS_NODE_VERSION",
+    "report": "nyc report",
+    "pretest": "npm run lint",
+    "pretest:ci": "npm run lint",
+    "posttest:ci": "npm run codecov"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "dependencies": {
     "graphql": "^14.1.1",
     "graphql-tools": "^4.0.4"
   },
-  "publishConfig": {
-    "access": "public"
+  "devDependencies": {
+    "@grown/test": "^0.0.3",
+    "chai": "^4.2.0",
+    "codecov": "^3.1.0",
+    "eslint": "^5.9.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.14.0",
+    "grown": "^1.1.4",
+    "lodash": ">=4.17.11",
+    "mocha": "^5.2.0",
+    "nyc": "^13.1.0"
   }
 }

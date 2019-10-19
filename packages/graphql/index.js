@@ -10,10 +10,6 @@ module.exports = (Grown, util) => {
     const _schema = gqltools.makeExecutableSchema({ typeDefs, resolvers });
 
     return ctx => {
-      if ((!ctx.req.baseUrl && ctx.req.url !== '/') || ctx.req.baseUrl !== ctx.req.originalUrl) {
-        return;
-      }
-
       const body = ctx.req.body || {};
       const query = ctx.req.query || {};
 
@@ -22,6 +18,7 @@ module.exports = (Grown, util) => {
 
       ctx.res.setHeader('Content-Type', 'application/json');
 
+      /* istanbul ignore else */
       if (!_query) {
         ctx.res.statusCode = 422;
         return ctx.res.end('{"errors":["Missing input body or query"]}');
@@ -29,15 +26,14 @@ module.exports = (Grown, util) => {
 
       return gql.graphql(_schema, _query, null, ctx, data)
         .then(result => {
-          if (result.errors && Grown.env === 'development') {
+          /* istanbul ignore else */
+          if (result.errors && result.errors.length > 0) {
+            ctx.res.statusCode = ctx.res.statusCode !== 200 ? ctx.res.statusCode : 400;
+
             result.errors.forEach(e => {
               e.message = e.message.replace(/^\d+ [_A-Z]+: /, '');
               e.description = e.stack.toString();
             });
-          }
-
-          if (result.errors && result.errors.length > 0) {
-            ctx.res.statusCode = ctx.res.statusCode !== 200 ? ctx.res.statusCode : 400;
           }
 
           ctx.res.end(JSON.stringify(result));
@@ -46,31 +42,46 @@ module.exports = (Grown, util) => {
   }
 
   function _bindGraphQLServer(schemas, container) {
-    const typeDefs = schemas.map(file => fs.readFileSync(file, 'utf8'));
+    /* istanbul ignore else */
+    if (!(schemas && Array.isArray(schemas))) {
+      throw new Error('Missing or invalid schemas');
+    }
 
-    const resolvers = {
-      Mutation: {},
-      Query: {},
-    };
+    const typeDefs = schemas.map(file => {
+      try {
+        return fs.readFileSync(file, 'utf8');
+      } catch (e) {
+        throw new Error(`Unable to load schema, given '${file}'`);
+      }
+    });
+
+    /* istanbul ignore else */
+    if (!(container && container.name && container.registry)) {
+      throw new Error('Missing or invalid container');
+    }
+
+    const resolvers = {};
 
     Object.keys(container.registry).forEach(name => {
       const target = container.get(name);
 
-      Object.keys(resolvers).forEach(method => {
+      ['Mutation', 'Query'].forEach(method => {
         Object.keys(target[method] || {}).forEach(prop => {
-          if (typeof target[method][prop] === 'function') {
-            resolvers[method][prop] = function $call(root, args, { req }) {
-              return Promise.resolve()
-                .then(() => target[method][prop]({ root, args, req }))
-                .catch(error => {
-                  if (!Grown.argv.flags.debug) {
-                    error = util.cleanError(error, Grown.cwd);
-                  }
-
-                  throw error;
-                });
-            };
+          /* istanbul ignore else */
+          if (typeof target[method][prop] !== 'function') {
+            throw new Error(`Expecting ${prop} to be a function, given '${target[method][prop]}'`);
           }
+
+          resolvers[method] = resolvers[method] || {};
+          resolvers[method][prop] = function $call(root, args, { req }) {
+            return Promise.resolve()
+              .then(() => target[method][prop]({ root, args, req }))
+              .catch(error => {
+                error = util.cleanError(error, Grown.cwd);
+
+                throw error;
+              });
+          };
         });
       });
     });
