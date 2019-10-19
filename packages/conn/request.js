@@ -1,6 +1,5 @@
 'use strict';
 
-const qs = require('querystring');
 const typeIs = require('type-is');
 const accepts = require('accepts');
 
@@ -74,7 +73,7 @@ module.exports = (Grown, util) => {
           },
 
           query_params() {
-            return qs.parse(this.req.url.split('?')[1] || '');
+            return this.req.query || {};
           },
 
           accept_charset(charsets) {
