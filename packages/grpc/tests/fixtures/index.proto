@@ -1,0 +1,11 @@
+syntax = "proto3";
+package API;
+service Test {
+  rpc is(Input) returns (Output) {}
+}
+message Input {
+  int32 truth = 1;
+}
+message Output {
+  string reveal = 1;
+}

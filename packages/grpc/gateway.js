@@ -6,6 +6,8 @@ const RE_DASHERIZE = /\b([A-Z])/g;
 module.exports = (Grown, util) => {
   const grpc = require('grpc');
 
+  // FIXME: implements streaming & metadata!
+
   function _callService(client, method, data) {
     return new Promise((resolve, reject) => {
       const identifier = client.constructor.service[method]
@@ -44,6 +46,7 @@ module.exports = (Grown, util) => {
       const callback = controller[key];
 
       controller[key] = function $proxy(ctx, reply) {
+        /* istanbul ignore else */
         if (!ctx || typeof reply !== 'function') {
           throw new Error(`${name}#${key}: Illegal arguments`);
         }
@@ -72,6 +75,7 @@ module.exports = (Grown, util) => {
     const originalError = e.metadata && e.metadata.get('originalError');
 
     try {
+      /* istanbul ignore else */
       if (originalError && typeof originalError[0] === 'string'
         && (originalError[0].charAt() === '{' && originalError[0].charAt(originalError[0].length - 1) === '}')) {
         e.original = JSON.parse(originalError[0]);
@@ -105,7 +109,7 @@ module.exports = (Grown, util) => {
 
       Object.keys(this[namespace]).forEach(key => {
         const id = key.replace(RE_DASHERIZE, ($0, $1) => $1.toLowerCase());
-        const host = this.self_hostname === true ? id : '0.0.0.0';
+        const host = (this.self_hostname === true && id) || '0.0.0.0';
 
         let _client;
 
@@ -136,6 +140,7 @@ module.exports = (Grown, util) => {
       });
 
       map.start = _port => {
+        /* istanbul ignore else */
         if (!server.started) {
           services.forEach(([Proto, name]) => {
             try {
@@ -152,6 +157,10 @@ module.exports = (Grown, util) => {
         }
 
         return map;
+      };
+
+      map.stop = () => {
+        server._server.forceShutdown();
       };
 
       return map;

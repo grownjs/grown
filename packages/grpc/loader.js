@@ -1,12 +1,18 @@
 'use strict';
 
 const path = require('path');
+const fs = require('fs');
 
 module.exports = (Grown, util) => {
+  const protoLoader = require('@grpc/proto-loader');
+  const grpc = require('grpc');
+
   return Grown('GRPC.Loader', {
     scan(file, options) {
-      const protoLoader = require('@grpc/proto-loader');
-      const grpc = require('grpc');
+      /* istanbul ignore else */
+      if (!fs.existsSync(file)) {
+        throw new Error(`Unable to load protobuf, given '${file}'`);
+      }
 
       const protoOptions = Object.assign({
         longs: String,
