@@ -155,7 +155,7 @@ function _grownFactory($, util, options) {
             const conn = scope._connection(request || {});
 
             if (typeof conn.req.query === 'undefined') {
-              conn.req.query = qs.parse(this.req.url.split('?')[1] || '');
+              conn.req.query = qs.parse(conn.req.url.split('?')[1] || '');
             }
 
             return Promise.resolve()

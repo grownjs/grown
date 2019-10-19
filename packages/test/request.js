@@ -59,24 +59,6 @@ module.exports = Grown => {
     _fixRequest,
 
     $install(ctx) {
-      // quick middlewares
-      ctx.mount(conn => {
-        if (typeof conn.req.query === 'undefined') {
-          const query = conn.req.url.split('?')[1] || '';
-          const parts = query.split('&');
-
-          conn.req.query = {};
-
-          parts.forEach(item => {
-            const [key, value] = item.split('=');
-
-            if (key.length) {
-              conn.req.query[key] = value;
-            }
-          });
-        }
-      });
-
       return {
         methods: {
           request(url, method, options, callback) {

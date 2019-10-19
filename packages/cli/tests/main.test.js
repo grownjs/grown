@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-expressions */
 const { expect } = require('chai');
+const path = require('path');
 
 const { cmd, bin } = require('./helpers');
 
@@ -112,7 +113,7 @@ describe('Grown.CLI', () => {
   });
 
   describe('Subshell', () => {
-    const TEST_JS = `${__dirname}/fixtures/test.js`;
+    const TEST_JS = path.join(__dirname, 'fixtures/test.js');
 
     it('should handle custom commands', () => {
       return cmd('sample', bin(`example -- node ${TEST_JS}`)).then(({ stdout, stderr, failure }) => {

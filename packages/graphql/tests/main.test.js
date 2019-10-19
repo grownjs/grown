@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-expressions */
 const { expect } = require('chai');
 
-// const td = require('testdouble');
 const Grown = require('grown')();
 const path = require('path');
 
@@ -28,7 +27,7 @@ function mockServer(schemas, registry, container = {}, onBefore = () => {}) {
 
 describe('Grown.GraphQL', () => {
   const validSchemas = [
-    path.resolve(__dirname, 'fixtures/test.gql'),
+    path.join(__dirname, 'fixtures/test.gql'),
   ];
 
   const validRegistry = {

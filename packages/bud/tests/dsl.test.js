@@ -166,7 +166,7 @@ describe('Grown (bud)', () => {
 
   describe('#load', () => {
     it('can load definitions from given directories', () => {
-      expect(Grown.load(`${__dirname}/fixtures`).get('Example').truth).to.eql(42);
+      expect(Grown.load(path.join(__dirname, 'fixtures')).get('Example').truth).to.eql(42);
     });
   });
 
