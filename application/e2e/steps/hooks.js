@@ -8,15 +8,15 @@ import * as elems from '../selectors';
 import * as pages from '../helpers/pages';
 import { getLocation } from '../helpers/client';
 
+let page;
+
 useFixtures(data);
 useSelectors(elems);
-
-let page;
 
 export default {
   matchers: {
     action: '(?:Then|When)',
-    prelude: '(?:Given an initial|Then should I take an)',
+    prelude: '(?:Given an initial|Then should I take an|Just take an?)',
   },
 
   after: {
@@ -29,11 +29,11 @@ export default {
     return config.url + path;
   },
 
-  '$action I click on <$selector>': selectorName => async t => {
+  '$action I click on $selector': selectorName => async t => {
     await t.click(getEl(selectorName));
   },
 
-  '$action I fill <$selector> with "$value"': (selectorName, innerText) => async t => {
+  '$action I fill $selector with "$value"': (selectorName, innerText) => async t => {
     await t.typeText(getEl(selectorName), getVal(innerText));
   },
 
@@ -41,14 +41,10 @@ export default {
     await takeSnapshot(t, { as: snapId });
   },
 
-  'Then I should navigate to <$pageId>': pageId => async t => {
-    if (!pages[pageId]) {
-      throw new TypeError(`Page with id '${pageId}' is not defined`);
-    }
-
+  'Then I should navigate to $pageId': pageId => async t => {
     const { pathname } = await getLocation();
 
-    page = pages[pageId];
+    page = getEl(pageId)
 
     await t
       .expect(page.url).eql(pathname)

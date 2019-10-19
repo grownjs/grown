@@ -3,6 +3,7 @@
 
 Feature: User authorization
 
+@snapshot=loginForm,body
 Scenario: Login with user and password
   When I click on <login>
   Then I should navigate to <loginPage>

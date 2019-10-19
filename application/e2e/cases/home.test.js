@@ -2,7 +2,7 @@ import { Selector } from 'testcafe';
 
 import config from '../config.js';
 
-fixture('Home')
+fixture.skip('Home')
   .page(config.url);
 
 test('should start the application', async t => {

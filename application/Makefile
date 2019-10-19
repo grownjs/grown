@@ -127,7 +127,7 @@ all: deps ## Develop NodeJS application only  (host)
 	@(npm run watch 2>&1 | npm run logs) & npm run watch:mail & npm run dev
 
 e2e: ## Headlessly run E2E tests  (host)
-	@npm run test:e2e -- e2e/cases && npm run test:bdd
+	@npm run test:e2e -- e2e/cases && npm run test:bdd -- --take-snapshot -S -s screenshots
 
 dist: deps ## Build artifacts for production  (host)
 	@npm run build:mail && npm run schema && npm run dist
