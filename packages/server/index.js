@@ -1,6 +1,7 @@
 'use strict';
 
 const debug = require('debug')('grown:server');
+const qs = require('querystring');
 
 const _pkg = require('./package.json');
 
@@ -152,6 +153,10 @@ function _grownFactory($, util, options) {
           .then(() => this.emit('begin'))
           .then(() => {
             const conn = scope._connection(request || {});
+
+            if (typeof conn.req.query === 'undefined') {
+              conn.req.query = qs.parse(this.req.url.split('?')[1] || '');
+            }
 
             return Promise.resolve()
               .then(() => {
