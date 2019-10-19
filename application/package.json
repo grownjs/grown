@@ -14,7 +14,7 @@
     "start": "node .",
     "logs": "logrof --",
     "debug": "ndb npm run watch --",
-    "watch": "nodemon --ignore '{build,docker,screenshots,logs,web,e2e}/**' --ignore '**/generated/**' --ignore Makefile",
+    "watch": "nodemon --ignore '{build,docker,logs,web,e2e}/**' --ignore '**/generated/**' --ignore Makefile",
     "watch:mail": "mailor watch lib/mailer/templates -d lib/mailer/generated --no-open",
     "build:mail": "mailor build lib/mailer/templates -d lib/mailer/generated",
     "mocha": "NODE_ENV=test _mocha -c --exit --recursive",
@@ -89,7 +89,7 @@
     }
   },
   "devDependencies": {
-    "bdd-tc": "^0.0.5",
+    "bdd-tc": "^0.0.6",
     "buble": "^0.19.3",
     "chai": "^4.1.2",
     "csso": "^3.5.1",

@@ -14,5 +14,6 @@ pgdata
 chrome
 *coverage
 generated
+screenshots
 asciidocfx*
 node_modules
