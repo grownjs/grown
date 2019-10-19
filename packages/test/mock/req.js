@@ -6,9 +6,15 @@ module.exports = (Grown, util) => {
   function _mockRequest(options) {
     const _body = options.body;
 
-    delete options.body;
-
     const req = new MockReq(options);
+
+    // keep given body if it's already an object!
+    if (typeof _body === 'object') {
+      req.body = _body;
+      return req;
+    }
+
+    delete options.body;
 
     try {
       if (_body) {
