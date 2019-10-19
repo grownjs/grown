@@ -42,7 +42,15 @@ module.exports = Grown => {
     });
 
     function assert(actual, expected, description) {
-      if (actual && actual !== expected) {
+      let pass;
+
+      if (expected instanceof RegExp) {
+        pass = expected.test(actual);
+      } else if (actual === expected) {
+        pass = true;
+      }
+
+      if (!pass) {
         throw new Error(`Response failure:\n${description}\n- actual: ${actual}\n- expected: ${expected}`);
       }
     }
