@@ -61,7 +61,7 @@ module.exports = Grown => {
     $install(ctx) {
       // quick middlewares
       ctx.mount(conn => {
-        if (!conn.req.query) {
+        if (typeof conn.req.query === 'undefined') {
           const query = conn.req.url.split('?')[1] || '';
           const parts = query.split('&');
 
