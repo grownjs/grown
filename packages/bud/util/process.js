@@ -118,15 +118,18 @@ function wrap(callback) {
 
   function err(message) {
     /* istanbul ignore else */
-    if (message) {
-      try {
-        process.stderr.write(`\r\x1b[31m${message}\x1b[0m\n`);
-      } catch (e) {
-        process.stderr.write(`\r\x1b[31m${e.stack}\x1b[0m\n`);
+    if (!_errCallback) {
+      /* istanbul ignore else */
+      if (message) {
+        try {
+          process.stderr.write(`\r\x1b[31m${message}\x1b[0m\n`);
+        } catch (e) {
+          process.stderr.write(`\r\x1b[31m${e.stack}\x1b[0m\n`);
+        }
       }
-    }
 
-    process.exit(1);
+      process.exit(1);
+    }
   }
 
   function ifErr(cb) {
@@ -174,7 +177,7 @@ function wrap(callback) {
       }
     }
 
-    return Promise.resolve()
+    Promise.resolve()
       .then(() => callback.call(self, ifErr))
       .then(() => end())
       .catch(end);
