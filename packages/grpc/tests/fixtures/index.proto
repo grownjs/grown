@@ -3,6 +3,8 @@ package API;
 service Test {
   rpc is(Input) returns (Output) {}
   rpc ok(Noop) returns (Success) {}
+  rpc err(Noop) returns (Success) {}
+  rpc throw(Noop) returns (Success) {}
 }
 message Noop {}
 message Input {

@@ -7,12 +7,17 @@ module.exports = (Grown, util) => {
   const grpc = require('grpc');
 
   // FIXME: implements streaming & metadata!
+  function _callDeadline(timeout) {
+    const now = new Date();
 
-  function _callService(client, method, data) {
+    now.setSeconds(now.getSeconds() + timeout);
+
+    return now;
+  }
+
+  function _callService(options, client, method, data) {
     return new Promise((resolve, reject) => {
-      const identifier = client.constructor.service[method]
-        ? client.constructor.service[method].path
-        : method;
+      const identifier = (client.constructor.service[method] && client.constructor.service[method].path) || method;
 
       /* istanbul ignore else */
       if (typeof client[method] !== 'function') {
@@ -21,9 +26,7 @@ module.exports = (Grown, util) => {
 
       /* istanbul ignore else */
       if (typeof data === 'undefined') {
-        const requestType = client.constructor.service[method]
-          ? client.constructor.service[method].requestType
-          : null;
+        const { requestType } = client.constructor.service[method];
 
         /* istanbul ignore else */
         if (requestType && requestType.type.field.length) {
@@ -31,35 +34,22 @@ module.exports = (Grown, util) => {
         }
       }
 
-      try {
-        const deadline = new Date();
+      client[method](data, { deadline: this._callDeadline(options.timeout) }, (error, result) => {
+        /* istanbul ignore else */
+        if (error) {
+          return reject(error);
+        }
 
-        deadline.setSeconds(deadline.getSeconds() + (this.timeout || 5));
-
-        client[method](data, { deadline }, (error, result) => {
-          /* istanbul ignore else */
-          if (error) {
-            return reject(error);
-          }
-
-          return resolve(result);
-        });
-      } catch (e) {
-        throw new Error(`Failed at calling ${identifier}: ${e.stack || e.message}`);
-      }
+        return resolve(result);
+      });
     });
   }
 
-  function _getService(name, controller) {
-    Object.keys(controller).forEach(key => {
-      const callback = controller[key];
+  function _getService(name, handler) {
+    Object.keys(handler).forEach(key => {
+      const callback = handler[key];
 
-      controller[key] = function $proxy(ctx, reply) {
-        /* istanbul ignore else */
-        if (!ctx || typeof reply !== 'function') {
-          throw new Error(`${name}#${key}: Illegal arguments`);
-        }
-
+      handler[key] = function $proxy(ctx, reply) {
         // overload given context
         ctx.handler = name;
         ctx.method = key;
@@ -70,14 +60,18 @@ module.exports = (Grown, util) => {
           .catch(e => {
             const meta = new grpc.Metadata();
 
-            meta.add('originalError', JSON.stringify(e));
+            meta.add('originalError', JSON.stringify({
+              message: e.message,
+              stack: e.stack,
+              code: e.code,
+            }));
 
             reply(e, null, meta);
           });
       };
     });
 
-    return controller;
+    return handler;
   }
 
   function _onError(e) {
@@ -90,45 +84,41 @@ module.exports = (Grown, util) => {
         e.original = JSON.parse(originalError[0]);
       }
     } catch (_e) {
-      throw new Error(`Failed to deserialize error. ${e.message}`);
+      // do nothing
     }
 
     throw e;
   }
 
   return Grown('GRPC.Gateway', {
+    _callDeadline,
     _callService,
     _getService,
     _onError,
 
-    setup(controllers) {
+    setup(controllers, options) {
       const _server = grpc.ServerCredentials.createInsecure();
       const _channel = grpc.credentials.createInsecure();
+      const _settings = options || {};
 
-      const namespace = this.proto_namespace || 'API';
-      const port = this.gateway_port || 50051;
+      const namespace = _settings.namespace || 'API';
+      const port = _settings.port || 50051;
       const server = new grpc.Server();
       const services = [];
       const map = {};
 
       /* istanbul ignore else */
       if (!this[namespace]) {
-        throw new Error(`${namespace} namespace not found`);
+        throw new Error(`Service '${namespace}' not found`);
       }
 
       Object.keys(this[namespace]).forEach(key => {
         const id = key.replace(RE_DASHERIZE, ($0, $1) => $1.toLowerCase());
-        const host = (this.self_hostname === true && id) || '0.0.0.0';
-
-        let _client;
-
-        /* istanbul ignore else */
-        if (map[`send${key}`]) {
-          throw new Error(`Method 'send${key}' already setup`);
-        }
-
+        const host = (typeof _settings.hostname === 'function' && _settings.hostname(id)) || '0.0.0.0';
         const name = key.replace(RE_SERVICE, '');
         const Proto = this[namespace][key];
+
+        let _client;
 
         map[`send${name}`] = (method, data) => {
           /* istanbul ignore else */
@@ -136,7 +126,7 @@ module.exports = (Grown, util) => {
             _client = new Proto(`${host}:${port}`, _channel);
           }
 
-          return this._callService(_client, method, data).catch(this._onError);
+          return this._callService(_settings, _client, method, data).catch(this._onError);
         };
 
         Object.keys(Proto.service).forEach(method => {
