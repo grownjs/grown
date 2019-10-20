@@ -7,16 +7,17 @@ module.exports = (Grown, util) => {
   // setup logger
   let _level = 'info';
 
-  /* istanbul ignore else */
+  /* istanbul ignore next */
   if (Grown.argv.flags.debug) {
     _level = 'debug';
   }
 
-  const _logger = Logger
+  /* istanbul ignore next */
+  let _logger = Logger
     .setLevel(Grown.argv.flags.quiet ? false : _level)
     .getLogger(12, process.stdout, process.stderr);
 
-  /* istanbul ignore else */
+  /* istanbul ignore next */
   if (Grown.argv.flags.debug && Grown.argv.flags.verbose) {
     require('debug').enable('*');
     Logger.setLevel(false);
@@ -34,7 +35,7 @@ module.exports = (Grown, util) => {
     if (text.charAt() === '-') {
       _logger.printf('\r\r{% item %s %}\n', text.substr(1).trim());
     } else if (text.indexOf('read ') === 0 || text.indexOf('write ') === 0) {
-      _logger(text.split(' ').shift(1), text.split(' ').slice(1).join(' '));
+      _logger(text.split(' ').shift(), text.split(' ').slice(1).join(' '));
     } else {
       _logger.printf('\r\r{% log %s %}\n', text);
     }
@@ -61,7 +62,7 @@ module.exports = (Grown, util) => {
     $before_send(e, ctx) {
       if (typeof ctx.end === 'function') {
         ctx.put_resp_header('X-Response-Time', this._elapsedTime(ctx));
-      } else if (ctx.res) {
+      } else {
         ctx.res.setHeader('X-Response-Time', this._elapsedTime(ctx));
       }
     },
@@ -89,6 +90,10 @@ module.exports = (Grown, util) => {
           logger: () => _logger,
         },
       };
+    },
+
+    setLogger(stdout) {
+      _logger = Logger.setLogger(stdout).getLogger(12);
     },
 
     message(log) {
