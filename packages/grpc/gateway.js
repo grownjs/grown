@@ -123,7 +123,7 @@ module.exports = (Grown, util) => {
         map[`send${name}`] = (method, data) => {
           /* istanbul ignore else */
           if (!_client) {
-            _client = new Proto(`${host}:${port}`, _channel);
+            _client = new Proto(!host.includes(':') ? `${host}:${port}` : host, _channel);
           }
 
           return this._callService(_settings, _client, method, data).catch(this._onError);

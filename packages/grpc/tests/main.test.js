@@ -6,8 +6,6 @@ const Grown = require('grown')();
 
 Grown.use(require('..'));
 
-let gateway;
-
 function mockGateway(protobuf, controllers, overrideOptions) {
   const Gateway = Grown.GRPC.Gateway({
     include: [
@@ -31,6 +29,8 @@ describe('Grown.GRPC', () => {
   };
 
   const validProtobuf = path.join(__dirname, 'fixtures/index.proto');
+
+  let gateway;
 
   afterEach(() => {
     if (gateway) gateway.stop();

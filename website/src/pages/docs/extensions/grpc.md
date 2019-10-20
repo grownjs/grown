@@ -65,9 +65,11 @@ const Gateway = Grown.GRPC.Gateway({
 });
 
 const API = Grown.load(`${__dirname}/handlers`);
-const gateway = Gateway.setup(API).start();
+const gateway = Gateway.setup(API, {
+  timeout: 10,
+}).start();
 
-gateway.Test.is({ truth: 42 })
+gateway.API.Test.is({ truth: 42 })
   .then(result => {
     console.log('GOT:', result);
   });
@@ -77,7 +79,7 @@ gateway.Test.is({ truth: 42 })
 
 ### Public methods <var>static</var>
 
-- `scan(file[, options])` &mdash; Returns a mapping of all services found in the given `file`, `options` are for `@grpc/proto-loader` when loading the file.
+- `scan(file[, options])` &mdash; Returns a mapping of all services found in the given `file`, `options` are given to `@grpc/proto-loader` when loading the file.
 
 ---
 
@@ -85,11 +87,18 @@ gateway.Test.is({ truth: 42 })
 
 ### Public methods <var>static</var>
 
-- `setup(controllers)` &mdash; Returns a gateway instance with services and controllers merged. Invoke them as `map.send<Service>(...)` or as `map.Service.method({ ... })` indistinctly.
+- `setup(controllers[, options])` &mdash; Returns a gateway instance with services and controllers merged. Invoke them as `map.send<Service>(...)` or as `map.Service.method({ ... })` indistinctly.
+
+  Supported options are:
+  - `hostname(serviceName)` &mdash; Function, used to determine a host for service registration, fallback to `0.0.0.0` otherwise.
+  - `timeout` &mdash; Number, timeout in seconds for gRPC deadline option; default to `undefined`.
+  - `port`  &mdash; Number, custom port for service registration; default to `50051`.
+
+> Calls to `hostname(...)` would return a port too, in such case is preferred and used instead.
 
 ### Private* methods <var>static</var>
 
-- `_callService(client, method, data)` &mdash; Wrap used methods when calling services.
+- `_callService(options, client, method, data)` &mdash; Wrap used methods when calling services.
 - `_getService(name, controller)` &mdash; Decorate all methods on given handlers.
 - `_onError(e)` &mdash; Decorate errors thrown by calling services.
 
