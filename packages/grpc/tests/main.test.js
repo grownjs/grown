@@ -10,12 +10,13 @@ let gateway;
 
 function mockGateway(protobuf, controllers) {
   const Gateway = Grown.GRPC.Gateway({
+    timeout: 1,
     include: [
       Grown.GRPC.Loader.scan(protobuf),
     ],
   });
 
-  return Gateway.setup(Grown.load(controllers)).start();
+  gateway = Gateway.setup(Grown.load(controllers)).start();
 }
 
 /* global beforeEach, afterEach, describe, it */
@@ -36,7 +37,7 @@ describe('Grown.GRPC', () => {
     });
 
     it('should scan/load properly', () => {
-      gateway = mockGateway(validProtobuf, validHandlers);
+      mockGateway(validProtobuf, validHandlers);
 
       return gateway.API.Test.is({ truth: 42 })
         .then(result => {
@@ -47,11 +48,19 @@ describe('Grown.GRPC', () => {
 
   describe('Gateway', () => {
     beforeEach(() => {
-      gateway = mockGateway(validProtobuf, validHandlers);
+      mockGateway(validProtobuf, validHandlers);
     });
 
-    it('....', () => {
-      // FIXME
+    it('should validate its input', () => {
+      return Promise.resolve()
+        .then(() => gateway.sendTest().catch(e => expect(e).to.match(/Invalid method for/)))
+        .then(() => gateway.sendTest('is').catch(e => expect(e).to.match(/Missing data for/)));
+    });
+
+    it('should handle timeout errors', () => {
+      return gateway.API.Test.ok().catch(e => {
+        expect(e).to.match(/Deadline Exceeded/);
+      });
     });
   });
 });

@@ -64,8 +64,8 @@ const Gateway = Grown.GRPC.Gateway({
   ],
 });
 
-const handlers = Grown.load(`${__dirname}/handlers`);
-const gateway = Gateway.setup(handlers).start();
+const API = Grown.load(`${__dirname}/handlers`);
+const gateway = Gateway.setup(API).start();
 
 gateway.Test.is({ truth: 42 })
   .then(result => {

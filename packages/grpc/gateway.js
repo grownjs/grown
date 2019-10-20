@@ -14,12 +14,21 @@ module.exports = (Grown, util) => {
         ? client.constructor.service[method].path
         : method;
 
+      /* istanbul ignore else */
       if (typeof client[method] !== 'function') {
         throw new Error(`Invalid method for '${identifier}' service`);
       }
 
+      /* istanbul ignore else */
       if (typeof data === 'undefined') {
-        throw new Error(`Missing data for '${identifier}' request`);
+        const requestType = client.constructor.service[method]
+          ? client.constructor.service[method].requestType
+          : null;
+
+        /* istanbul ignore else */
+        if (requestType && requestType.type.field.length) {
+          throw new Error(`Missing data for '${identifier}' request`);
+        }
       }
 
       try {

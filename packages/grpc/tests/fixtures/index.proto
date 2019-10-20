@@ -2,10 +2,15 @@ syntax = "proto3";
 package API;
 service Test {
   rpc is(Input) returns (Output) {}
+  rpc ok(Noop) returns (Success) {}
 }
+message Noop {}
 message Input {
   int32 truth = 1;
 }
 message Output {
   string reveal = 1;
+}
+message Success {
+  bool ok = 1;
 }
