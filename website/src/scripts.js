@@ -7,8 +7,10 @@
   const sourceCode = source.innerText.replace(`${matches[0]}\n`, '');
   const a = document.createElement('a');
   a.innerText = '▾ REPL';
-  a.href = '#';
+  a.href = location.href;
   a.onclick = e => {
+    if (a._locked) return;
+    a._locked = true;
     delete a.onclick;
     e.preventDefault();
     a.innerText = 'Loading...';

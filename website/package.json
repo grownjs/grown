@@ -39,7 +39,6 @@
       "**:{fullpath/1}"
     ],
     "watching": [
-      ".env",
       "package.json"
     ],
     "ignoreFiles": [
@@ -81,8 +80,7 @@
     "pug": "^2.0.0-beta11",
     "rollup": "^1.1.2",
     "talavera": "^0.7.4",
-    "tarima": "^4.4.4",
-    "tarima-lr": "^0.4.1",
+    "tarima": "^4.6.0",
     "terser": "^3.17.0"
   }
 }

@@ -1,7 +1,23 @@
 ---
 title: Model
 $render: ../../../lib/layouts/default.pug
+runkit:
+  preamble: |
+    const Grown = require('@grown/bud')();
+    Grown.use(require('@grown/server'));
+    const server = new Grown();
 ---
+
+...
+
+
+```js
+/* @runkit */
+// register extension
+const Model = Grown.use(require('@grown/model'));
+
+console.log(Model)
+```
 
 ## Resource
 
