@@ -16,6 +16,9 @@ install:
 setup:
 	@lerna bootstrap
 
+dev\:%:
+	@cd packages/$(subst dev:,,$*) && npm run dev
+
 test\:%:
 	@cd packages/$(subst test:,,$@) && npm run $(TASK)
 
