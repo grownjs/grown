@@ -5,8 +5,6 @@ const stdMocks = require('std-mocks');
 const td = require('testdouble');
 const path = require('path');
 
-const procExit = process.exit;
-
 let Grown;
 
 /* global beforeEach, afterEach, describe, it */
@@ -230,22 +228,16 @@ describe('Grown (bud)', () => {
       beforeEach(() => {
         calls = [];
         stdMocks.use();
-        process.exit = () => {
-          calls.push('exit');
-        };
       });
 
       afterEach(() => {
         stdMocks.restore();
-        process.exit = procExit;
 
         const result = stdMocks.flush();
 
         expect(result.stdout.length).to.eql(1);
-        process.stdout.write(result.stdout.join('\n'));
-
-        expect(result.stderr.join('\n')).to.contain('Error: OK');
-        expect(calls).to.eql(['guard', 'rescue', 'exit']);
+        expect(result.stderr.join('\n')).not.to.contain('Error: OK');
+        expect(calls).to.eql(['guard', 'rescue']);
       });
 
       it('will output to stderr', () => Grown
