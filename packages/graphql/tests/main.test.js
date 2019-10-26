@@ -12,7 +12,6 @@ Grown.use(require('..'));
 function mockServer(schemas, registry, container = {}, onBefore = () => {}) {
   const middleware = Grown.GraphQL.setup(schemas, {
     registry,
-    name: 'Test',
     get: () => container,
   });
 

@@ -56,7 +56,7 @@ module.exports = (Grown, util) => {
     });
 
     /* istanbul ignore else */
-    if (!(container && container.name && container.registry)) {
+    if (!(container && container.registry)) {
       throw new Error('Missing or invalid container');
     }
 
