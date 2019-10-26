@@ -2,7 +2,8 @@ FROM application/nodejs:latest
 
 COPY ./package*.json /app/
 WORKDIR /app
-RUN npm ci
+#RUN npm ci
+RUN npm i
 
 COPY . /app/
 RUN make dist

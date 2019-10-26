@@ -1,3 +1,5 @@
+require('logro').setForbiddenFields(require('./api/forbidden.json'));
+
 const log = require('logro').createLogger(__filename);
 const Application = require('./lib');
 

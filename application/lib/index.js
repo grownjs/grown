@@ -14,7 +14,7 @@ Application('GRPC.Gateway', {
 
 Application('Services', {
   include: [
-    GRPC.Gateway.setup(Application.load(path.join(__dirname, '../api/handlers'))),
+    GRPC.Gateway.setup(Application.load(path.join(__dirname, '../api/handlers')), { timeout: 10 }),
   ],
   getSchema(ref) {
     return Schema.get(ref, require('../api/schema/generated'));

@@ -77,8 +77,6 @@ stop: ## Stop single services  (docker)
 down: ## Destroy test environment  (docker)
 	@docker-compose $(TEST_COMPOSE) down
 
-# FIXME: docker integration...
-
 test: ## Test current build of a service  (docker)
 	@docker-compose $(TEST_COMPOSE) run -T --rm web
 	@docker-compose $(E2E_COMPOSE) exec -T --rm web bash -c "echo RUN E2E"
@@ -90,11 +88,10 @@ backend: ## Build base docker-image  (docker)
 	@docker build -t application/nodejs --target nodejs -f docker/Dockerfile.backend .
 
 integration: ## Env for frontend-development and QA  (docker)
-	@docker-compose $(E2E_COMPOSE) run --rm -d $(PORT_FLAGS) $(service)
+	@docker-compose $(E2E_COMPOSE) up -d $(PORT_FLAGS)
 
 provision: ## Env for production or staging servers  (docker)
-	@$(call fig,$(service) up)
-	@docker-compose $(BASE_COMPOSE) run --rm -p $(PORT):80 -d $(service)
+	@docker-compose $(BASE_COMPOSE) run --rm -p $(PORT):80 -d web
 
 	@printf "\nPlease wait while the server is being provisioned... "
 	@printf "\nOnce done, it will be available at http://$(shell hostname):$(PORT)/"
@@ -105,7 +102,7 @@ provision: ## Env for production or staging servers  (docker)
 	@fkill -s $*
 
 %\:%: ## Invoke tasks by service name  (host)
-%\:sh %\:up %\:run %\:logs %\:stop %\:down %\:test %\:build %\:provision:
+%\:sh %\:up %\:run %\:logs %\:stop %\:down %\:test %\:build:
 	@make -s service=$(subst :, ,$@)
 
 npm\:%: ## Invoke NPM commands  (host)
@@ -118,12 +115,12 @@ ci: deps ## Run tests and report coverage results! :wink:  (host)
 cov: deps ## Report coverage after tests  (host)
 	@npm run test:report -- -r $(report)
 
-dev: deps ## Single-shot development workspace  (host)
+all: deps ## Single-shot development workspace  (host)
 	@make -s up service=db
 	@make -s schema templates database node
 
-all: deps ## Develop NodeJS application only  (host)
-	@fkill -s :4001 :3000 :1080 :1081 :1025
+dev: deps ## Develop NodeJS application only  (host)
+	@make -s :4001! :3000! :1080! :1081! :1025!
 	@(npm run watch 2>&1 | npm run logs) & npm run watch:mail & npm run dev
 
 e2e: deps ## Headlessly run E2E tests  (host)

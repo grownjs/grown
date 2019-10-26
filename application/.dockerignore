@@ -1,6 +1,7 @@
 **
 !.eslintrc
-!docker
+!docker/postgres
+!docker/*.*
 !api
 !db
 !lib

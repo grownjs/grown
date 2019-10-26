@@ -5,7 +5,7 @@ services:
     volumes:
       - ./chrome/:/data
   web:
-    entrypoint: bash
-    command: -c "echo e2e"
+    entrypoint: sh
+    command: -c "exit 2"
     depends_on:
       - chrome
