@@ -8,6 +8,7 @@ test-all:
 	@make test:bud test:cli test:server test:parsers test:conn
 
 test-ci:
+	@make -C application lint
 	@make test-all
 
 install:
