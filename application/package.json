@@ -13,6 +13,7 @@
     "grown": "grown",
     "start": "node .",
     "logs": "logrof --",
+    "lint": "eslint api db e2e lib web *.js",
     "debug": "ndb npm run watch --",
     "watch": "nodemon --ignore '{build,docker,logs,web,e2e}/**' --ignore '**/generated/**' --ignore Makefile",
     "watch:mail": "mailor watch lib/mailer/templates -d lib/mailer/generated --no-open",
@@ -27,6 +28,7 @@
     "size": "npm run dist && size-limit",
     "test": "npm run test:unit && npm run test:functional --",
     "bdd": "bdd-tc e2e/features --",
+    "pretest": "npm run lint",
     "test:bdd": "npm run bdd -- npm run test:e2e --",
     "test:e2e": "testcafe --color ${BROWSER:-chrome:headless}",
     "test:e2e:ci": "BASE_URL=http://web:4001 testcafe --ports 9505,9506 remote:1",
@@ -89,6 +91,12 @@
     }
   },
   "devDependencies": {
+    "eslint": "^6.4.0",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-pug": "^1.1.1",
+    "eslint-plugin-svelte3": "^2.7.3",
+    "eslint-utils": ">=1.4.1",
     "axios": ">=0.18.1",
     "bdd-tc": "^0.0.7",
     "buble": "^0.19.3",

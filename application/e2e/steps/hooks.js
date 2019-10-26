@@ -44,7 +44,7 @@ export default {
   'Then I should navigate to $pageId': pageId => async t => {
     const { pathname } = await getLocation();
 
-    page = getEl(pageId)
+    page = getEl(pageId);
 
     await t
       .expect(page.url).eql(pathname)

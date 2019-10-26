@@ -1,7 +1,7 @@
 module.exports = ({ User, Session }) => async function checkLogin({ request }) {
   const { params: { type, auth } } = request;
 
-  const [ user ] = await User.findOrCreate({
+  const [user] = await User.findOrCreate({
     where: {
       platform: type,
       identifier: auth.id,

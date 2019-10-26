@@ -126,13 +126,16 @@ all: deps ## Develop NodeJS application only  (host)
 	@fkill -s :4001 :3000 :1080 :1081 :1025
 	@(npm run watch 2>&1 | npm run logs) & npm run watch:mail & npm run dev
 
-e2e: ## Headlessly run E2E tests  (host)
+e2e: deps ## Headlessly run E2E tests  (host)
 	@npm run test:e2e -- e2e/cases && npm run test:bdd -- --take-snapshot -S -s e2e/screenshots
+
+lint: deps ## Run ESLint on all source files  (host)
+	@npm run lint
 
 dist: deps ## Build artifacts for production  (host)
 	@npm run build:mail && npm run schema && npm run dist
 
-repl: ## Interactive console  (host)
+repl: deps ## Interactive console  (host)
 	@npm run grown -- repl models:$(models)
 
 seed: deps ## Run custom seeders  (host)

@@ -15,4 +15,3 @@ function expirationTime(time) {
 module.exports = function defineExpiration(role) {
   return expirationTime(TIME[role]);
 };
-
