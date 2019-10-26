@@ -5,7 +5,7 @@ import {
 import config from '../config';
 import * as data from '../fixtures';
 import * as elems from '../selectors';
-import * as pages from '../helpers/pages';
+
 import { getLocation } from '../helpers/client';
 
 let page;
