@@ -174,12 +174,12 @@ templates: deps ## Regenerate mailing templates  (host)
 	@npm run build:mail
 
 database: deps ## Start database for development  (host)
-	@make -s migrate-up reset
+	@make -s migrate:up reset
 
-migrate-%: deps ## Execute pending migrations  (host)
+migrate\:%: deps ## Execute pending migrations  (host)
 	@npm run grown -- migrate models:$(models) --$(subst :, --,$*)
 
 migration: deps ## Autogenerate new migration files  (host)
-	@make -s migrate-make
-	@make -s migrate-up
-	@make -s migrate-apply
+	@make -s migrate:make
+	@make -s migrate:up
+	@make -s migrate:apply
