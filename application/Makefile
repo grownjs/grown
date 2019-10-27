@@ -10,7 +10,7 @@ profile := $(notdir $(PWD))
 # environment
 PORT ?= 4001
 NODE_ENV ?= development
-BASE_URL ?= http://localhost:$(PORT)
+POSTGRES_USER ?= postgres
 
 ifneq ($(PORTS),)
 	PORT_FLAGS = -p $(subst $(shell echo ','), -p ,$(PORTS))
@@ -50,7 +50,7 @@ endef
 	@awk -F':.*?##' '/^[^ @:]+:.*##/{gsub("%","*",$$1);gsub("\\\\",":*",$$1);printf "\033[36m%13s\033[0m %s\n",$$1,$$2}' $<
 
 	@printf "\n  Examples:"
-	@printf "\n    make web:build nginx:provision"
+	@printf "\n    make build provision"
 	@printf "\n    make migrate-destroy"
 	@printf "\n    make clean dev"
 	@printf "\n\n"
@@ -93,7 +93,7 @@ integration: ## Env for frontend-development and QA  (docker)
 	@docker-compose $(E2E_COMPOSE) up -d --force-recreate $(PORT_FLAGS)
 
 provision: ## Env for production or staging servers  (docker)
-	@docker-compose $(PROD_COMPOSE) run --rm -p $(PORT):80 -e BASE_URL=http://$(shell hostname):$(PORT) -d $(service)
+	@docker-compose $(PROD_COMPOSE) run --rm -p $(PORT):80 -e BASE_URL=http://$(shell hostname):$(PORT) -d nginx
 
 	@printf "\nPlease wait while the server is being provisioned... "
 	@printf "\nOnce done, it will be available at http://$(shell hostname):$(PORT)/"

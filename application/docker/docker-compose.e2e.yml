@@ -4,7 +4,7 @@ services:
   chrome:
     volumes:
       - ./chrome/:/data
-    depends_on:
+    links:
       - nginx
   web:
     command: "migrate-up reset npm:start"

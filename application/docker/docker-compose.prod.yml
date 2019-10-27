@@ -4,6 +4,9 @@ services:
   web:
     command: "migrate-up seed npm:start"
     environment:
-      NODE_ENV: production
+      NODE_ENV: development
     links:
       - db
+  nginx:
+    links:
+      - web
