@@ -5,6 +5,5 @@ services:
     volumes:
       - ./chrome/:/data
   web:
-    command: "reset seed npm:start"
     depends_on:
       - chrome
