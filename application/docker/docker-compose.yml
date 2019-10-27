@@ -26,6 +26,8 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-*secret*}
       WITHOUT_SEEDS: ${WITHOUT_SEEDS}
       REMOVE_LOG: ${REMOVE_LOG}
+      FB_CLIENT_ID: ${FB_CLIENT_ID}
+      FB_CLIENT_SECRET: ${FB_CLIENT_SECRET}
     links:
       - db
   db:
