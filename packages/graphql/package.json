@@ -1,6 +1,6 @@
 {
   "name": "@grown/graphql",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "main": "index.js",
   "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
   "license": "MIT",
@@ -29,13 +29,13 @@
     "graphql-tools": "^4.0.4"
   },
   "devDependencies": {
-    "@grown/test": "^0.0.3",
+    "@grown/test": "^0.0.4",
     "chai": "^4.2.0",
     "codecov": "^3.1.0",
     "eslint": "^5.9.0",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-import": "^2.14.0",
-    "grown": "^1.1.4",
+    "grown": "^1.1.5",
     "lodash": ">=4.17.11",
     "mocha": "^5.2.0",
     "nyc": "^13.1.0"
