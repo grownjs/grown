@@ -1,12 +1,12 @@
 version: "3.4"
 
 services:
+  nginx:
+    links:
+      - web
   web:
-    command: "migrate-up seed npm:start"
+    command: "database npm:start"
     environment:
       NODE_ENV: development
     links:
       - db
-  nginx:
-    links:
-      - web

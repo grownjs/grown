@@ -7,4 +7,4 @@ services:
     links:
       - nginx
   web:
-    command: "migrate-up reset npm:start"
+    command: "database npm:start"

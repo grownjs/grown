@@ -7,30 +7,33 @@ report := html
 models := lib/models
 profile := $(notdir $(PWD))
 
-# environment
-PORT ?= 4001
-NODE_ENV ?= development
-POSTGRES_USER ?= postgres
-
-ifneq ($(PORTS),)
-	PORT_FLAGS = -p $(subst $(shell echo ','), -p ,$(PORTS))
-endif
-
 # dotenv support
 ifneq ($(wildcard .env),)
 	include .env
 endif
 
+# environment
+PORT ?= 4001
+NODE_ENV ?= development
+BASE_URL ?= http://localhost:$(PORT)
+
+export PORT NODE_ENV BASE_URL
+
+ifneq ($(PORTS),)
+	PORT_FLAGS = -p $(subst $(shell echo ','), -p ,$(PORTS))
+endif
+
 # docker-compose configuration
-BASE_COMPOSE = -f docker/docker-compose.yml
-PROD_COMPOSE = $(BASE_COMPOSE) -f docker/docker-compose.prod.yml
-TEST_COMPOSE = $(BASE_COMPOSE) -f docker/docker-compose.test.yml
+DOCKER_COMPOSE = -f docker/docker-compose.yml
+TEST_COMPOSE = $(DOCKER_COMPOSE) -f docker/docker-compose.test.yml
+PRE_COMPOSE = $(DOCKER_COMPOSE) -f docker/docker-compose.pre.yml
 DEV_COMPOSE = $(TEST_COMPOSE) -f docker/docker-compose.dev.yml
 E2E_COMPOSE = $(DEV_COMPOSE) -f docker/docker-compose.e2e.yml
 
 # targets
-.PHONY: ? up run logs stop down e2e test build integration provision ci cov add rm dev dist
-.PHONY: seed reset clear clean prune deps purge schema database migration templates
+.PHONY: ? sh up run logs stop down test chrome test-e2e build backend integration provision
+.PHONY: ci test-ci cov all dev e2e lint kill dist repl seed reset clear watch clean prune deps
+.PHONY: purge install schema templates database migration
 
 # utils
 define ls
@@ -50,9 +53,9 @@ endef
 	@awk -F':.*?##' '/^[^ @:]+:.*##/{gsub("%","*",$$1);gsub("\\\\",":*",$$1);printf "\033[36m%13s\033[0m %s\n",$$1,$$2}' $<
 
 	@printf "\n  Examples:"
-	@printf "\n    make build provision"
-	@printf "\n    make migrate-destroy"
-	@printf "\n    make clean dev"
+	@printf "\n    make build provision  -- Build webapp, start nginx proxy-server"
+	@printf "\n    make clean dev        -- Clean local artifacts, start local-development"
+	@printf "\n    make up test          -- Start all docker-services, run E2E tests remotely"
 	@printf "\n\n"
 
 sh: ## SSH into services with current SHELL  (docker)
@@ -62,18 +65,18 @@ up: ## Start service in the background  (docker)
 	@docker-compose $(DEV_COMPOSE) up -d --force-recreate $(service)
 
 run: ## Execute from single service  (docker)
-	@docker-compose $(BASE_COMPOSE) run -T --rm $(PORT_FLAGS) $(service)
+	@docker-compose $(DOCKER_COMPOSE) run -T --rm $(PORT_FLAGS) $(service)
 
 logs: ## Display logs for given service  (docker)
-	@docker-compose $(BASE_COMPOSE) logs -f $(service)
+	@docker-compose $(DOCKER_COMPOSE) logs -f $(service)
 
 stop: ## Stop single services  (docker)
-	@docker-compose $(BASE_COMPOSE) stop $(service)
+	@docker-compose $(DOCKER_COMPOSE) stop $(service)
 
 down: ## Destroy test environment  (docker)
 	@docker-compose $(TEST_COMPOSE) down
 
-test: ## Test all services at once, even E2E  (docker)
+test: ## Run all E2E test-cases remotely  (docker)
 	@make -s test-e2e command="npm run test:e2e:remote -- e2e/cases"
 	@make -s test-e2e command="npm run bdd -- npm run test:e2e:remote"
 
@@ -84,7 +87,7 @@ test-e2e: chrome
 	@docker-compose $(E2E_COMPOSE) exec -e BASE_URL=http://nginx -T web $(command)
 
 build: ## Build all or single services  (docker)
-	@docker-compose $(BASE_COMPOSE) build $(service)
+	@docker-compose $(DOCKER_COMPOSE) build $(service)
 
 backend: ## Build base docker-image  (docker)
 	@docker build -t application/nodejs --target nodejs -f docker/Dockerfile.backend .
@@ -93,10 +96,10 @@ integration: ## Env for frontend-development and QA  (docker)
 	@docker-compose $(E2E_COMPOSE) up -d --force-recreate $(PORT_FLAGS)
 
 provision: ## Env for production or staging servers  (docker)
-	@docker-compose $(PROD_COMPOSE) run --rm -p $(PORT):80 -e BASE_URL=http://$(shell hostname):$(PORT) -d nginx
+	@docker-compose $(PRE_COMPOSE) run --rm -p $(PORT):80 -d nginx
 
 	@printf "\nPlease wait while the server is being provisioned... "
-	@printf "\nOnce done, it will be available at http://$(shell hostname):$(PORT)/"
+	@printf "\nOnce done, it will be available at $(BASE_URL)/"
 	@printf "\n\nIf takes longer, execute \`make logs\` to understand what's going on."
 	@printf "\n\n"
 

@@ -2,6 +2,6 @@ version: "3.4"
 
 services:
   web:
-    command: "migrate-up reset watch"
+    command: "database watch"
     environment:
       NODE_ENV: test
