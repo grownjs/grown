@@ -10,13 +10,23 @@ services:
       PGDATA: /var/lib/postgresql/data/pgdata
   web:
     ports:
+      - "1080:1080"
+      - "1081:1081"
+      - "1025:1025"
       - "3000:3000"
-      - "4000:4000"
       - "9505:9505"
       - "9506:9506"
-      - "35729:35729"
+    volumes:
+      - ..:/app
+      - /app/node_modules
+    environment:
+      NODE_ENV: development
+    links:
+      - db
   nginx:
     ports:
-      - "4001:80"
+      - "8080:80"
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    links:
+      - web

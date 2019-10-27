@@ -23,6 +23,7 @@ endif
 
 # docker-compose configuration
 BASE_COMPOSE = -f docker/docker-compose.yml
+PROD_COMPOSE = $(BASE_COMPOSE) -f docker/docker-compose.prod.yml
 TEST_COMPOSE = $(BASE_COMPOSE) -f docker/docker-compose.test.yml
 DEV_COMPOSE = $(TEST_COMPOSE) -f docker/docker-compose.dev.yml
 E2E_COMPOSE = $(DEV_COMPOSE) -f docker/docker-compose.e2e.yml
@@ -50,7 +51,7 @@ endef
 
 	@printf "\n  Examples:"
 	@printf "\n    make web:build nginx:provision"
-	@printf "\n    make migrate:destroy"
+	@printf "\n    make migrate-destroy"
 	@printf "\n    make clean dev"
 	@printf "\n\n"
 
@@ -58,10 +59,10 @@ sh: ## SSH into services with current SHELL  (docker)
 	@docker exec -it $(shell docker ps | grep $(service) | awk '/.*/{print $$1}') $(SHELL) $(SHELL_FLAGS)
 
 up: ## Start service in the background  (docker)
-	@docker-compose $(DEV_COMPOSE) up -d --no-deps --force-recreate $(service)
+	@docker-compose $(DEV_COMPOSE) up -d --force-recreate $(service)
 
 run: ## Execute from single service  (docker)
-	@docker-compose $(BASE_COMPOSE) run -T --rm --no-deps $(PORT_FLAGS) $(service)
+	@docker-compose $(BASE_COMPOSE) run -T --rm $(PORT_FLAGS) $(service)
 
 logs: ## Display logs for given service  (docker)
 	@docker-compose $(BASE_COMPOSE) logs -f $(service)
@@ -73,8 +74,13 @@ down: ## Destroy test environment  (docker)
 	@docker-compose $(TEST_COMPOSE) down
 
 test: ## Test current build of a service  (docker)
-	@docker-compose $(TEST_COMPOSE) run -T --rm web
-	@docker-compose $(E2E_COMPOSE) exec -T --rm web sh -c "echo RUN E2E"
+	@make -s integration
+	@docker-compose $(E2E_COMPOSE) exec -T web make test-all
+	@make -s down
+
+test-all: ## FIXME
+	@npm run test:e2e:ci -- e2e/cases
+	#@npm run test:bdd:ci
 
 build: ## Build all or single services  (docker)
 	@docker-compose $(BASE_COMPOSE) build $(service)
@@ -83,10 +89,10 @@ backend: ## Build base docker-image  (docker)
 	@docker build -t application/nodejs --target nodejs -f docker/Dockerfile.backend .
 
 integration: ## Env for frontend-development and QA  (docker)
-	@docker-compose $(E2E_COMPOSE) up -d $(PORT_FLAGS)
+	@docker-compose $(E2E_COMPOSE) up -d --force-recreate $(PORT_FLAGS)
 
 provision: ## Env for production or staging servers  (docker)
-	@docker-compose $(BASE_COMPOSE) run --rm -p $(PORT):80 -d web
+	@docker-compose $(PROD_COMPOSE) run --rm -p $(PORT):80 -d $(service)
 
 	@printf "\nPlease wait while the server is being provisioned... "
 	@printf "\nOnce done, it will be available at http://$(shell hostname):$(PORT)/"
@@ -97,7 +103,7 @@ provision: ## Env for production or staging servers  (docker)
 	@fkill -s $*
 
 %\:%: ## Invoke tasks by service name  (host)
-%\:sh %\:run %\:logs %\:stop %\:test %\:build:
+%\:sh %\:up %\:run %\:logs %\:stop %\:down %\:test %\:build:
 	@make -s service=$(subst :, ,$@)
 
 npm\:%: ## Invoke NPM commands  (host)
@@ -115,7 +121,7 @@ all: deps ## Single-shot development workspace  (host)
 	@make -s schema templates database node
 
 dev: deps ## Develop NodeJS application only  (host)
-	@(npm run watch 2>&1 | npm run logs) & npm run watch:mail & npm run dev
+	@make -s watch & npm run dev
 
 e2e: deps ## Headlessly run E2E tests  (host)
 	@npm run test:e2e -- e2e/cases && npm run test:bdd -- --take-snapshot -S -s e2e/screenshots
@@ -140,6 +146,9 @@ reset: deps ## Run integration_seeds  (host)
 
 clear: deps ## Run integration_seeds with --clear  (host)
 	@node db/integration_seeds --clear
+
+watch: deps ## Enable nodemon watching of sources  (host)
+	@(npm run watch 2>&1 | npm run logs) & npm run watch:mail
 
 clean: ## Remove cache and generated artifacts  (host)
 	@$(call iif,rm -r pgdata build api/schema/generated lib/mailer/generated,Built artifacts were deleted,Artifacts already deleted)
@@ -169,12 +178,12 @@ templates: deps ## Regenerate mailing templates  (host)
 	@npm run build:mail
 
 database: deps ## Start database for development  (host)
-	@make -s migrate:up reset
+	@make -s migrate-up reset
 
-migrate\:%: deps ## Execute pending migrations  (host)
+migrate-%: deps ## Execute pending migrations  (host)
 	@npm run grown -- migrate models:$(models) --$(subst :, --,$*)
 
 migration: deps ## Autogenerate new migration files  (host)
-	@make -s migrate:make
-	@make -s migrate:up
-	@make -s migrate:apply
+	@make -s migrate-make
+	@make -s migrate-up
+	@make -s migrate-apply

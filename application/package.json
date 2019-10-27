@@ -30,6 +30,7 @@
     "bdd": "bdd-tc e2e/features --",
     "pretest": "npm run lint",
     "test:bdd": "npm run bdd -- npm run test:e2e --",
+    "test:bdd:ci": "npm run bdd -- npm run test:e2e:ci --",
     "test:e2e": "testcafe --color ${BROWSER:-chrome:headless}",
     "test:e2e:ci": "BASE_URL=http://web:4001 testcafe --ports 9505,9506 remote:1",
     "test:unit": "npm run mocha -- -bR spec 'api/**/*.test.js'",

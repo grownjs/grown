@@ -2,6 +2,6 @@ version: "3.4"
 
 services:
   web:
-    command: "migrate:up reset npm:start"
+    command: "migrate-up reset watch"
     environment:
       NODE_ENV: test

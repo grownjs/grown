@@ -5,6 +5,7 @@
 !api
 !db
 !lib
+!e2e
 !web
 !main.js
 !Makefile

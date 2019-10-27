@@ -9,14 +9,11 @@ services:
       context: ..
       dockerfile: ./docker/Dockerfile.nginx
     image: application/nginx
-    links:
-      - web
   web:
     build:
       context: ..
       dockerfile: ./docker/Dockerfile.web
     image: application/web
-    command: "migrate:up seed npm:start"
     environment:
       NODE_ENV: ${NODE_ENV:-development}
       DB_NAME: ${DB_NAME:-user_dev}
@@ -28,8 +25,6 @@ services:
       REMOVE_LOG: ${REMOVE_LOG}
       FB_CLIENT_ID: ${FB_CLIENT_ID}
       FB_CLIENT_SECRET: ${FB_CLIENT_SECRET}
-    links:
-      - db
   db:
     image: postgres:11
     volumes:

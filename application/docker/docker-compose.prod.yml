@@ -1,0 +1,9 @@
+version: "3.4"
+
+services:
+  web:
+    command: "migrate-up seed npm:start"
+    environment:
+      NODE_ENV: production
+    links:
+      - db
