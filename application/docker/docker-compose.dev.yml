@@ -18,3 +18,5 @@ services:
   nginx:
     ports:
       - "4001:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
