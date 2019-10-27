@@ -33,7 +33,7 @@ DEV_COMPOSE = $(TEST_COMPOSE) -f docker/docker-compose.dev.yml
 E2E_COMPOSE = $(DEV_COMPOSE) -f docker/docker-compose.e2e.yml
 
 # targets
-.PHONY: ? up run bash logs stop down e2e test build integration provision ci cov add rm dev dist
+.PHONY: ? up run logs stop down e2e test build integration provision ci cov add rm dev dist
 .PHONY: seed reset clear clean prune deps purge schema database migration templates
 
 # utils
@@ -79,7 +79,7 @@ down: ## Destroy test environment  (docker)
 
 test: ## Test current build of a service  (docker)
 	@docker-compose $(TEST_COMPOSE) run -T --rm web
-	@docker-compose $(E2E_COMPOSE) exec -T --rm web bash -c "echo RUN E2E"
+	@docker-compose $(E2E_COMPOSE) exec -T --rm web sh -c "echo RUN E2E"
 
 build: ## Build all or single services  (docker)
 	@docker-compose $(BASE_COMPOSE) build $(service)
@@ -102,7 +102,7 @@ provision: ## Env for production or staging servers  (docker)
 	@fkill -s $*
 
 %\:%: ## Invoke tasks by service name  (host)
-%\:sh %\:up %\:run %\:logs %\:stop %\:down %\:test %\:build:
+%\:sh %\:run %\:logs %\:stop %\:test %\:build:
 	@make -s service=$(subst :, ,$@)
 
 npm\:%: ## Invoke NPM commands  (host)
@@ -120,7 +120,6 @@ all: deps ## Single-shot development workspace  (host)
 	@make -s schema templates database node
 
 dev: deps ## Develop NodeJS application only  (host)
-	@make -s :4001! :3000! :1080! :1081! :1025!
 	@(npm run watch 2>&1 | npm run logs) & npm run watch:mail & npm run dev
 
 e2e: deps ## Headlessly run E2E tests  (host)
@@ -128,6 +127,9 @@ e2e: deps ## Headlessly run E2E tests  (host)
 
 lint: deps ## Run ESLint on all source files  (host)
 	@npm run lint
+
+kill: deps ## Stop started services by port-number  (host)
+	@make -s :4001! :3000! :1080! :1081! :1025!
 
 dist: deps ## Build artifacts for production  (host)
 	@npm run build:mail && npm run schema && npm run dist

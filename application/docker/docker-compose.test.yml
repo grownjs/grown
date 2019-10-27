@@ -2,5 +2,5 @@ version: "3.4"
 
 services:
   web:
-    entrypoint: bash
-    command: -c "echo test"
+    environment:
+      NODE_ENV: test
