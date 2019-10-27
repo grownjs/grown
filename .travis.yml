@@ -8,7 +8,9 @@ node_js:
   - 10
   - 11
   - 12
+before_script:
+  - make install
 script:
-  - make install setup test-ci
+  - make test-ci
 notifications:
   email: false

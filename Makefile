@@ -11,6 +11,9 @@ test-ci:
 	@make -C application lint
 	@make test-all
 
+ci:
+	@make -s clean setup test-ci
+
 release:
 	@mv lerna.json lerna.json_backup
 	@cat lerna.json_backup | grep -v application > lerna.json
