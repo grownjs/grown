@@ -29,7 +29,7 @@ module.exports = (Grown, util) => {
           try {
             prev[cur] = require(`./passport/${cur}`)(types[cur], callback);
           } catch (e) {
-            throw new Error(`Unsupported strategy, given '${cur}'`);
+            throw new Error(`Failed at loading '${cur}' strategy (${e.message})`);
           }
         }
 
