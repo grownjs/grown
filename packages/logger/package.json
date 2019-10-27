@@ -1,6 +1,6 @@
 {
   "name": "@grown/logger",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "main": "index.js",
   "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
   "license": "MIT",
@@ -29,9 +29,9 @@
     "log-pose": "^0.3.5"
   },
   "devDependencies": {
-    "@grown/bud": "^0.0.17",
-    "@grown/server": "^0.0.10",
-    "@grown/test": "^0.0.3",
+    "@grown/bud": "^0.0.18",
+    "@grown/server": "^0.0.11",
+    "@grown/test": "^0.0.4",
     "chai": "^4.2.0",
     "codecov": "^3.6.1",
     "eslint": "^5.9.0",

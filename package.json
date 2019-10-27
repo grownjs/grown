@@ -1,6 +1,6 @@
 {
   "name": "grown",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "homepage": "https://soypache.co/grown/",
   "description": "Experimental DSL for web-apps",
   "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
@@ -32,8 +32,8 @@
     "mem": ">=4.0.0"
   },
   "dependencies": {
-    "@grown/bud": "^0.0.17",
-    "@grown/cli": "^0.0.23",
-    "@grown/server": "^0.0.10"
+    "@grown/bud": "^0.0.18",
+    "@grown/cli": "^0.0.24",
+    "@grown/server": "^0.0.11"
   }
 }

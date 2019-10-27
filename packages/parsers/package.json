@@ -1,6 +1,6 @@
 {
   "name": "@grown/parsers",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "main": "index.js",
   "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
   "license": "MIT",
@@ -25,9 +25,9 @@
     "access": "public"
   },
   "dependencies": {
-    "@grown/test": "^0.0.3",
+    "@grown/test": "^0.0.4",
     "body-parser": "^1.18.2",
-    "grown": "^1.1.4"
+    "grown": "^1.1.5"
   },
   "devDependencies": {
     "chai": "^4.2.0",

@@ -13,7 +13,7 @@ test-ci:
 
 release:
 	@mv lerna.json lerna.json_backup
-	@echo '{"lerna": "2.8.0","packages":[".","packages/*"],"version": "independent"}' > lerna.json
+	@cat lerna.json_backup | grep -v application > lerna.json
 	@git update-index --assume-unchanged lerna.json
 	@lerna publish || true
 	@mv lerna.json_backup lerna.json
