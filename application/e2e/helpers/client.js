@@ -1,3 +1,3 @@
 import { ClientFunction } from 'testcafe';
 
-export const getLocation = ClientFunction(url => document.location);
+export const getLocation = ClientFunction(() => document.location);

@@ -93,7 +93,7 @@ integration: ## Env for frontend-development and QA  (docker)
 	@docker-compose $(E2E_COMPOSE) up -d --force-recreate $(PORT_FLAGS)
 
 provision: ## Env for production or staging servers  (docker)
-	@docker-compose $(PROD_COMPOSE) run --rm -p $(PORT):80 -d $(service)
+	@docker-compose $(PROD_COMPOSE) run --rm -p $(PORT):80 -e BASE_URL=http://$(shell hostname):$(PORT) -d $(service)
 
 	@printf "\nPlease wait while the server is being provisioned... "
 	@printf "\nOnce done, it will be available at http://$(shell hostname):$(PORT)/"
@@ -110,7 +110,11 @@ provision: ## Env for production or staging servers  (docker)
 npm\:%: ## Invoke NPM commands  (host)
 	@npm $(subst :, ,$*) $(NPM_FLAGS)
 
-ci: deps ## Run tests and report coverage results! :wink:  (host)
+ci: deps ## Run all-tests and report coverage results! :wink:  (host)
+	@make -s test-ci run=unit
+	@make -s test-ci run=functional
+
+test-ci: deps
 	@mkdir -p $(run)_coverage && npm run test:coverage:$(run)
 	@make -s cov report="text-lcov > $(run)_coverage/lcov.info"
 

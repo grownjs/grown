@@ -15,7 +15,7 @@ services:
       dockerfile: ./docker/Dockerfile.web
     image: application/web
     environment:
-      BASE_URL: ${BASE_URL:-http://localhost:8080}
+      BASE_URL: ${BASE_URL:-http://localhost:4001}
       NODE_ENV: ${NODE_ENV:-development}
       DB_NAME: ${DB_NAME:-user_dev}
       DB_PORT: ${DB_PORT:-5432}

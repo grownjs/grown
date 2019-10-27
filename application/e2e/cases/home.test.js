@@ -2,6 +2,8 @@ import { Selector } from 'testcafe';
 
 import config from '../config.js';
 
+/* global fixture, test */
+
 fixture('Home')
   .page(config.url);
 
