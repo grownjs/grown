@@ -13,11 +13,10 @@ ifneq ($(wildcard .env),)
 endif
 
 # environment
-PORT ?= 4001
+BASE_URL ?= http://localhost:4001
 NODE_ENV ?= development
-BASE_URL ?= http://localhost:$(PORT)
 
-export PORT NODE_ENV BASE_URL
+export BASE_URL NODE_ENV
 
 ifneq ($(PORTS),)
 	PORT_FLAGS = -p $(subst $(shell echo ','), -p ,$(PORTS))
@@ -58,45 +57,48 @@ endef
 	@printf "\n    make up test          -- Start all docker-services, run E2E tests remotely"
 	@printf "\n\n"
 
-sh: ## SSH into services with current SHELL  (docker)
+sh: check ## SSH into services with current SHELL  (docker)
 	@docker exec -it $(shell docker ps | grep $(service) | awk '/.*/{print $$1}') $(SHELL) $(SHELL_FLAGS)
 
-up: ## Start service in the background  (docker)
+up: check ## Start service in the background  (docker)
 	@docker-compose $(DEV_COMPOSE) up -d --force-recreate $(service)
 
-run: ## Execute from single service  (docker)
+run: check ## Execute from single service  (docker)
 	@docker-compose $(DOCKER_COMPOSE) run -T --rm $(PORT_FLAGS) $(service)
 
-logs: ## Display logs for given service  (docker)
+logs: check ## Display logs for given service  (docker)
 	@docker-compose $(DOCKER_COMPOSE) logs -f $(service)
 
-stop: ## Stop single services  (docker)
+stop: check ## Stop single services  (docker)
 	@docker-compose $(DOCKER_COMPOSE) stop $(service)
 
-down: ## Destroy test environment  (docker)
+down: check ## Destroy test environment  (docker)
 	@docker-compose $(TEST_COMPOSE) down
 
-test: ## Run all E2E test-cases remotely  (docker)
+test: check ## Run all E2E test-cases remotely  (docker)
 	@make -s test-e2e command="npm run test:e2e:remote -- e2e/cases"
 	@make -s test-e2e command="npm run bdd -- npm run test:e2e:remote"
 
-chrome:
+chrome: check
 	@docker-compose $(E2E_COMPOSE) up -d --no-deps --force-recreate chrome
 
 test-e2e: chrome
 	@docker-compose $(E2E_COMPOSE) exec -e BASE_URL=http://nginx -T web $(command)
 
-build: ## Build all or single services  (docker)
+build: check ## Build all or single services  (docker)
 	@docker-compose $(DOCKER_COMPOSE) build $(service)
+
+check: ## Verify and setup docker dependencies  (docker)
+	@(((docker images | grep application/nodejs) > /dev/null 2>&1) || make backend) || true
 
 backend: ## Build base docker-image  (docker)
 	@docker build -t application/nodejs --target nodejs -f docker/Dockerfile.backend .
 
-integration: ## Env for frontend-development and QA  (docker)
+integration: check ## Env for frontend-development and QA  (docker)
 	@docker-compose $(E2E_COMPOSE) up -d --force-recreate $(PORT_FLAGS)
 
-provision: ## Env for production or staging servers  (docker)
-	@docker-compose $(PRE_COMPOSE) run --rm -p $(PORT):80 -d nginx
+provision: check ## Env for production or staging servers  (docker)
+	@docker-compose $(PRE_COMPOSE) run --rm -p 4001:80 -d nginx
 
 	@printf "\nPlease wait while the server is being provisioned... "
 	@printf "\nOnce done, it will be available at $(BASE_URL)/"
@@ -126,7 +128,7 @@ cov: deps ## Report coverage after tests  (host)
 
 all: deps ## Single-shot development workspace  (host)
 	@make -s up service=db
-	@make -s schema templates database node
+	@make -s schema templates database dev
 
 dev: deps ## Develop NodeJS application only  (host)
 	@make -s watch & npm run dev
