@@ -19,7 +19,7 @@ const config = module.exports = {
 };
 
 if (env === 'test') {
-  config.database = ':memory:';
+  config.storage = `${__dirname}/db.sqlite`;
   config.dialect = 'sqlite';
 } else {
   config.database = database;

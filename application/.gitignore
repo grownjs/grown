@@ -8,6 +8,7 @@
 *.css
 *.html
 *.todo
+*.sqlite
 codecov.sh
 build
 pgdata
