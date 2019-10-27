@@ -73,14 +73,15 @@ stop: ## Stop single services  (docker)
 down: ## Destroy test environment  (docker)
 	@docker-compose $(TEST_COMPOSE) down
 
-test: ## Test current build of a service  (docker)
-	@make -s integration
-	@docker-compose $(E2E_COMPOSE) exec -T web make test-all
-	@make -s down
+test: ## Test all services at once, even E2E  (docker)
+	@make -s test-e2e command="npm run test:e2e:remote -- e2e/cases"
+	@make -s test-e2e command="npm run bdd -- npm run test:e2e:remote"
 
-test-all: ## FIXME
-	@npm run test:e2e:ci -- e2e/cases
-	#@npm run test:bdd:ci
+chrome:
+	@docker-compose $(E2E_COMPOSE) up -d --no-deps --force-recreate chrome
+
+test-e2e: chrome
+	@docker-compose $(E2E_COMPOSE) exec -e BASE_URL=http://nginx -T web $(command)
 
 build: ## Build all or single services  (docker)
 	@docker-compose $(BASE_COMPOSE) build $(service)
@@ -124,7 +125,8 @@ dev: deps ## Develop NodeJS application only  (host)
 	@make -s watch & npm run dev
 
 e2e: deps ## Headlessly run E2E tests  (host)
-	@npm run test:e2e -- e2e/cases && npm run test:bdd -- --take-snapshot -S -s e2e/screenshots
+	@npm run test:e2e -- e2e/cases
+	@npm run test:bdd -- --take-snapshot -S -s e2e/screenshots
 
 lint: deps ## Run ESLint on all source files  (host)
 	@npm run lint
