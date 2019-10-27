@@ -9,7 +9,7 @@ node_js:
   - 11
   - 12
 before_script:
-  - make install
+  - make install setup
 script:
   - make test-ci
 notifications:
