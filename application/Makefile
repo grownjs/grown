@@ -13,10 +13,11 @@ ifneq ($(wildcard .env),)
 endif
 
 # environment
+GIT_REVISION ?= $(shell git rev-parse --short=7 HEAD)
 BASE_URL ?= http://localhost:4001
 NODE_ENV ?= development
 
-export BASE_URL NODE_ENV
+.EXPORT_ALL_VARIABLES:
 
 ifneq ($(PORTS),)
 	PORT_FLAGS = -p $(subst $(shell echo ','), -p ,$(PORTS))

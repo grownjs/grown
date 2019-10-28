@@ -100,8 +100,7 @@
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-plugin-import": "^2.18.2",
     "eslint-plugin-pug": "^1.1.1",
-    "eslint-plugin-svelte3": "^2.7.3",
-    "eslint-utils": ">=1.4.1",
+    "eslint-utils": "^1.4.3",
     "json-schema-to": "^0.0.18",
     "less": "^3.8.1",
     "less-plugin-autoprefix": "^2.0.0",
@@ -120,7 +119,7 @@
     "terser": "^4.3.8",
     "testcafe": "^1.6.0",
     "uglify-es": "^3.3.9",
-    "yrv": "^0.0.7"
+    "yrv": "0.0.8"
   },
   "dependencies": {
     "@grown/graphql": "^0.0.7",

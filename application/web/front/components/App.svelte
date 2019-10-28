@@ -1,5 +1,8 @@
 <script>
-  import { Router, Route, Link, navigateTo } from 'yrv';
+  import {
+    Router, Route, Link, navigateTo,
+  } from 'yrv';
+
   import { useToken, setupClient, Status } from 'svql';
 
   import ResetPassword from './pages/ResetPassword.svelte';

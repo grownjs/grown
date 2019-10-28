@@ -5,13 +5,19 @@
   },
   "extends": "airbnb-base",
   "plugins": [
-    "svelte3",
     "pug"
   ],
   "overrides": [
     {
       "files": ["**/*.svelte"],
-      "processor": "svelte3/svelte3"
+      "rules": {
+        "no-undef": 0,
+        "no-labels": 0,
+        "no-unused-vars": 0,
+        "no-unused-labels": 0,
+        "no-restricted-syntax": 0,
+        "no-restricted-globals": 0
+      }
     }
   ],
   "parserOptions": {
