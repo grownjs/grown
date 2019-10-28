@@ -14,6 +14,8 @@ endif
 
 # environment
 GIT_REVISION ?= $(shell git rev-parse --short=7 HEAD)
+POSTGRES_USER ?= $(shell whoami)
+
 BASE_URL ?= http://localhost:4001
 NODE_ENV ?= development
 
