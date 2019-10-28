@@ -39,7 +39,7 @@
       navigateTo(back);
       setTimeout(() => {
         login = null;
-        location.reload();
+        window.location.reload();
       }, 1000);
     }, () => {
       disabled = false;

@@ -1,9 +1,5 @@
 <script>
-  import {
-    Failure,
-    mutation, state, query,
-  } from 'svql';
-
+  import { Failure, state, query } from 'svql';
   import { ME_INFO } from '../../shared/queries';
 
   export let label = 'Hey, please log in.';

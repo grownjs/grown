@@ -1,6 +1,6 @@
 <script>
   import { In, Status, mutation } from 'svql';
-  import { Route, Link, navigateTo } from 'yrv';
+  import { Link, navigateTo } from 'yrv';
   import { RESET_PASSWORD_REQUEST } from '../../shared/queries';
 
   let cssClass = '';

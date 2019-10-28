@@ -3,7 +3,7 @@
     Router, Route, Link, navigateTo,
   } from 'yrv';
 
-  import { useToken, setupClient, Status } from 'svql';
+  import { useToken, setupClient } from 'svql';
 
   import ResetPassword from './pages/ResetPassword.svelte';
   import NotFound from './pages/NotFound.svelte';
@@ -13,8 +13,8 @@
   import Login from './session/Login.svelte';
   import Logout from './session/Logout.svelte';
 
-  if (location.search) {
-    const matches = location.search.match(/token=([^=]+)/);
+  if (window.location.search) {
+    const matches = window.location.search.match(/token=([^=]+)/);
 
     if (matches) {
       useToken(matches[1]);
