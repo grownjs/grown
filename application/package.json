@@ -101,12 +101,12 @@
     "eslint-plugin-import": "^2.18.2",
     "eslint-plugin-pug": "^1.1.1",
     "eslint-plugin-svelte3": "^2.7.3",
-    "eslint-utils": "^1.4.3",
+    "eslint-utils": "^2.0.0",
     "json-schema-to": "^0.0.18",
     "less": "^3.8.1",
     "less-plugin-autoprefix": "^2.0.0",
-    "mocha": "^6.0.0",
-    "nyc": "^14.1.0",
+    "mocha": "^7.0.1",
+    "nyc": "^15.0.0",
     "open": ">=6.0.0",
     "pug": "^2.0.3",
     "rollup": "^1.1.2",
@@ -115,12 +115,12 @@
     "rollup-plugin-svelte": "^5.1.0",
     "sqlite3": "^4.1.0",
     "svelte": "^3.3.0",
-    "svql": "^0.0.15",
+    "svql": "^0.0.16",
     "tarima": "^4.6.0",
     "terser": "^4.3.8",
     "testcafe": "^1.6.0",
     "uglify-es": "^3.3.9",
-    "yrv": "^0.0.9"
+    "yrv": "^0.0.18"
   },
   "dependencies": {
     "@grown/graphql": "^0.0.7",
@@ -133,7 +133,7 @@
     "express-useragent": "^1.0.12",
     "grown": "^1.1.5",
     "logro": "^0.1.6",
-    "mailor": "^0.0.9",
+    "mailor": "^0.0.21",
     "pg": "^7.9.0",
     "rand-token": "^0.4.0"
   }
