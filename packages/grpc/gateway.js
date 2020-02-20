@@ -82,12 +82,17 @@ module.exports = (Grown, util) => {
       if (originalError && typeof originalError[0] === 'string'
         && (originalError[0].charAt() === '{' && originalError[0].charAt(originalError[0].length - 1) === '}')) {
         e.original = JSON.parse(originalError[0]);
+
+        const err = new Error(e.original.message);
+
+        err.stack = e.original.stack;
+        e.original = err;
       }
     } catch (_e) {
       // do nothing
     }
 
-    throw e;
+    throw e.original || e;
   }
 
   return Grown('GRPC.Gateway', {
