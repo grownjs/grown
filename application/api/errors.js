@@ -1,30 +1,23 @@
-const {
-  buildError,
-  IS_NOT_FOUND,
-  IS_PERMISSION_DENIED,
-  IS_RESOURCE_EXHAUSTED,
-  IS_FAILED_PRECONDITION,
-} = require('berro');
+const Therror = require('therror');
 
-const UserErrors = {
-  UserNotFoundError: buildError('User.NOT_FOUND', IS_NOT_FOUND, 404),
-  UserNotVerifiedError: buildError('User.NOT_VERIFIED', IS_PERMISSION_DENIED, 403),
-  PasswordMismatchError: buildError('User.PASSWORD_MISMATCH', IS_FAILED_PRECONDITION, 400),
-  OldPasswordMismatchError: buildError('User.OLD_PASSWORD_MISMATCH', IS_FAILED_PRECONDITION, 400),
-};
+class UserNotFound extends Therror.HTTP(404);
+class UserNotVerified extends Therror.HTTP(403);
 
-const TokenErrors = {
-  ResetPasswordExpiredError: buildError('Token.RESET_PASSWORD_EXPIRED', IS_RESOURCE_EXHAUSTED, 401),
-  TokenExpiredError: buildError('Token.RESET_PASSWORD_EXPIRED', IS_RESOURCE_EXHAUSTED, 401),
-};
+class PasswordMismatch extends Therror.HTTP(400);
+class OldPasswordMismatch extends Therror.HTTP(400);
+class ResetPasswordExpired extends Therror.HTTP(401);
 
-const SessionErrors = {
-  SessionNotFoundError: buildError('Session.NOT_FOUND', IS_NOT_FOUND, 404),
-  SessionExpiredError: buildError('Session.TOKEN_EXPIRED', IS_RESOURCE_EXHAUSTED, 401),
-};
+class TokenExpired extends Therror.HTTP(401);
+class SessionNotFound extends Therror.HTTP(401);
+class SessionExpired extends Therror.HTTP(401);
 
 module.exports = {
-  ...UserErrors,
-  ...TokenErrors,
-  ...SessionErrors,
+  UserNotFound,
+  UserNotVerified,
+  PasswordMismatch,
+  OldPasswordMismatch,
+  ResetPasswordExpired,
+  TokenExpired,
+  SessionNotFound,
+  SessionExpired,
 };

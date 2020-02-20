@@ -129,12 +129,12 @@
     "@grown/parsers": "^0.0.4",
     "@grown/schema": "^0.0.5",
     "@grown/session": "^0.0.5",
-    "berro": "^0.0.2",
     "express-useragent": "^1.0.12",
     "grown": "^1.1.5",
     "logro": "^0.1.6",
     "mailor": "^0.0.21",
     "pg": "^7.9.0",
-    "rand-token": "^0.4.0"
+    "rand-token": "^0.4.0",
+    "therror": "^4.1.1"
   }
 }
