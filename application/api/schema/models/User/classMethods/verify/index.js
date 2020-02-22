@@ -1,5 +1,5 @@
 const {
-  UserNotFoundError,
+  UserNotFound,
 } = require('~/api/errors');
 
 module.exports = ({ bcrypt, User }) => async function verify(email, password, userId) {
@@ -21,7 +21,7 @@ module.exports = ({ bcrypt, User }) => async function verify(email, password, us
     : false;
 
   if (!(user && result)) {
-    throw new UserNotFoundError('User not found');
+    throw new UserNotFound('User not found.');
   }
 
   return user;

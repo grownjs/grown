@@ -2,7 +2,7 @@
   "name": "application",
   "version": "0.0.1",
   "private": true,
-  "description": "Grown application skeleton",
+  "description": "Shopfish - Self-store webapp demo",
   "author": "Alvaro Cabrera <pateketrueke@gmail.com> (https://soypache.co)",
   "license": "MIT",
   "main": "main.js",
@@ -114,13 +114,13 @@
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-svelte": "^5.1.0",
     "sqlite3": "^4.1.0",
-    "svelte": "^3.3.0",
-    "svql": "^0.0.16",
+    "svelte": "^3.17.3",
+    "svql": "^0.0.19",
     "tarima": "^4.6.0",
     "terser": "^4.3.8",
     "testcafe": "^1.6.0",
     "uglify-es": "^3.3.9",
-    "yrv": "^0.0.18"
+    "yrv": "^0.0.19"
   },
   "dependencies": {
     "@grown/graphql": "^0.0.7",
@@ -132,7 +132,7 @@
     "express-useragent": "^1.0.12",
     "grown": "^1.1.5",
     "logro": "^0.1.6",
-    "mailor": "^0.0.21",
+    "mailor": "^0.0.22",
     "pg": "^7.9.0",
     "rand-token": "^0.4.0",
     "therror": "^4.1.1"

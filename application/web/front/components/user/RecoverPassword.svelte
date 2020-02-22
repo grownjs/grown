@@ -1,5 +1,8 @@
 <script>
-  import { In, Status, mutation } from 'svql';
+  import {
+    In, Status, Failure, mutation,
+  } from 'svql';
+
   import { Route, Link, navigateTo } from 'yrv';
   import { RECOVER_PASSWORD_REQUEST } from '../../shared/queries';
 
@@ -11,7 +14,7 @@
   export { cssClass as class };
 
   export let back = '/';
-  export let label = 'request a password recovery';
+  export let label = 'password recovery';
 
   let email = null;
   let updating = null;
@@ -51,11 +54,11 @@
 </div>
 
 <Route path="/password-recovery">
-  <In modal autofocus id="password-recovery" on:cancel={clear}>
+  <In modal autofocus id="password-recovery" on:cancel={clear} on:submit={doUpdate}>
     <h2>Password recovery</h2>
     <label>
       E-mail address: <input type="email" bind:value={email} required autocomplete="current-email" />
     </label>
-    <button {disabled} type="submit" on:click={doUpdate}>Request change</button> or <Link href={back} on:click={clear}>cancel</Link>
+    <button {disabled} type="submit">Request change</button> or <Link href={back} on:click={clear}>cancel</Link>
   </In>
 </Route>

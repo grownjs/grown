@@ -1,5 +1,5 @@
 const {
-  TokenExpiredError,
+  TokenExpired,
 } = require('~/api/errors');
 
 module.exports = ({ Token }) => async function verify(token, type) {
@@ -13,7 +13,7 @@ module.exports = ({ Token }) => async function verify(token, type) {
   const result = await Token.findOne(query);
 
   if (!result || (new Date() >= result.expirationDate)) {
-    throw new TokenExpiredError('Given token has been expired');
+    throw new TokenExpired('Request token has been expired.');
   }
 
   return result;

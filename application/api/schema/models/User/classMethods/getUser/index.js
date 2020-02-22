@@ -1,3 +1,7 @@
+const {
+  UserNotFound,
+} = require('~/api/errors');
+
 module.exports = ({ User }) => async function getUser(id, email) {
   const query = {
     where: {},
@@ -12,7 +16,7 @@ module.exports = ({ User }) => async function getUser(id, email) {
   const user = await User.findOne(query);
 
   if (!user) {
-    throw new Error('FIXME: user not found');
+    throw new UserNotFound('The user does not exists.');
   }
 
   return user;

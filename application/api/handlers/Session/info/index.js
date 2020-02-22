@@ -1,5 +1,5 @@
 const {
-  SessionNotFoundError,
+  SessionNotFound,
 } = require('~/api/errors');
 
 module.exports = ({ Session }) => async function info({ request }) {
@@ -17,7 +17,7 @@ module.exports = ({ Session }) => async function info({ request }) {
   const session = await Session.findOne(query);
 
   if (!session) {
-    throw new SessionNotFoundError('Your session does not exists');
+    throw new SessionNotFound('Your session does not exists.');
   }
 
   return {

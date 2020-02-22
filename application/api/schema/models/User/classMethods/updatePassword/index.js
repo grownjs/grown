@@ -1,6 +1,7 @@
 const {
-  PasswordMismatchError,
-  OldPasswordMismatchError,
+
+  PasswordMismatch,
+  OldPasswordMismatch,
 } = require('~/api/errors');
 
 module.exports = ({ bcrypt, User }) => async function updatePassword(userId, oldPassword, newPassword, confirmPassword) {
@@ -9,11 +10,11 @@ module.exports = ({ bcrypt, User }) => async function updatePassword(userId, old
   try {
     user = await User.verify(null, oldPassword, userId);
   } catch (e) {
-    throw new OldPasswordMismatchError(e);
+    throw new OldPasswordMismatch(e, 'Old password does not match.');
   }
 
   if (newPassword !== confirmPassword) {
-    throw new PasswordMismatchError('Wrong password confirmation');
+    throw new PasswordMismatch('Wrong password confirmation.');
   }
 
   const encrypted = await bcrypt.encode(newPassword);

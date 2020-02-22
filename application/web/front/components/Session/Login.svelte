@@ -2,11 +2,11 @@
   import { Route, Link, navigateTo } from 'yrv';
 
   import {
-    In, Status,
-    saveSession, useToken, mutation, state,
+    In, Status, saveSession, useToken, mutation, state,
   } from 'svql';
 
-  import PasswordRecovery from './PasswordRecovery.svelte';
+  import Auth from './Auth.svelte';
+  import RecoverPassword from '../user/RecoverPassword.svelte';
   import { LOGIN_REQUEST } from '../../shared/queries';
 
   export let back = '/';
@@ -56,14 +56,15 @@
 />
 
 {#if !$state.isLogged}
-  <Link href="/login">{label}</Link>
+  <Link href="/sign-up">Create a new account</Link> | <Link href="/login">{label}</Link>
 
-  <PasswordRecovery class="menu">
-    or
-  </PasswordRecovery>
+  <div class="menu">
+    <Auth nodebug />
+    <RecoverPassword>Try requesting for a</RecoverPassword>
+  </div>
 
   <Route exact path="/login">
-    <In modal autofocus id="login" on:cancel={clear}>
+    <In modal autofocus id="login" on:cancel={clear} on:submit={doLogin}>
       <h2>Login</h2>
       <label>
         Email: <input type="email" bind:value={email} required autocomplete="current-email" />
@@ -71,7 +72,7 @@
       <label>
         Password: <input type="password" bind:value={password} required autocomplete="current-password" />
       </label>
-      <button {disabled} type="submit" on:click={doLogin}>Log in</button> or <Link href={back} on:click={clear}>cancel</Link>
+      <button {disabled} type="submit">Log in</button> or <Link href={back} on:click={clear}>cancel</Link>
 
       <hr />
 

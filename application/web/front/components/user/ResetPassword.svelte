@@ -11,7 +11,7 @@
 
   export let back = '/';
   export let router = null;
-  export let label = 'change your password';
+  export let label = 'Set a new password';
 
   let updating = null;
   let newPassword = null;
@@ -41,7 +41,7 @@
 </script>
 
 <Status
-  fixed
+  fixed nodebug
   from={updating}
   pending="Updating your password..."
   otherwise="Password was successfully set..."
@@ -49,7 +49,7 @@
 
 <div {id} class={className || cssClass}>
   <In modal autofocus id="password-reset" on:cancel={clear}>
-    <h2>Set a new password</h2>
+    <h2>{label}</h2>
     <label>
       New password: <input type="password" bind:value={newPassword} autocomplete="new-password" />
     </label>

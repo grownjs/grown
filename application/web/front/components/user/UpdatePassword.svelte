@@ -1,6 +1,6 @@
 <script>
   import {
-    In, Status, mutation, state,
+    In, Status, mutation, state, setupClient,
   } from 'svql';
 
   import { Route, Link, navigateTo } from 'yrv';
@@ -66,17 +66,17 @@
 </div>
 
 <Route path="/password-change">
-  <In modal autofocus id="password-change" on:cancel={clear}>
+  <In modal autofocus id="password-change" on:cancel={clear} on:submit={doUpdate}>
     <h2>Change password</h2>
     <label>
-      Current password: <input type="password" bind:value={password} autocomplete="current-password" />
+      Current password: <input type="password" bind:value={password} required autocomplete="current-password" />
     </label>
     <label>
-      New password: <input type="password" bind:value={newPassword} autocomplete="new-password" />
+      New password: <input type="password" bind:value={newPassword} required autocomplete="new-password" />
     </label>
     <label>
-      Confirm new password: <input type="password" bind:value={confirmPassword} autocomplete="confirm-password" />
+      Confirm new password: <input type="password" bind:value={confirmPassword} required autocomplete="confirm-password" />
     </label>
-    <button {disabled} on:click={doUpdate} type="submit">Update</button> or <Link href={back} on:click={clear}>cancel</Link>
+    <button {disabled} type="submit">Update</button> or <Link href={back} on:click={clear}>cancel</Link>
   </In>
 </Route>

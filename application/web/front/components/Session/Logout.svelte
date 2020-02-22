@@ -1,12 +1,11 @@
 <script>
   import {
-    Status,
-    saveSession, mutation, state,
+    Status, saveSession, mutation, state,
   } from 'svql';
 
   import { navigateTo } from 'yrv';
 
-  import PasswordChange from './PasswordChange.svelte';
+  import UpdatePassword from '../user/UpdatePassword.svelte';
   import { LOGOUT_REQUEST } from '../../shared/queries';
 
   export let back = '/';
@@ -39,8 +38,8 @@
 
 {#if $state.me}
   <span>Hello, {$state.me.email}</span>
-  <PasswordChange class="menu">
+  <UpdatePassword class="menu">
     <button {disabled} on:click|preventDefault={doLogout}>Log out</button>
     {#if !$state.me.platform} or {/if}
-  </PasswordChange>
+  </UpdatePassword>
 {/if}

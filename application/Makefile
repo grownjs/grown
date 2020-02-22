@@ -134,6 +134,7 @@ all: deps ## Single-shot development workspace  (host)
 	@make -s schema templates database dev
 
 dev: deps ## Develop NodeJS application only  (host)
+	@make :3000! :4001! :1080! :1081!
 	@make -s watch & npm run dev
 
 e2e: deps ## Headlessly run E2E tests  (host)

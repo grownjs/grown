@@ -2,7 +2,7 @@
   import { Failure, state, query } from 'svql';
   import { ME_INFO } from '../../shared/queries';
 
-  export let label = 'Hey, please log in.';
+  export let label = 'Do you have an account?';
   export let nodebug = false;
 
   $state.info = query(ME_INFO, result => {

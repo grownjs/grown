@@ -5,13 +5,14 @@
 
   import { useToken, setupClient } from 'svql';
 
-  import ResetPassword from './pages/ResetPassword.svelte';
   import NotFound from './pages/NotFound.svelte';
   import Home from './pages/Home.svelte';
 
-  import Auth from './session/Auth.svelte';
   import Login from './session/Login.svelte';
   import Logout from './session/Logout.svelte';
+
+  import SignUp from './pages/SignUp.svelte';
+  import ResetPassword from './user/ResetPassword.svelte';
 
   if (window.location.search) {
     const matches = window.location.search.match(/token=([^=]+)/);
@@ -45,8 +46,8 @@
 
 <main class="body">
   <Router>
-    <Auth nodebug />
     <Route path="/" component={Home} />
+    <Route exact path="/sign-up" component={SignUp} />
     <Route exact path="/reset-password/:token" component={ResetPassword} />
     <Route fallback component={NotFound} />
   </Router>

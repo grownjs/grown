@@ -1,13 +1,13 @@
 const {
-  UserNotVerifiedError,
-  PasswordMismatchError,
+  UserNotVerified,
+  PasswordMismatch,
 } = require('~/api/errors');
 
 module.exports = ({ Session, User }) => async function verifyAndCreate(email, password) {
   const user = await User.verify(email, password);
 
   if (!user.verified) {
-    throw new UserNotVerifiedError('User not allowed');
+    throw new UserNotVerified('User not allowed.');
   }
 
   let session;
@@ -19,7 +19,7 @@ module.exports = ({ Session, User }) => async function verifyAndCreate(email, pa
       role: user.role,
     });
   } catch (err) {
-    throw new PasswordMismatchError(err);
+    throw new PasswordMismatch(err);
   }
 
   return {
