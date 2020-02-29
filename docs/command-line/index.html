@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <base href="/">
+    <base href="/grown">
     <meta lang="en">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -42,14 +42,21 @@
 }
 </code></pre>
 <p>Run your server manually with <code>node your-app/server.js</code> or with <code>npm start</code>.</p>
-<p>For the latter add the following settings to your <code>package.json</code> file:</p>
+<p>For the latter add the following script to your <code>package.json</code> file:</p>
 <pre class="hljs"><code class="lang-json">{
   <span class="hljs-attr">"scripts"</span>: {
     <span class="hljs-attr">"start"</span>: <span class="hljs-string">"grown up"</span>
   }
 }
 </code></pre>
-<p>Try <code>grown --help</code> to get more usage info.</p>
+<p>Try <code>npx grown --help</code> to get more usage info.</p>
+<blockquote>
+<p>Also, you can setup a <code>bin/grown</code> executable with the following content:</p>
+<pre class="hljs"><code class="lang-bash"><span class="hljs-comment">#!/usr/bin/env node</span>
+require(<span class="hljs-string">'grown/cli'</span>);
+</code></pre>
+<p>Test it out!</p>
+</blockquote>
 <hr>
 <p>➯ Next: <a href="./docs/extensions">Add-ons &rangle; Extensions</a></p>
 
