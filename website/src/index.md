@@ -8,7 +8,7 @@ runkit:
     require('@grown/server');
 ---
 
-I suggest you installing NodeJS through NVM, using `v6.17.x` or higher is fine.
+I suggest you installing NodeJS through NVM, using `8.16.2` or higher is fine.
 
 See: [NVM installation instructions](https://github.com/creationix/nvm#installation)
 

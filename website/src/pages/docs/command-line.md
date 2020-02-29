@@ -31,7 +31,7 @@ if (require.main === module) {
 
 Run your server manually with `node your-app/server.js` or with `npm start`.
 
-For the latter add the following settings to your `package.json` file:
+For the latter add the following script to your `package.json` file:
 
 ```json
 {
@@ -41,7 +41,16 @@ For the latter add the following settings to your `package.json` file:
 }
 ```
 
-Try `grown --help` to get more usage info.
+Try `npx grown --help` to get more usage info.
+
+> Also, you can setup a `bin/grown` executable with the following content:
+>
+> ```bash
+> #!/usr/bin/env node
+> require('grown/cli');
+> ```
+>
+> Test it out!
 
 ---
 
