@@ -18,26 +18,59 @@
     <main id="wrapper">
       <div class="body" id="content">
         <main><a id="menu" href="./docs/extensions/logger/#sidebar">&#9776;</a>
-          <h1>Logger <small><a href="//github.com/pateketrueke/grown/blob/master/website/src/pages/docs/extensions/logger.md" target="_blank">✎</a></small></h1><h3 id="public-methods-var-static-var">Public methods <var>static</var></h3>
+          <h1>Logger <small><a href="//github.com/pateketrueke/grown/blob/master/website/src/pages/docs/extensions/logger.md" target="_blank">✎</a></small></h1><p>Enable shared and custom logging in your applications.</p>
+<pre class="hljs"><code class="lang-js"><span class="hljs-comment">/* @runkit */</span>
+<span class="hljs-comment">// register extension</span>
+<span class="hljs-keyword">const</span> Logger = Grown.use(<span class="hljs-built_in">require</span>(<span class="hljs-string">'@grown/logger'</span>));
+
+Logger.getLogger().info(<span class="hljs-string">'This works?'</span>);
+Logger.setLevel(<span class="hljs-string">'debug'</span>);
+
+<span class="hljs-comment">// always show, not restricted by level</span>
+Logger.message(<span class="hljs-string">'OK'</span>);
+Logger.error(<span class="hljs-string">'ERROR'</span>);
+
+<span class="hljs-comment">// register middleware</span>
+server.plug(Grown.Logger);
+
+<span class="hljs-comment">// use with server</span>
+server.mount(<span class="hljs-function"><span class="hljs-params">conn</span> =&gt;</span> {
+  <span class="hljs-comment">// shown, because `debug &gt; info`</span>
+  conn.logger.info(<span class="hljs-string">'INFO'</span>);
+  conn.logger.debug(<span class="hljs-string">'DEBUG'</span>);
+
+  <span class="hljs-comment">// not shown, because `verbose &gt; debug`</span>
+  conn.logger.verbose(<span class="hljs-string">'VERBOSE'</span>);
+});
+</code></pre>
+<h3 id="methods-var-mixin-var">Methods <var>mixin</var></h3>
 <ul>
-<li><code>$before_render(ctx, template)</code> &mdash;</li>
-<li><code>$before_send(e, ctx)</code> &mdash;</li>
-<li><code>$install(ctx)</code> &mdash;</li>
-<li><code>$mixins()</code> &mdash;</li>
-<li><code>message(log)</code> &mdash;</li>
-<li><code>error(log)</code> &mdash;</li>
-<li><code>pause()</code> &mdash;</li>
-<li><code>resume()</code> &mdash;</li>
-<li><code>setLevel(type)</code> &mdash;</li>
-<li><code>setLogger(callback)</code> &mdash;</li>
-<li><code>getLogger(depth[, stdout])</code> &mdash;</li>
-<li><code>newLogger(prefix, level, depth[, stdout])</code> &mdash;</li>
+<li><code>logger</code> &mdash; Log-pose instance, <a href="https://www.npmjs.com/package/log-pose">see docs</a><ul>
+<li><code>isEnabled()</code> &mdash; Returns if logging is globally enabled.</li>
+<li><code>isVerbose()</code>, <code>isDebug()</code> and <code>isInfo()</code> &mdash; Returns true if log-level is enabled, respectively.</li>
+<li><code>printf(...)</code>  and <code>write(...)</code> &mdash; Low-level methods from log-pose internals</li>
+<li><code>verbose(...)</code>, <code>debug(...)</code> and <code>info(...)</code> &mdash; High-level methods from log-pose</li>
+</ul>
+</li>
+</ul>
+<h3 id="public-methods-var-static-var">Public methods <var>static</var></h3>
+<ul>
+<li><code>$before_render(ctx, template)</code> &mdash; Append or replace <code>{elapsed}</code> on the response body, only if <code>Render</code> is available</li>
+<li><code>$before_send(e, ctx)</code> &mdash; Hook for calculating the <code>{elapsed}</code> time before sending anything, see above</li>
+<li><code>$install(ctx)</code> &mdash; Used by <code>server.plug</code> calls.</li>
+<li><code>$mixins()</code> &mdash; Extra <code>Grown.Conn.Builder</code> definitions.</li>
+<li><code>message(...)</code> and <code>error(...)</code> &mdash; Standard logging helpers.</li>
+<li><code>pause()</code> and <code>resume()</code> &mdash; To turn off/on logging respectively.</li>
+<li><code>setLevel(type)</code> &mdash; Set active level of logging.</li>
+<li><code>setLogger([stdout])</code> &mdash; Define output target (default to <code>process.stdout</code>)</li>
+<li><code>getLogger(depth[, stdout])</code> &mdash; Return shared logger instance, optional output as above</li>
+<li><code>newLogger(prefix, level, depth[, stdout])</code> &mdash; Returns a custom log-pose interface</li>
 </ul>
 <h3 id="private-methods-var-static-var">Private* methods <var>static</var></h3>
 <ul>
-<li><code>_elapsedTime()</code> &mdash;</li>
-<li><code>_errorLog(value)</code> &mdash;</li>
-<li><code>_msgLog(value)</code> &mdash;</li>
+<li><code>_elapsedTime()</code> &mdash; Used by <code>$before_render</code>.</li>
+<li><code>_errorLog(value)</code> &mdash; Override output for errors.</li>
+<li><code>_msgLog(value)</code> &mdash; Override output for regular logs.</li>
 </ul>
 <hr>
 <p>➯ Next: <a href="./docs/extensions/model">Extensions &rangle; Model</a></p>
@@ -148,7 +181,7 @@
         </div>
       </aside>
     </main>
-    <script>window.__runkit__ = {};</script>
+    <script>window.__runkit__ = {"endpoint":true,"preamble":"const Grown = require('@grown/bud')();\nGrown.use(require('@grown/server'));\nconst server = new Grown();\nprocess.nextTick(() => server.listen(8080));\nprocess.stdout.write = msg => console.log(msg);\n"};</script>
     <script src="https://embed.runkit.com"></script>
     <script src="scripts.js"></script>
   </body>

@@ -49,10 +49,12 @@
   ],
 });
 
-<span class="hljs-keyword">const</span> handlers = Grown.load(<span class="hljs-string">`<span class="hljs-subst">${__dirname}</span>/handlers`</span>);
-<span class="hljs-keyword">const</span> gateway = Gateway.setup(handlers).start();
+<span class="hljs-keyword">const</span> API = Grown.load(<span class="hljs-string">`<span class="hljs-subst">${__dirname}</span>/handlers`</span>);
+<span class="hljs-keyword">const</span> gateway = Gateway.setup(API, {
+  <span class="hljs-attr">timeout</span>: <span class="hljs-number">10</span>,
+}).start();
 
-gateway.Test.is({ <span class="hljs-attr">truth</span>: <span class="hljs-number">42</span> })
+gateway.API.Test.is({ <span class="hljs-attr">truth</span>: <span class="hljs-number">42</span> })
   .then(<span class="hljs-function"><span class="hljs-params">result</span> =&gt;</span> {
     <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'GOT:'</span>, result);
   });
@@ -60,17 +62,27 @@ gateway.Test.is({ <span class="hljs-attr">truth</span>: <span class="hljs-number
 <h2 id="loader">Loader</h2>
 <h3 id="public-methods-var-static-var">Public methods <var>static</var></h3>
 <ul>
-<li><code>scan(file[, options])</code> &mdash; Returns a mapping of all services found in the given <code>file</code>, <code>options</code> are for <code>@grpc/proto-loader</code> when loading the file.</li>
+<li><code>scan(file[, options])</code> &mdash; Returns a mapping of all services found in the given <code>file</code>, <code>options</code> are given to <code>@grpc/proto-loader</code> when loading the file.</li>
 </ul>
 <hr>
 <h2 id="gateway">Gateway</h2>
 <h3 id="public-methods-var-static-var">Public methods <var>static</var></h3>
 <ul>
-<li><code>setup(controllers)</code> &mdash; Returns a gateway instance with services and controllers merged. Invoke them as <code>map.send&lt;Service&gt;(...)</code> or as <code>map.Service.method({ ... })</code> indistinctly.</li>
+<li><p><code>setup(controllers[, options])</code> &mdash; Returns a gateway instance with services and controllers merged. Invoke them as <code>map.send&lt;Service&gt;(...)</code> or as <code>map.Service.method({ ... })</code> indistinctly.</p>
+<p>Supported options are:</p>
+<ul>
+<li><code>hostname(serviceName)</code> &mdash; Function, used to determine a host for service registration, fallback to <code>0.0.0.0</code> otherwise.</li>
+<li><code>timeout</code> &mdash; Number, timeout in seconds for gRPC deadline option; default to <code>undefined</code>.</li>
+<li><code>port</code>  &mdash; Number, custom port for service registration; default to <code>50051</code>.</li>
 </ul>
+</li>
+</ul>
+<blockquote>
+<p>Calls to <code>hostname(...)</code> would return a port too, in such case is preferred and used instead.</p>
+</blockquote>
 <h3 id="private-methods-var-static-var">Private* methods <var>static</var></h3>
 <ul>
-<li><code>_callService(client, method, data)</code> &mdash; Wrap used methods when calling services.</li>
+<li><code>_callService(options, client, method, data)</code> &mdash; Wrap used methods when calling services.</li>
 <li><code>_getService(name, controller)</code> &mdash; Decorate all methods on given handlers.</li>
 <li><code>_onError(e)</code> &mdash; Decorate errors thrown by calling services.</li>
 </ul>

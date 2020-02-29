@@ -226,7 +226,7 @@ server.mount(<span class="hljs-function"><span class="hljs-params">ctx</span> =&
         </div>
       </aside>
     </main>
-    <script>window.__runkit__ = {"endpoint":true,"preamble":"const Grown = require('@grown/bud')();\nGrown.use(require('@grown/server'));\nconst server = new Grown();\nprocess.nextTick(() => server.listen(8080));\n"};</script>
+    <script>window.__runkit__ = {"endpoint":true,"preamble":"const Grown = require('@grown/bud')();\nGrown.use(require('@grown/server'));\nconst server = new Grown();\nprocess.nextTick(() => server.listen(8080));\nprocess.stdout.write = msg => console.log(msg);\n"};</script>
     <script src="https://embed.runkit.com"></script>
     <script src="scripts.js"></script>
   </body>
