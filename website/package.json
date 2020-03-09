@@ -67,8 +67,8 @@
   },
   "devDependencies": {
     "buble": "^0.19.6",
-    "eslint": "^5.12.1",
-    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.0.0",
     "eslint-plugin-import": "^2.15.0",
     "eslint-plugin-pug": "^1.1.1",
     "highlight.js": "^9.15.6",
@@ -78,9 +78,8 @@
     "lodash": "^4.17.15",
     "lodash.template": ">=4.5.0",
     "pug": "^2.0.0-beta11",
-    "rollup": "^1.1.2",
-    "talavera": "^0.7.4",
-    "tarima": "^4.6.0",
-    "terser": "^3.17.0"
+    "talavera": "^0.8.0",
+    "tarima": "^4.7.2",
+    "terser": "^4.6.6"
   }
 }
