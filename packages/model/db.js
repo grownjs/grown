@@ -7,12 +7,16 @@ module.exports = (Grown, util) => {
     _registry: {},
 
     registered(name) {
-      return typeof this._registry[name] !== 'undefined';
+      return this._registry[name] instanceof JSONSchemaSequelizer;
     },
 
     register(name, params) {
       if (this._registry[name]) {
         throw new Error(`Database '${name}' already registred!`);
+      }
+
+      if (!params || !params.config) {
+        throw new Error(`Missing configuration for '${name}' connection!`);
       }
 
       if (!params.config.identifier) {
@@ -25,62 +29,71 @@ module.exports = (Grown, util) => {
 
       util.readOnlyProperty(this, name, () => this._registry[name]);
 
-      return this._registry;
+      return this;
+    },
+
+    partial(Model, definition) {
+      if (definition.hooks) {
+        Object.keys(definition.hooks).forEach(hook => {
+          Model.addHook(hook, definition.hooks[hook]);
+        });
+      }
+
+      Object.assign(Model, definition.classMethods);
+      Object.assign(Model.prototype, definition.instanceMethods);
+
+      delete definition.hooks;
+      delete definition.classMethods;
+      delete definition.instanceMethods;
+
+      return Model;
     },
 
     bundle(options) {
       options = options || {};
 
+      /* istanbul ignore else */
+      if (!Grown.Model.Entity) {
+        Grown.use(require('./entity'));
+      }
+
       const name = (options.database && options.database.identifier) || 'default';
       const DB = Grown.Model.DB.register(name, options.database);
-      const Models = Grown.load(options.models, {
+
+      // scan and load/define models
+      const $ = Grown.load(options.models, {
         before(_name, definition) {
+          // always add it as model!
           DB[name].add(definition);
         },
         after(_name, definition) {
-          const Model = DB[name].models[_name];
-
-          if (definition.hooks) {
-            Object.keys(definition.hooks).forEach(hook => {
-              Model.addHook(hook, definition.hooks[hook]);
-            });
+          // no connection? return it as Entity definition
+          if (!DB[name].sequelize._resolved) {
+            return Grown.Model.Entity.define(_name, definition);
           }
 
-          Object.assign(Model, definition.classMethods);
-          Object.assign(Model.prototype, definition.instanceMethods);
-
-          delete definition.hooks;
-          delete definition.classMethods;
-          delete definition.instanceMethods;
-
-          return Model;
+          return Grown.Model.DB.partial(DB[name].models[_name], definition);
         },
       });
 
-      function get(model) {
-        try {
-          return Models.get(model);
-        } catch (e) {
-          throw new Error(`Unable to load model '${model}'. ${e.message || e.toString()}`);
-        }
-      }
-
+      // reassign values
       DB[name].ready(() => {
-        Object.assign(Models.values, DB[name].models);
+        Object.assign($.values, DB[name].models);
       });
 
-      if (!(Grown.Model && Grown.Model.Repo)) {
-        Grown.use(require('./repo'));
+      function get(model) {
+        return Grown.Model.Entity.wrap($.get(model), Grown.Model.DB[name].schemas);
       }
 
       return Grown(`Model.DB.${name}.repository`, {
-        extend: Grown('Model.Repo', {
-          _getModels: () => Object.keys(DB[name].models).map(get),
-          _getDB: () => DB[name],
-          get: _name => get(_name),
-          connect: DB[name].connect,
-          disconnect: DB[name].close,
-        }),
+        get connection() { return DB[name].sequelize.options; },
+        get sequelize() { return DB[name].sequelize; },
+        get schemas() { return DB[name].schemas; },
+        get models() { return DB[name].models; },
+
+        disconnect: () => DB[name].disconnect(),
+        connect: () => DB[name].connect(),
+        get: model => get(model),
       });
     },
   });

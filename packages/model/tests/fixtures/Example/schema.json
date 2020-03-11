@@ -1,0 +1,9 @@
+{
+  "id": "Example",
+  "type": "object",
+  "properties": {
+    "value": {
+      "type": "string"
+    }
+  }
+}

@@ -36,41 +36,23 @@ module.exports = (Grown, util) => {
     return _models;
   }
 
-  function _getModel(name, refs, cwd) {
+  function _getModel(name) {
     /* istanbul ignore else */
     if (!this[name]) {
       throw new Error(`Model '${name}' is not defined`);
     }
 
-    const _opts = this.connection || {};
-
     /* istanbul ignore else */
     if (!this[name].connect) {
-      if (!Grown.Model.Base) {
-        Grown.use(require('./base'));
+      /* istanbul ignore else */
+      if (!Grown.Model.Entity) {
+        Grown.use(require('./entity'));
       }
 
-      const Model = Grown.Model.Base({
-        name: `${name}Model`,
-        include: [{
-          $schema: this[name].$schema,
-          hooks: this[name].hooks || {},
-          classMethods: this[name].classMethods || {},
-          getterMethods: this[name].getterMethods || {},
-          setterMethods: this[name].setterMethods || {},
-          instanceMethods: this[name].instanceMethods || {},
-        }],
-      });
-
-      this[name].extensions
-        .forEach(ext => {
-          Model._makeDefinition(ext);
-        });
-
-      return Model.connect(_opts, refs, cwd);
+      this[name] = Grown.Model.Entity.define(name, this[name]);
     }
 
-    return this[name].connect(_opts, refs, cwd);
+    return this[name];
   }
 
   function _getDB(identifier) {
@@ -117,6 +99,7 @@ module.exports = (Grown, util) => {
 
     connect() {
       const _cwd = this.schemas_directory;
+      const _opts = this.connection || {};
       const _refs = this.$refs || [];
       const _tasks = [];
 
@@ -130,14 +113,15 @@ module.exports = (Grown, util) => {
                 this[key].$schema.id = key;
               }
 
-              _tasks.push(this._getModel(key, _refs, _cwd)
-                .then(model => {
-                  this[model.name] = model;
-                }));
+              _tasks.push(this._getModel(key).connect(_opts, _refs, _cwd));
             }
           });
         })
-        .then(() => Promise.all(_tasks))
+        .then(() => Promise.all(_tasks).then(models => {
+          models.forEach(model => {
+            this[model.name] = model;
+          });
+        }))
         .then(() => this);
     },
 
