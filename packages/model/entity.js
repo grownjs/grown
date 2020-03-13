@@ -131,6 +131,18 @@ module.exports = (Grown, util) => {
     };
   }
 
+  function _wrap(id, def, refs) {
+    if (!def) {
+      throw new Error(`Missing '${id}' model!`);
+    }
+
+    if (typeof def.getSchema === 'undefined') {
+      def.getSchema = _id => this._through(_id ? `${def.name}.${_id}` : def.name, refs);
+    }
+
+    return def;
+  }
+
   return Grown('Model.Entity', {
     _makeDefinition,
     _validateFrom,
@@ -138,14 +150,7 @@ module.exports = (Grown, util) => {
     _fakeFrom,
     _through,
     _schema,
-
-    wrap(model, refs) {
-      if (typeof model.getSchema === 'undefined') {
-        model.getSchema = id => this._through(id ? `${model.name}.${id}` : model.name, refs);
-      }
-
-      return model;
-    },
+    _wrap,
 
     define(name, params) {
       const target = Grown.Model.Entity({
@@ -210,7 +215,7 @@ module.exports = (Grown, util) => {
 
       return Promise.resolve()
         .then(() => Grown.Model.DB[name].connect())
-        .then(() => this.wrap(Grown.Model.DB[name].models[this.$schema.id], Grown.Model.DB[name].schemas));
+        .then(() => this._wrap(this.$schema.id, Grown.Model.DB[name].models[this.$schema.id], Grown.Model.DB[name].schemas));
     },
 
     getSchema(id, refs) {

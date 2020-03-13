@@ -32,23 +32,6 @@ module.exports = (Grown, util) => {
       return this;
     },
 
-    partial(Model, definition) {
-      if (definition.hooks) {
-        Object.keys(definition.hooks).forEach(hook => {
-          Model.addHook(hook, definition.hooks[hook]);
-        });
-      }
-
-      Object.assign(Model, definition.classMethods);
-      Object.assign(Model.prototype, definition.instanceMethods);
-
-      delete definition.hooks;
-      delete definition.classMethods;
-      delete definition.instanceMethods;
-
-      return Model;
-    },
-
     bundle(options) {
       options = options || {};
 
@@ -68,11 +51,7 @@ module.exports = (Grown, util) => {
         },
         after(_name, definition) {
           // no connection? return it as Entity definition
-          if (!DB[name].sequelize._resolved) {
-            return Grown.Model.Entity.define(_name, definition);
-          }
-
-          return Grown.Model.DB.partial(DB[name].models[_name], definition);
+          return Grown.Model.Entity.define(_name, definition);
         },
       });
 
@@ -82,7 +61,7 @@ module.exports = (Grown, util) => {
       });
 
       function get(model) {
-        return Grown.Model.Entity.wrap($.get(model), Grown.Model.DB[name].schemas);
+        return Grown.Model.Entity._wrap(model, $.get(model), Grown.Model.DB[name].schemas);
       }
 
       return Grown(`Model.DB.${name}.repository`, {

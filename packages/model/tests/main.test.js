@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-expressions */
 const { expect } = require('chai');
+const td = require('testdouble');
 
 /* global beforeEach, describe, it */
 
@@ -31,7 +32,10 @@ describe('Grown.Model', () => {
   });
 
   describe('CLI', () => {
-    it('...');
+    it('should integrate json-schema-sequelizer CLI module', () => {
+      expect(typeof Grown.Model.CLI.usage).to.eql('function');
+      expect(typeof Grown.Model.CLI.execute).to.eql('function');
+    });
   });
 
   describe('DB', () => {
@@ -86,21 +90,25 @@ describe('Grown.Model', () => {
       const Example = container.get('Example');
 
       expect(Example.name).to.eql('ExampleModel');
-      expect(Example.getSchema()).not.to.be.undefined;
+      expect(typeof Example.getSchema).to.eql('function');
 
       return container.connect().then(() => {
         expect(container.get('Example').name).to.eql('Example');
         expect(container.get('Example').callMe()).to.eql(42);
-        expect(container.get('Example').getSchema()).not.to.be.undefined;
         expect(Example === container.get('Example')).to.be.false;
+        expect(typeof container.get('Example').getSchema).to.eql('function');
       });
     });
   });
 
   describe('Entity', () => {
-    it('should be able to define new entities', () => {
-      const Model = Grown.Model.Entity.define('X', { connection: sqliteMemory, $schema });
+    let Model;
 
+    beforeEach(() => {
+      Model = Grown.Model.Entity.define('X', { connection: sqliteMemory, $schema });
+    });
+
+    it('should be able to define new entities', () => {
       expect(() => Model.getSchema().assert({ value: 123 })).to.throw(/Invalid input for Example/);
 
       return Model.connect()
@@ -111,13 +119,56 @@ describe('Grown.Model', () => {
           expect(typeof Example.getSchema().fakeOne().value).to.eql('string');
         });
     });
-  });
 
-  describe('Formator', () => {
-    it('...');
+    it('should fail on invalid definitions, e.g. hooks', () => {
+      const WithInvalidHooks = Model({ hooks: { undef() {} } });
+
+      return WithInvalidHooks.connect().catch(e => {
+        expect(e.stack).to.contains('getProxiedHooks');
+      });
+    });
+
+    it('should load hooks if present otherwise', () => {
+      const WithValidHooks = Model({ hooks: { beforeCreate: td.func() } });
+
+      return WithValidHooks.connect()
+        .then(Entity => Entity.sync({ force: true }))
+        .then(Entity => Entity.create({ value: 'X' }))
+        .then(() => {
+          expect(td.explain(WithValidHooks.hooks.beforeCreate).callCount).to.eql(1);
+        });
+    });
   });
 
   describe('Repo', () => {
-    it('...');
+    function makeServer(db) {
+      const server = new Grown();
+
+      server.plug(Grown.Test);
+      server.plug(Grown.Model.Repo({
+        prefix: '/db',
+        options: { attributes: false },
+        database: db,
+      }));
+
+      return server;
+    }
+
+    function getDatabase() {
+      const { repo } = Grown.Model.DB.register('repo', { config: { ...sqliteMemory } });
+
+      repo.add({ $schema });
+
+      return repo;
+    }
+
+    it('should should responds to RESTful calls', () => {
+      const repo = getDatabase();
+
+      return repo.connect()
+        .then(() => repo.sync())
+        .then(() => makeServer(repo).request('/db', (err, conn) => conn.res.ok(err, /"Example"/)))
+        .then(() => makeServer(repo).request('/db/Example', (err, conn) => conn.res.ok(err, /"primaryKeys"/)));
+    });
   });
 });
