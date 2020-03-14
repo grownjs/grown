@@ -34,6 +34,7 @@
     "@grown/test": "^0.0.4",
     "chai": "^4.2.0",
     "codecov": "^3.6.5",
+    "minimist": ">=1.2.2",
     "eslint": "^5.9.0",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-import": "^2.14.0",

@@ -29,6 +29,7 @@
     "lerna": "^2.8.0",
     "lodash": ">=4.17.11",
     "lodash.template": ">=4.5.0",
+    "minimist": ">=1.2.2",
     "mem": ">=4.0.0"
   },
   "dependencies": {
