@@ -1,20 +1,20 @@
 const path = require('path');
 
-const Application = require('grown')();
+const App = require('grown')();
 
-const GRPC = Application.use(require('@grown/grpc'));
-const Schema = Application.use(require('@grown/schema'));
-const Models = Application.use(require('./models'));
+const GRPC = App.use(require('@grown/grpc'));
+const Schema = App.use(require('@grown/schema'));
+const Models = App.use(require('./models'));
 
-Application('GRPC.Gateway', {
+App('GRPC.Gateway', {
   include: [
     GRPC.Loader.scan(path.join(__dirname, '../api/schema/generated/index.proto')),
   ],
 });
 
-Application('Services', {
+App('Services', {
   include: [
-    GRPC.Gateway.setup(Application.load(path.join(__dirname, '../api/handlers')), { timeout: 10 }),
+    GRPC.Gateway.setup(App.load(path.join(__dirname, '../api/handlers')), { timeout: 10 }),
   ],
   getSchema(ref) {
     return Schema.get(ref, require('../api/schema/generated'));
@@ -27,4 +27,4 @@ Application('Services', {
   },
 });
 
-module.exports = Application;
+module.exports = App;
