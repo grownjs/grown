@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = (Grown, util) => {
-  const Repo = require('./repo')(Grown);
+  const Formator = require('./Formator')(Grown);
   const DB = require('./db')(Grown, util);
 
   // register only
@@ -10,7 +10,7 @@ module.exports = (Grown, util) => {
 
   return Grown('Model', {
     include: [
-      Repo,
+      Formator,
       DB,
     ],
   });
