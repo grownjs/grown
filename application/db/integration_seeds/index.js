@@ -3,15 +3,15 @@ const log = require('logro').createLogger(__filename);
 const CleanUpSeeds = require('./cleanup');
 const UserSeeds = require('./user');
 
-const Application = require('../../lib');
+const App = require('../../lib');
 
-const { connect, sequelize } = Application.Models
-  ._getDB(Application.Models.connection.identifier);
+const { connect, sequelize } = App.Models
+  ._getDB(App.Models.connection.identifier);
 
 async function integrationSeeds(tasks) {
   try {
     await tasks.reduce((prev, { run }) => {
-      return prev.then(() => run.call(Application, sequelize));
+      return prev.then(() => run.call(App, sequelize));
     }, Promise.resolve());
   } catch (err) {
     log.exception(err, 'E_FATAL');
@@ -21,7 +21,7 @@ async function integrationSeeds(tasks) {
 
 async function runTasks() {
   if (process.argv.slice(2).includes('--clear')) {
-    return CleanUpSeeds.run.call(Application, sequelize);
+    return CleanUpSeeds.run.call(App, sequelize);
   }
 
   await integrationSeeds([

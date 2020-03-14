@@ -7,6 +7,7 @@ module.exports = {
     identifier: {
       'ui:hidden': true,
     },
+    'ui:append': false,
   },
   $attributes: {
     findAll: ['email', 'role', 'verified', 'platform'],
