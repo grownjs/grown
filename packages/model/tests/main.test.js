@@ -145,7 +145,7 @@ describe('Grown.Model', () => {
       const server = new Grown();
 
       server.plug(Grown.Test);
-      server.plug(Grown.Model.Repo({
+      server.plug(Grown.Model.Formator({
         prefix: '/db',
         options: { attributes: false },
         database: db,

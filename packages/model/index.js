@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = (Grown, util) => {
-  const Formator = require('./Formator')(Grown);
+  const Formator = require('./formator')(Grown);
   const DB = require('./db')(Grown, util);
 
   // register only
