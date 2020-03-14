@@ -7,10 +7,8 @@
   let cssClass = '';
 
   export let id = '';
-  export let className = '';
-  export { cssClass as class };
-
   export let back = '/';
+  export { cssClass as class };
 
   let signUp;
   let disabled;
@@ -44,7 +42,7 @@
   otherwise="Access was successfully granted..."
 />
 
-<In modal autofocus id="password-recovery" on:cancel={clear} on:submit={doSignUp}>
+<In {id} modal autofocus on:cancel={clear} on:submit={doSignUp}>
   <h2>Create a new account</h2>
   <label>
     Email: <input type="email" bind:value={email} required autocomplete="current-email" />

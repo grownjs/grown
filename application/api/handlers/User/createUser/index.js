@@ -4,6 +4,7 @@ const {
 
 module.exports = ({ User, Token, mailer }) => async function createUser({ request }) {
   const {
+    guid,
     params: {
       email, password, confirmPassword,
     },

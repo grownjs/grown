@@ -1,6 +1,6 @@
 <script>
   import {
-    In, Status, Failure, mutation,
+    In, Status, mutation,
   } from 'svql';
 
   import { Route, Link, navigateTo } from 'yrv';

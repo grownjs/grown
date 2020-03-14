@@ -1,3 +1,5 @@
+/* eslint-disable max-classes-per-file */
+
 const Therror = require('therror');
 
 class UserNotFound extends Therror.HTTP(404) {}

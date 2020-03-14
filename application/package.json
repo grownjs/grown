@@ -124,7 +124,7 @@
   "dependencies": {
     "@grown/graphql": "^0.0.7",
     "@grown/grpc": "^0.0.7",
-    "@grown/model": "^0.0.15",
+    "@grown/model": "^0.0.16",
     "@grown/parsers": "^0.0.4",
     "@grown/router": "0.0.4",
     "@grown/schema": "^0.0.5",
