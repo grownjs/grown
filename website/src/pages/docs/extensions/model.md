@@ -3,12 +3,29 @@ title: Model
 $render: ../../../lib/layouts/default.pug
 runkit:
   preamble: |
+    const fs = require('fs');
+    fs.mkdirSync('./models');
+    fs.mkdirSync('./models/Test');
+    fs.writeFileSync('./models/Test/schema.json', `{
+      "id": "ExampleModel",
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "string"
+        }
+      }
+    }`);
+    fs.writeFileSync('./models/Test/index.js', `
+      module.exports = {
+        $schema: require('./schema')
+      };
+    `);
     const Grown = require('@grown/bud')();
     Grown.use(require('@grown/server'));
     const server = new Grown();
 ---
 
-...
+Declare and validate your models using JSON-Schema definitions.
 
 
 ```js
@@ -16,6 +33,7 @@ runkit:
 // register extension
 const Model = Grown.use(require('@grown/model'));
 
+// declares a single entity model
 const Example = Model.Entity.define('Test', {
   $schema: {
     id: 'TestExample',
@@ -28,41 +46,87 @@ const Example = Model.Entity.define('Test', {
   },
 });
 
-Example.connect({
+// connect database for this model only
+const ExampleModel = await Example.connect({
   dialect: 'sqlite',
   storage: ':memory:',
-}).then(Model => {
-  return Model;
 });
+
+// ./models/Test/index.js
+// module.exports = {
+//   $schema: require('./schema')
+// };
+
+// ./models/Test/schema.json
+// {
+//   "id": "TestModel",
+//   "type": "object",
+//   "properties": {
+//     "value": {
+//       "type": "string"
+//     }
+//   }
+// }
+
+// scan for all model definitions within
+const repo = Grown.Model.DB.bundle({
+  models: `${__dirname}/models`,
+  database: {
+    identifier: 'test',
+    config: {
+      dialect: 'sqlite',
+      storage: ':memory:'
+    }
+  }
+});
+
+// expose RESTful endpoint to your models
+const API = Grown.Model.Formator({
+  database: Grown.Model.DB.test,
+  prefix: '/db',
+});
+
+server.plug(API);
+
+// connect the repository
+await repo.connect();
+await repo.sync();
+
+// direct access to your models
+console.log(repo.models.TestModel);
+
+// access model as a RESTful resource
+const TestRepo = API.from(repo.models.TestModel);
+const testCount = await TestRepo.count();
+
+console.log(testCount);
+
+// close connection
+await repo.disconnect();
 ```
 
 ## CLI
 
-### Public props <var>static</var>
+### Public methods <var>static</var>
 
 - `usage(bin)` &mdash; Prints out the usage info for the given binary.
 - `execute(db, cmd, argv)` &mdash; Run the given `cmd` and `argv` through the given `db` connection.
 
 > See [json-schema-sequelizer](https://github.com/json-schema-faker/json-schema-sequelizer) for usage info.
 
-## Repo
-
-### Public methods <var>static</var>
-
-- `$install(ctx)` &mdash; Auto-mount endpoint for general usage; requires `prefix`, `database` and `options` to be defined.
-- `bind(Model, params, options)` &mdash; Returns a single mount-point for the given model; requires `database` to be defined.
-
 ## DB
-
-### Private* props <var>static</var>
-
-- `_registry` &mdash; All registered database connections.
 
 ### Public methods <var>static</var>
 
 - `registered(name)` &mdash; Returns `true` if the named connection is already defined.
 - `register(name, params)` &mdash; Add a named connection to the registry where params is an object with `config`, `refs` and `cwd` options.
 - `bundle(options)` &mdash; Returns a repository built on top of given `models` directory and `database` options as connection.
+
+> Repos have only four methods: `disconnect`, `connect`, `sync` and `get` &mdash; also `connection`, `sequelize`, `schemas` and `models` are available as properties.
+
+### Private* props <var>static</var>
+
+- `_registry` &mdash; All registered database connections.
 
 ## Entity
 
@@ -82,6 +146,17 @@ Example.connect({
 - `_wrap(id, def[, refs])` &mdash; Use to decorate any given model with the `getSchema(...)` method, only if is not present already.
 
 > See [json-schema-faker](https://json-schema-faker.js.org/) for usage info.
+
+## Formator
+
+### Public methods <var>static</var>
+
+- `$install(ctx)` &mdash; Auto-mount endpoint for general usage; requires `prefix`, `database` and `options` to be defined.
+- `from(Model, params, options)` &mdash; Returns a RESTful resource for the given model; requires `database` to be defined.
+
+> RESTful resources have six methods only: `findAll`, `findOne`, `destroy`, `update`, `count` and `create`.
+>
+> See [formator](https://github.com/pateketrueke/formator) for usage info.
 
 ---
 

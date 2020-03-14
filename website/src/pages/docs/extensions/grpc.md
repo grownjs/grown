@@ -69,10 +69,9 @@ const gateway = Gateway.setup(API, {
   timeout: 10,
 }).start();
 
-gateway.API.Test.is({ truth: 42 })
-  .then(result => {
-    console.log('GOT:', result);
-  });
+const result = await gateway.API.Test.is({ truth: 42 });
+
+console.log('GOT:', result);
 ```
 
 ## Loader
