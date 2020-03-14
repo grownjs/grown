@@ -5,4 +5,4 @@ $render: ../../../lib/layouts/default.pug
 
 ---
 
-➯ Next: [Extensions &rangle; Schema](./docs/extensions/schema)
+➯ Next: [Extensions &rangle; Server](./docs/extensions/server)
