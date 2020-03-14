@@ -1,26 +1,5 @@
 'use strict';
 
-const HOOK_METHODS = [
-  'beforeValidate', 'afterValidate', 'validationFailed',
-  'beforeCreate', 'afterCreate',
-  'beforeDestroy', 'afterDestroy',
-  'beforeRestore', 'afterRestore',
-  'beforeUpdate', 'afterUpdate',
-  'beforeSave', 'afterSave',
-  'beforeUpsert', 'afterUpsert',
-  'beforeBulkCreate', 'afterBulkCreate',
-  'beforeBulkDestroy', 'afterBulkDestroy',
-  'beforeBulkRestore', 'afterBulkRestore',
-  'beforeBulkUpdate', 'afterBulkUpdate',
-  'beforeFind', 'beforeFindAfterExpandIncludeAll', 'beforeFindAfterOptions', 'afterFind',
-  'beforeCount',
-  'beforeDefine', 'afterDefine',
-  'beforeInit', 'afterInit',
-  'beforeConnect', 'afterConnect',
-  'beforeSync', 'afterSync',
-  'beforeBulkSync', 'afterBulkSync',
-];
-
 const JSF_DEFAULTS = {
   random: Math.random,
   useDefaultValue: false,
@@ -30,42 +9,6 @@ const JSF_DEFAULTS = {
 module.exports = (Grown, util) => {
   const Ajv = require('ajv');
   const jsf = require('json-schema-faker');
-
-  function _makeDefinition(src) {
-    Object.keys(src).forEach(key => {
-      /* istanbul ignore else */
-      if (key !== 'connect' && typeof src[key] === 'function') {
-        if (HOOK_METHODS.indexOf(key) === -1) {
-          this.classMethods[key] = src[key];
-        } else {
-          this.hooks[key] = src[key];
-        }
-      }
-    });
-
-    Object.keys(src.props || {}).forEach(key => {
-      const d = util.getDescriptor(src.props, key);
-
-      /* istanbul ignore else */
-      if (d.get) {
-        this.getterMethods[key] = d.get;
-      }
-
-      /* istanbul ignore else */
-      if (d.set) {
-        this.setterMethods[key] = d.set;
-      }
-
-      /* istanbul ignore else */
-      if (d.value) {
-        this.getterMethods[key] = () => d.value;
-      }
-    });
-
-    Object.keys(src.methods || {}).forEach(key => {
-      this.instanceMethods[key] = src.methods[key];
-    });
-  }
 
   function _validateFrom(id, ref, refs, data) {
     return new Promise((resolve, reject) => {
@@ -144,7 +87,6 @@ module.exports = (Grown, util) => {
   }
 
   return Grown('Model.Entity', {
-    _makeDefinition,
     _validateFrom,
     _assertFrom,
     _fakeFrom,
@@ -153,7 +95,7 @@ module.exports = (Grown, util) => {
     _wrap,
 
     define(name, params) {
-      const target = Grown.Model.Entity({
+      return Grown.Model.Entity({
         name: `${name}Model`,
         include: [{
           connection: params.connection || {},
@@ -165,24 +107,13 @@ module.exports = (Grown, util) => {
           instanceMethods: params.instanceMethods || {},
         }],
       });
-
-      if (params.extensions) {
-        params.extensions.forEach(ext => this._makeDefinition(ext));
-      }
-
-      return target;
     },
 
     connect(options, refs, cwd) {
       const _opts = {};
 
       // merge defaults first
-      util.extendValues(_opts, this.connection);
-
-      /* istanbul ignore else */
-      if (Object.prototype.toString.call(options) === '[object Object]') {
-        util.extendValues(_opts, options);
-      }
+      util.extendValues(_opts, this.connection, options);
 
       let name;
 

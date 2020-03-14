@@ -70,8 +70,9 @@ module.exports = (Grown, util) => {
         get schemas() { return DB[name].schemas; },
         get models() { return DB[name].models; },
 
-        disconnect: () => DB[name].disconnect(),
+        disconnect: () => DB[name].close(),
         connect: () => DB[name].connect(),
+        sync: opts => DB[name].sync(opts),
         get: model => get(model),
       });
     },

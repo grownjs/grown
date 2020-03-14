@@ -3,8 +3,8 @@
 module.exports = Grown => {
   const Formator = require('formator');
 
-  return Grown('Model.Repo', {
-    bind(Model, params, options) {
+  return Grown('Model.Formator', {
+    from(Model, params, options) {
       return new Formator(this.database).bind(Model, params, options);
     },
     $install(ctx) {
