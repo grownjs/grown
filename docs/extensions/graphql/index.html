@@ -109,8 +109,6 @@ server.mount(<span class="hljs-string">'/'</span>, Grown.GraphQL
                     </li>
                     <li><a href="./docs/extensions/router">Router</a>
                     </li>
-                    <li><a href="./docs/extensions/schema">Schema</a>
-                    </li>
                     <li><a href="./docs/extensions/server">Server</a>
                     </li>
                     <li><a href="./docs/extensions/session">Session</a>
@@ -167,7 +165,7 @@ server.mount(<span class="hljs-string">'/'</span>, Grown.GraphQL
       </aside>
     </main>
     <script>window.__runkit__ = {"endpoint":true,"preamble":"const fs = require('fs');\nconst assert = require('assert');\nfs.mkdirSync('./handlers');\nfs.mkdirSync('./handlers/Test');\nfs.mkdirSync('./handlers/Test/Query');\nfs.mkdirSync('./handlers/Test/Query/truth');\nfs.writeFileSync('./handlers/Test/Query/truth/index.js', `\n  module.exports = function () { return 42; };\n`);\nfs.writeFileSync('./index.gql', `\n  type Mutation { noop: Int }\n  type Query { truth: Int }\n`);\nconst Grown = require('@grown/bud')();\nGrown.use(require('@grown/server'));\nconst server = new Grown();\nglobal.__dirname=process.cwd();\nprocess.nextTick(() => server.listen(8080));\n"};</script>
-    <script src="https://embed.runkit.com"></script>
+    <script src="//embed.runkit.com"></script>
     <script src="scripts.js"></script>
   </body>
 </html>

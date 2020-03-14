@@ -23,51 +23,70 @@
 <span class="hljs-comment">// register extension</span>
 <span class="hljs-keyword">const</span> Model = Grown.use(<span class="hljs-built_in">require</span>(<span class="hljs-string">'@grown/model'</span>));
 
-<span class="hljs-built_in">console</span>.log(Model)
+<span class="hljs-keyword">const</span> Example = Model.Entity.define(<span class="hljs-string">'Test'</span>, {
+  <span class="hljs-attr">$schema</span>: {
+    <span class="hljs-attr">id</span>: <span class="hljs-string">'TestExample'</span>,
+    <span class="hljs-attr">type</span>: <span class="hljs-string">'object'</span>,
+    <span class="hljs-attr">properties</span>: {
+      <span class="hljs-attr">value</span>: {
+        <span class="hljs-attr">type</span>: <span class="hljs-string">'string'</span>,
+      },
+    },
+  },
+});
+
+Example.connect({
+  <span class="hljs-attr">dialect</span>: <span class="hljs-string">'sqlite'</span>,
+  <span class="hljs-attr">storage</span>: <span class="hljs-string">':memory:'</span>,
+}).then(<span class="hljs-function"><span class="hljs-params">Model</span> =&gt;</span> {
+  <span class="hljs-keyword">return</span> Model;
+});
 </code></pre>
-<h2 id="resource">Resource</h2>
-<h3 id="public-methods-var-static-var">Public methods <var>static</var></h3>
+<h2 id="cli">CLI</h2>
+<h3 id="public-props-var-static-var">Public props <var>static</var></h3>
 <ul>
-<li><code>$install(ctx)</code> &mdash;</li>
-<li><code>dispatch(resource)</code> &mdash;</li>
+<li><code>usage(bin)</code> &mdash; Prints out the usage info for the given binary.</li>
+<li><code>execute(db, cmd, argv)</code> &mdash; Run the given <code>cmd</code> and <code>argv</code> through the given <code>db</code> connection.</li>
 </ul>
-<h3 id="private-methods-var-static-var">Private* methods <var>static</var></h3>
-<ul>
-<li><code>_buildAttachments(Model, options)</code> &mdash;</li>
-<li><code>_buildResource(Model, conn, options)</code> &mdash;</li>
-<li><code>_findModel(resource)</code> &mdash;</li>
-</ul>
-<h2 id="loader">Loader</h2>
-<h3 id="public-methods-var-static-var">Public methods <var>static</var></h3>
-<ul>
-<li><code>scan(cwd[, refs])</code> &mdash;</li>
-<li><code>refs(cwd)</code> &mdash;</li>
-</ul>
+<blockquote>
+<p>See <a href="https://github.com/json-schema-faker/json-schema-sequelizer">json-schema-sequelizer</a> for usage info.</p>
+</blockquote>
 <h2 id="repo">Repo</h2>
 <h3 id="public-methods-var-static-var">Public methods <var>static</var></h3>
 <ul>
-<li><code>sync(opts)</code> &mdash;</li>
-<li><code>clear(opts)</code> &mdash;</li>
-<li><code>connect()</code> &mdash;</li>
-<li><code>disconnect()</code> &mdash;</li>
+<li><code>$install(ctx)</code> &mdash; Auto-mount endpoint for general usage; requires <code>prefix</code>, <code>database</code> and <code>options</code> to be defined.</li>
+<li><code>bind(Model, params, options)</code> &mdash; Returns a single mount-point for the given model; requires <code>database</code> to be defined.</li>
+</ul>
+<h2 id="db">DB</h2>
+<h3 id="private-props-var-static-var">Private* props <var>static</var></h3>
+<ul>
+<li><code>_registry</code> &mdash; All registered database connections.</li>
+</ul>
+<h3 id="public-methods-var-static-var">Public methods <var>static</var></h3>
+<ul>
+<li><code>registered(name)</code> &mdash; Returns <code>true</code> if the named connection is already defined.</li>
+<li><code>register(name, params)</code> &mdash; Add a named connection to the registry where params is an object with <code>config</code>, <code>refs</code> and <code>cwd</code> options.</li>
+<li><code>bundle(options)</code> &mdash; Returns a repository built on top of given <code>models</code> directory and <code>database</code> options as connection.</li>
+</ul>
+<h2 id="entity">Entity</h2>
+<h3 id="public-methods-var-static-var">Public methods <var>static</var></h3>
+<ul>
+<li><code>define(name, params)</code> &mdash; Returns a new <code>Entity</code> model from the given <code>name</code> and <code>params</code> arguments.</li>
+<li><code>connect(options[, refs, cwd])</code> &mdash; Set the connection for the given options; <code>refs</code> and <code>cwd</code> are for dereferencing.</li>
+<li><code>getSchema(id[, refs])</code> &mdash; Returns the wrapped schema, given <code>id</code> is lookup through <code>definitions</code> schemas; <code>refs</code> are optional schemas.</li>
 </ul>
 <h3 id="private-methods-var-static-var">Private* methods <var>static</var></h3>
 <ul>
-<li><code>_getSchemas()</code> &mdash;</li>
-<li><code>_getModels()</code> &mdash;</li>
-<li><code>_getModel(name, refs, cwd)</code> &mdash;</li>
-<li><code>_getDB([identifier])</code> &mdash;</li>
+<li><code>_validateFrom(id, ref, refs, data)</code> &mdash; Returns a promise with the validation results from calling <code>_assertFrom(...)</code>.</li>
+<li><code>_assertFrom(id, ref, refs, data)</code> &mdash; Retrieve the named schema by <code>ìd</code> and validates the given <code>data</code> input; <code>ref</code> and <code>refs</code> are optional.</li>
+<li><code>_fakeFrom(id, refs, opts)</code> &mdash; Generates examples based on the json-schema found by <code>id</code>-</li>
+<li><code>_through(id, refs)</code> &mdash; Used to resolve from <code>definitions</code> returning the same methods as <code>_schema(...)</code>.</li>
+<li><code>_schema(id, refs)</code> &mdash; Used to resove from regular schemas; returns <code>fakeOne</code>, <code>fakeMany</code>, <code>assert</code>, and <code>validate</code> methods.</li>
+<li><code>_wrap(id, def[, refs])</code> &mdash; Use to decorate any given model with the <code>getSchema(...)</code> method, only if is not present already.</li>
 </ul>
-<h2 id="base">Base</h2>
-<h3 id="public-props-var-static-var">Public props <var>static</var></h3>
-<h3 id="public-methods-var-static-var">Public methods <var>static</var></h3>
-<h3 id="private-props-var-static-var">Private* props <var>static</var></h3>
-<h3 id="private-methods-var-static-var">Private* methods <var>static</var></h3>
-<h2 id="db">DB</h2>
-<h3 id="public-props-var-static-var">Public props <var>static</var></h3>
-<h3 id="public-methods-var-static-var">Public methods <var>static</var></h3>
-<h3 id="private-props-var-static-var">Private* props <var>static</var></h3>
-<h3 id="private-methods-var-static-var">Private* methods <var>static</var></h3>
+<blockquote>
+<p>See <a href="https://json-schema-faker.js.org/">json-schema-faker</a> for usage info.</p>
+</blockquote>
 <hr>
 <p>➯ Next: <a href="./docs/extensions/parsers">Extensions &rangle; Parsers</a></p>
 
@@ -119,8 +138,6 @@
                     <li><a href="./docs/extensions/repl">REPL</a>
                     </li>
                     <li><a href="./docs/extensions/router">Router</a>
-                    </li>
-                    <li><a href="./docs/extensions/schema">Schema</a>
                     </li>
                     <li><a href="./docs/extensions/server">Server</a>
                     </li>
@@ -178,7 +195,7 @@
       </aside>
     </main>
     <script>window.__runkit__ = {"preamble":"const Grown = require('@grown/bud')();\nGrown.use(require('@grown/server'));\nconst server = new Grown();\n"};</script>
-    <script src="https://embed.runkit.com"></script>
+    <script src="//embed.runkit.com"></script>
     <script src="scripts.js"></script>
   </body>
 </html>

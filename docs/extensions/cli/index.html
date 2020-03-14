@@ -177,8 +177,6 @@ Additional args after <code>--</code> are executed as a shell command, returns a
                     </li>
                     <li><a href="./docs/extensions/router">Router</a>
                     </li>
-                    <li><a href="./docs/extensions/schema">Schema</a>
-                    </li>
                     <li><a href="./docs/extensions/server">Server</a>
                     </li>
                     <li><a href="./docs/extensions/session">Session</a>
@@ -235,7 +233,7 @@ Additional args after <code>--</code> are executed as a shell command, returns a
       </aside>
     </main>
     <script>window.__runkit__ = {"preamble":"const fs = require('fs');\nconst assert = require('assert');\nfs.mkdirSync('./tasks');\nfs.writeFileSync('./tasks/example.js',\n  `module.exports = {\n    description: 'Example task',\n    callback() {\n      console.log('It works.')\n    },\n  };`);\nconst stripAnsi = require('strip-ansi');\nconst toString = value => String(Buffer.from(value));\nconst normalizeText = msg => stripAnsi(msg.replace(/[\\r\\n\\b]/g, ''));\nprocess.stdout.write = msg => console.log(normalizeText(toString(msg)));\n"};</script>
-    <script src="https://embed.runkit.com"></script>
+    <script src="//embed.runkit.com"></script>
     <script src="scripts.js"></script>
   </body>
 </html>

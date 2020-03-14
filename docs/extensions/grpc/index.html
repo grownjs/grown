@@ -138,8 +138,6 @@ gateway.API.Test.is({ <span class="hljs-attr">truth</span>: <span class="hljs-nu
                     </li>
                     <li><a href="./docs/extensions/router">Router</a>
                     </li>
-                    <li><a href="./docs/extensions/schema">Schema</a>
-                    </li>
                     <li><a href="./docs/extensions/server">Server</a>
                     </li>
                     <li><a href="./docs/extensions/session">Session</a>
@@ -196,7 +194,7 @@ gateway.API.Test.is({ <span class="hljs-attr">truth</span>: <span class="hljs-nu
       </aside>
     </main>
     <script>window.__runkit__ = {"preamble":"require('@grpc/proto-loader');\nrequire('grpc');\nconst fs = require('fs');\nconst assert = require('assert');\nfs.mkdirSync('./handlers');\nfs.mkdirSync('./handlers/Test');\nfs.mkdirSync('./handlers/Test/is');\nfs.writeFileSync('./handlers/Test/is/index.js', `\n  module.exports = function ({ request }) {\n    return { reveal: request.truth === 42 };\n  };\n`);\nfs.writeFileSync('./index.proto', `\n  syntax = \"proto3\";\n  package API;\n  service Test {\n    rpc is(Input) returns (Output) {}\n  }\n  message Input {\n    int32 truth = 1;\n  }\n  message Output {\n    string reveal = 1;\n  }\n`);\nconst Grown = require('@grown/bud')();\n"};</script>
-    <script src="https://embed.runkit.com"></script>
+    <script src="//embed.runkit.com"></script>
     <script src="scripts.js"></script>
   </body>
 </html>
