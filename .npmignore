@@ -1,6 +1,9 @@
+packages
+application
 node_modules
 .gitattributes
 .travis.yml
 .nvmrc
+Makefile
 *.json
 *.log
