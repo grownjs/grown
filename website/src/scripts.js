@@ -4,30 +4,27 @@
   if (!matches) return;
   const snippet = __runkit__[matches[1]] || __runkit__;
   const isEndpoint = snippet.endpoint;
-  const sourceCode = source.innerText.replace(`${matches[0]}\n`, '');
+  const sourceCode = source.innerText;
   const a = document.createElement('a');
-  a.innerText = '▾ REPL';
+  a.innerText = '► RUN';
   a.href = location.href;
   a.onclick = e => {
     if (a._locked) return;
     a._locked = true;
     delete a.onclick;
     e.preventDefault();
-    a.innerText = 'Loading...';
     const target = document.createElement('div');
+    source.parentNode.parentNode.insertBefore(target, source.parentNode);
+    source.parentNode.parentNode.removeChild(source.parentNode);
     RunKit.createNotebook({
       element: target,
       source: sourceCode,
       mode: isEndpoint && 'endpoint',
-      title: snippet.title,
+      title: snippet.title || 'Untitled',
       preamble: snippet.preamble,
-      onLoad() {
-        target.style = 'display:block;overflow:hidden';
-        source.parentNode.parentNode.removeChild(source.parentNode);
-      },
+      gutterStyle: 'none',
+      evaluateOnLoad: true,
     });
-    target.style = 'display:none';
-    source.parentNode.parentNode.insertBefore(target, source.parentNode);
   };
   source.parentNode.appendChild(a);
 });
