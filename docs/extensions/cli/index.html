@@ -49,11 +49,10 @@ Grown.argv.raw = [<span class="hljs-string">'ls'</span>, <span class="hljs-strin
 <span class="hljs-keyword">const</span> taskName = Grown.argv._.shift();
 
 <span class="hljs-comment">// invoke raw args and then run</span>
-Grown.CLI.start(taskName)
-  .then(<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
-    <span class="hljs-comment">// these tasks are invoked synchronously</span>
-    Grown.CLI.run(taskName);
-  });
+<span class="hljs-keyword">await</span> Grown.CLI.start(taskName);
+
+<span class="hljs-comment">// these tasks are invoked synchronously</span>
+<span class="hljs-keyword">await</span> Grown.CLI.run(taskName);
 </code></pre>
 <blockquote>
 <p>Use this technique if you want to define your own <code>CLI</code> behavior, etc.</p>
