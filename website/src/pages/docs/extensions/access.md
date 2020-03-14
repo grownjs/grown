@@ -59,7 +59,7 @@ server.mount(ctx => {
 });
 ```
 
-> Try loading different URLs like `/etc` or `/login` in your browser
+> Try loading different URLs like `/etc` or `/login` in your browser.
 
 ---
 

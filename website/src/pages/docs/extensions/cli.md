@@ -52,11 +52,10 @@ Grown.argv.raw = ['ls', 'tasks'];
 const taskName = Grown.argv._.shift();
 
 // invoke raw args and then run
-Grown.CLI.start(taskName)
-  .then(() => {
-    // these tasks are invoked synchronously
-    Grown.CLI.run(taskName);
-  });
+await Grown.CLI.start(taskName);
+
+// these tasks are invoked synchronously
+await Grown.CLI.run(taskName);
 ```
 
 > Use this technique if you want to define your own `CLI` behavior, etc.
