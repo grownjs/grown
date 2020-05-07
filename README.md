@@ -1,8 +1,8 @@
 # Grown
 
+![Build status](https://github.com/grownjs/grown/workflows/build/badge.svg)
 [![NPM version](https://badge.fury.io/js/grown.png)](http://badge.fury.io/js/grown)
-[![travis-ci](https://api.travis-ci.org/pateketrueke/grown.svg)](https://travis-ci.org/pateketrueke/grown)
-[![codecov](https://codecov.io/gh/pateketrueke/grown/branch/master/graph/badge.svg)](https://codecov.io/gh/pateketrueke/grown)
+[![codecov](https://codecov.io/gh/grownjs/grown/branch/master/graph/badge.svg)](https://codecov.io/gh/grownjs/grown)
 
 Available packages:
 
