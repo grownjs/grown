@@ -160,4 +160,4 @@ await repo.disconnect();
 
 ---
 
-➯ Next: [Extensions &rangle; Parsers](./docs/extensions/parsers)
+➯ Next: [Extensions &rangle; Render](./docs/extensions/render)

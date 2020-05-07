@@ -152,7 +152,7 @@ function endCallback(err, conn, options) {
           return conn.end();
         }
 
-        return conn.halt(() => conn.res.end());
+        return conn.halt(() => conn.res.end(null));
       }
     })
     .catch(e => {

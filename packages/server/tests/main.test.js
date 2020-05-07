@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-expressions */
 
 const { expect } = require('chai');
+const { get, post } = require('httpie');
 
 let Grown;
 let g;
@@ -130,6 +131,80 @@ describe('Grown.Server', () => {
 
         return g.emit('async-seq').then(() => {
           expect(call).to.eql([1, 2]);
+        });
+      });
+    });
+
+    describe('uWebSockets.js', () => {
+      beforeEach(() => {
+        g = Grown.new();
+      });
+
+      it('should responds with 501 as default', done => {
+        g.listen(async app => {
+          let err;
+          try {
+            await get('http://0.0.0.0:80');
+          } catch (e) {
+            err = e;
+          }
+
+          expect(err.statusMessage).to.eql('Not Implemented');
+          expect(err.statusCode).to.eql(501);
+
+          app.close();
+          done();
+        });
+      });
+
+      it('should responds with 200 if ctx.res.end() is called', done => {
+        g.mount(ctx => ctx.res.end());
+        g.listen(async app => {
+          const { statusCode } = await get('http://0.0.0.0:80');
+
+          expect(statusCode).to.eql(200);
+          app.close();
+          done();
+        });
+      });
+
+      it('should parse multipart/x-www-form-urlencoded', done => {
+        g.mount(ctx => {
+          ctx.res.write(JSON.stringify(ctx.req.body));
+          ctx.res.end();
+        });
+
+        g.listen(async app => {
+          const { data } = await post('http://0.0.0.0:80', {
+            headers: {
+              'Content-Type': 'multipart/x-www-form-urlencoded',
+            },
+            body: 'x=y',
+          });
+
+          expect(data).to.eql('{"x":"y"}')
+          app.close();
+          done();
+        });
+      });
+
+      it('should parse application/json', done => {
+        g.mount(ctx => {
+          ctx.res.write(JSON.stringify(ctx.req.body));
+          ctx.res.end();
+        });
+
+        g.listen(async app => {
+          const { data } = await post('http://0.0.0.0:80', {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: '{"a":"b"}',
+          });
+
+          expect(data).to.eql('{"a":"b"}')
+          app.close();
+          done();
         });
       });
     });

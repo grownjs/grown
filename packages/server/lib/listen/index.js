@@ -25,7 +25,7 @@ module.exports = function $listen(location, params, cb) {
 
   params = params || {};
 
-  let _protocolName = (typeof params === 'object'
+  const _protocolName = (typeof params === 'object'
     && (params.cert || params.key || params.ca)) ? 'https' : 'http';
 
   if (typeof location === 'object') {
@@ -51,13 +51,6 @@ module.exports = function $listen(location, params, cb) {
 
   _server.host = _server.location.host.split(':')[0];
 
-  _protocolName = _server.location.protocol.replace(':', '');
-
-  /* istanbul ignore else */
-  if (!this._protocols[_protocolName]) {
-    this._protocols[_protocolName] = require(_protocolName);
-  }
-
   let _close;
 
   _server.close = () => {
@@ -67,7 +60,7 @@ module.exports = function $listen(location, params, cb) {
     }
   };
 
-  debug('#%s Initializing listener for %s', process.pid, _server.location.host);
+  debug('#%s Initializing listener for %s', process.pid, _server.host);
 
   return new Promise((resolve, reject) => {
     const _listen = () => this._events.emit('listen', _server);
@@ -81,7 +74,7 @@ module.exports = function $listen(location, params, cb) {
 
       /* istanbul ignore else */
       if (typeof this !== 'undefined') {
-        _close = this.close ? this.close.bind(this) : null;
+        _close = this.close ? this.close.bind(this, _server.location) : null;
       }
 
       _listen()
@@ -105,7 +98,7 @@ module.exports = function $listen(location, params, cb) {
       return;
     }
 
-    debug('#%s Server registered at %s', process.pid, _server.location.host);
+    debug('#%s Server registered at %s', process.pid, _server.host);
 
     this._hosts[_server.location.host] = _server;
   });

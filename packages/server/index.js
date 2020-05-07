@@ -39,7 +39,6 @@ function _grownFactory($, util, options) {
   scope._ = util;
   scope._hosts = {};
   scope._servers = {};
-  scope._protocols = {};
 
   scope._pipeline = [];
   scope._extensions = [];

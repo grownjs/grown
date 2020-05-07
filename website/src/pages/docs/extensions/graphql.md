@@ -40,14 +40,6 @@ Grown.use(require('@grown/graphql'));
 //   return 42;
 // };
 
-// body-parsers are required too
-Grown.use(require('@grown/parsers'));
-
-server.plug([
-  Grown.Parsers.JSON,
-  Grown.Parsers.URLENCODED,
-]);
-
 // mount our GraphQL API
 server.mount('/', Grown.GraphQL
   .setup([`${__dirname}/index.gql`],

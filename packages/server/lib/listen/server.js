@@ -2,36 +2,64 @@
 
 const debug = require('debug')('grown:listen');
 
+const qs = require('querystring');
+const uWS = require('uWebSockets.js');
+
 const $host = require('./host');
+
+const {
+  readBody,
+  ServerRequest,
+  ServerResponse,
+} = require('./_uws');
 
 module.exports = function $server(ctx, options, callback) {
   debug('#%s Initializing <%s> protocol', process.pid, ctx.location.protocol);
 
   const protocolName = ctx.location.protocol.replace(':', '');
-  const cb = $host.bind(this, this._protocols[protocolName]);
 
-  let _protocol;
-
-  try {
-    if (protocolName === 'https') {
-      _protocol = this._protocols[protocolName].createServer(options, cb);
-    } else {
-      _protocol = this._protocols[protocolName].createServer(cb);
-    }
-  } catch (e) {
-    throw new Error(`Protocol '${protocolName}' failed. ${e.stack}`);
+  let app;
+  if (protocolName === 'https') {
+    app = uWS.SSLApp(options.https);
+  } else {
+    app = uWS.App();
   }
 
-  /* istanbul ignore else */
-  if (!_protocol) {
-    throw new Error(`Unsupported '${protocolName}' protocol`);
-  }
+  this.close = () => uWS.us_listen_socket_close(app._self);
 
-  _protocol.listen(ctx.port, '0.0.0.0', function _onListen() {
+  app.listen(ctx.host, ctx.port, socket => {
     debug('#%s Server was started and listening at port', process.pid, ctx.port);
+
+    app._self = socket;
+    app.any('/*', (res, req) => {
+      req.headers = { host: ctx.host };
+      req.forEach((k, v) => {
+        req.headers[k] = v;
+      });
+
+      const _req = new ServerRequest(req);
+      const _resp = new ServerResponse(res);
+
+      const next = (data, cb) => {
+        if (typeof data === 'string') {
+          _req.body = cb(data);
+          _req._body = true;
+        }
+
+        $host.call(this, ctx.location, _req, _resp);
+      };
+
+      const type = req.getHeader('content-type');
+
+      if (type.includes('/json')) {
+        readBody(req, res, data => next(data, JSON.parse));
+      } else if (type.includes('/x-www-form-urlencoded')) {
+        readBody(req, res, data => next(data, qs.parse));
+      } else {
+        next();
+      }
+    });
 
     callback.call(this);
   });
-
-  return _protocol;
 };

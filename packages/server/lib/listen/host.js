@@ -2,11 +2,11 @@
 
 const debug = require('debug')('grown:listen');
 
-module.exports = function $host(_protocol, req, res) {
+module.exports = function $host(_location, req, res) {
   // normalize
   const host = req.headers.host ? req.headers.host : '';
-  const port = host.split(':')[1] || _protocol.globalAgent.defaultPort;
-  const hostname = port ? host : `${host}:${_protocol.globalAgent.defaultPort}`;
+  const port = host.split(':')[1] || _location.port;
+  const hostname = port ? host : `${host}:${_location.port}`;
 
   debug('#%s (%s) %s %s',
     process.pid,
