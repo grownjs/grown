@@ -9,7 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no"><!--[if lt IE 9]>
     <script src="https://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <script src="https://css3-mediaqueries-js.googlecode.com/svn/trunk/css3-mediaqueries.js"></script><![endif]-->
-    <title>Grown // REPL</title>
+    <title>Grown // Command line</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://unpkg.com/highlight.js/styles/default.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Sorts+Mill+Goudy">
@@ -17,9 +17,48 @@
   <body class="reset">
     <main id="wrapper">
       <div class="body" id="content">
-        <main><a id="menu" href="./docs/extensions/repl/#sidebar">&#9776;</a>
-          <h1>REPL <small><a href="//github.com/pateketrueke/grown/blob/master/website/src/pages/docs/extensions/repl.md" target="_blank">✎</a></small></h1><hr>
-<p>➯ Next: <a href="./docs/extensions/router">Extensions &rangle; Router</a></p>
+        <main><a id="menu" href="./docs/command-line/#sidebar">&#9776;</a>
+          <h1>Command line <small><a href="//github.com/pateketrueke/grown/blob/master/website/src/pages/docs/command-line.md" target="_blank">✎</a></small></h1><p>Make sure you write a script like the shown below, e.g. <strong>your-app/server.js</strong></p>
+<pre class="hljs"><code class="lang-js"><span class="hljs-comment">// require and create a Grown-container</span>
+<span class="hljs-keyword">const</span> Grown = <span class="hljs-built_in">require</span>(<span class="hljs-string">'grown'</span>)();
+
+<span class="hljs-comment">// exports for external usage</span>
+<span class="hljs-keyword">const</span> initServer = <span class="hljs-built_in">module</span>.exports = <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+  <span class="hljs-comment">// create the web-server instance</span>
+  <span class="hljs-keyword">const</span> server = <span class="hljs-keyword">new</span> Grown();
+
+  <span class="hljs-comment">// return the server to be called later</span>
+  <span class="hljs-keyword">return</span> server;
+};
+
+<span class="hljs-comment">// e.g. `node ./your-app/server.js`</span>
+<span class="hljs-keyword">if</span> (<span class="hljs-built_in">require</span>.main === <span class="hljs-built_in">module</span>) {
+  initServer()
+    .listen(Grown.argv.flags.port || <span class="hljs-number">8080</span>)
+    .catch(<span class="hljs-function"><span class="hljs-params">e</span> =&gt;</span> {
+      <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'E_FATAL'</span>, e);
+      process.exit(<span class="hljs-number">1</span>);
+    });
+}
+</code></pre>
+<p>Run your server manually with <code>node your-app/server.js</code> or with <code>npm start</code>.</p>
+<p>For the latter add the following script to your <code>package.json</code> file:</p>
+<pre class="hljs"><code class="lang-json">{
+  <span class="hljs-attr">"scripts"</span>: {
+    <span class="hljs-attr">"start"</span>: <span class="hljs-string">"grown up"</span>
+  }
+}
+</code></pre>
+<p>Try <code>npx grown --help</code> to get more usage info.</p>
+<blockquote>
+<p>Also, you can setup a <code>bin/grown</code> executable with the following content:</p>
+<pre class="hljs"><code class="lang-bash"><span class="hljs-comment">#!/usr/bin/env node</span>
+require(<span class="hljs-string">'grown/cli'</span>);
+</code></pre>
+<p>Test it out!</p>
+</blockquote>
+<hr>
+<p>➯ Next: <a href="./docs/extensions">Add-ons &rangle; Extensions</a></p>
 
         </main>
       </div>
@@ -37,7 +76,7 @@
                 </li>
                 <li><a href="./docs">The interface</a>
                 </li>
-                <li><a href="./docs/command-line">Command line</a>
+                <li><strong><a class="here" href="./docs/command-line">Command line</a></strong>
                 </li>
               </ul>
             </li>
@@ -45,42 +84,6 @@
               <h3 class="reset">Add-ons</h3>
               <ul class="pl reset">
                 <li><a href="./docs/extensions">Extensions</a>
-                  <ul class="pl reset">
-                    <li><a href="./docs/extensions/access">Access</a>
-                    </li>
-                    <li><a href="./docs/extensions/bud">Bud</a>
-                    </li>
-                    <li><a href="./docs/extensions/cli">CLI</a>
-                    </li>
-                    <li><a href="./docs/extensions/conn">Conn</a>
-                    </li>
-                    <li><a href="./docs/extensions/graphql">GraphQL</a>
-                    </li>
-                    <li><a href="./docs/extensions/grpc">GRPC</a>
-                    </li>
-                    <li><a href="./docs/extensions/logger">Logger</a>
-                    </li>
-                    <li><a href="./docs/extensions/model">Model</a>
-                    </li>
-                    <li><a href="./docs/extensions/render">Render</a>
-                    </li>
-                    <li><strong><a class="here" href="./docs/extensions/repl">REPL</a></strong>
-                    </li>
-                    <li><a href="./docs/extensions/router">Router</a>
-                    </li>
-                    <li><a href="./docs/extensions/server">Server</a>
-                    </li>
-                    <li><a href="./docs/extensions/session">Session</a>
-                    </li>
-                    <li><a href="./docs/extensions/static">Static</a>
-                    </li>
-                    <li><a href="./docs/extensions/tarima">Tarima</a>
-                    </li>
-                    <li><a href="./docs/extensions/test">Test</a>
-                    </li>
-                    <li><a href="./docs/extensions/upload">Upload</a>
-                    </li>
-                  </ul>
                 </li>
                 <li><a href="./docs/connection">Connection</a>
                 </li>

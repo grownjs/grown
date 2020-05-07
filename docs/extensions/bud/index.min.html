@@ -9,7 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no"><!--[if lt IE 9]>
     <script src="https://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <script src="https://css3-mediaqueries-js.googlecode.com/svn/trunk/css3-mediaqueries.js"></script><![endif]-->
-    <title>Grown // Parsers</title>
+    <title>Grown // Bud</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://unpkg.com/highlight.js/styles/default.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Sorts+Mill+Goudy">
@@ -17,9 +17,71 @@
   <body class="reset">
     <main id="wrapper">
       <div class="body" id="content">
-        <main><a id="menu" href="./docs/extensions/parsers/#sidebar">&#9776;</a>
-          <h1>Parsers <small><a href="//github.com/pateketrueke/grown/blob/master/website/src/pages/docs/extensions/parsers.md" target="_blank">✎</a></small></h1><hr>
-<p>➯ Next: <a href="./docs/extensions/render">Extensions &rangle; Render</a></p>
+        <main><a id="menu" href="./docs/extensions/bud/#sidebar">&#9776;</a>
+          <h1>Bud <small><a href="//github.com/pateketrueke/grown/blob/master/website/src/pages/docs/extensions/bud.md" target="_blank">✎</a></small></h1><p>The foundation of the whole framework is this, it provides the DSL
+used by all extensions, expose common utils, etc.</p>
+<pre class="hljs"><code class="lang-js"><span class="hljs-comment">/* @runkit */</span>
+<span class="hljs-keyword">const</span> Grown = <span class="hljs-built_in">require</span>(<span class="hljs-string">'@grown/bud'</span>)();
+<span class="hljs-keyword">const</span> Util = <span class="hljs-built_in">require</span>(<span class="hljs-string">'@grown/bud/util'</span>);
+
+<span class="hljs-comment">// extends the Grown-container</span>
+Grown.use(<span class="hljs-function">(<span class="hljs-params">$, util</span>) =&gt;</span> {
+  assert($ === Grown);
+  assert(util === Util);
+});
+
+<span class="hljs-comment">// build a promise-guard for callbacks</span>
+<span class="hljs-keyword">const</span> cb = Grown.do(<span class="hljs-function"><span class="hljs-params">rescue</span> =&gt;</span> {
+  rescue(<span class="hljs-function"><span class="hljs-params">e</span> =&gt;</span> {
+    <span class="hljs-comment">// you can use this block to</span>
+    <span class="hljs-comment">// catch-up things on a failure</span>
+    assert(e <span class="hljs-keyword">instanceof</span> <span class="hljs-built_in">Error</span>);
+  });
+
+  <span class="hljs-comment">// any errors thrown here will reject</span>
+  <span class="hljs-comment">// the created promise, also they'll be</span>
+  <span class="hljs-comment">// logged through `Util.getLogger().error`</span>
+  <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'E_FAILURE'</span>);
+});
+
+cb();
+
+<span class="hljs-comment">// ./exts/Test/handler/index.js</span>
+<span class="hljs-comment">// module.exports = function () {</span>
+<span class="hljs-comment">//   return 42;</span>
+<span class="hljs-comment">// };</span>
+
+<span class="hljs-comment">// load additional definitions</span>
+<span class="hljs-keyword">const</span> Exts = Grown.load(<span class="hljs-string">`<span class="hljs-subst">${__dirname}</span>/exts`</span>);
+
+<span class="hljs-comment">// locate the dependency</span>
+assert(Exts.get(<span class="hljs-string">'Test'</span>).handler() === <span class="hljs-number">42</span>);
+
+<span class="hljs-comment">// don't do this!</span>
+<span class="hljs-comment">// new Grown();</span>
+</code></pre>
+<blockquote>
+<p>Invoking <code>new Grown()</code> will throw an error if <code>Server</code> is not available!</p>
+</blockquote>
+<hr>
+<h3 id="public-props-var-static-var">Public props <var>static</var></h3>
+<ul>
+<li><code>argv</code> &mdash; Parsed argv from command-line.</li>
+<li><code>cwd</code> &mdash; Current working directory.</li>
+<li><code>env</code> &mdash; Current <code>process.env.NODE_ENV</code> value.</li>
+</ul>
+<h3 id="public-methods-var-static-var">Public methods <var>static</var></h3>
+<ul>
+<li><code>do(body)</code> &mdash; Wraps code into promises with <code>rescue</code> abilities.</li>
+<li><code>use(module)</code> &mdash; Register custom extensions from external modules.</li>
+<li><code>new([options])</code> &mdash; Shortcut for <code>new Grown(...)</code> constructor.</li>
+<li><code>defn(name, value)</code> &mdash; Set static values into the <code>Grown</code> container, once.</li>
+<li><code>load(cwd[, hooks])</code> &mdash; Build module definitions from this directory.
+If <code>hooks</code> are given, found modules will be passed to them, so they can be
+extended or completely replaced.</li>
+</ul>
+<hr>
+<p>➯ Next: <a href="./docs/extensions/cli">Extensions &rangle; CLI</a></p>
 
         </main>
       </div>
@@ -48,7 +110,7 @@
                   <ul class="pl reset">
                     <li><a href="./docs/extensions/access">Access</a>
                     </li>
-                    <li><a href="./docs/extensions/bud">Bud</a>
+                    <li><strong><a class="here" href="./docs/extensions/bud">Bud</a></strong>
                     </li>
                     <li><a href="./docs/extensions/cli">CLI</a>
                     </li>
@@ -61,8 +123,6 @@
                     <li><a href="./docs/extensions/logger">Logger</a>
                     </li>
                     <li><a href="./docs/extensions/model">Model</a>
-                    </li>
-                    <li><strong><a class="here" href="./docs/extensions/parsers">Parsers</a></strong>
                     </li>
                     <li><a href="./docs/extensions/render">Render</a>
                     </li>
@@ -125,7 +185,7 @@
         </div>
       </aside>
     </main>
-    <script>window.__runkit__ = {};</script>
+    <script>window.__runkit__ = {"preamble":"const fs = require('fs');\nconst assert = require('assert');\nfs.mkdirSync('./exts');\nfs.mkdirSync('./exts/Test');\nfs.mkdirSync('./exts/Test/handler');\nfs.writeFileSync('./exts/Test/handler/index.js',\n  'module.exports = function () { return 42; };');\n"};</script>
     <script src="//embed.runkit.com"></script>
     <script src="scripts.js"></script>
   </body>

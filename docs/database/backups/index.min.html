@@ -9,7 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no"><!--[if lt IE 9]>
     <script src="https://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <script src="https://css3-mediaqueries-js.googlecode.com/svn/trunk/css3-mediaqueries.js"></script><![endif]-->
-    <title>Grown // Installation</title>
+    <title>Grown // Backups</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://unpkg.com/highlight.js/styles/default.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Sorts+Mill+Goudy">
@@ -17,37 +17,15 @@
   <body class="reset">
     <main id="wrapper">
       <div class="body" id="content">
-        <main><a id="menu" href="./#sidebar">&#9776;</a>
-          <h1>Installation <small><a href="//github.com/pateketrueke/grown/blob/master/website/src/index.md" target="_blank">✎</a></small></h1><p>I suggest you installing NodeJS through NVM, using <code>8.16.2</code> or higher is fine.</p>
-<p>See: <a href="https://github.com/creationix/nvm#installation">NVM installation instructions</a></p>
-<p>Once done, install the main <code>grown</code> dependency:</p>
-<pre class="hljs"><code class="lang-bash">$ npm install grown --save
-</code></pre>
-<h2 id="how-it-works">How it works?</h2>
-<p>On the beginning, starting a new web server is a simple task:</p>
-<pre class="hljs"><code class="lang-js"><span class="hljs-comment">/* @runkit */</span>
-<span class="hljs-comment">// require and create a Grown-container</span>
-<span class="hljs-keyword">const</span> Grown = <span class="hljs-built_in">require</span>(<span class="hljs-string">'grown'</span>)();
-
-<span class="hljs-comment">// create the web-server instance</span>
-<span class="hljs-keyword">const</span> server = <span class="hljs-keyword">new</span> Grown();
-
-<span class="hljs-comment">// append middleware</span>
-server.mount(<span class="hljs-function"><span class="hljs-params">ctx</span> =&gt;</span> {
-  ctx.res.end(<span class="hljs-string">'&lt;pre&gt;It works!&lt;/pre&gt;'</span>);
-});
-
-<span class="hljs-comment">// starts the web-server</span>
-server.listen(<span class="hljs-number">8080</span>);
-</code></pre>
-<hr>
-<p>➯ Next: <a href="./docs">APIs &rangle; The interface</a></p>
+        <main><a id="menu" href="./docs/database/backups/#sidebar">&#9776;</a>
+          <h1>Backups <small><a href="//github.com/pateketrueke/grown/blob/master/website/src/pages/docs/database/backups.md" target="_blank">✎</a></small></h1><hr>
+<p>➯ Next: <a href="./docs/database/migrations">Data-layer &rangle; Models &rangle; Migrations</a></p>
 
         </main>
       </div>
       <aside class="inverted" id="sidebar">
         <div class="body">
-          <h1><strong><a class="here" href="./">Grown</a></strong>
+          <h1><a href="./">Grown</a>
           </h1>
           <p>Experimental DSL for web-apps</p>
           <div class="sp"><a href="//travis-ci.org/pateketrueke/grown" target="_blank"><img src="//api.travis-ci.org/pateketrueke/grown.svg"></a><a href="//codecov.io/gh/pateketrueke/grown" target="_blank"><img src="//codecov.io/gh/pateketrueke/grown/branch/master/graph/badge.svg"></a></div>
@@ -55,7 +33,7 @@ server.listen(<span class="hljs-number">8080</span>);
             <li>
               <h3 class="reset">APIs</h3>
               <ul class="pl reset">
-                <li><strong><a class="here" href="./">Installation</a></strong>
+                <li><a href="./">Installation</a>
                 </li>
                 <li><a href="./docs">The interface</a>
                 </li>
@@ -79,6 +57,12 @@ server.listen(<span class="hljs-number">8080</span>);
               <ul class="pl reset">
                 <li><a href="./docs/database">Models</a>
                 </li>
+                <ul class="pl reset">
+                  <li><strong><a class="here" href="./docs/database/backups">Backups</a></strong>
+                  </li>
+                  <li><a href="./docs/database/migrations">Migrations</a>
+                  </li>
+                </ul>
                 <li><a href="./docs/validation">Schemas</a>
                 </li>
               </ul>
@@ -109,7 +93,7 @@ server.listen(<span class="hljs-number">8080</span>);
         </div>
       </aside>
     </main>
-    <script>window.__runkit__ = {"endpoint":true,"preamble":"require('@grown/bud');\nrequire('@grown/server');\n"};</script>
+    <script>window.__runkit__ = {};</script>
     <script src="//embed.runkit.com"></script>
     <script src="scripts.js"></script>
   </body>
