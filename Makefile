@@ -14,6 +14,9 @@ test-ci:
 ci: deps
 	@make -s clean setup test-ci
 
+publish:
+	@make -C website dist deploy
+
 release: install
 	@mv lerna.json lerna.json_backup
 	@cat lerna.json_backup | grep -v application > lerna.json
