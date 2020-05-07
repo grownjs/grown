@@ -6,10 +6,9 @@ const App = require('./lib');
 const start = new Date();
 
 const initServer = module.exports = () => {
+  App.use(require('@grown/model'));
   App.use(require('@grown/router'));
   App.use(require('@grown/graphql'));
-  App.use(require('@grown/parsers'));
-  App.use(require('@grown/model/repo'));
   App.use(require('@grown/session/auth'));
 
   const config = require('./api/config');
@@ -19,8 +18,6 @@ const initServer = module.exports = () => {
   });
 
   server.plug([
-    App.Parsers.URLENCODED,
-    App.Parsers.JSON,
     require('express-useragent').express(),
     require('logro').getExpressLogger(),
     App.Model.Formator({
