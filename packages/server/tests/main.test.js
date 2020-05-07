@@ -182,7 +182,7 @@ describe('Grown.Server', () => {
             body: 'x=y',
           });
 
-          expect(data).to.eql('{"x":"y"}')
+          expect(data).to.eql('{"x":"y"}');
           app.close();
           done();
         });
@@ -202,7 +202,7 @@ describe('Grown.Server', () => {
             body: '{"a":"b"}',
           });
 
-          expect(data).to.eql('{"a":"b"}')
+          expect(data).to.eql('{"a":"b"}');
           app.close();
           done();
         });

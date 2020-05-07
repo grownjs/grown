@@ -8,7 +8,7 @@ test-all:
 	@make test:bud test:cli test:server test:conn
 
 test-ci:
-	@make -C application lint
+	#@make -C application lint
 	@make test-all
 
 ci: deps
