@@ -18,8 +18,8 @@ function _run(task, state, options) {
 
   try {
     /* istanbul ignore else */
-    if (task.filter && (task.filter(state, options) === false)) {
-      return;
+    if (state.halted || (task.filter && (task.filter(state, options) === false))) {
+      return Promise.resolve();
     }
   } catch (e) {
     debug('#%s Skip. %s', state.pid, e.message);
