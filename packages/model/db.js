@@ -61,7 +61,11 @@ module.exports = (Grown, util) => {
       });
 
       function get(model) {
-        return Grown.Model.Entity._wrap(model, $.get(model), Grown.Model.DB[name].schemas);
+        const target = DB[name].sequelize._resolved
+          ? DB[name].models[model]
+          : $.get(model);
+
+        return Grown.Model.Entity._wrap(model, target, Grown.Model.DB[name].schemas);
       }
 
       return Grown(`Model.DB.${name}.repository`, {
