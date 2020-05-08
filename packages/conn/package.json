@@ -1,6 +1,6 @@
 {
   "name": "@grown/conn",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "main": "index.js",
   "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
   "license": "MIT",
@@ -32,14 +32,14 @@
     "type-is": "^1.6.15"
   },
   "devDependencies": {
-    "@grown/test": "^0.0.5",
+    "@grown/test": "^0.0.6",
     "chai": "^4.2.0",
     "codecov": "^3.6.5",
     "eslint": "^5.9.0",
-    "minimist": ">=1.2.2",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-import": "^2.14.0",
     "grown": "^1.1.5",
+    "minimist": ">=1.2.2",
     "mocha": "^6.2.1",
     "nyc": "^14.1.1"
   }

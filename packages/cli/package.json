@@ -1,6 +1,6 @@
 {
   "name": "@grown/cli",
-  "version": "0.0.24",
+  "version": "0.0.25",
   "main": "index.js",
   "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
   "license": "MIT",
@@ -26,16 +26,16 @@
   },
   "dependencies": {
     "@grown/bud": "^0.0.18",
-    "@grown/logger": "^0.0.8",
-    "@grown/repl": "^0.0.7"
+    "@grown/logger": "^0.0.9",
+    "@grown/repl": "^0.0.8"
   },
   "devDependencies": {
     "chai": "^4.2.0",
     "codecov": "^3.6.5",
     "eslint": "^5.9.0",
-    "minimist": ">=1.2.2",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-import": "^2.14.0",
+    "minimist": ">=1.2.2",
     "mocha": "^6.2.1",
     "nyc": "^14.1.1"
   }
