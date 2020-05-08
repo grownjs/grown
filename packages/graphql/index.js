@@ -21,7 +21,9 @@ module.exports = (Grown, util) => {
       /* istanbul ignore else */
       if (!_query) {
         ctx.res.statusCode = 422;
-        return ctx.res.end('{"errors":["Missing input body or query"]}');
+        ctx.res.write('{"errors":["Missing input body or query"]}');
+        ctx.res.end();
+        return;
       }
 
       return gql.graphql(_schema, _query, null, ctx, data)
@@ -36,7 +38,8 @@ module.exports = (Grown, util) => {
             });
           }
 
-          ctx.res.end(JSON.stringify(result));
+          ctx.res.write(JSON.stringify(result));
+          ctx.res.end();
         });
     };
   }
