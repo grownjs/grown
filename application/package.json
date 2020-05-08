@@ -91,6 +91,7 @@
     }
   },
   "devDependencies": {
+    "acorn": ">=5.7.4",
     "axios": ">=0.18.1",
     "bdd-tc": "^0.0.7",
     "buble": "^0.19.3",
@@ -103,8 +104,10 @@
     "eslint-plugin-svelte3": "^2.7.3",
     "eslint-utils": ">=1.4.1",
     "json-schema-to": "0.0.20",
+    "kind-of": ">=6.0.3",
     "less": "^3.8.1",
     "less-plugin-autoprefix": "^2.0.0",
+    "minimist": ">=1.2.3",
     "mocha": "^7.0.1",
     "nyc": "^15.0.0",
     "open": ">=6.0.0",
@@ -114,15 +117,12 @@
     "rollup-plugin-svelte": "^5.0.3",
     "sqlite3": "^4.1.0",
     "svelte": "^3.18.2",
-    "svql": "0.0.27",
+    "svql": "^0.0.27",
     "tarima": "^4.7.2",
     "terser": "^4.3.8",
     "testcafe": "^1.6.0",
-    "minimist": ">=1.2.3",
-    "acorn": ">=5.7.4",
-    "kind-of": ">=6.0.3",
     "uglify-es": "^3.3.9",
-    "yrv": "0.0.25"
+    "yrv": "^0.0.30"
   },
   "dependencies": {
     "@grown/graphql": "^0.0.7",

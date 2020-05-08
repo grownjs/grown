@@ -31,7 +31,7 @@
 </script>
 
 <nav class="menu">
-  <Router exact nofallback>
+  <Router nofallback>
     <ul class="flex reset">
       <li class="auto">
         <Link href="/">Home</Link>
