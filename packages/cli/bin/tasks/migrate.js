@@ -31,8 +31,6 @@ const USAGE_INFO = `
 
 `;
 
-const CACHED = {};
-
 module.exports = {
   description: USAGE_INFO,
   callback(Grown) {
@@ -46,15 +44,13 @@ module.exports = {
 
     const path = require('path');
 
-    const Models = !CACHED[use]
-      ? (CACHED[use] = Grown.use(require(path.resolve(Grown.cwd, use))))
-      : CACHED[use];
+    const Models = Grown.use(require(path.resolve(Grown.cwd, use)));
 
     if (!(Grown.Model && Grown.Model.CLI)) {
       throw new Error('Missing Grown.Model.CLI');
     }
 
-    const DB = Models._getDB(db);
+    const DB = Object.assign(Models, { close: Models.disconnect });
     const cmd = Grown.argv._[0] || 'migrate';
 
     let _error;
