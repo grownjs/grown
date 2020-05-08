@@ -65,7 +65,7 @@ module.exports = (Grown, util) => {
           ? DB[name].models[model]
           : $.get(model);
 
-        return Grown.Model.Entity._wrap(model, target, Grown.Model.DB[name].schemas);
+        return Grown.Model.Entity._wrap(model, target, DB[name].schemas);
       }
 
       return Grown(`Model.DB.${name}.repository`, {

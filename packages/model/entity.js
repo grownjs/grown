@@ -24,12 +24,16 @@ module.exports = (Grown, util) => {
   function _assertFrom(id, ref, refs, data) {
     const ajv = new Ajv({
       validateSchema: true,
+      addUsedSchema: false,
       jsonPointers: true,
       schemaId: 'auto',
     });
 
     refs.forEach(sub => {
-      ajv.addSchema(sub, sub.id);
+      /* istanbul ignore else */
+      if (!ajv.getSchema(sub.id)) {
+        ajv.addSchema(sub, sub.id);
+      }
     });
 
     const valid = ajv.validate(ref ? { $ref: ref } : id, data);
