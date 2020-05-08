@@ -135,86 +135,87 @@ describe('Grown.Server', () => {
       });
     });
 
-    describe('uWebSockets.js', () => {
-      beforeEach(() => {
-        g = Grown.new();
-      });
-
-      it('should responds with 501 as default', done => {
-        g.listen(async app => {
-          let err;
-          try {
-            await get('http://0.0.0.0:80');
-          } catch (e) {
-            err = e;
-          }
-
-          expect(err.statusMessage).to.eql('Not Implemented');
-          expect(err.statusCode).to.eql(501);
-
-          app.close();
-          done();
-        });
-      });
-
-      it('should responds with 200 if ctx.res.end() is called', done => {
-        g.mount(ctx => ctx.res.end());
-        g.listen(async app => {
-          const { statusCode } = await get('http://0.0.0.0:80');
-
-          expect(statusCode).to.eql(200);
-          app.close();
-          done();
-        });
-      });
-
-      it('should parse multipart/x-www-form-urlencoded', done => {
-        g.mount(ctx => {
-          ctx.res.write(JSON.stringify(ctx.req.body));
-          ctx.res.end();
+    if (!process.env.U_WEBSOCKETS_SKIP) {
+      describe('uWebSockets.js', () => {
+        beforeEach(() => {
+          g = Grown.new();
         });
 
-        g.listen(async app => {
-          const { data } = await post('http://0.0.0.0:80', {
-            headers: {
-              'Content-Type': 'multipart/x-www-form-urlencoded',
-            },
-            body: 'x=y',
+        it('should responds with 501 as default', done => {
+          g.listen(async app => {
+            let err;
+            try {
+              await get('http://0.0.0.0:80');
+            } catch (e) {
+              err = e;
+            }
+
+            expect(err.statusMessage).to.eql('Not Implemented');
+            expect(err.statusCode).to.eql(501);
+
+            app.close();
+            done();
+          });
+        });
+
+        it('should responds with 200 if ctx.res.end() is called', done => {
+          g.mount(ctx => ctx.res.end());
+          g.listen(async app => {
+            const { statusCode } = await get('http://0.0.0.0:80');
+
+            expect(statusCode).to.eql(200);
+            app.close();
+            done();
+          });
+        });
+
+        it('should parse multipart/x-www-form-urlencoded', done => {
+          g.mount(ctx => {
+            ctx.res.write(JSON.stringify(ctx.req.body));
+            ctx.res.end();
           });
 
-          expect(data).to.eql('{"x":"y"}');
-          app.close();
-          done();
-        });
-      });
+          g.listen(async app => {
+            const { data } = await post('http://0.0.0.0:80', {
+              headers: {
+                'Content-Type': 'multipart/x-www-form-urlencoded',
+              },
+              body: 'x=y',
+            });
 
-      it('should parse application/json', done => {
-        g.mount(ctx => {
-          ctx.res.write(JSON.stringify(ctx.req.body));
-          ctx.res.end();
+            expect(data).to.eql('{"x":"y"}');
+            app.close();
+            done();
+          });
         });
 
-        g.listen(async app => {
-          const { data } = await post('http://0.0.0.0:80', {
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: '{"a":"b"}',
+        it('should parse application/json', done => {
+          g.mount(ctx => {
+            ctx.res.write(JSON.stringify(ctx.req.body));
+            ctx.res.end();
           });
 
-          expect(data).to.eql('{"a":"b"}');
-          app.close();
-          done();
+          g.listen(async app => {
+            const { data } = await post('http://0.0.0.0:80', {
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: '{"a":"b"}',
+            });
+
+            expect(data).to.eql('{"a":"b"}');
+            app.close();
+            done();
+          });
         });
       });
-    });
+    }
 
     describe('HTTP(s)', () => {
       it('should fallback to native modules if U_WEBSOCKETS_SKIP is set', done => {
         process.env.U_WEBSOCKETS_SKIP = 'true';
 
         g = Grown.new();
-
         g.plug(require('body-parser').json());
         g.mount(ctx => {
           ctx.res.write(JSON.stringify(ctx.req.body));
