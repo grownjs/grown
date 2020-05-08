@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base href="/">
+    <meta lang="en">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="HandheldFriendly" content="true">
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no"><!--[if lt IE 9]>
+    <script src="https://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <script src="https://css3-mediaqueries-js.googlecode.com/svn/trunk/css3-mediaqueries.js"></script><![endif]-->
+    <title>Grown // Conn</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://unpkg.com/highlight.js/styles/default.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Sorts+Mill+Goudy">
+  </head>
+  <body class="reset">
+    <main id="wrapper">
+      <div class="body" id="content">
+        <main><a id="menu" href="./docs/extensions/conn/#sidebar">&#9776;</a>
+          <h1>Conn <small><a href="//github.com/pateketrueke/grown/blob/master/website/src/pages/docs/extensions/conn.md" target="_blank">✎</a></small></h1><p>High level details of the current connection.</p>
+<pre class="hljs"><code class="lang-js"><span class="hljs-comment">/* @runkit */</span>
+<span class="hljs-comment">// register extension</span>
+Grown.use(<span class="hljs-built_in">require</span>(<span class="hljs-string">'@grown/conn'</span>));
+
+<span class="hljs-comment">// register middleware</span>
+server.plug(Grown.Conn);
+
+<span class="hljs-comment">// new props/methods are available at `ctx`</span>
+server.mount(<span class="hljs-function"><span class="hljs-params">ctx</span> =&gt;</span> {
+  <span class="hljs-keyword">if</span> (ctx.is_json) {
+    <span class="hljs-keyword">return</span> ctx.json({
+      <span class="hljs-attr">status</span>: <span class="hljs-string">'ok'</span>,
+      <span class="hljs-attr">result</span>: ctx.req_headers,
+    });
+  }
+
+  ctx.resp_body = <span class="hljs-string">`&lt;dl&gt;
+    &lt;dt&gt;host&lt;/dt&gt;
+    &lt;dd&gt;<span class="hljs-subst">${ctx.host}</span>&lt;/dd&gt;
+    &lt;dt&gt;content_type&lt;/dt&gt;
+    &lt;dd&gt;<span class="hljs-subst">${ctx.content_type}</span>&lt;/dd&gt;
+    &lt;dt&gt;accept_languages&lt;/dt&gt;
+    &lt;dd&gt;<span class="hljs-subst">${ctx.accept_languages}</span>&lt;/dd&gt;
+  &lt;/dl&gt;`</span>;
+});
+</code></pre>
+<blockquote>
+<p>Try requesting the endpoint as <code>application/json</code></p>
+</blockquote>
+<h2 id="request">Request</h2>
+<h3 id="props-var-mixin-var">Props <var>mixin</var></h3>
+<ul>
+<li><code>req_headers</code> &mdash; Return all the request headers as an object.</li>
+<li><code>is_xhr</code> &mdash; Returns <code>true</code> if the connection was made through XHR (<code>x-requested-with</code>).</li>
+<li><code>is_json</code> &mdash; Returns <code>true</code> if the connection requested as <code>application/json</code>.</li>
+<li><code>has_type</code> &mdash; Returns <code>true</code> if the connection requested a known type.</li>
+<li><code>host</code> &mdash; Current connection host.</li>
+<li><code>port</code> &mdash; Current connection port.</li>
+<li><code>remote_ip</code> &mdash; Remote client&#39;s IP.</li>
+<li><code>method</code> &mdash; Normalized request method as it can be sent as <code>_method</code>.</li>
+<li><code>params</code> &mdash; Combination of <code>path_params</code>, <code>query_params</code> and <code>body_params</code> merged.</li>
+<li><code>path_info</code> &mdash; Return <code>request_path</code> segments as array.</li>
+<li><code>path_params</code> &mdash; Return the path params as an object, if any.</li>
+<li><code>body_params</code> &mdash; Returns the body payload as an object, if any.</li>
+<li><code>request_path</code> &mdash; Returns the fixed path of requested resources.</li>
+<li><code>query_string</code> &mdash; Returns the raw query-string from the connection.</li>
+<li><code>query_params</code> &mdash; Returns the <code>query_string</code> parsed as an object.</li>
+<li><code>accept_charset(s)</code> &mdash; If singular, returns <code>true</code> if the connection accepts this charset. As plural, will return all accepted charsets by the current connection.</li>
+<li><code>accept_encoding(s)</code> &mdash; If singular, returns <code>true</code> if the connection accepts this encoding. As plural, will return all accepted encodings by the current connection.</li>
+<li><code>accept_language(s)</code> &mdash; If singular, returns <code>true</code> if the connection accepts this language. As plural, will return all accepted languages by the current connection.</li>
+<li><code>accept_type(s)</code> &mdash; If singular, returns <code>true</code> if the connection accepts this type. As plural, will return all accepted types by the current connection.</li>
+</ul>
+<h3 id="methods-var-mixin-var">Methods <var>mixin</var></h3>
+<ul>
+<li><code>get_req_header(name[, defvalue])</code> &mdash; Return a single request header.</li>
+<li><code>put_req_header(name, value)</code> &mdash; Set or update a request header.</li>
+<li><code>delete_req_header(name)</code> &mdash; Remove request headers by <code>name</code>.</li>
+</ul>
+<h3 id="public-methods-var-static-var">Public methods <var>static</var></h3>
+<ul>
+<li><code>$mixins()</code> &mdash; Request mixins to be exported through <code>ctx</code> object.</li>
+</ul>
+<hr>
+<h2 id="response">Response</h2>
+<h3 id="props-var-mixin-var">Props <var>mixin</var></h3>
+<ul>
+<li><code>has_body</code> &mdash; Returns <code>true</code> if the connection has a body defined.</li>
+<li><code>has_status</code> &mdash; Returns <code>true</code> if the connection has an status defined.</li>
+<li><code>content_type</code> &mdash; Current <code>content-type</code>, default to <code>text/html</code>.</li>
+<li><code>status_code</code> &mdash; Current <code>ctx.res.statusCode</code>, default to <code>200</code>.</li>
+<li><code>resp_body</code> &mdash; Current response body, <code>null</code> if none.</li>
+<li><code>resp_charset</code> &mdash; Charset from the current connection, default to <code>utf8</code>.</li>
+</ul>
+<h3 id="methods-var-mixin-var">Methods <var>mixin</var></h3>
+<ul>
+<li><code>resp_headers()</code> &mdash; Return all the response headers as an object.</li>
+<li><code>get_resp_header(name)</code> &mdash; Return a single response header.</li>
+<li><code>put_resp_header(name, value)</code> &mdash; Set or update a response header.</li>
+<li><code>merge_resp_headers(headers)</code> &mdash; Extend response headers.</li>
+<li><code>delete_resp_header(name)</code> &mdash; Remove a single response headers.</li>
+<li><code>redirect(location[, timeout[, body]])</code> &mdash; Redirect to another resource. If <code>timeout</code> is given, a <code>&lt;meta http-equiv=&quot;refresh&quot;&gt;</code> will be sent, use <code>body</code> to append anything else in this case.</li>
+<li><code>json(value)</code> &mdash; Send the given value as <code>application/json</code> and ends the connection.</li>
+<li><code>send_file(entry[, mimeType])</code> &mdash; Send the given file as <code>binary/octet-stream</code>, use <code>mimeType</code> to setup a different MIME.</li>
+<li><code>send([body])</code> &mdash; Finish the current connection. The <code>body</code> value can be an object, buffer or string otherwise.</li>
+<li><code>end([code[, message]])</code> &mdash; End the current connection. The <code>code</code> should be a number, otherwise it will be treated as <code>message</code> value.</li>
+</ul>
+<h3 id="public-methods-var-static-var">Public methods <var>static</var></h3>
+<ul>
+<li><code>$mixins()</code> &mdash; Response mixins to be exported through <code>ctx</code> object.</li>
+<li><code>$before_render(ctx, template)</code> &mdash; Extend locals with <code>ctx.state</code> hook.</li>
+</ul>
+<h3 id="private-methods-var-static-var">Private* methods <var>static</var></h3>
+<ul>
+<li><code>_finishRequest(ctx[, body])</code> &mdash; Normalize the input given by <code>ctx.send()</code> calls.</li>
+<li><code>_endRequest(ctx, code[, message])</code> &mdash; Normalize the input given to <code>ctx.end()</code> calls.</li>
+<li><code>_cutBody(value)</code> &mdash; Trim the value passed through <code>set_body</code> calls.</li>
+<li><code>_fixURL(location)</code> &mdash; Normalize any given value into a valid URL string.</li>
+</ul>
+<hr>
+<p>➯ Next: <a href="./docs/extensions/graphql">Extensions &rangle; GraphQL</a></p>
+
+        </main>
+      </div>
+      <aside class="inverted" id="sidebar">
+        <div class="body">
+          <h1><a href="./">Grown</a>
+          </h1>
+          <p>Experimental DSL for web-apps</p>
+          <div class="sp"><a href="//travis-ci.org/pateketrueke/grown" target="_blank"><img src="//api.travis-ci.org/pateketrueke/grown.svg"></a><a href="//codecov.io/gh/pateketrueke/grown" target="_blank"><img src="//codecov.io/gh/pateketrueke/grown/branch/master/graph/badge.svg"></a></div>
+          <ul class="mt reset">
+            <li>
+              <h3 class="reset">APIs</h3>
+              <ul class="pl reset">
+                <li><a href="./">Installation</a>
+                </li>
+                <li><a href="./docs">The interface</a>
+                </li>
+                <li><a href="./docs/command-line">Command line</a>
+                </li>
+              </ul>
+            </li>
+            <li>
+              <h3 class="reset">Add-ons</h3>
+              <ul class="pl reset">
+                <li><a href="./docs/extensions">Extensions</a>
+                  <ul class="pl reset">
+                    <li><a href="./docs/extensions/access">Access</a>
+                    </li>
+                    <li><a href="./docs/extensions/bud">Bud</a>
+                    </li>
+                    <li><a href="./docs/extensions/cli">CLI</a>
+                    </li>
+                    <li><strong><a class="here" href="./docs/extensions/conn">Conn</a></strong>
+                    </li>
+                    <li><a href="./docs/extensions/graphql">GraphQL</a>
+                    </li>
+                    <li><a href="./docs/extensions/grpc">GRPC</a>
+                    </li>
+                    <li><a href="./docs/extensions/logger">Logger</a>
+                    </li>
+                    <li><a href="./docs/extensions/model">Model</a>
+                    </li>
+                    <li><a href="./docs/extensions/render">Render</a>
+                    </li>
+                    <li><a href="./docs/extensions/repl">REPL</a>
+                    </li>
+                    <li><a href="./docs/extensions/router">Router</a>
+                    </li>
+                    <li><a href="./docs/extensions/server">Server</a>
+                    </li>
+                    <li><a href="./docs/extensions/session">Session</a>
+                    </li>
+                    <li><a href="./docs/extensions/static">Static</a>
+                    </li>
+                    <li><a href="./docs/extensions/tarima">Tarima</a>
+                    </li>
+                    <li><a href="./docs/extensions/test">Test</a>
+                    </li>
+                    <li><a href="./docs/extensions/upload">Upload</a>
+                    </li>
+                  </ul>
+                </li>
+                <li><a href="./docs/connection">Connection</a>
+                </li>
+                <li><a href="./docs/middlewares">Middlewares</a>
+                </li>
+              </ul>
+            </li>
+            <li>
+              <h3 class="reset">Data-layer</h3>
+              <ul class="pl reset">
+                <li><a href="./docs/database">Models</a>
+                </li>
+                <li><a href="./docs/validation">Schemas</a>
+                </li>
+              </ul>
+            </li>
+            <li>
+              <h3 class="reset">Controllers</h3>
+              <ul class="pl reset">
+                <li><a href="./docs/controllers">Web</a>
+                </li>
+                <li><a href="./docs/controllers/grpc">GRPC</a>
+                </li>
+                <li><a href="./docs/controllers/graphql">GraphQL</a>
+                </li>
+              </ul>
+            </li>
+            <li>
+              <h3 class="reset">Unit-testing</h3>
+              <ul class="pl reset">
+                <li><a href="./docs/testing">Server</a>
+                </li>
+                <li><a href="./docs/testing/schema">Schema</a>
+                </li>
+                <li><a href="./docs/testing/handlers">Handlers</a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </aside>
+    </main>
+    <script>window.__runkit__ = {"endpoint":true,"preamble":"const Grown = require('@grown/bud')();\nGrown.use(require('@grown/server'));\nconst server = new Grown();\nprocess.nextTick(() => server.listen(8080));\nprocess.stdout.write = msg => console.log(msg);\n"};</script>
+    <script src="//embed.runkit.com"></script>
+    <script src="scripts.js"></script>
+  </body>
+</html>
