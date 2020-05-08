@@ -13,6 +13,23 @@ const _util = require('util');
 
 const $host = require('./host');
 
+// https://github.com/uNetworking/uWebSockets.js/issues/58
+function remoteAddressToString(address) {
+  if (address.byteLength === 4) {
+    return new Uint8Array(address).join('.');
+  }
+
+  if (address.byteLength === 16) {
+    const arr = Array.from(new Uint16Array(address));
+
+    if (!arr[0] && !arr[1] && !arr[2] && !arr[3] && !arr[4] && arr[5] === 0xffff) {
+      return new Uint8Array(address.slice(12)).join('.');
+    }
+
+    return Array.from(new Uint16Array(address)).map(v => v.toString(16)).join(':').replace(/((^|:)(0(:|$))+)/, '::');
+  }
+}
+
 function readBody(req, res, cb) {
   const stream = new Readable();
 
@@ -48,7 +65,7 @@ function readBody(req, res, cb) {
   });
 }
 
-function ServerRequest(req) {
+function ServerRequest(req, res) {
   Transform.call(this);
 
   this._writableState.objectMode = true;
@@ -59,6 +76,9 @@ function ServerRequest(req) {
   this.method = req.method || 'GET';
   this.headers = _util._extend({}, req.headers);
   this.rawHeaders = [];
+  this.connection = {
+    remoteAddress: remoteAddressToString(res.getRemoteAddress()),
+  };
 
   Object.keys(req.headers).forEach(key => {
     this.rawHeaders.push(key);
@@ -101,12 +121,14 @@ function ServerResponse(resp) {
       head[key.replace(/\b([a-z])/g, $0 => $0.toUpperCase())] = this._headers[key];
     });
 
-    resp.writeStatus(`${this.statusCode} ${STATUS_CODES[this.statusCode]}`);
-    this.writeHead(this.statusCode, head);
-    this.finished = true;
+    resp.cork(() => {
+      resp.writeStatus(`${this.statusCode} ${STATUS_CODES[this.statusCode]}`);
+      this.writeHead(this.statusCode, head);
+      this.finished = true;
 
-    resp.write(body);
-    resp.end();
+      resp.write(body);
+      resp.end();
+    });
   });
 }
 
@@ -181,7 +203,7 @@ module.exports = function _uws(ctx, options, callback, protocolName) {
         req.headers[k] = v;
       });
 
-      const _req = new ServerRequest(req);
+      const _req = new ServerRequest(req, res);
       const _resp = new ServerResponse(res);
 
       const next = (data, cb) => {
