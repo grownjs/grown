@@ -123,8 +123,8 @@ ci: deps ## Run all-tests and report coverage results! :wink:  (host)
 	@make -s test-ci run=functional
 
 test-ci: deps
-	@mkdir -p $(run)_coverage && npm run test:coverage:$(run)
-	@make -s cov report="text-lcov > $(run)_coverage/lcov.info"
+	@mkdir -p coverage/$(run) && npm run test:coverage:$(run)
+	@make -s cov report="text-lcov > coverage/$(run)/lcov.info"
 
 cov: deps ## Report coverage after tests  (host)
 	@npm run test:report -- -r $(report)

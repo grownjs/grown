@@ -5,8 +5,7 @@ const UserSeeds = require('./user');
 
 const App = require('../../lib');
 
-const { connect, sequelize } = App.Models
-  ._getDB(App.Models.connection.identifier);
+const { connect, sequelize } = App.Models;
 
 async function integrationSeeds(tasks) {
   try {
