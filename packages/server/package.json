@@ -31,6 +31,7 @@
   },
   "devDependencies": {
     "acorn": ">=5.7.4",
+    "body-parser": "^1.19.0",
     "chai": "^4.2.0",
     "codecov": "^3.6.5",
     "eslint": "^5.9.0",

@@ -208,5 +208,34 @@ describe('Grown.Server', () => {
         });
       });
     });
+
+    describe('HTTP(s)', () => {
+      it('should fallback to native modules if U_WEBSOCKETS_SKIP is set', done => {
+        process.env.U_WEBSOCKETS_SKIP = 'true';
+
+        g = Grown.new();
+
+        g.plug(require('body-parser').json());
+        g.mount(ctx => {
+          ctx.res.write(JSON.stringify(ctx.req.body));
+          ctx.res.end();
+        });
+
+        g.listen(async () => {
+          process.env.U_WEBSOCKETS_SKIP = '';
+
+          const { data } = await post('http://0.0.0.0:80', {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: '{"a":"b"}',
+          });
+
+          expect(data).to.eql('{"a":"b"}');
+
+          done();
+        });
+      });
+    });
   });
 });
