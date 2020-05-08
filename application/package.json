@@ -116,7 +116,7 @@
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-svelte": "^5.0.3",
     "sqlite3": "^4.1.0",
-    "svelte": "^3.18.2",
+    "svelte": "^3.22.2",
     "svql": "^0.0.27",
     "tarima": "^4.7.2",
     "terser": "^4.3.8",
