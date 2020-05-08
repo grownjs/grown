@@ -161,11 +161,7 @@ function _grownFactory($, util, options) {
               .then(() => {
                 this.emit('request', conn, scope._options);
               })
-              .then(() => new Promise(resolve => {
-                conn.res.on('resume', () => resolve());
-
-                return scope._callback(conn, scope._options);
-              }))
+              .then(() => scope._callback(conn, scope._options))
               .then(() => typeof callback === 'function' && callback(null, conn))
               .catch(e => {
                 this.emit('failure', e, scope._options);

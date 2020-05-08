@@ -12,7 +12,6 @@ module.exports = Grown => {
     res.cookie = (k, v, o) => { res.cookies[k] = { value: v, opts: o || {} }; };
 
     const _setHeader = res.setHeader;
-    const _endCall = res.end.bind(res);
 
     res.setHeader = (k, v) => {
       res._header = true;
@@ -26,11 +25,6 @@ module.exports = Grown => {
       }
 
       _setHeader.call(res, k, v);
-    };
-
-    res.end = x => {
-      _endCall(x);
-      res.emit('resume');
     };
 
     Object.defineProperty(res, 'body', {
