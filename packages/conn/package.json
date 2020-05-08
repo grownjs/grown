@@ -32,7 +32,7 @@
     "type-is": "^1.6.15"
   },
   "devDependencies": {
-    "@grown/test": "^0.0.4",
+    "@grown/test": "^0.0.5",
     "chai": "^4.2.0",
     "codecov": "^3.6.5",
     "eslint": "^5.9.0",

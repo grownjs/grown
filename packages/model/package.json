@@ -32,7 +32,7 @@
   },
   "devDependencies": {
     "@grown/bud": "^0.0.18",
-    "@grown/server": "^0.0.12",
+    "@grown/server": "^0.0.13",
     "@grown/test": "^0.0.5",
     "chai": "^4.2.0",
     "codecov": "^3.6.1",
