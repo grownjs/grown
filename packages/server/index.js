@@ -90,7 +90,7 @@ function _grownFactory($, util, options) {
 
       // read-only
       get halted() {
-        return (this.res && this.res.finished) || this.has_body || this.has_status;
+        return (this.res && this.res._halted) || this.has_body || this.has_status;
       },
 
       get state() {

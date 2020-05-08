@@ -6,7 +6,7 @@ const { get, post } = require('httpie');
 let Grown;
 let g;
 
-/* global beforeEach, describe, it */
+/* global beforeEach, afterEach, describe, it */
 
 describe('Grown.Server', () => {
   beforeEach(() => {
@@ -208,13 +208,41 @@ describe('Grown.Server', () => {
             done();
           });
         });
+
+        it('should handle mount-points', done => {
+          g.mount('/ko', ctx => {
+            ctx.res.write('OK');
+            ctx.res.end();
+          });
+
+          g.mount(ctx => {
+            ctx.res.write('):');
+            ctx.res.end();
+          });
+
+          g.listen(async app => {
+            const { data: a } = await get('http://0.0.0.0:80/ko');
+            const { data: b } = await get('http://0.0.0.0:80/x');
+
+            expect(a).to.eql('OK');
+            expect(b).to.eql('):');
+            app.close();
+            done();
+          });
+        });
       });
     }
 
     describe('HTTP(s)', () => {
-      it('should fallback to native modules if U_WEBSOCKETS_SKIP is set', done => {
+      beforeEach(() => {
         process.env.U_WEBSOCKETS_SKIP = 'true';
+      });
 
+      afterEach(() => {
+        process.env.U_WEBSOCKETS_SKIP = '';
+      });
+
+      it('should fallback to native modules if U_WEBSOCKETS_SKIP is set', done => {
         g = Grown.new();
         g.plug(require('body-parser').json());
         g.mount(ctx => {
@@ -222,9 +250,7 @@ describe('Grown.Server', () => {
           ctx.res.end();
         });
 
-        g.listen(async () => {
-          process.env.U_WEBSOCKETS_SKIP = '';
-
+        g.listen(async app => {
           const { data } = await post('http://0.0.0.0:80', {
             headers: {
               'Content-Type': 'application/json',
@@ -233,7 +259,30 @@ describe('Grown.Server', () => {
           });
 
           expect(data).to.eql('{"a":"b"}');
+          app.close();
+          done();
+        });
+      });
 
+      it('should handle mount-points', done => {
+        g = Grown.new();
+        g.mount('/ko', ctx => {
+          ctx.res.write('OK');
+          ctx.res.end();
+        });
+
+        g.mount(ctx => {
+          ctx.res.write('):');
+          ctx.res.end();
+        });
+
+        g.listen(async app => {
+          const { data: a } = await get('http://0.0.0.0:80/x');
+          const { data: b } = await get('http://0.0.0.0:80/ko');
+
+          expect(a).to.eql('):');
+          expect(b).to.eql('OK');
+          app.close();
           done();
         });
       });

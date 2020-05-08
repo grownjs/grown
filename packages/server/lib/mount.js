@@ -36,6 +36,7 @@ module.exports = function $mount(name, handler, callback) {
           return false;
         }
 
+        ctx.res._halted = true;
         ctx.req.originalUrl = ctx.req.url;
         ctx.req.baseUrl = name;
         ctx.req.url = url;
