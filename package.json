@@ -33,8 +33,8 @@
     "mem": ">=4.0.0"
   },
   "dependencies": {
-    "@grown/bud": "^0.0.18",
-    "@grown/cli": "^0.0.24",
-    "@grown/server": "^0.0.13"
+    "@grown/bud": "^0.0.19",
+    "@grown/cli": "^0.0.25",
+    "@grown/server": "^0.0.14"
   }
 }
