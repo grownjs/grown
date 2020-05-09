@@ -12,7 +12,6 @@ module.exports = (Grown, util) => {
     return ctx => {
       const body = ctx.req.body || {};
       const query = ctx.req.query || {};
-
       const _query = body.query || query.body;
       const data = body.variables || query.data || {};
 
@@ -20,9 +19,8 @@ module.exports = (Grown, util) => {
 
       /* istanbul ignore else */
       if (!_query) {
-        ctx.res.statusCode = 422;
         ctx.res.write('{"errors":["Missing input body or query"]}');
-        ctx.res.end();
+        ctx.res.end(422);
         return;
       }
 
