@@ -25,6 +25,7 @@
     "access": "public"
   },
   "dependencies": {
+    "ajv": "^6.12.2",
     "debug": "^3.1.0",
     "formator": "0.0.0",
     "json-schema-faker": "^0.5.0-rc9",
