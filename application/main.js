@@ -17,6 +17,11 @@ const initServer = module.exports = () => {
     cors: App.env !== 'production',
   });
 
+  if (process.env.U_WEBSOCKETS_SKIP) {
+    server.plug(require('body-parser').json({ limit: '5mb' }));
+    server.plug(require('body-parser').urlencoded({ extended: false }));
+  }
+
   const path = require('path');
 
   async function main() {}
