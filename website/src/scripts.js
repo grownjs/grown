@@ -1,4 +1,12 @@
-/* global RunKit, __runkit__ */
+/* global target, RunKit, __runkit__ */
+function links(baseURL) {
+  target.style.display = 'block';
+  [].slice.call(document.querySelectorAll('a>code')).forEach(node => {
+    if (!node.dataset.href) node.dataset.href = node.parentNode.href.replace(location.origin, '');
+    node.parentNode.setAttribute('target', '_external');
+    node.parentNode.setAttribute('href', baseURL + node.dataset.href);
+  });
+}
 [].slice.call(document.querySelectorAll('pre code.lang-js')).forEach(source => {
   const matches = source.innerText.match(/\/\*+\s*@runkit\s*(.+?)\s*\*+\//);
   if (!matches) return;
@@ -13,17 +21,19 @@
     a._locked = true;
     delete a.onclick;
     e.preventDefault();
-    const target = document.createElement('div');
-    source.parentNode.parentNode.insertBefore(target, source.parentNode);
+    const el = document.createElement('div');
+    source.parentNode.parentNode.insertBefore(el, source.parentNode);
     source.parentNode.parentNode.removeChild(source.parentNode);
-    RunKit.createNotebook({
-      element: target,
+    const notebook = RunKit.createNotebook({
+      element: el,
       source: sourceCode,
       mode: isEndpoint && 'endpoint',
       title: snippet.title || 'Untitled',
-      preamble: snippet.preamble,
+      preamble: snippet.preamble
+        + (isEndpoint ? 'exports.endpoint=(req,res)=>{res.end()}' : ''),
       gutterStyle: 'none',
       evaluateOnLoad: true,
+      onURLChanged: () => notebook.getEndpointURL().then(links),
     });
   };
   source.parentNode.appendChild(a);
