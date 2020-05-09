@@ -134,9 +134,9 @@
     "yrv": "^0.0.30"
   },
   "dependencies": {
-    "@grown/graphql": "^0.0.8",
+    "@grown/graphql": "^0.0.9",
     "@grown/grpc": "^0.0.8",
-    "@grown/model": "^0.0.17",
+    "@grown/model": "^0.0.18",
     "@grown/router": "0.0.4",
     "@grown/session": "^0.0.6",
     "express-useragent": "^1.0.12",
