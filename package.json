@@ -33,8 +33,8 @@
     "minimist": ">=1.2.2"
   },
   "dependencies": {
-    "@grown/bud": "^0.0.19",
-    "@grown/cli": "^0.0.25",
-    "@grown/server": "^0.0.14"
+    "@grown/bud": "^0.0.21",
+    "@grown/cli": "^0.0.26",
+    "@grown/server": "^0.0.15"
   }
 }
