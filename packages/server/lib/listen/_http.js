@@ -1,11 +1,15 @@
 'use strict';
 
 const debug = require('debug')('grown:http');
+const qs = require('querystring');
 
 const $host = require('./host');
 
 module.exports = function _http(ctx, options, callback, protocolName) {
-  const cb = $host.bind(this, ctx.location);
+  const cb = (req, res) => {
+    req.query = req.query || qs.parse(req.url.split('?')[1]);
+    $host.call(this, ctx.location, req, res);
+  };
 
   let _protocol;
   if (protocolName === 'https') {
