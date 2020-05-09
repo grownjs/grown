@@ -3,7 +3,7 @@ title: Extensions
 $render: ../../lib/layouts/default.pug
 ---
 
-More functionality can be added through the `Grown` container, e.g. **api/index.js**
+Most functionality can be added through the `Grown` container, e.g. `api/index.js`
 
 ```js
 module.exports = Grown => {

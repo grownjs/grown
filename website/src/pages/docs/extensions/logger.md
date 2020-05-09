@@ -33,6 +33,10 @@ server.mount(conn => {
 });
 ```
 
+> Try requesting through [`this link`](/).
+
+<iframe id="target" name="external"></iframe>
+
 ### Methods <var>mixin</var>
 
 - `logger` &mdash; Log-pose instance, [see docs](https://www.npmjs.com/package/log-pose)

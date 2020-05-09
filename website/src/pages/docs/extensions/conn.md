@@ -4,7 +4,7 @@ $render: ../../../lib/layouts/default.pug
 runkit: !include ../../../lib/shared/runkit/server.yml
 ---
 
-High level details of the current connection.
+High level details for the current connection. ⚓
 
 ```js
 /* @runkit */
@@ -34,7 +34,9 @@ server.mount(ctx => {
 });
 ```
 
-> Try requesting the endpoint as `application/json`
+> Try requesting the endpoint as `application/json` or [`click here`](/) to perform a regular request.
+
+<iframe id="target" name="external"></iframe>
 
 ## Request
 

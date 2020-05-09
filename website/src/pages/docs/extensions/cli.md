@@ -64,7 +64,7 @@ await Grown.CLI.run(taskName);
 
 ## How it works?
 
-Task files are defined as modules, e.g. **tasks/words.js**
+Task files are defined as modules, e.g. `tasks/words.js`
 
 ```js
 const USAGE_INFO = `

@@ -57,7 +57,7 @@ assert(Exts.get('Test').handler() === 42);
 // new Grown();
 ```
 
-> Invoking `new Grown()` will throw an error if `Server` is not available!
+> If you uncomment `// new Grown()` and re-run the code it'll throw an error since `Server` is not available! 💣
 
 ---
 

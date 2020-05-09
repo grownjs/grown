@@ -32,12 +32,17 @@ const server = new Grown();
 
 // append middleware
 server.mount(ctx => {
-  ctx.res.end('<pre>It works!</pre>');
+  ctx.res.write(new Date().toISOString());
+  ctx.res.end();
 });
 
 // starts the web-server
 server.listen(8080);
 ```
+
+> Once you click <kbd>► RUN</kbd> try opening [`this link`](/) in your browser.
+
+<iframe id="target" name="_external"></iframe>
 
 ---
 

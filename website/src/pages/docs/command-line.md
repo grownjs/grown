@@ -3,7 +3,7 @@ title: Command line
 $render: ../../lib/layouts/default.pug
 ---
 
-Make sure you write a script like the shown below, e.g. **your-app/server.js**
+Make sure you write a script like the shown below, e.g. `your-app/server.js`
 
 ```js
 // require and create a Grown-container
@@ -47,7 +47,7 @@ Try `npx grown --help` to get more usage info.
 >
 > ```bash
 > #!/usr/bin/env node
-> require('grown/cli');
+> require('grown/cli.js');
 > ```
 >
 > Test it out!

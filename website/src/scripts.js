@@ -1,9 +1,10 @@
-/* global target, RunKit, __runkit__ */
+/* global fetch, target, RunKit, __runkit__ */
 function links(baseURL) {
+  if (typeof target === 'undefined') return;
   target.style.display = 'block';
   [].slice.call(document.querySelectorAll('a>code')).forEach(node => {
     if (!node.dataset.href) node.dataset.href = node.parentNode.href.replace(location.origin, '');
-    node.parentNode.setAttribute('target', '_external');
+    node.parentNode.setAttribute('target', 'external');
     node.parentNode.setAttribute('href', baseURL + node.dataset.href);
   });
 }
@@ -30,7 +31,8 @@ function links(baseURL) {
       mode: isEndpoint && 'endpoint',
       title: snippet.title || 'Untitled',
       preamble: snippet.preamble
-        + (isEndpoint ? 'exports.endpoint=(req,res)=>{res.end()}' : ''),
+        + (isEndpoint ? '\nexports.endpoint=(req,res)=>{res.end()}' : ''),
+      environment: [{ name: 'U_WEBSOCKETS_SKIP', value: 'true' }],
       gutterStyle: 'none',
       evaluateOnLoad: true,
       onURLChanged: () => notebook.getEndpointURL().then(links),

@@ -5,23 +5,27 @@ runkit:
   endpoint: true
   preamble: |
     const fs = require('fs');
+    const path = require('path');
     const assert = require('assert');
-    fs.mkdirSync('./handlers');
-    fs.mkdirSync('./handlers/Test');
-    fs.mkdirSync('./handlers/Test/Query');
-    fs.mkdirSync('./handlers/Test/Query/truth');
-    fs.writeFileSync('./handlers/Test/Query/truth/index.js', `
+    fs.mkdirSync('./app');
+    fs.mkdirSync('./app/handlers');
+    fs.mkdirSync('./app/handlers/Test');
+    fs.mkdirSync('./app/handlers/Test/Query');
+    fs.mkdirSync('./app/handlers/Test/Query/truth');
+    fs.writeFileSync('./app/handlers/Test/Query/truth/index.js', `
       module.exports = function () { return 42; };
     `);
-    fs.writeFileSync('./index.gql', `
+    fs.writeFileSync('./app/index.gql', `
       type Mutation { noop: Int }
       type Query { truth: Int }
     `);
     const Grown = require('@grown/bud')();
     Grown.use(require('@grown/server'));
     const server = new Grown();
-    global.__dirname=process.cwd();
+    server.plug(require('body-parser').json({ limit: '5mb' }));
+    server.plug(require('body-parser').urlencoded({ extended: false }));
     process.nextTick(() => server.listen(8080));
+    eval(`__dirname='${path.join(process.cwd(), 'app')}';`);
 ---
 
 Build high-level endpoints for your API consumers.
@@ -46,7 +50,9 @@ server.mount('/', Grown.GraphQL
     Grown.load(`${__dirname}/handlers`)));
 ```
 
-> Try asking with your GraphQL client: `query { truth }`.
+> Try asking with your GraphQL client: `query { truth }` &mdash; or try requesting through this [`link`](/?body=query{truth}).
+
+<iframe id="target" name="external"></iframe>
 
 ### Public methods <var>static</var>
 

@@ -61,7 +61,7 @@ server.mount(ctx => {
 
 > Try loading different URLs like [`/etc`](/etc) or [`/login`](/login) in your browser.
 
-<iframe id="target" name="_external"></iframe>
+<iframe id="target" name="external"></iframe>
 
 ---
 
