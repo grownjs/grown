@@ -15,7 +15,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "dev": "tarima watch -d",
+    "dev": "tarima watch -dp 3001",
     "dist": "tarima -mqe $NODE_ENV",
     "check": "eslint 'src/**/*.{js,pug}'",
     "predist": "npm run check"
