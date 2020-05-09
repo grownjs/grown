@@ -28,7 +28,7 @@
     "debug": "^3.1.0",
     "formator": "github:pateketrueke/formator#latest",
     "json-schema-faker": "^0.5.0-rc9",
-    "json-schema-sequelizer": "^0.20.5"
+    "json-schema-sequelizer": "^0.20.7"
   },
   "devDependencies": {
     "@grown/bud": "^0.0.18",
