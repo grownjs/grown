@@ -64,7 +64,7 @@
   </div>
 
   <Route exact path="/login">
-    <In modal autofocus id="login" on:cancel={clear} on:submit={doLogin}>
+    <In modal visible autofocus id="login" on:cancel={clear} on:submit={doLogin}>
       <h2>Login</h2>
       <label>
         Email: <input type="email" bind:value={email} required autocomplete="current-email" />

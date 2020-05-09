@@ -42,7 +42,7 @@
   otherwise="Access was successfully granted..."
 />
 
-<In {id} modal autofocus on:cancel={clear} on:submit={doSignUp}>
+<In {id} modal visible autofocus on:cancel={clear} on:submit={doSignUp}>
   <h2>Create a new account</h2>
   <label>
     Email: <input type="email" bind:value={email} required autocomplete="current-email" />

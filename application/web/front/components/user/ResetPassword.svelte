@@ -48,7 +48,7 @@
 />
 
 <div {id} class={className || cssClass}>
-  <In modal autofocus id="password-reset" on:cancel={clear}>
+  <In modal visible autofocus id="password-reset" on:cancel={clear}>
     <h2>{label}</h2>
     <label>
       New password: <input type="password" bind:value={newPassword} autocomplete="new-password" />

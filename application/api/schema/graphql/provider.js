@@ -4,7 +4,7 @@ module.exports = {
       return this.Services.API.Session.checkToken({ params: { token } });
     }, {
       input: (req, data, definition) => {
-        // return this.Services.getSchema(definition).validate(data.input);
+        return this.Services.getSchema(definition).validate(data.input);
       },
     });
   },

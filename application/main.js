@@ -17,6 +17,16 @@ const initServer = module.exports = () => {
     cors: App.env !== 'production',
   });
 
+  const path = require('path');
+
+  async function main() {}
+
+  // FIXME: how to mount inside plugs?
+  server.mount('/api/v1/graphql', App.GraphQL.setup([
+    path.join(__dirname, 'api/schema/common.gql'),
+    path.join(__dirname, 'api/schema/generated/index.gql'),
+  ], App.load(path.join(__dirname, 'api/schema/graphql'))));
+
   server.plug([
     require('express-useragent').express(),
     require('logro').getExpressLogger(),
@@ -29,6 +39,10 @@ const initServer = module.exports = () => {
       routes(map) {
         // how this shit works?
         return map()
+          .get('/test', ctx => {
+            ctx.res.write('OK');
+            ctx.res.end();
+          })
           .get('/validate-access/:token', ctx => {
             console.log('>>>', ctx.req.params, ctx.req.handler, ctx.req.handler.url('42'));
           });
@@ -42,14 +56,7 @@ const initServer = module.exports = () => {
     }, (type, userInfo) => App.Services.API.Session.checkLogin({ params: { type, auth: userInfo } })),
   ]);
 
-  const path = require('path');
-
-  server.mount('/api/v1/graphql', App.GraphQL.setup([
-    path.join(__dirname, 'api/schema/common.gql'),
-    path.join(__dirname, 'api/schema/generated/index.gql'),
-  ], App.load(path.join(__dirname, 'api/schema/graphql'))));
-
-  server.on('start', () => App.Models.connect().then(() => App.Services.start()));
+  server.on('start', () => App.Models.connect().then(() => App.Services.start()).then(main));
   server.on('listen', ctx => log.info(`API started after ${(new Date() - start) / 1000} seconds`, { endpoint: ctx.location.href }));
 
   return server;

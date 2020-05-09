@@ -74,10 +74,19 @@
       },
       "rollup": {
         "context": "window",
+        "rollup-plugin-svelte": {
+          "dev": true
+        },
+        "rollup-plugin-node-resolve": {
+          "dedupe": [
+            "svelte"
+          ],
+          "browser": true
+        },
         "plugins": [
+          "rollup-plugin-svelte",
           "rollup-plugin-node-resolve",
-          "rollup-plugin-commonjs",
-          "rollup-plugin-svelte"
+          "rollup-plugin-commonjs"
         ]
       },
       "buble": {
@@ -94,7 +103,7 @@
     "acorn": ">=5.7.4",
     "axios": ">=0.18.1",
     "bdd-tc": "^0.0.7",
-    "buble": "^0.19.3",
+    "buble": "^0.20.0",
     "chai": "^4.1.2",
     "csso": "^4.0.1",
     "eslint": "^6.4.0",
@@ -117,7 +126,7 @@
     "rollup-plugin-svelte": "^5.0.3",
     "sqlite3": "^4.1.0",
     "svelte": "^3.22.2",
-    "svql": "^0.0.27",
+    "svql": "0.0.28",
     "tarima": "^4.7.2",
     "terser": "^4.3.8",
     "testcafe": "^1.6.0",
@@ -132,7 +141,7 @@
     "@grown/session": "^0.0.6",
     "express-useragent": "^1.0.12",
     "grown": "^1.1.7",
-    "logro": "^0.1.6",
+    "logro": "^0.1.8",
     "mailor": "^0.0.22",
     "pg": "^7.9.0",
     "rand-token": "^0.4.0",

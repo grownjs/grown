@@ -3,7 +3,6 @@ const path = require('path');
 const App = require('grown')();
 
 const GRPC = App.use(require('@grown/grpc'));
-// const Schema = App.use(require('@grown/schema'));
 const Models = App.use(require('./models'));
 
 App('GRPC.Gateway', {
@@ -17,7 +16,9 @@ App('Services', {
     GRPC.Gateway.setup(App.load(path.join(__dirname, '../api/handlers')), { timeout: 10 }),
   ],
   getSchema(ref) {
-    // return Schema.get(ref, require('../api/schema/generated'));
+    const [name, id] = ref.split('.');
+
+    return Models.get(name).getSchema(id);
   },
   getMailer() {
     return require('./mailer');

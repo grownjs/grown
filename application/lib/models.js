@@ -10,7 +10,7 @@ module.exports = App => {
         models: path.join(__dirname, '../api/schema/models'),
         database: {
           config: require('../db/config'),
-          refs: require('../api/schema/generated/index.json'),
+          refs: require('../api/schema/generated'),
         },
       }),
     ],

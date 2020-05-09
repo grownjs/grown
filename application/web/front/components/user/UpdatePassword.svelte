@@ -66,7 +66,7 @@
 </div>
 
 <Route path="/password-change">
-  <In modal autofocus id="password-change" on:cancel={clear} on:submit={doUpdate}>
+  <In modal visible autofocus id="password-change" on:cancel={clear} on:submit={doUpdate}>
     <h2>Change password</h2>
     <label>
       Current password: <input type="password" bind:value={password} required autocomplete="current-password" />
