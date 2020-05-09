@@ -65,6 +65,15 @@ module.exports = (Grown, util) => {
           ? DB[name].models[model]
           : $.get(model);
 
+        if (!target._resolved) {
+          const source = $.get(model);
+
+          Object.assign(target, source.classMethods);
+          Object.assign(target.prototype, source.instanceMethods);
+
+          target._resolved = true;
+        }
+
         return Grown.Model.Entity._wrap(model, target, DB[name].schemas);
       }
 
@@ -73,6 +82,7 @@ module.exports = (Grown, util) => {
         get sequelize() { return DB[name].sequelize; },
         get schemas() { return DB[name].schemas; },
         get models() { return DB[name].models; },
+        get $refs() { return DB[name].$refs; },
 
         disconnect: () => DB[name].close(),
         connect: () => DB[name].connect(),
