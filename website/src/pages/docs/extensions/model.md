@@ -3,6 +3,7 @@ title: Model
 $render: ../../../lib/layouts/default.pug
 runkit:
   preamble: |
+    require('sqlite3');
     const fs = require('fs');
     fs.mkdirSync('./models');
     fs.mkdirSync('./models/Test');
@@ -93,10 +94,10 @@ await repo.connect();
 await repo.sync();
 
 // direct access to your models
-console.log(repo.models.TestModel);
+console.log(ExampleModel);
 
 // access model as a RESTful resource
-const TestRepo = API.from(repo.models.TestModel);
+const TestRepo = API.from(repo.models.ExampleModel);
 const testCount = await TestRepo.count();
 
 console.log(testCount);
