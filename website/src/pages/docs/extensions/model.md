@@ -53,6 +53,18 @@ const ExampleModel = await Example.connect({
   storage: ':memory:',
 });
 
+// direct access to your sequelize-models
+await ExampleModel.sync();
+await ExampleModel.count();
+```
+
+Repositories are built by scanning source files in any given directory, e.g.
+
+```js
+/* @runkit */
+// register extension
+const Model = Grown.use(require('@grown/model'));
+
 // ./models/Test/index.js
 // module.exports = {
 //   $schema: require('./schema')
@@ -87,14 +99,9 @@ const API = Grown.Model.Formator({
   prefix: '/db',
 });
 
-server.plug(API);
-
 // connect the repository
 await repo.connect();
 await repo.sync();
-
-// direct access to your models
-console.log(ExampleModel);
 
 // access model as a RESTful resource
 const TestRepo = API.from(repo.models.ExampleModel);
@@ -105,6 +112,10 @@ console.log(testCount);
 // close connection
 await repo.disconnect();
 ```
+
+In the example above we're using `API` as our RESTful adapter, we can also `plug()` it in our server application, e.g. `server.plug(API)` &mdash; that would mount the `/db` endpoint.
+
+> Repos are built using [`sastre`](https://github.com/tacoss/sastre) &mdash; check it out for further info.
 
 ## CLI
 
@@ -123,7 +134,7 @@ await repo.disconnect();
 - `register(name, params)` &mdash; Add a named connection to the registry where params is an object with `config`, `refs` and `cwd` options.
 - `bundle(options)` &mdash; Returns a repository built on top of given `models` directory and `database` options as connection.
 
-> Repos have only four methods: `disconnect`, `connect`, `sync` and `get` &mdash; also `connection`, `sequelize`, `schemas` and `models` are available as properties.
+> Repos has the following methods/props: `disconnect()`, `connect()`, `sync()`, `get(model)`, `connection`, `sequelize`, `schemas`, `models` and `$refs`.
 
 ### Private* props <var>static</var>
 
