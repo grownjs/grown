@@ -54,10 +54,16 @@ module.exports = (Grown, util) => {
     const _layout = template.locals.layout || this.template;
 
     /* istanbul ignore else */
-    if (template.locals.layout !== false && (_layout !== template.view)) {
-      const markup = (this.partial(_layout, util.extendValues({}, template.locals, {
-        contents: template.contents,
-      })) || '').trim();
+    if (template.locals.layout !== false && (_layout && _layout !== template.view)) {
+      let markup = '';
+
+      try {
+        markup = (this.partial(_layout, util.extendValues({}, template.locals, {
+          contents: template.contents,
+        })) || '').trim();
+      } catch (e) {
+        markup = e.message;
+      }
 
       template.contents = markup.indexOf('<html') === 0
         ? `<!DOCTYPE html>\n${markup}`
