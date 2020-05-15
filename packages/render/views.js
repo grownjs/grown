@@ -9,6 +9,7 @@ const RE_SELECTOR = /([.#]?[^\s#.]+)/;
 const RE_UPPERCASE = /[A-Z]/;
 
 const NO_PADDING_ELEMENTS = [
+  'title', 'script', 'style',
   'textarea', 'pre', 'code', 'var', 'tt', 'dfn', 'kbd', 'a',
   'samp', 'bdo', 'sup', 'sub', 'strong', 'abbr', 'em', 'b', 'i', 'q',
   'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'big', 'small', 'acronym', 'cite', 'span',
@@ -53,7 +54,7 @@ function _buildvNode(tag, data) {
   // cleanup classes
   if (_classes.length) {
     data.class = _classes
-      .filter(x => x).join(' ') || undefined;
+      .filter(x => x).join(' ');
   }
 
   return {
@@ -84,7 +85,7 @@ function _buildAttr(key, value) {
 function _buildHTML(vnode, depth, context) {
   /* istanbul ignore else */
   if (Array.isArray(vnode)) {
-    return vnode.map(x => this._buildHTML(x, depth, context));
+    return vnode.map(x => this._buildHTML(x, depth, context)).join('');
   }
 
   /* istanbul ignore else */
@@ -130,7 +131,7 @@ function _buildHTML(vnode, depth, context) {
     return `<${vnode.tag}${_attrs}>${_prefix}${_buffer}${_suffix}</${vnode.tag}>`;
   }
 
-  return `<${vnode.tag}${_attrs}${vnode.tag.charAt() !== '!' ? '/' : ''}>${_suffix}`;
+  return `<${vnode.tag}${_attrs}/>${_suffix}`;
 }
 
 function _buildPartial(view, data) {
@@ -161,9 +162,6 @@ function _buildPartial(view, data) {
 }
 
 function _render(fn, data) {
-  // es6-modules interop
-  fn = (fn.__esModule && fn.default) || fn;
-
   /* istanbul ignore else */
   if (typeof fn !== 'function') {
     throw new Error(`Invalid view function, given '${fn}'`);
@@ -217,8 +215,8 @@ module.exports = (Grown, util) => {
         }
 
         /* istanbul ignore else */
-        if (!view.data.render) {
-          util.hiddenProperty(view.data, 'render', (tpl, state) => this.render({ src: tpl, data: state || {} }, cached, options));
+        if (!view.data.partial) {
+          util.hiddenProperty(view.data, 'partial', (tpl, state) => this.partial({ src: tpl, data: state || {} }, cached, options));
         }
 
         /* istanbul ignore else */
@@ -287,6 +285,7 @@ module.exports = (Grown, util) => {
         try {
           return this._partial(this._buildPartial(src, data), this._cache, defaults);
         } catch (e) {
+          console.log(src);
           throw new Error(`Failed to render '${src.replace(/\./g, '/')}' template\n${e.message}`);
         }
       };

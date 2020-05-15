@@ -70,13 +70,13 @@ module.exports = (Grown, util) => {
         : markup;
 
       const before = {
-        body: this._renderSlot(ctx.views.before.body, template.locals),
-        head: this._renderSlot(ctx.views.before.head, template.locals),
+        body: this._renderSlot(ctx.chunks.before.body, template.locals),
+        head: this._renderSlot(ctx.chunks.before.head, template.locals),
       };
 
       const after = {
-        body: this._renderSlot(ctx.views.after.body, template.locals),
-        head: this._renderSlot(ctx.views.after.head, template.locals),
+        body: this._renderSlot(ctx.chunks.after.body, template.locals),
+        head: this._renderSlot(ctx.chunks.after.head, template.locals),
       };
 
       if (template.contents.indexOf('</head>') === -1) {
@@ -107,7 +107,7 @@ module.exports = (Grown, util) => {
     },
 
     $mixins() {
-      const _views = {
+      const _partials = {
         before: {
           head: [],
           body: [],
@@ -120,17 +120,17 @@ module.exports = (Grown, util) => {
 
       return {
         props: {
-          views: () => _views,
+          chunks: () => _partials,
         },
         methods: {
           prepend(to, opts) {
-            _views.before[to].unshift(opts);
+            _partials.before[to].unshift(opts);
 
             return this;
           },
 
           append(to, opts) {
-            _views.after[to].push(opts);
+            _partials.after[to].push(opts);
 
             return this;
           },

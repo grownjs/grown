@@ -3,6 +3,10 @@
 module.exports = Grown => {
   return Grown('Render.Actions', {
     $install(ctx) {
+      if (!this._buildvNode) {
+        throw new Error('Render.Actions depends on Render.Views, please include within');
+      }
+
       ctx.mount('Render.Actions#pipe', conn => {
         if (conn.req.handler
           && conn.req.handler.Controller
