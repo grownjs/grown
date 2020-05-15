@@ -82,6 +82,8 @@ function _grownFactory($, util, options) {
           });
       },
       raise(code, message) {
+        this.res.setHeader('X-Failure', message);
+
         throw util.buildError(code || 500, message);
       },
     },
