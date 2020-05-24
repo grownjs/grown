@@ -24,7 +24,7 @@ const initServer = module.exports = () => {
 
   const path = require('path');
 
-  async function main() {}
+  async function main() {} // eslint-disable-line
 
   // FIXME: how to mount inside plugs?
   server.mount('/api/v1/graphql', App.GraphQL.setup([

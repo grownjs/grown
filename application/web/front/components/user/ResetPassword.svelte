@@ -1,4 +1,4 @@
-<script>
+<script>//
   import { In, Status, mutation } from 'svql';
   import { Link, navigateTo } from 'yrv';
   import { RESET_PASSWORD_REQUEST } from '../../shared/queries';

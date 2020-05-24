@@ -5,10 +5,11 @@ ifdef CI
 endif
 
 test-all:
-	@make test:bud test:cli test:server test:conn
+	@make test:bud test:cli test:server test:conn test:access
+	@make test:grpc test:graphql test:model test:logger test:render
 
 test-ci:
-	#@make -C application lint
+	@make -C application lint
 	@make test-all
 
 ci: deps

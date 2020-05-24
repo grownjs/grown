@@ -1,14 +1,9 @@
-<script>
-  import { In, Status, mutation } from 'svql';
+<script>  import { In, Status, mutation } from 'svql';
   import { Link, navigateTo } from 'yrv';
 
   import { SIGNUP_REQUEST } from '../../shared/queries';
 
-  let cssClass = '';
-
-  export let id = '';
   export let back = '/';
-  export { cssClass as class };
 
   let signUp;
   let disabled;
@@ -42,7 +37,7 @@
   otherwise="Access was successfully granted..."
 />
 
-<In {id} modal visible autofocus on:cancel={clear} on:submit={doSignUp}>
+<In modal visible autofocus on:cancel={clear} on:submit={doSignUp}>
   <h2>Create a new account</h2>
   <label>
     Email: <input type="email" bind:value={email} required autocomplete="current-email" />

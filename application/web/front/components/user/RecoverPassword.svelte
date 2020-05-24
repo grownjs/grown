@@ -1,4 +1,4 @@
-<script>
+<script>//
   import {
     In, Status, mutation,
   } from 'svql';

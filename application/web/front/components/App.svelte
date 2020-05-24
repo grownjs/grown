@@ -1,4 +1,4 @@
-<script>
+<script>//
   import {
     Router, Route, Link, navigateTo,
   } from 'yrv';
