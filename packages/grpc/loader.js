@@ -14,12 +14,13 @@ module.exports = (Grown, util) => {
         throw new Error(`Unable to load protobuf, given '${file}'`);
       }
 
-      const protoOptions = Object.assign({
+      const protoOptions = {
         longs: String,
         enums: String,
         defaults: true,
         oneofs: true,
-      }, options);
+        ...options,
+      };
 
       const packageDefinition = protoLoader.loadSync(file, protoOptions);
       const Proto = grpc.loadPackageDefinition(packageDefinition);
