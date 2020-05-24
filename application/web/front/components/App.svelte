@@ -10,8 +10,6 @@
 
   import Login from './session/Login.svelte';
   import Logout from './session/Logout.svelte';
-
-  import SignUp from './pages/SignUp.svelte';
   import ResetPassword from './user/ResetPassword.svelte';
 
   if (window.location.search) {
@@ -47,7 +45,6 @@
 <main class="body">
   <Router>
     <Route path="/" component={Home} />
-    <Route exact path="/sign-up" component={SignUp} />
     <Route exact path="/reset-password/:token" component={ResetPassword} />
     <Route fallback component={NotFound} />
   </Router>

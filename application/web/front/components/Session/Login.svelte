@@ -6,6 +6,7 @@
   } from 'svql';
 
   import Auth from './Auth.svelte';
+  import SignUp from '../pages/SignUp.svelte';
   import RecoverPassword from '../user/RecoverPassword.svelte';
   import { LOGIN_REQUEST } from '../../shared/queries';
 
@@ -62,6 +63,8 @@
     <Auth nodebug />
     <RecoverPassword>Try requesting for a</RecoverPassword>
   </div>
+
+  <Route exact path="/sign-up" component={SignUp} />
 
   <Route exact path="/login">
     <In modal visible autofocus id="login" on:cancel={clear} on:submit={doLogin}>
