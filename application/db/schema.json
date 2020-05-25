@@ -33,7 +33,7 @@
       "accessType": {
         "type": "string",
         "enum": [
-          "VERIFY_EMAIL",
+          "VALIDATE_EMAIL",
           "RECOVER_PASSWORD"
         ]
       }
@@ -134,7 +134,7 @@
         "type": {
           "type": "string",
           "enum": [
-            "VERIFY_EMAIL",
+            "VALIDATE_EMAIL",
             "RECOVER_PASSWORD"
           ]
         },

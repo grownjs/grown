@@ -10,7 +10,7 @@ module.exports = {
           autoIncrement: true,
         },
         type: {
-          type: dataTypes.ENUM('VERIFY_EMAIL', 'RECOVER_PASSWORD'),
+          type: dataTypes.ENUM('VALIDATE_EMAIL', 'RECOVER_PASSWORD'),
         },
         token: {
           type: dataTypes.STRING,

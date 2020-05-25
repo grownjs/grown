@@ -10,5 +10,5 @@ definitions:
   accessType:
     type: string
     enum:
-      - VERIFY_EMAIL
+      - VALIDATE_EMAIL
       - RECOVER_PASSWORD
