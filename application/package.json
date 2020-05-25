@@ -142,7 +142,7 @@
     "express-useragent": "^1.0.12",
     "grown": "^1.1.7",
     "logro": "^0.1.8",
-    "mailor": "^0.0.22",
+    "mailor": "^0.1.0",
     "pg": "^7.9.0",
     "rand-token": "^0.4.0",
     "therror": "^4.1.1"

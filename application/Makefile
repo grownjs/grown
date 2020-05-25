@@ -18,6 +18,7 @@ POSTGRES_USER ?= $(shell whoami)
 
 BASE_URL ?= http://localhost:4001
 NODE_ENV ?= development
+MAILDEV ?= YES
 
 .EXPORT_ALL_VARIABLES:
 

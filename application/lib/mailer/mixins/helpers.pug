@@ -1,8 +1,8 @@
 mixin link(href, name)
-  a.btn(href=href, target='_blank') #{name}
+  mj-button(mj-class='link' href=href) #{name}
 
 mixin regards(message, about)
-  p.foot
+  mj-text(mj-class='about')
     span
       | #{message || 'Best Regards'},
       br

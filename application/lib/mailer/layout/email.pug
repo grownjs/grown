@@ -1,18 +1,17 @@
 include ../mixins/helpers
 
-heml
-  head
+mjml
+  mj-head
     block head
-      subject Test subject
 
-    style
-      include ../partials/style.css
+    mj-attributes
+      include ../partials/styles
 
-  body
-    .main-content
+  mj-body(mj-class='body')
+    mj-wrapper(mj-class='wrapper')
       include ../partials/header
 
-      .content-body
+      mj-section(mj-class='content')
         block body
 
       include ../partials/footer

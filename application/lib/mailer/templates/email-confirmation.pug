@@ -1,13 +1,11 @@
 extends ../layout/email
 
-block head
-  subject {{subject}}
-
 block body
-  b Hi {{name}},
-  p Please use the following link to confirm your e-mail address.
-  p
-    | If you did not submit a request to this e-mail address, please reply to this email and let us know.
+  mj-column
+    mj-text
+      p Please use the following link to confirm your e-mail address.
+      p
+        | If you did not submit a request to this e-mail address, please reply to this email and let us know.
 
-  +link(`${process.env.BASE_URL}/validate-access/{{token}}`, 'Confirm e-email address')
-  +regards
+    +link(`${process.env.BASE_URL}/validate-access/{{token}}`, 'Confirm e-email address')
+    +regards
