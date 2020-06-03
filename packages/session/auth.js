@@ -1,3 +1,5 @@
+const qs = require('querystring');
+
 module.exports = (Grown, util) => {
   function _callback() {
   }
@@ -51,15 +53,7 @@ module.exports = (Grown, util) => {
         }
 
         if (!req.query) {
-          req.query = (searchQuery || '')
-            .split(/&|&amp;/g)
-            .reduce((prev, cur) => {
-              const [key, value] = cur.split('=');
-
-              prev[key] = decodeURIComponent(value);
-
-              return prev;
-            }, {});
+          req.query = qs.parse(searchQuery || '');
         }
 
         if (!middleware[type]) {
