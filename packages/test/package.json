@@ -4,12 +4,36 @@
   "main": "index.js",
   "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
   "license": "MIT",
+  "scripts": {
+    "dev": "npm run test:unit -- -w",
+    "lint": "eslint tests *.js",
+    "test": "npm run coverage -- npm run test:unit --",
+    "test:ci": "npm test && nyc report -r lcov",
+    "test:dev": "npm test && nyc report -r html",
+    "test:run": "NODE_ENV=test _mocha --exit --recursive -bR spec --colors",
+    "test:unit": "npm run test:run tests/*.test.js --",
+    "coverage": "nyc -s -x '**/tests/**' -x '**/*.test.js'",
+    "codecov": "codecov --file=coverage/lcov.info -e TRAVIS_NODE_VERSION",
+    "pretest": "npm run lint",
+    "pretest:ci": "npm run lint",
+    "posttest:ci": "npm run codecov"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "dependencies": {
     "debug": "^3.1.0",
     "mock-req": "^0.2.0",
     "mock-res": "^0.5.0"
   },
-  "publishConfig": {
-    "access": "public"
+  "devDependencies": {
+    "@grown/bud": "^0.0.18",
+    "@grown/server": "^0.0.16",
+    "codecov": "^3.6.1",
+    "eslint": "^5.9.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.14.0",
+    "mocha": "^6.2.1",
+    "nyc": "^14.1.1"
   }
 }
