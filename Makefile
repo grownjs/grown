@@ -9,7 +9,7 @@ test-ci:
 	@make test-all
 
 test-all:
-	@make test:bud test:cli test:server test:conn test:access
+	@make test:cli test:bud test:server test:conn test:access
 	@make test:grpc test:graphql test:model test:logger test:render
 
 ci: deps
