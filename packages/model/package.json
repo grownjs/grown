@@ -30,8 +30,8 @@
   },
   "devDependencies": {
     "@grown/bud": "^0.0.18",
-    "@grown/server": "^0.0.15",
-    "@grown/test": "^0.0.6",
+    "@grown/server": "^0.0.16",
+    "@grown/test": "^0.0.7",
     "chai": "^4.2.0",
     "codecov": "^3.6.1",
     "eslint": "^5.9.0",
