@@ -175,13 +175,10 @@ ServerResponse.prototype.removeHeader = function removeHeader(name) {
   delete this._headers[name.toLowerCase()];
 };
 
-ServerResponse.prototype.end = function end(code = 200) {
-  /* istanbul ignore else */
-  if (code > 0) {
-    this.statusCode = code;
-  }
-
-  Transform.prototype.end.call(this);
+ServerResponse.prototype.status = function status(code = 200) {
+  this.statusCode = code;
+  this.statusMessage = STATUS_CODES[code] || 'unknown';
+  return this;
 };
 
 module.exports = function _uws(ctx, options, callback, protocolName) {

@@ -27,6 +27,11 @@ module.exports = Grown => {
       _setHeader.call(res, k, v);
     };
 
+    res.status = n => {
+      res.statusCode = n;
+      return res;
+    };
+
     Object.defineProperty(res, 'body', {
       get: () => res._getString(),
     });

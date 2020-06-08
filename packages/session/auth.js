@@ -70,8 +70,7 @@ module.exports = (Grown, util) => {
 
             // FIXME: setup url-back
             res.setHeader('Location', `/?token=${req.user.token || ''}`);
-            res.statusCode = 302;
-            res.end();
+            res.status(302).end();
           });
           return;
         }

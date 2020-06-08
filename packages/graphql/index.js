@@ -20,7 +20,7 @@ module.exports = (Grown, util) => {
       /* istanbul ignore else */
       if (!_query) {
         ctx.res.write('{"errors":["Missing input body or query"]}');
-        ctx.res.end(422);
+        ctx.res.status(422).end();
         return;
       }
 

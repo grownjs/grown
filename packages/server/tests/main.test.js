@@ -158,8 +158,8 @@ describe('Grown.Server', () => {
           });
         });
 
-        it('should responds with 200 if ctx.res.end() is called', done => {
-          g.mount(ctx => ctx.res.end());
+        it('should responds with 200 if ctx.res.status() is called', done => {
+          g.mount(ctx => ctx.res.status(200).end());
           g.listen(async app => {
             const { statusCode } = await get('http://0.0.0.0:80');
 
@@ -172,7 +172,7 @@ describe('Grown.Server', () => {
         it('should parse multipart/x-www-form-urlencoded', done => {
           g.mount(ctx => {
             ctx.res.write(JSON.stringify(ctx.req.body));
-            ctx.res.end();
+            ctx.res.status(200).end();
           });
 
           g.listen(async app => {
@@ -192,7 +192,7 @@ describe('Grown.Server', () => {
         it('should parse application/json', done => {
           g.mount(ctx => {
             ctx.res.write(JSON.stringify(ctx.req.body));
-            ctx.res.end();
+            ctx.res.status(200).end();
           });
 
           g.listen(async app => {
@@ -212,12 +212,12 @@ describe('Grown.Server', () => {
         it('should handle mount-points', done => {
           g.mount('/ko', ctx => {
             ctx.res.write('OK');
-            ctx.res.end();
+            ctx.res.status(200).end();
           });
 
           g.mount(ctx => {
             ctx.res.write('):');
-            ctx.res.end();
+            ctx.res.status(200).end();
           });
 
           g.listen(async app => {

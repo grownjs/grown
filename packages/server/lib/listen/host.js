@@ -37,7 +37,7 @@ module.exports = function $host(_location, req, res) {
       debug('#%s Using first available connection from <{ %s }>', process.pid, Object.keys(this._hosts).join(', '));
     } catch (e) {
       res.write(`Bad input: ${hostname} (${port})`);
-      res.end(500);
+      res.status(500).end();
       return;
     }
   }
