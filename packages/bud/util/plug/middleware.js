@@ -1,20 +1,31 @@
 'use strict';
 
-function _callOrReject(fn, ...args) {
-  return Promise.resolve().then(() => fn(...args, error => {
-    /* istanbul ignore else */
-    if (error) throw error;
-  }));
+function _callOrReject(fn, check) {
+  return new Promise((next, failure) => {
+    let called;
+
+    Promise.resolve()
+      .then(() => fn(e => {
+        called = true;
+
+        if (e) {
+          failure(e);
+        } else {
+          next();
+        }
+      }))
+      .then(() => process.nextTick(() => check && check(called) && next()));
+  });
 }
 
-function _expressMiddleware(callback) {
+function _expressMiddleware(cb) {
   return conn => {
     /* istanbul ignore else */
-    if (callback.length === 4) {
-      return conn.next().catch(error => _callOrReject(callback, error, conn.req, conn.res));
+    if (cb.length === 4) {
+      return conn.next().catch(error => _callOrReject(_done => cb(error, conn.req, conn.res, _done)));
     }
 
-    return _callOrReject(callback, conn.req, conn.res);
+    return _callOrReject(_done => cb(conn.req, conn.res, _done), isCalled => !isCalled && conn.res._halted);
   };
 }
 

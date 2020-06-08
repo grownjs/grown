@@ -4,6 +4,13 @@
   "main": "index.js",
   "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
   "license": "MIT",
+  "scripts": {
+    "test": "echo FIXME",
+    "test:ci": "echo FIXME"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "dependencies": {
     "connect-flash": "^0.1.1",
     "cookie-parser": "^1.4.3",
@@ -12,8 +19,5 @@
     "passport-facebook": "^3.0.0",
     "passport-http-bearer": "^1.0.1",
     "qs": "^6.9.4"
-  },
-  "publishConfig": {
-    "access": "public"
   }
 }

@@ -1,5 +1,7 @@
 'use strict';
 
+const fs = require('fs');
+
 module.exports = Grown => {
   const MockRes = require('mock-res');
 
@@ -27,9 +29,22 @@ module.exports = Grown => {
       _setHeader.call(res, k, v);
     };
 
+    res.sendFile = (src, meta) => {
+      res.writeHead(200, (meta || {}).headers);
+      res.write(fs.readFileSync(src));
+      res.end();
+    };
+
     res.status = n => {
       res.statusCode = n;
       return res;
+    };
+
+    res.send = out => {
+      if (typeof out !== 'undefined') {
+        res.write(typeof out !== 'string' ? JSON.stringify(out) : out);
+      }
+      res.end();
     };
 
     Object.defineProperty(res, 'body', {

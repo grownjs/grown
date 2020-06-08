@@ -247,7 +247,7 @@ describe('Grown.Server', () => {
         g.plug(require('body-parser').json());
         g.mount(ctx => {
           ctx.res.write(JSON.stringify(ctx.req.body));
-          ctx.res.end();
+          ctx.res.status(200).end();
         });
 
         g.listen(async app => {
@@ -268,12 +268,12 @@ describe('Grown.Server', () => {
         g = Grown.new();
         g.mount('/ko', ctx => {
           ctx.res.write('OK');
-          ctx.res.end();
+          ctx.res.status(200).end();
         });
 
         g.mount(ctx => {
           ctx.res.write('):');
-          ctx.res.end();
+          ctx.res.status(200).end();
         });
 
         g.listen(async app => {

@@ -4,10 +4,14 @@
   "main": "index.js",
   "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
   "license": "MIT",
-  "dependencies": {
-    "serve-static": "^1.13.1"
+  "scripts": {
+    "test": "echo FIXME",
+    "test:ci": "echo FIXME"
   },
   "publishConfig": {
     "access": "public"
+  },
+  "dependencies": {
+    "serve-static": "^1.13.1"
   }
 }

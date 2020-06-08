@@ -3,7 +3,7 @@ const { expect } = require('chai');
 
 const Grown = require('grown')();
 
-Grown.use(require('@grown/test'));
+Grown.use(require('../../test'));
 Grown.use(require('..'));
 
 /* global beforeEach, describe, it */

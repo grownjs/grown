@@ -4,6 +4,10 @@
   "main": "index.js",
   "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
   "license": "MIT",
+  "scripts": {
+    "test": "echo FIXME",
+    "test:ci": "echo FIXME"
+  },
   "publishConfig": {
     "access": "public"
   },

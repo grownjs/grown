@@ -13,10 +13,8 @@
     "test:run": "NODE_ENV=test _mocha --exit --recursive -bR spec --colors",
     "test:unit": "npm run test:run tests/*.test.js --",
     "coverage": "nyc -s -x '**/tests/**' -x '**/*.test.js'",
-    "codecov": "codecov --file=coverage/lcov.info -e TRAVIS_NODE_VERSION",
     "pretest": "npm run lint",
-    "pretest:ci": "npm run lint",
-    "posttest:ci": "npm run codecov"
+    "pretest:ci": "npm run lint"
   },
   "publishConfig": {
     "access": "public"
@@ -29,9 +27,7 @@
     "type-is": "^1.6.15"
   },
   "devDependencies": {
-    "@grown/test": "^0.0.7",
     "chai": "^4.2.0",
-    "codecov": "^3.6.5",
     "eslint": "^5.9.0",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-import": "^2.14.0",

@@ -1,19 +1,41 @@
 TASK ?= test
+RUNNER ?= test
 
 ifdef CI
 	TASK=test:ci
+	RUNNER=testc
 endif
+
+ifneq ($(wildcard .env),)
+include .env
+endif
+
+.EXPORT_ALL_VARIABLES:
 
 test-ci:
 	@make -C application lint
 	@make test-all
 
 test-all:
-	@make test:cli test:bud test:server test:conn test:access
-	@make test:grpc test:graphql test:logger test:render test:model
+	@make $(RUNNER):bud $(RUNNER):cli $(RUNNER):grpc $(RUNNER):graphql $(RUNNER):model
+	@make $(RUNNER):repl $(RUNNER):test $(RUNNER):conn $(RUNNER):server $(RUNNER):access $(RUNNER):session
+	@make $(RUNNER):logger $(RUNNER):render $(RUNNER):router $(RUNNER):static $(RUNNER):tarima $(RUNNER):upload
 
 ci: deps
-	@make -s clean setup test-ci
+	@make -s clean setup test-ci codecov
+
+testc\:%:
+	@make -s test:$(subst testc:,,$*) coverage:$(subst testc:,,$*)
+
+codecov:
+	@curl -s https://codecov.io/bash > codecov.sh
+	@chmod +x codecov.sh
+	@./codecov.sh -p build/coverage -f '*.info' -F unit
+
+coverage\:%:
+	@mkdir -p build/coverage
+	@(sed 's|$(PWD)|.|g' packages/$(subst coverage:,,$*)/coverage/lcov.info \
+		> build/coverage/$(subst coverage:,,$*).info) || true
 
 publish:
 	@make -C website dist deploy

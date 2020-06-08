@@ -10,6 +10,7 @@ const uWS = require('uWebsockets.js');
 const qs = require('querystring');
 
 const _util = require('util');
+const { send, sendFile, setStatus } = require('./util');
 
 const $host = require('./host');
 
@@ -135,6 +136,10 @@ function ServerResponse(resp) {
 
 _util.inherits(ServerResponse, Transform);
 
+ServerResponse.prototype.send = send;
+ServerResponse.prototype.status = setStatus;
+ServerResponse.prototype.sendFile = sendFile;
+
 ServerResponse.prototype._transform = function _transform(chunk, encoding, next) {
   this._buffer.push(chunk);
   next();
@@ -173,12 +178,6 @@ ServerResponse.prototype.getHeader = function getHeader(name) {
 
 ServerResponse.prototype.removeHeader = function removeHeader(name) {
   delete this._headers[name.toLowerCase()];
-};
-
-ServerResponse.prototype.status = function status(code = 200) {
-  this.statusCode = code;
-  this.statusMessage = STATUS_CODES[code] || 'unknown';
-  return this;
 };
 
 module.exports = function _uws(ctx, options, callback, protocolName) {

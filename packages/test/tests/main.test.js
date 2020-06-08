@@ -1,8 +1,8 @@
 /* global beforeEach, describe, it */
 
-const Grown = require('@grown/bud')();
+const Grown = require('../../bud')();
 
-Grown.use(require('@grown/server'));
+Grown.use(require('../../server'));
 Grown.use(require('..'));
 
 describe('Grown.Test', () => {
@@ -13,9 +13,8 @@ describe('Grown.Test', () => {
     server.plug(Grown.Test);
     server.mount(conn => {
       conn.res.setHeader('Content-Type', 'text/html');
-      conn.res.write('<!DOCTYPE html>');
-      conn.res.status(200).end();
-    })
+      conn.res.status(200).send('<!DOCTYPE html>');
+    });
   });
 
   describe('Request', () => {

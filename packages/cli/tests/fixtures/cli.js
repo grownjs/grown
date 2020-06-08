@@ -1,6 +1,6 @@
-const Grown = require('@grown/bud')();
+const Grown = require('../../../bud')();
 
-Grown.use(require('@grown/cli'));
+Grown.use(require('../../../cli'));
 
 Grown.CLI.start(Grown.argv._[0]).catch(e => {
   Grown.Logger.getLogger()

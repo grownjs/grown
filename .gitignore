@@ -1,4 +1,7 @@
 *.log
 *.todo
+.env
 .DS_Store
+codecov.sh
+build
 node_modules

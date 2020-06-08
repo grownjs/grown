@@ -25,9 +25,9 @@ describe('Grown.Model', () => {
   let Grown;
 
   beforeEach(() => {
-    Grown = require('@grown/bud')();
-    Grown.use(require('@grown/server'));
-    Grown.use(require('@grown/test'));
+    Grown = require('../../bud')();
+    Grown.use(require('../../server'));
+    Grown.use(require('../../test'));
     Grown.use(require('..'));
   });
 
@@ -169,7 +169,8 @@ describe('Grown.Model', () => {
       return repo.connect()
         .then(() => repo.sync())
         .then(() => server.request('/db', (err, conn) => conn.res.ok(err, /"Example"/)))
-        .then(() => server.request('/db/Example', (err, conn) => conn.res.ok(err, /"primaryKeys"/)));
+        .then(() => server.request('/db/Example', (err, conn) => conn.res.ok(err, /"primaryKeys"/)))
+        .then(() => server.request('/db/main.js', (err, conn) => expect(conn.res.body).to.contain('function noop')));
     });
   });
 });

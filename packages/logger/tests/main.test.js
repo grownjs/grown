@@ -1,10 +1,10 @@
 /* eslint-disable no-unused-expressions */
 const { expect } = require('chai');
 
-const Grown = require('@grown/bud')();
+const Grown = require('../../bud')();
 
-Grown.use(require('@grown/server'));
-Grown.use(require('@grown/test'));
+Grown.use(require('../../server'));
+Grown.use(require('../../test'));
 Grown.use(require('..'));
 
 /* global beforeEach, describe, it */

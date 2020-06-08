@@ -4,7 +4,7 @@ const { expect } = require('chai');
 const Grown = require('grown')();
 const path = require('path');
 
-Grown.use(require('@grown/test'));
+Grown.use(require('../../test'));
 Grown.use(require('..'));
 
 /* global describe, it */

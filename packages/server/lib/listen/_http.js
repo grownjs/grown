@@ -4,10 +4,15 @@ const debug = require('debug')('grown:http');
 const qs = require('querystring');
 
 const $host = require('./host');
+const { send, sendFile, setStatus } = require('./util');
 
 module.exports = function _http(ctx, options, callback, protocolName) {
   const cb = (req, res) => {
     req.query = req.query || qs.parse(req.url.split('?')[1]);
+    res.send = send.bind(res);
+    res.status = setStatus.bind(res);
+    res.sendFile = sendFile.bind(res);
+
     $host.call(this, ctx.location, req, res);
   };
 
