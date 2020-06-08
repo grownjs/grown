@@ -1,6 +1,6 @@
 {
   "name": "@grown/server",
-  "version": "0.0.15",
+  "version": "0.0.16",
   "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
   "license": "MIT",
   "main": "index.js",
