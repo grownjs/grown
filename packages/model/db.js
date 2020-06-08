@@ -69,17 +69,20 @@ module.exports = (Grown, util) => {
         if (!target._resolved) {
           const source = $.get(model);
 
-          Object.keys(source.hooks).forEach(key => {
-            /* istanbul ignore else */
-            if (!target.options.hooks[key]) {
-              target.options.hooks[key] = [];
-            }
+          /* istanbul ignore else */
+          if (source.hooks) {
+            Object.keys(source.hooks).forEach(key => {
+              /* istanbul ignore else */
+              if (!target.options.hooks[key]) {
+                target.options.hooks[key] = [];
+              }
 
-            /* istanbul ignore else */
-            if (!target.options.hooks[key].includes(source.hooks[key])) {
-              target.options.hooks[key].push(source.hooks[key]);
-            }
-          });
+              /* istanbul ignore else */
+              if (!target.options.hooks[key].includes(source.hooks[key])) {
+                target.options.hooks[key].push(source.hooks[key]);
+              }
+            });
+          }
 
           Object.assign(target, source.classMethods);
           Object.assign(target.prototype, source.instanceMethods);

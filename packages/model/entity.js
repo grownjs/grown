@@ -54,7 +54,7 @@ module.exports = (Grown, util) => {
   function _fakeFrom(id, refs, opts) {
     jsf.option(util.extendValues(opts, JSF_DEFAULTS));
 
-    return jsf(id, refs);
+    return jsf.generate(id, refs);
   }
 
   function _through(id, refs) {

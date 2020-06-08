@@ -164,11 +164,12 @@ describe('Grown.Model', () => {
 
     it('should should responds to RESTful calls', () => {
       const repo = getDatabase();
+      const server = makeServer(repo);
 
       return repo.connect()
         .then(() => repo.sync())
-        .then(() => makeServer(repo).request('/db', (err, conn) => conn.res.ok(err, /"Example"/)))
-        .then(() => makeServer(repo).request('/db/Example', (err, conn) => conn.res.ok(err, /"primaryKeys"/)));
+        .then(() => server.request('/db', (err, conn) => conn.res.ok(err, /"Example"/)))
+        .then(() => server.request('/db/Example', (err, conn) => conn.res.ok(err, /"primaryKeys"/)));
     });
   });
 });
