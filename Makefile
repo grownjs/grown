@@ -10,7 +10,7 @@ test-ci:
 
 test-all:
 	@make test:cli test:bud test:server test:conn test:access
-	@make test:grpc test:graphql test:model test:logger test:render
+	@make test:grpc test:graphql test:logger test:render test:model
 
 ci: deps
 	@make -s clean setup test-ci
