@@ -40,7 +40,7 @@ describe('Grown.GRPC', () => {
     it('should validate its input', () => {
       expect(() => Grown.GRPC.Loader.scan()).to.throw(/Unable to load protobuf/);
       expect(() => Grown.GRPC.Loader.scan(path.join(__dirname, 'fixtures/other.proto'))).to.throw(/API package not found/);
-      expect(() => Grown.GRPC.Loader.scan(path.join(__dirname, 'fixtures/invalid.proto'))).to.throw(/Cannot convert undefined/);
+      expect(() => Grown.GRPC.Loader.scan(path.join(__dirname, 'fixtures/invalid.proto'))).to.throw(/API package not found/);
     });
 
     it('should scan/load properly', () => {
@@ -89,14 +89,14 @@ describe('Grown.GRPC', () => {
       let err;
 
       return gateway.API.Test.err().catch(e => { err = e; })
-        .then(() => expect(err.original.message).to.eql('FAILURE'));
+        .then(() => expect(err.message).to.eql('FAILURE'));
     });
 
     it('should handle controller failures (throw)', () => {
       let err;
 
       return gateway.API.Test.throw().catch(e => { err = e; })
-        .then(() => expect(err.original.message).to.eql('FAILURE'));
+        .then(() => expect(err.message).to.eql('FAILURE'));
     });
 
     it('should handle timeout errors', () => {
