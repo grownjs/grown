@@ -1,31 +1,20 @@
 'use strict';
 
+function _callOrReject(fn, ...args) {
+  return Promise.resolve().then(() => fn(...args, error => {
+    /* istanbul ignore else */
+    if (error) throw error;
+  }));
+}
+
 function _expressMiddleware(callback) {
   return conn => {
     /* istanbul ignore else */
     if (callback.length === 4) {
-      return conn.next().catch(error => {
-        return new Promise((resolve, reject) => {
-          callback(error, conn.req, conn.res, _error => {
-            if (_error) {
-              reject(_error);
-            } else {
-              resolve();
-            }
-          });
-        });
-      });
+      return conn.next().catch(error => _callOrReject(callback, error, conn.req, conn.res));
     }
 
-    return new Promise((resolve, reject) => {
-      callback(conn.req, conn.res, error => {
-        if (error) {
-          reject(error);
-        } else {
-          resolve();
-        }
-      });
-    });
+    return _callOrReject(callback, conn.req, conn.res);
   };
 }
 
