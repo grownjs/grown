@@ -24,7 +24,9 @@ const initServer = module.exports = () => {
 
   const path = require('path');
 
-  async function main() {} // eslint-disable-line
+  async function main() {
+    // CHANGE ME
+  }
 
   // FIXME: how to mount inside plugs?
   server.mount('/api/v1/graphql', App.GraphQL.setup([
@@ -40,25 +42,25 @@ const initServer = module.exports = () => {
       options: { attributes: false },
       database: App.Model.DB.default,
     }),
-    App.Router.Mappings({
-      routes(map) {
-        // how this shit works?
-        return map()
-          .get('/test', ctx => {
-            ctx.res.write('OK');
-            ctx.res.end();
-          })
-          .get('/validate-access/:token', ctx => {
-            console.log('>>>', ctx.req.params, ctx.req.handler, ctx.req.handler.url('42'));
-          });
-      },
-    }),
     App.Session.Auth.use('/auth', {
       facebook: {
         enabled: true,
         credentials: config.facebook,
       },
     }, (type, userInfo) => App.Services.API.Session.checkLogin({ params: { type, auth: userInfo } })),
+    App.Router.Mappings({
+      routes(map) {
+        // how this shit works?
+        return map()
+          .get('/test', ctx => {
+            ctx.res.status(200);
+          })
+          .get('/validate-access/:token', ctx => {
+            console.log('>>>', ctx.req.params, ctx.req.handler, ctx.req.handler.url('42'));
+            ctx.res.status(200);
+          });
+      },
+    }),
   ]);
 
   server.on('start', () => App.Models.connect().then(() => App.Services.start()).then(main));
