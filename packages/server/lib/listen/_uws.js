@@ -117,13 +117,14 @@ function ServerResponse(resp) {
     const head = {};
 
     Object.keys(this._headers).forEach(key => {
-      head[key.replace(/\b([a-z])/g, $0 => $0.toUpperCase())] = this._headers[key];
+      head[key.toLowerCase()] = this._headers[key];
     });
 
-    if (body.length) {
-      head['Content-Length'] = body.length.toString();
+    // FIXME: this does not work through proxy-middleware!
+    if (body.length && process.env.NODE_ENV === 'production') {
+      head['content-length'] = body.length.toString();
     } else {
-      delete head['Content-Length'];
+      delete head['content-length'];
     }
 
     resp.cork(() => {
