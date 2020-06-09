@@ -141,7 +141,7 @@ function _grownFactory($, util, options) {
           res.setHeader('Allow', 'GET, POST, OPTIONS, PUT, DELETE');
 
           if (req.method === 'OPTIONS') {
-            res.end();
+            res.status(200).end();
             return;
           }
 

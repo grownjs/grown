@@ -37,7 +37,7 @@ module.exports = (Grown, util) => {
           }
 
           ctx.res.write(JSON.stringify(result));
-          ctx.res.end();
+          ctx.res.status(200).end();
         });
     };
   }
