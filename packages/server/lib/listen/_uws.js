@@ -114,14 +114,17 @@ function ServerResponse(resp) {
 
   this.on('finish', () => {
     const body = Buffer.concat(this._buffer);
-
-    this._headers['content-length'] = body.length.toString();
-
     const head = {};
 
     Object.keys(this._headers).forEach(key => {
       head[key.replace(/\b([a-z])/g, $0 => $0.toUpperCase())] = this._headers[key];
     });
+
+    if (body.length) {
+      head['Content-Length'] = body.length.toString();
+    } else {
+      delete head['Content-Length'];
+    }
 
     resp.cork(() => {
       resp.writeStatus(`${this.statusCode} ${STATUS_CODES[this.statusCode]}`);
@@ -163,7 +166,7 @@ ServerResponse.prototype.writeHead = function writeHead(statusCode, reason, head
   /* istanbul ignore else */
   if (headers) {
     Object.keys(headers).forEach(key => {
-      this.setHeader(key, headers[key]);
+      this._response.writeHeader(key, headers[key]);
     });
   }
 };
