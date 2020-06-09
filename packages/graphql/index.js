@@ -26,10 +26,11 @@ module.exports = (Grown, util) => {
 
       return gql.graphql(_schema, _query, null, ctx, data)
         .then(result => {
+          let statusCode = 200;
+
           /* istanbul ignore else */
           if (result.errors && result.errors.length > 0) {
-            ctx.res.statusCode = ctx.res.statusCode !== 200 ? ctx.res.statusCode : 400;
-
+            statusCode = ctx.res.statusCode > 200 ? ctx.res.statusCode : 400;
             result.errors.forEach(e => {
               e.message = e.message.replace(/^\d+ [_A-Z]+: /, '');
               e.description = e.stack.toString();
@@ -37,7 +38,7 @@ module.exports = (Grown, util) => {
           }
 
           ctx.res.write(JSON.stringify(result));
-          ctx.res.status(200).end();
+          ctx.res.status(statusCode).end();
         });
     };
   }
