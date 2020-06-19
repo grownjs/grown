@@ -50,9 +50,9 @@ module.exports = (Grown, util) => {
           });
 
           if (typeof opts.at === 'string' && opts.at.charAt() === '/') {
-            ctx.mount(`[at:${opts.at}]`, this._middleware(serveStatic(opts.from, _opts)), opts.filter);
+            ctx.mount(`[at:${opts.at}]`, this._middleware(serveStatic(opts.from, _opts)), opts.filter || this.filter);
           } else {
-            ctx.mount(`[from:${path.relative(_cwd, opts.from) || '.'}]`, this._middleware(serveStatic(opts.from, _opts)), opts.filter);
+            ctx.mount(`[from:${path.relative(_cwd, opts.from) || '.'}]`, this._middleware(serveStatic(opts.from, _opts)), opts.filter || this.filter);
           }
         });
     },
