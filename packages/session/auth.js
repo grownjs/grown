@@ -29,7 +29,7 @@ module.exports = (Grown, util) => {
       const middleware = Object.keys(types).reduce((prev, cur) => {
         if (types[cur].enabled) {
           try {
-            prev[cur] = require(`./passport/${cur}`)(types[cur], callback);
+            prev[cur] = ctx => require(`./passport/${cur}`)(types[cur], ctx, callback);
           } catch (e) {
             throw new Error(`Failed at loading '${cur}' strategy (${e.message})`);
           }
@@ -62,7 +62,7 @@ module.exports = (Grown, util) => {
         }
 
         if (action) {
-          middleware[type](req, res, err => {
+          middleware[type](req)(req, res, err => {
             if (err) {
               next(err);
               return;
@@ -76,7 +76,7 @@ module.exports = (Grown, util) => {
         }
 
         try {
-          middleware[type](req, res, next);
+          middleware[type](req)(req, res, next);
         } catch (e) {
           next(e);
         }
