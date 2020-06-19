@@ -141,7 +141,7 @@
     "@grown/session": "^0.0.6",
     "express-useragent": "^1.0.12",
     "grown": "^1.1.9",
-    "logro": "^0.1.8",
+    "logro": "^0.1.9",
     "mailor": "^0.1.0",
     "pg": "^7.9.0",
     "rand-token": "^0.4.0",
