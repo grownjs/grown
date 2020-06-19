@@ -19,7 +19,7 @@ module.exports = (Grown, util) => {
     }
 
     // speed up static routes
-    const _handler = this._routes[_method](conn.req.url, 1);
+    const _handler = this._routes[_method](conn.req.url.replace(/\/$/, '').replace('/?', '?'), 1);
 
     /* istanbul ignore else */
     if (_handler) {
