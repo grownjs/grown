@@ -55,6 +55,10 @@ install: deps
 setup: install
 	@lerna bootstrap
 
+link\:%:
+	@rm -rf $(PWD)/application/node_modules/@grown/$*
+	@ln -s $(PWD)/packages/$* $(PWD)/application/node_modules/@grown/
+
 dev\:%:
 	@cd packages/$(subst dev:,,$*) && npm run dev
 
