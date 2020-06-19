@@ -30,7 +30,7 @@ module.exports = (Grown, util) => {
 
           /* istanbul ignore else */
           if (result.errors && result.errors.length > 0) {
-            statusCode = ctx.res.statusCode > 200 ? ctx.res.statusCode : 400;
+            statusCode = ctx.res.statusCode > 200 && ctx.res.statusCode < 500 ? ctx.res.statusCode : 400;
             result.errors.forEach(e => {
               e.message = e.message.replace(/^\d+ [_A-Z]+: /, '');
               e.description = e.stack.toString();
