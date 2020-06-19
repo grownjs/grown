@@ -23,7 +23,7 @@
     "schema-to:json": "json-schema-to -tw api/schema -pbc index --json",
     "schema-to:graphql": "json-schema-to -tw api/schema -pc index --graphql",
     "schema-to:protobuf": "json-schema-to -tw api/schema -pc index --protobuf -br ../common -k API",
-    "dev": "tarima watch -p 4001 -P '/api,/auth -> 3000'",
+    "dev": "tarima watch -p 4001 -P '/api,/auth,/admin -> 3000'",
     "dist": "tarima -mqe $NODE_ENV",
     "size": "npm run dist && size-limit",
     "test": "npm run test:unit && npm run test:functional --",

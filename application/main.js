@@ -52,7 +52,11 @@ const initServer = module.exports = () => {
       routes(map) {
         // how this shit works?
         return map()
-          .get('/test', ctx => {
+          .get('/status', ctx => {
+            ctx.res.status(200);
+          })
+          .get('/admin', ctx => {
+            ctx.res.write('ADMINISTRATION');
             ctx.res.status(200);
           })
           .get('/validate-access/:token', ctx => {
