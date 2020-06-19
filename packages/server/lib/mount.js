@@ -19,7 +19,6 @@ module.exports = function $mount(name, handler, callback) {
     cb.name = `${cb.name}${name}`;
   }
 
-  /* istanbul ignore else */
   if (name && name.charAt() === '/') {
     cb.filter = (ctx, options) => {
       debug('#%s Filter <%s> with url <%s>', ctx.pid, ctx.req.url, name);
@@ -50,6 +49,8 @@ module.exports = function $mount(name, handler, callback) {
 
       return false;
     };
+  } else {
+    cb.filter = callback;
   }
 
   debug('#%s Mounting <%s> handler', process.pid, cb.name);
