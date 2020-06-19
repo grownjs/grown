@@ -8,7 +8,25 @@ module.exports = Grown => {
       return new Formator(this.database).bind(Model, params, options);
     },
     $install(ctx) {
-      ctx.mount(this.prefix || '/', new Formator(this.database).hook(this.options));
+      const connections = [];
+
+      ctx.mount(this.prefix || '/', (req, res, next) => {
+        const database = typeof this.database === 'function'
+          ? this.database(req)
+          : this.database;
+
+        let found = connections.find(x => x.database === database);
+
+        if (!found) {
+          const middleware = new Formator(database).hook(this.options);
+
+          connections.push({ database, middleware });
+
+          found = { middleware };
+        }
+
+        return found.middleware(req, res, next);
+      });
     },
   });
 };
