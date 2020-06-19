@@ -50,6 +50,10 @@ module.exports = (Grown, util) => {
           DB[name].add(definition);
         },
         after(_name, definition) {
+          if (DB[name].sequelize._resolved) {
+            return DB[name].models[_name];
+          }
+
           // no connection? return it as Entity definition
           return Grown.Model.Entity.define(_name, definition);
         },
