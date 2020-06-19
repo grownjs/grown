@@ -18,6 +18,10 @@ service:
     resp: Success
     input: RecoverPasswordParams
     params: RecoverPasswordRequest
+  - set: validateToken
+    resp: Success
+    input: ValidateTokenParams
+    params: ValidateTokenRequest
 
 definitions:
   Success:
@@ -91,4 +95,20 @@ definitions:
         type: string
       params:
         $ref: '#/definitions/RecoverPasswordParams'
+    required: [guid, params]
+
+  ValidateTokenParams:
+    properties:
+      email:
+        type: string
+      token:
+        type: string
+    required: [email, token]
+
+  ValidateTokenRequest:
+    properties:
+      guid:
+        type: string
+      params:
+        $ref: '#/definitions/ValidateTokenParams'
     required: [guid, params]

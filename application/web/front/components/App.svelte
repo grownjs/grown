@@ -10,6 +10,7 @@
 
   import Login from './session/Login.svelte';
   import Logout from './session/Logout.svelte';
+  import ValidateToken from './user/ValidateToken.svelte';
   import ResetPassword from './user/ResetPassword.svelte';
 
   if (window.location.search) {
@@ -46,6 +47,7 @@
   <Router>
     <Route path="/" component={Home} />
     <Route exact path="/reset-password/:token" component={ResetPassword} />
+    <Route exact path="/validate-access/:token" component={ValidateToken} />
     <Route fallback component={NotFound} />
   </Router>
 </main>

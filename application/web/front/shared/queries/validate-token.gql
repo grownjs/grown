@@ -1,0 +1,11 @@
+mutation(
+  $email: String!,
+  $token: String!,
+) {
+  validateToken(input: {
+    email: $email,
+    token: $token,
+  }) {
+    success
+  }
+}
