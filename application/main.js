@@ -49,7 +49,7 @@ const initServer = module.exports = () => {
   hook('onInit', server);
 
   server.mount(ctx => {
-    const site = Shopfish.adminPlugin.siteManager.locate(ctx);
+    const site = Shopfish.adminPlugin.siteManager.locate(ctx, 'custom');
 
     ctx.req.site = site;
     hook('onRequest', ctx);

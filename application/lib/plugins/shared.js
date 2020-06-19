@@ -13,8 +13,13 @@ class Sites {
     this.all = names.map(name => ({ name, config: require(path.join(cwd, baseDir, name, 'settings.json')) }));
   }
 
-  locate({ req }) {
-    return this.all.find(site => site.config.enabled && site.config.match.some(str => req.headers.host.includes(str)));
+  locate({ req }, fallback) {
+    const enabled = this.all.filter(site => site.config.enabled);
+    const hostname = req.headers.host || '';
+
+    return enabled.find(site => site.config.match.some(str => hostname.includes(str)))
+      || (fallback && enabled.find(site => site.name === fallback))
+      || null;
   }
 }
 
