@@ -5,7 +5,22 @@ const path = require('path');
 module.exports = (Grown, util) => {
   const serveStatic = require('serve-static');
 
+  function _middleware(cb) {
+    return (req, res, next) => {
+      let called = cb(req, res, err => {
+        called = true;
+        next(err);
+      });
+
+      if (!called) {
+        res.status(200);
+      }
+    };
+  }
+
   return Grown('Static', {
+    _middleware,
+
     $install(ctx) {
       const _cwd = Grown.cwd;
 
@@ -35,9 +50,9 @@ module.exports = (Grown, util) => {
           });
 
           if (typeof opts.at === 'string' && opts.at.charAt() === '/') {
-            ctx.mount(`[at:${opts.at}]`, serveStatic(opts.from, _opts), opts.filter);
+            ctx.mount(`[at:${opts.at}]`, this._middleware(serveStatic(opts.from, _opts)), opts.filter);
           } else {
-            ctx.mount(`[from:${path.relative(_cwd, opts.from) || '.'}]`, serveStatic(opts.from, _opts), opts.filter);
+            ctx.mount(`[from:${path.relative(_cwd, opts.from) || '.'}]`, this._middleware(serveStatic(opts.from, _opts)), opts.filter);
           }
         });
     },
