@@ -1,20 +1,22 @@
 require('logro').setForbiddenFields(require('./api/forbidden.json'));
 
 const log = require('logro').createLogger(__filename);
-const App = require('./lib');
+const Shopfish = require('./lib');
 
 const start = new Date();
 
 const initServer = module.exports = () => {
-  App.use(require('@grown/model'));
-  App.use(require('@grown/router'));
-  App.use(require('@grown/graphql'));
-  App.use(require('@grown/session/auth'));
+  Shopfish.use(require('@grown/model'));
+  Shopfish.use(require('@grown/router'));
+  Shopfish.use(require('@grown/render'));
+  Shopfish.use(require('@grown/static'));
+  Shopfish.use(require('@grown/graphql'));
+  Shopfish.use(require('@grown/session/auth'));
 
   const config = require('./api/config');
 
-  const server = new App({
-    cors: App.env !== 'production',
+  const server = new Shopfish({
+    cors: Shopfish.env !== 'production',
   });
 
   if (process.env.U_WEBSOCKETS_SKIP) {
@@ -22,52 +24,97 @@ const initServer = module.exports = () => {
     server.plug(require('body-parser').urlencoded({ extended: false }));
   }
 
-  const path = require('path');
+  const hooks = require('./lib/plugins').map(cb => {
+    const plugin = cb(Shopfish, config);
 
-  async function main() {
-    // CHANGE ME
+    Shopfish[plugin.name] = plugin;
+
+    return plugin;
+  });
+
+  function hook(name, ...args) {
+    hooks.forEach(hook => {
+      if (hook.enabled && typeof hook[name] === 'function') {
+        hook[name](...args);
+      }
+    });
   }
 
-  // FIXME: how to mount inside plugs?
-  server.mount('/api/v1/graphql', App.GraphQL.setup([
+  const path = require('path');
+
+  async function main(ctx) {
+    hook('onStart', ctx);
+  }
+
+  hook('onInit', server);
+
+  server.mount(ctx => {
+    const site = Shopfish.adminPlugin.siteManager.locate(ctx);
+
+    ctx.req.site = site;
+    hook('onRequest', ctx);
+  });
+
+  server.mount('/api/v1/graphql', Shopfish.GraphQL.setup([
     path.join(__dirname, 'api/schema/common.gql'),
     path.join(__dirname, 'api/schema/generated/index.gql'),
-  ], App.load(path.join(__dirname, 'api/schema/graphql'))));
+  ], Shopfish.load(path.join(__dirname, 'api/schema/graphql'))));
 
   server.plug([
     require('express-useragent').express(),
     require('logro').getExpressLogger(),
-    App.Model.Formator({
+    Shopfish.Model.Formator({
       prefix: '/db',
       options: { attributes: false },
-      database: App.Model.DB.default,
+      database: req => Shopfish.Model.DB[req.site ? req.site.config.database : 'default'],
     }),
-    App.Session.Auth.use('/auth', {
+    Shopfish.Session.Auth.use('/auth', {
       facebook: {
-        enabled: true,
-        credentials: config.facebook,
+        enabled: req => (req.site ? !!req.site.config.facebook : true),
+        credentials: req => (req.site ? req.site.config.facebook : config.facebook),
       },
-    }, (type, userInfo) => App.Services.API.Session.checkLogin({ params: { type, auth: userInfo } })),
-    App.Router.Mappings({
-      routes(map) {
-        // how this shit works?
-        return map()
-          .get('/status', ctx => {
-            ctx.res.status(200);
-          })
-          .get('/admin', ctx => {
-            ctx.res.write('ADMINISTRATION');
-            ctx.res.status(200);
-          })
-          .get('/validate-access/:token', ctx => {
-            console.log('>>>', ctx.req.params, ctx.req.handler, ctx.req.handler.url('42'));
-            ctx.res.status(200);
-          });
+    }, (type, userInfo) => Shopfish.Services.API.Session.checkLogin({ params: { type, auth: userInfo } })),
+    Shopfish.Static({
+      from_folders: [
+        path.join(__dirname, 'sites'),
+      ],
+      filter: ctx => {
+        const { site } = ctx.req;
+
+        if (site && site.config.root && ctx.req.url === '/') {
+          ctx.req.originalUrl = ctx.req.url;
+          ctx.req.url = site.config.root;
+        }
+
+        if (/\.\w+$/.test(ctx.req.url.split('?')[0])) {
+          if (site && Array.isArray(site.config.rewrite)) {
+            site.config.rewrite.some(pattern => {
+              const [prefix, suffix] = pattern.split(':');
+              const trailingSlash = prefix.substr(-1) === '/' ? '/' : '';
+
+              if (ctx.req.url.indexOf(prefix) === 0) {
+                ctx.req.originalUrl = ctx.req.url;
+                ctx.req.url = ctx.req.url.replace(prefix, `/${site.name}${suffix}${trailingSlash}`);
+                return true;
+              }
+              return false;
+            });
+          }
+        }
       },
+    }),
+    Shopfish.Render.Views({
+      view_folders: [
+        path.join(__dirname, 'lib/plugins'),
+        path.join(__dirname, 'sites'),
+      ],
+    }),
+    Shopfish.Router.Mappings({
+      routes: map => hook('routeMappings', map),
     }),
   ]);
 
-  server.on('start', () => App.Models.connect().then(() => App.Services.start()).then(main));
+  server.on('start', () => Shopfish.Models.connect().then(() => Shopfish.Services.start()).then(main));
   server.on('listen', ctx => log.info(`API started after ${(new Date() - start) / 1000} seconds`, { endpoint: ctx.location.href }));
 
   return server;
@@ -75,7 +122,7 @@ const initServer = module.exports = () => {
 
 if (require.main === module) {
   initServer()
-    .listen(App.argv.flags.port || 3000)
+    .listen(Shopfish.argv.flags.port || 3000)
     .catch(e => {
       log.exception(e, 'E_FATAL');
       process.exit(1);

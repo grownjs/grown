@@ -138,6 +138,10 @@ dev: deps ## Develop NodeJS application only  (host)
 	@make :3000! :4001! :1080! :1081!
 	@make -s watch & npm run dev
 
+api: deps
+	@make :3000! :4001! :1080! :1081!
+	@npm run watch
+
 e2e: deps ## Headlessly run E2E tests  (host)
 	@npm run test:e2e -- e2e/cases
 	@npm run test:bdd -- --take-snapshot -S -s e2e/screenshots

@@ -1,0 +1,11 @@
+{
+  "label": "Custom site",
+  "enabled": true,
+  "match": [
+    "site.local"
+  ],
+  "rewrite": [
+    "/:/public"
+  ],
+  "root": "/index.html"
+}

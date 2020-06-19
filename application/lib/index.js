@@ -1,19 +1,19 @@
 const path = require('path');
 
-const App = require('grown')();
+const Shopfish = require('grown')();
 
-const GRPC = App.use(require('@grown/grpc'));
-const Models = App.use(require('./models'));
+const GRPC = Shopfish.use(require('@grown/grpc'));
+const Models = Shopfish.use(require('./models'));
 
-App('GRPC.Gateway', {
+Shopfish('GRPC.Gateway', {
   include: [
     GRPC.Loader.scan(path.join(__dirname, '../api/schema/generated/index.proto')),
   ],
 });
 
-App('Services', {
+Shopfish('Services', {
   include: [
-    GRPC.Gateway.setup(App.load(path.join(__dirname, '../api/handlers')), { timeout: 10 }),
+    GRPC.Gateway.setup(Shopfish.load(path.join(__dirname, '../api/handlers')), { timeout: 10 }),
   ],
   getSchema(ref) {
     const [name, id] = ref.split('.');
@@ -28,4 +28,4 @@ App('Services', {
   },
 });
 
-module.exports = App;
+module.exports = Shopfish;

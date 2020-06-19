@@ -3,14 +3,14 @@ const log = require('logro').createLogger(__filename);
 const CleanUpSeeds = require('./cleanup');
 const UserSeeds = require('./user');
 
-const App = require('../../lib');
+const Shopfish = require('../../lib');
 
-const { connect, sequelize } = App.Models;
+const { connect, sequelize } = Shopfish.Models;
 
 async function integrationSeeds(tasks) {
   try {
     await tasks.reduce((prev, { run }) => {
-      return prev.then(() => run.call(App, sequelize));
+      return prev.then(() => run.call(Shopfish, sequelize));
     }, Promise.resolve());
   } catch (err) {
     log.exception(err, 'E_FATAL');
@@ -20,7 +20,7 @@ async function integrationSeeds(tasks) {
 
 async function runTasks() {
   if (process.argv.slice(2).includes('--clear')) {
-    return CleanUpSeeds.run.call(App, sequelize);
+    return CleanUpSeeds.run.call(Shopfish, sequelize);
   }
 
   await integrationSeeds([

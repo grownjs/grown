@@ -1,12 +1,12 @@
 const path = require('path');
 
-module.exports = App => {
-  App.use(require('@grown/model/db'));
-  App.use(require('@grown/model/cli'));
+module.exports = Shopfish => {
+  Shopfish.use(require('@grown/model/db'));
+  Shopfish.use(require('@grown/model/cli'));
 
-  return App('Models', {
+  return Shopfish('Models', {
     include: [
-      App.Model.DB.bundle({
+      Shopfish.Model.DB.bundle({
         models: path.join(__dirname, '../api/schema/models'),
         database: {
           config: require('../db/config'),
