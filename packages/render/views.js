@@ -23,7 +23,10 @@ const SELF_CLOSING_ELEMENTS = [
 const _util = require('util');
 
 function _buildvNode(tag, data) {
-  data = data || {};
+  const offset = typeof data === 'string' || typeof data === 'number' || typeof data === 'boolean' || Array.isArray(data) ? 1 : 2;
+  const children = Array.prototype.slice.call(arguments, offset);
+
+  data = (offset === 1 && {}) || data || {};
 
   const _classes = data.class && !Array.isArray(data.class)
     ? [data.class]
@@ -60,7 +63,7 @@ function _buildvNode(tag, data) {
   return {
     tag,
     data,
-    children: Array.prototype.slice.call(arguments, 2),
+    children,
   };
 }
 
