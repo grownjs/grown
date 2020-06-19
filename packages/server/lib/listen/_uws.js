@@ -208,7 +208,7 @@ module.exports = function _uws(ctx, options, callback, protocolName) {
       const _resp = new ServerResponse(res);
 
       const next = (data, cb) => {
-        if (typeof data === 'string') {
+        if (typeof data === 'string' && data.length) {
           _req.body = cb(data);
           _req._body = true;
         }
