@@ -22,7 +22,7 @@
   "dependencies": {
     "ajv": "^6.12.2",
     "debug": "^3.1.0",
-    "formator": "^0.0.2",
+    "formator": "^0.0.3",
     "json-schema-faker": "^0.5.0-rc9",
     "json-schema-sequelizer": "^0.20.7"
   },
