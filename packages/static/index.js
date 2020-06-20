@@ -7,14 +7,21 @@ module.exports = (Grown, util) => {
 
   function _middleware(cb) {
     return (req, res, next) => {
-      let called = cb(req, res, err => {
-        called = true;
-        next(err);
-      });
+      let called;
 
-      if (!called) {
-        res.status(200);
-      }
+      return new Promise(ok => {
+        cb(req, res, err => {
+          called = true;
+          next(err);
+        });
+
+        process.nextTick(() => {
+          if (!called) {
+            res.status(200);
+          }
+          ok();
+        });
+      });
     };
   }
 
