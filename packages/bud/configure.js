@@ -10,6 +10,7 @@ module.exports = ($, cwd, argv, util) => {
   // props
   $('Grown.argv', () => argv, false);
   $('Grown.cwd', () => cwd, false);
+  $('Grown.pkg', () => require(`${cwd}/package.json`), false);
   $('Grown.env', () => process.env.NODE_ENV || 'development', false);
 
   // methods
