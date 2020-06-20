@@ -89,11 +89,9 @@ const initServer = module.exports = () => {
         credentials: req => (req.site ? req.site.config.facebook : config.facebook),
       },
     }, (type, userInfo) => Shopfish.Services.API.Session.checkLogin({ params: { type, auth: userInfo } })),
-    Shopfish.Static({ from_folders: [path.join(__dirname, 'etc/plugins')] }),
     Shopfish.Render.Views({ view_folders: [path.join(__dirname, 'etc')] }),
-    Shopfish.Router.Mappings({
-      routes: map => hook('routeMappings', map),
-    }),
+    Shopfish.Router.Mappings({ routes: map => hook('routeMappings', map) }),
+    Shopfish.Static({ from_folders: [path.join(__dirname, 'etc/plugins')] }),
   ]);
 
   server.on('start', () => Shopfish.Models.connect().then(() => Shopfish.Services.start()).then(main));

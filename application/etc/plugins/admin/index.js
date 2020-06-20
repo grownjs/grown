@@ -1,25 +1,33 @@
 const { Sites, Plugin } = require('../../shared');
 
 class AdminPlugin extends Plugin {
-  onAdmin(ctx) {
+  onAdmin(ctx, site) {
     return ctx.render('layout', {
-      body: 'FIXME',
+      body: `<pre>${JSON.stringify({
+        matches: ctx.req.site,
+        current: site,
+      }, null, 2)}</pre>`,
       pkg: this.pkg,
       env: process.env,
-      base: '/admin/',
-      scripts: '<script src="/assets/admin.js"></script>',
-      styles: '<link rel="stylesheet" href="/assets/admin.css" />',
+      base: `/${site.id}/`,
+      scripts: `<script src="/assets/${site.id}.js"></script>`,
+      styles: `<link rel="stylesheet" href="/assets/${site.id}.css" />`,
     });
   }
 
   routeMappings(map) {
-    return map()
+    const routes = map()
       .get('/api/status', ctx => {
         ctx.res.write(JSON.stringify(ctx.req.headers, null, 2));
         ctx.res.status(200);
-      })
-      .get('/admin', this.onAdmin.bind(this))
-      .get('/admin/*path', this.onAdmin.bind(this));
+      });
+
+    this.siteManager.all.forEach(site => {
+      routes.get(`/${site.id}`, ctx => this.onAdmin(ctx, site));
+      routes.get(`/${site.id}/*path`, ctx => this.onAdmin(ctx, site));
+    });
+
+    return routes;
   }
 }
 

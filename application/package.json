@@ -101,6 +101,11 @@
           "less-plugin-autoprefix"
         ]
       }
+    },
+    "pluginOptions": {
+      "lr": {
+        "timeout": 1000
+      }
     }
   },
   "devDependencies": {
