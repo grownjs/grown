@@ -1,43 +1,6 @@
 {
-  "description": "Migration from 2019-10-14T18:20:45.820Z",
+  "description": "Migration from 2020-06-20T13:31:09.377Z",
   "definitions": {
-    "apiTypes": {
-      "SuccessfulResponse": {
-        "properties": {
-          "success": {
-            "type": "boolean"
-          }
-        },
-        "required": [
-          "success"
-        ],
-        "id": "Success"
-      }
-    },
-    "dataTypes": {
-      "primaryKey": {
-        "type": "integer",
-        "primaryKey": true,
-        "autoIncrement": true
-      }
-    },
-    "userTypes": {
-      "accessRole": {
-        "type": "string",
-        "enum": [
-          "ADMIN",
-          "GUEST",
-          "USER"
-        ]
-      },
-      "accessType": {
-        "type": "string",
-        "enum": [
-          "VALIDATE_EMAIL",
-          "RECOVER_PASSWORD"
-        ]
-      }
-    },
     "Session": {
       "id": "Session",
       "options": {
@@ -103,6 +66,14 @@
             "verified": {
               "type": "boolean",
               "default": false
+            },
+            "is_admin": {
+              "type": "boolean",
+              "default": false
+            },
+            "is_root": {
+              "type": "boolean",
+              "default": false
             }
           },
           "required": [
@@ -117,6 +88,229 @@
       "required": [
         "email",
         "role"
+      ]
+    },
+    "Me": {
+      "properties": {
+        "token": {
+          "type": "string"
+        },
+        "expirationDate": {
+          "type": "string"
+        },
+        "user": {
+          "id": "User",
+          "options": {
+            "tableName": "users",
+            "paranoid": true
+          },
+          "properties": {
+            "id": {
+              "type": "integer",
+              "primaryKey": true,
+              "autoIncrement": true
+            },
+            "platform": {
+              "type": "string"
+            },
+            "identifier": {
+              "type": "string"
+            },
+            "email": {
+              "type": "string"
+            },
+            "role": {
+              "type": "string",
+              "enum": [
+                "ADMIN",
+                "GUEST",
+                "USER"
+              ]
+            },
+            "password": {
+              "type": "string"
+            },
+            "verified": {
+              "type": "boolean",
+              "default": false
+            },
+            "is_admin": {
+              "type": "boolean",
+              "default": false
+            },
+            "is_root": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          "required": [
+            "email",
+            "role"
+          ]
+        }
+      },
+      "required": [
+        "token",
+        "expirationDate",
+        "user"
+      ]
+    },
+    "Success": {
+      "properties": {
+        "success": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "success"
+      ],
+      "id": "Success"
+    },
+    "TokenParams": {
+      "properties": {
+        "token": {
+          "type": "string"
+        },
+        "expirationDate": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "token"
+      ]
+    },
+    "TokenRequest": {
+      "properties": {
+        "params": {
+          "properties": {
+            "token": {
+              "type": "string"
+            },
+            "expirationDate": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "token"
+          ]
+        }
+      },
+      "required": [
+        "params"
+      ]
+    },
+    "CheckAuth": {
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string",
+          "format": "email"
+        }
+      }
+    },
+    "CheckParams": {
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "facebook"
+          ]
+        },
+        "auth": {
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "email": {
+              "type": "string",
+              "format": "email"
+            }
+          }
+        }
+      },
+      "required": [
+        "type",
+        "auth"
+      ]
+    },
+    "CheckRequest": {
+      "properties": {
+        "params": {
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "facebook"
+              ]
+            },
+            "auth": {
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "email": {
+                  "type": "string",
+                  "format": "email"
+                }
+              }
+            }
+          },
+          "required": [
+            "type",
+            "auth"
+          ]
+        }
+      },
+      "required": [
+        "params"
+      ]
+    },
+    "LoginParams": {
+      "properties": {
+        "email": {
+          "type": "string",
+          "format": "email"
+        },
+        "password": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "email",
+        "password"
+      ]
+    },
+    "LoginRequest": {
+      "properties": {
+        "params": {
+          "properties": {
+            "email": {
+              "type": "string",
+              "format": "email"
+            },
+            "password": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "email",
+            "password"
+          ]
+        }
+      },
+      "required": [
+        "params"
       ]
     },
     "Token": {
@@ -189,12 +383,57 @@
         "verified": {
           "type": "boolean",
           "default": false
+        },
+        "is_admin": {
+          "type": "boolean",
+          "default": false
+        },
+        "is_root": {
+          "type": "boolean",
+          "default": false
         }
       },
       "required": [
         "email",
         "role"
       ]
+    },
+    "apiTypes": {
+      "SuccessfulResponse": {
+        "properties": {
+          "success": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "id": "Success"
+      }
+    },
+    "dataTypes": {
+      "primaryKey": {
+        "type": "integer",
+        "primaryKey": true,
+        "autoIncrement": true
+      }
+    },
+    "userTypes": {
+      "accessRole": {
+        "type": "string",
+        "enum": [
+          "ADMIN",
+          "GUEST",
+          "USER"
+        ]
+      },
+      "accessType": {
+        "type": "string",
+        "enum": [
+          "VALIDATE_EMAIL",
+          "RECOVER_PASSWORD"
+        ]
+      }
     }
   }
 }

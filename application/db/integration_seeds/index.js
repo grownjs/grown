@@ -3,7 +3,7 @@ const log = require('logro').createLogger(__filename);
 const CleanUpSeeds = require('./cleanup');
 const UserSeeds = require('./user');
 
-const Shopfish = require('../../lib');
+const Shopfish = require('../../etc');
 
 const { connect, sequelize } = Shopfish.Models;
 
