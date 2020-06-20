@@ -11,8 +11,10 @@
   "publishConfig": {
     "access": "public"
   },
+  "peerDependencies": {
+    "tarima": "^4.x"
+  },
   "dependencies": {
-    "debug": "^4.1.1",
-    "tarima": "^4.7.2"
+    "debug": "^4.1.1"
   }
 }

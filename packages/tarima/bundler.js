@@ -97,10 +97,10 @@ module.exports = (Grown, util) => {
 
   function _bundleView(src, options) {
     return new Promise((resolve, reject) => {
-      const name = `${path.basename(src, '.js')}.js`;
+      const name = `${path.basename(src).replace(/\.\w+$/, '')}.js`;
 
       // use the internal resolution algorithm for imported sources
-      const code = `import x from '${src}'; export default x;`;
+      const code = `import x from '${path.join(options.working_directory || '', src)}'; export default x;`;
 
       // prepare the source for bundling, see other extensions
       tarima.parse(name, code, options).bundle((err, output) => {
