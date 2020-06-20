@@ -11,5 +11,6 @@ module.exports = ({ env, pkg, body }) => `
       <title>Administration</title>
     </head>
     <body id="app">${body}</body>
+    <script src="/assets/admin.bundle.js"></script>
   </html>
 `;

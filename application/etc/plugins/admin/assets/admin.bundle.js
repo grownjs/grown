@@ -1,2 +1,1 @@
-function main() {
-}
+console.log('OSOMS');

@@ -2,7 +2,11 @@ const { Sites, Plugin } = require('../../shared');
 
 class AdminPlugin extends Plugin {
   onAdmin(ctx) {
-    return ctx.render('admin/views/panel');
+    return ctx.render('layout', {
+      body: 'FIXME',
+      pkg: this.pkg,
+      env: process.env,
+    });
   }
 
   routeMappings(map) {
@@ -11,17 +15,17 @@ class AdminPlugin extends Plugin {
         ctx.res.write(JSON.stringify(ctx.req.headers, null, 2));
         ctx.res.status(200);
       })
-      .get('/admin', this.onAdmin)
-      .get('/admin/*path', this.onAdmin);
+      .get('/admin/*path?', this.onAdmin.bind(this));
   }
 }
 
 module.exports = (Shopfish, config) => {
-  const siteManager = new Sites(Shopfish.cwd, 'etc/tenants');
+  const siteManager = new Sites(Shopfish.cwd, 'etc/plugins');
   const pluginInstance = new AdminPlugin({
     enabled: config.admin,
     name: 'adminPlugin',
     siteManager,
+    ...Shopfish,
   });
 
   return pluginInstance;

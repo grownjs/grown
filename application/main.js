@@ -27,7 +27,7 @@ const initServer = module.exports = () => {
   }
 
   const hooks = Plugin.from(path.join(__dirname, 'etc/plugins'), cb => cb(Shopfish, config))
-    .map(plugin => (Shopfish[plugin.name] = plugin));
+    .map(plugin => (Shopfish[plugin.name] = plugin, plugin));
 
   function hook(name, ...args) {
     hooks.forEach(hook => {
@@ -37,15 +37,6 @@ const initServer = module.exports = () => {
     });
   }
 
-  const static_dirs = hooks.reduce((memo, hook) => {
-    const publicDir = path.join(__dirname, `etc/plugins/${hook.id}/public`);
-
-    if (hook.enabled && Plugin.isDir(publicDir)) {
-      memo.push(publicDir);
-    }
-    return memo;
-  }, []);
-
   async function main(ctx) {
     hook('onStart', ctx);
   }
@@ -54,16 +45,14 @@ const initServer = module.exports = () => {
 
   server.mount(ctx => {
     const site = Shopfish.adminPlugin.siteManager.locate(ctx);
+    const fileName = ctx.req.url.split('?')[0];
 
-    if (site && site.config.root && ctx.req.url === '/') {
+    if (site && site.config.root && fileName.substr(-1) === '/') {
       ctx.req.originalUrl = ctx.req.url;
-      ctx.req.url = site.config.root;
+      ctx.req.url = `${fileName.replace(/\/$/, '')}${site.config.root}`;
     }
 
-    const fileName = ctx.req.url.split('?')[0];
-    const exists = static_dirs.some(cwd => Plugin.isFile(path.join(cwd, fileName)));
-
-    if (!exists && site && Array.isArray(site.config.rewrite)) {
+    if (site && Array.isArray(site.config.rewrite)) {
       site.config.rewrite.some(pattern => {
         const [prefix, suffix] = pattern.split(':');
         const trailingSlash = prefix.substr(-1) === '/' ? '/' : '';
@@ -100,15 +89,8 @@ const initServer = module.exports = () => {
         credentials: req => (req.site ? req.site.config.facebook : config.facebook),
       },
     }, (type, userInfo) => Shopfish.Services.API.Session.checkLogin({ params: { type, auth: userInfo } })),
-    Shopfish.Static({
-      from_folders: static_dirs.concat(path.join(__dirname, 'tenants')),
-    }),
-    Shopfish.Render.Views({
-      view_folders: [
-        path.join(__dirname, 'etc/plugins'),
-        path.join(__dirname, 'etc/tenants'),
-      ],
-    }),
+    Shopfish.Static({ from_folders: [path.join(__dirname, 'etc/plugins')] }),
+    Shopfish.Render.Views({ view_folders: [path.join(__dirname, 'etc')] }),
     Shopfish.Router.Mappings({
       routes: map => hook('routeMappings', map),
     }),

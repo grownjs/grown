@@ -4,14 +4,23 @@ const path = require('path')
 class Sites {
   constructor(cwd, baseDir) {
     this.all = Plugin.readdir(path.join(cwd, baseDir))
-      .map(id => ({ id, config: require(path.join(cwd, baseDir, id, 'settings.json')) }));
+      .map(id => {
+        const configFile = path.join(cwd, baseDir, id, 'settings.json');
+        const config = Plugin.isFile(configFile)
+          ? require(configFile)
+          : {};
+
+        return { id, config };
+      });
   }
 
   locate({ req }, fallback) {
-    const enabled = this.all.filter(site => site.config.enabled);
+    const enabled = this.all.filter(site => site.config.enabled).sort((a, b) => (b.config.match ? 1 : (a.config.match ? -1 : 0)));
     const hostname = req.headers.host || '';
 
-    return enabled.find(site => site.config.match.some(str => hostname.includes(str)))
+    fallback = fallback || req.url.split('/')[1];
+
+    return enabled.find(site => !site.config.match || site.config.match.some(str => hostname.includes(str)))
       || (fallback && enabled.find(site => site.id === fallback))
       || null;
   }
@@ -24,7 +33,13 @@ class Plugin {
 
   static from(fullDir, cb) {
     return Plugin.readdir(fullDir)
-      .map(id => ({ id, ...cb(require(path.join(fullDir, id))) }));
+      .reduce((memo, id) => {
+        const indexFile = path.join(fullDir, id, 'index.js');
+        const definition = Plugin.isFile(indexFile) && require(indexFile);
+
+        if (definition) memo.push(cb(definition));
+        return memo;
+      }, []);
   }
 
   static isDir(x, y) {
