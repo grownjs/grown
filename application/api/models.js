@@ -7,10 +7,10 @@ module.exports = Shopfish => {
   return Shopfish('Models', {
     include: [
       Shopfish.Model.DB.bundle({
-        models: path.join(__dirname, '../api/schema/models'),
+        models: path.join(__dirname, 'schema/models'),
         database: {
           config: require('../db/config'),
-          refs: require('../api/schema/generated'),
+          refs: require('./schema/generated'),
         },
       }),
     ],

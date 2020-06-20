@@ -47,9 +47,9 @@ const initServer = module.exports = () => {
     const site = Shopfish.adminPlugin.siteManager.locate(ctx);
     const fileName = ctx.req.url.split('?')[0];
 
-    if (site && site.config.root && fileName.substr(-1) === '/') {
+    if (site && site.config.root && fileName === '/') {
       ctx.req.originalUrl = ctx.req.url;
-      ctx.req.url = `${fileName.replace(/\/$/, '')}${site.config.root}`;
+      ctx.req.url = site.config.root;
     }
 
     if (site && Array.isArray(site.config.rewrite)) {
@@ -81,7 +81,7 @@ const initServer = module.exports = () => {
     Shopfish.Model.Formator({
       prefix: '/db',
       options: { attributes: false },
-      database: req => Shopfish.Model.DB[req.site ? req.site.config.database : 'default'],
+      database: req => Shopfish.Model.DB[(req.site && req.site.config.database) || 'default'],
     }),
     Shopfish.Session.Auth.use('/auth', {
       facebook: {

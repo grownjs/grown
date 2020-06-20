@@ -6,6 +6,9 @@ class AdminPlugin extends Plugin {
       body: 'FIXME',
       pkg: this.pkg,
       env: process.env,
+      base: '/admin/',
+      scripts: '<script src="/assets/admin.js"></script>',
+      styles: '<link rel="stylesheet" href="/assets/admin.css" />',
     });
   }
 
@@ -15,7 +18,8 @@ class AdminPlugin extends Plugin {
         ctx.res.write(JSON.stringify(ctx.req.headers, null, 2));
         ctx.res.status(200);
       })
-      .get('/admin/*path?', this.onAdmin.bind(this));
+      .get('/admin', this.onAdmin.bind(this))
+      .get('/admin/*path', this.onAdmin.bind(this));
   }
 }
 

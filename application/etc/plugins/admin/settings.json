@@ -1,4 +1,6 @@
 {
   "enabled": true,
-  "root": "/index.html"
+  "rewrite": [
+    "/admin:/public"
+  ]
 }

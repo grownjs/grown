@@ -4,7 +4,7 @@ PWD=$(shell pwd)
 # default settings
 run := unit
 report := html
-models := lib/models
+models := api/models
 profile := $(notdir $(PWD))
 
 # dotenv support

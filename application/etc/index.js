@@ -3,7 +3,7 @@ const path = require('path');
 const Shopfish = require('grown')();
 
 const GRPC = Shopfish.use(require('@grown/grpc'));
-const Models = Shopfish.use(require('./models'));
+const Models = Shopfish.use(require('../api/models'));
 
 Shopfish('GRPC.Gateway', {
   include: [
