@@ -13,11 +13,11 @@
     "grown": "grown",
     "start": "node .",
     "logs": "logrof --",
-    "lint": "eslint --ext js,svelte api db e2e lib web *.js",
+    "lint": "eslint --ext js,svelte api db e2e etc web *.js",
     "debug": "ndb npm run watch --",
-    "watch": "nodemon --ignore '{build,docker,logs,web,sites,e2e}/**' --ignore '**/generated/**' --ignore Makefile",
-    "watch:mail": "mailor watch lib/mailer/templates -d lib/mailer/generated --no-open",
-    "build:mail": "mailor build lib/mailer/templates -d lib/mailer/generated",
+    "watch": "nodemon --ignore '{build,docker,logs,web,assets,e2e}/**' --ignore '**/generated/**' --ignore Makefile",
+    "watch:mail": "mailor watch etc/mailer/templates -d etc/mailer/generated --no-open",
+    "build:mail": "mailor build etc/mailer/templates -d etc/mailer/generated",
     "mocha": "NODE_ENV=test _mocha -c --exit --recursive",
     "schema": "npm run schema-to:json && npm run schema-to:graphql && npm run schema-to:protobuf",
     "schema-to:json": "json-schema-to -tw api/schema -pbc index --json",
@@ -46,23 +46,27 @@
     }
   ],
   "tarima": {
-    "from": "web/front",
+    "from": [
+      "web/front",
+      "etc/tenants",
+      "etc/plugins"
+    ],
     "public": "build",
     "copy": [
       "web/public/**"
     ],
     "rename": [
-      "**/front/**:{fullpath/2}"
+      "**/front/**:{fullpath/2}",
+      "**/etc/**:{fullpath/3}"
     ],
     "filter": [
       "!_*",
       "!**/_*",
       "!**/_*/**",
-      "!**/{lib,shared,components}/**"
+      "!**/{index.js,settings.json}",
+      "!**/{lib,views,shared,public,components}/**"
     ],
-    "bundle": [
-      "**/main.js"
-    ],
+    "bundle": "**/assets/**",
     "ignoreFiles": [
       ".gitignore"
     ],

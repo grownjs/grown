@@ -1,7 +1,9 @@
 require('logro').setForbiddenFields(require('./api/forbidden.json'));
 
+const path = require('path');
 const log = require('logro').createLogger(__filename);
-const Shopfish = require('./lib');
+const { Plugin } = require('./etc/shared')
+const Shopfish = require('./etc');
 
 const start = new Date();
 
@@ -24,13 +26,8 @@ const initServer = module.exports = () => {
     server.plug(require('body-parser').urlencoded({ extended: false }));
   }
 
-  const hooks = require('./lib/plugins').map(cb => {
-    const plugin = cb(Shopfish, config);
-
-    Shopfish[plugin.name] = plugin;
-
-    return plugin;
-  });
+  const hooks = Plugin.from(path.join(__dirname, 'etc/plugins'), cb => cb(Shopfish, config))
+    .map(plugin => (Shopfish[plugin.name] = plugin));
 
   function hook(name, ...args) {
     hooks.forEach(hook => {
@@ -40,7 +37,14 @@ const initServer = module.exports = () => {
     });
   }
 
-  const path = require('path');
+  const static_dirs = hooks.reduce((memo, hook) => {
+    const publicDir = path.join(__dirname, `etc/plugins/${hook.id}/public`);
+
+    if (hook.enabled && Plugin.isDir(publicDir)) {
+      memo.push(publicDir);
+    }
+    return memo;
+  }, []);
 
   async function main(ctx) {
     hook('onStart', ctx);
@@ -49,7 +53,29 @@ const initServer = module.exports = () => {
   hook('onInit', server);
 
   server.mount(ctx => {
-    const site = Shopfish.adminPlugin.siteManager.locate(ctx, 'custom');
+    const site = Shopfish.adminPlugin.siteManager.locate(ctx);
+
+    if (site && site.config.root && ctx.req.url === '/') {
+      ctx.req.originalUrl = ctx.req.url;
+      ctx.req.url = site.config.root;
+    }
+
+    const fileName = ctx.req.url.split('?')[0];
+    const exists = static_dirs.some(cwd => Plugin.isFile(path.join(cwd, fileName)));
+
+    if (!exists && site && Array.isArray(site.config.rewrite)) {
+      site.config.rewrite.some(pattern => {
+        const [prefix, suffix] = pattern.split(':');
+        const trailingSlash = prefix.substr(-1) === '/' ? '/' : '';
+
+        if (ctx.req.url.indexOf(prefix) === 0) {
+          ctx.req.originalUrl = ctx.req.url;
+          ctx.req.url = ctx.req.url.replace(prefix, `/${site.id}${suffix}${trailingSlash}`);
+          return true;
+        }
+        return false;
+      });
+    }
 
     ctx.req.site = site;
     hook('onRequest', ctx);
@@ -75,38 +101,12 @@ const initServer = module.exports = () => {
       },
     }, (type, userInfo) => Shopfish.Services.API.Session.checkLogin({ params: { type, auth: userInfo } })),
     Shopfish.Static({
-      from_folders: [
-        path.join(__dirname, 'sites'),
-      ],
-      filter: ctx => {
-        const { site } = ctx.req;
-
-        if (site && site.config.root && ctx.req.url === '/') {
-          ctx.req.originalUrl = ctx.req.url;
-          ctx.req.url = site.config.root;
-        }
-
-        if (/\.\w+$/.test(ctx.req.url.split('?')[0])) {
-          if (site && Array.isArray(site.config.rewrite)) {
-            site.config.rewrite.some(pattern => {
-              const [prefix, suffix] = pattern.split(':');
-              const trailingSlash = prefix.substr(-1) === '/' ? '/' : '';
-
-              if (ctx.req.url.indexOf(prefix) === 0) {
-                ctx.req.originalUrl = ctx.req.url;
-                ctx.req.url = ctx.req.url.replace(prefix, `/${site.name}${suffix}${trailingSlash}`);
-                return true;
-              }
-              return false;
-            });
-          }
-        }
-      },
+      from_folders: static_dirs.concat(path.join(__dirname, 'tenants')),
     }),
     Shopfish.Render.Views({
       view_folders: [
-        path.join(__dirname, 'lib/plugins'),
-        path.join(__dirname, 'sites'),
+        path.join(__dirname, 'etc/plugins'),
+        path.join(__dirname, 'etc/tenants'),
       ],
     }),
     Shopfish.Router.Mappings({

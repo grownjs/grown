@@ -1,8 +1,8 @@
-const { Sites, Plugin } = require('../shared');
+const { Sites, Plugin } = require('../../shared');
 
 class AdminPlugin extends Plugin {
   onAdmin(ctx) {
-    return ctx.render('admin/dashboard');
+    return ctx.render('admin/views/panel');
   }
 
   routeMappings(map) {
@@ -17,7 +17,7 @@ class AdminPlugin extends Plugin {
 }
 
 module.exports = (Shopfish, config) => {
-  const siteManager = new Sites(Shopfish.cwd, 'sites');
+  const siteManager = new Sites(Shopfish.cwd, 'etc/tenants');
   const pluginInstance = new AdminPlugin({
     enabled: config.admin,
     name: 'adminPlugin',
