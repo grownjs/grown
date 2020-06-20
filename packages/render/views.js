@@ -322,7 +322,9 @@ module.exports = (Grown, util) => {
       return {
         methods: {
           render(src, data) {
-            return self.render.call(this, src, data)
+            return Promise.resolve()
+              .then(() => self.render.call(this, src, data))
+              .catch(e => `${e.type || e.name}:\n${e.message}`)
               .then(body => {
                 if (typeof this.end === 'function') {
                   this.resp_body = body;
