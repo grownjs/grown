@@ -17,7 +17,7 @@ module.exports = (Grown, util) => {
 
         process.nextTick(() => {
           if (!called) {
-            res.status(200);
+            res.status(200).end();
           }
           ok();
         });
