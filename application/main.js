@@ -11,6 +11,7 @@ const initServer = module.exports = () => {
   Shopfish.use(require('@grown/model'));
   Shopfish.use(require('@grown/router'));
   Shopfish.use(require('@grown/render'));
+  Shopfish.use(require('@grown/tarima'));
   Shopfish.use(require('@grown/static'));
   Shopfish.use(require('@grown/graphql'));
   Shopfish.use(require('@grown/session/auth'));
@@ -89,9 +90,21 @@ const initServer = module.exports = () => {
         credentials: req => (req.site ? req.site.config.facebook : config.facebook),
       },
     }, (type, userInfo) => Shopfish.Services.API.Session.checkLogin({ params: { type, auth: userInfo } })),
-    Shopfish.Render.Views({ view_folders: [path.join(__dirname, 'etc')] }),
-    Shopfish.Router.Mappings({ routes: map => hook('routeMappings', map) }),
-    Shopfish.Static({ from_folders: [path.join(__dirname, 'etc/plugins')] }),
+    Shopfish.Tarima.Bundler({
+      bundle_options: {
+        ...Shopfish.pkg.tarima.bundleOptions,
+        working_directory: path.join(__dirname, 'etc/plugins'),
+      },
+    }),
+    Shopfish.Render.Views({
+      view_folders: [path.join(__dirname, 'etc')],
+    }),
+    Shopfish.Router.Mappings({
+      routes: map => hook('routeMappings', map),
+    }),
+    Shopfish.Static({
+      from_folders: [path.join(__dirname, 'etc/plugins')],
+    }),
   ]);
 
   server.on('start', () => Shopfish.Models.connect().then(() => Shopfish.Services.start()).then(main));

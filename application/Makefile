@@ -203,9 +203,9 @@ database: deps ## Start database for development  (host)
 migrate-%: deps ## Generic method to run migrate-tasks  (host)
 	@npm run grown -- migrate models:$(models) --$(subst :, --,$*)
 
-refresh: deps ## Autogenerate new migration files  (host)
-	@make -s migrate-make
-
 migrate: deps ## Run & apply pending migrations	  (host)
 	@make -s migrate-up
 	@make -s migrate-apply
+
+refresh: deps ## Autogenerate new migration files  (host)
+	@make -s migrate-make

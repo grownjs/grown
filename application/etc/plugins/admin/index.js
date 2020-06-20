@@ -1,12 +1,15 @@
 const { Sites, Plugin } = require('../../shared');
 
 class AdminPlugin extends Plugin {
-  onAdmin(ctx, site) {
+  async onAdmin(ctx, site) {
+    const { render } = await ctx.bundle('admin/views/panel');
+
     return ctx.render('layout', {
-      body: `<pre>${JSON.stringify({
-        matches: ctx.req.site,
-        current: site,
-      }, null, 2)}</pre>`,
+      body: render({
+        plugins: this.siteManager.all,
+        matches: ctx.req.site.id,
+        current: site.id,
+      }),
       pkg: this.pkg,
       env: process.env,
       base: `/${site.id}/`,
@@ -17,9 +20,9 @@ class AdminPlugin extends Plugin {
 
   routeMappings(map) {
     const routes = map()
-      .get('/api/status', ctx => {
-        ctx.res.write(JSON.stringify(ctx.req.headers, null, 2));
-        ctx.res.status(200);
+      .get('/api/status', ({ req, res }) => {
+        res.write(JSON.stringify(req.headers, null, 2));
+        res.status(200);
       });
 
     this.siteManager.all.forEach(site => {
