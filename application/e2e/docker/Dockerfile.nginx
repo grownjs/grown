@@ -1,7 +1,7 @@
 FROM nginx:stable
 
 COPY --from=application/web /app/build /var/www
-COPY ./docker/nginx.conf /etc/nginx/conf.d/default.conf
-COPY ./docker/*.sh /usr/bin
+COPY ./e2e/docker/nginx.conf /etc/nginx/conf.d/default.conf
+COPY ./e2e/docker/*.sh /usr/bin
 
 ENTRYPOINT ["entrypoint.sh"]

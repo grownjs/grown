@@ -15,7 +15,7 @@
     "logs": "logrof --",
     "lint": "eslint --ext js,svelte api db e2e etc web *.js",
     "debug": "ndb npm run watch --",
-    "watch": "nodemon --ignore '{build,docker,logs,web,assets,e2e}/**' --ignore '**/generated/**' --ignore Makefile",
+    "watch": "nodemon --ignore '{build,logs,web,assets,e2e}/**' --ignore '**/generated/**' --ignore Makefile",
     "watch:mail": "mailor watch etc/mailer/templates -d etc/mailer/generated --no-open",
     "build:mail": "mailor build etc/mailer/templates -d etc/mailer/generated",
     "mocha": "NODE_ENV=test _mocha -c --exit --recursive",
@@ -64,7 +64,7 @@
       "!**/_*",
       "!**/_*/**",
       "!**/{index.js,settings.json}",
-      "!**/{lib,views,shared,public,components}/**"
+      "!**/{db,api,lib,views,shared,public,components}/**"
     ],
     "bundle": "**/assets/**",
     "ignoreFiles": [
@@ -153,6 +153,7 @@
     "@grown/tarima": "^0.0.10",
     "express-useragent": "^1.0.12",
     "grown": "^1.1.9",
+    "is-docker": "^2.0.0",
     "logro": "^0.1.9",
     "mailor": "^0.1.0",
     "pg": "^7.9.0",

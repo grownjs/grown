@@ -5,6 +5,12 @@ const Shopfish = require('grown')();
 const GRPC = Shopfish.use(require('@grown/grpc'));
 const Models = Shopfish.use(require('../api/models'));
 
+Shopfish('ApplicationServer', {
+  getServer() {
+    return require('./server')(Shopfish, require('./shared'));
+  },
+});
+
 Shopfish('GRPC.Gateway', {
   include: [
     GRPC.Loader.scan(path.join(__dirname, '../api/schema/generated/index.proto')),

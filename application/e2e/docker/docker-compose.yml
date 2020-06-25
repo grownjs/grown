@@ -7,12 +7,12 @@ services:
   nginx:
     build:
       context: ..
-      dockerfile: ./docker/Dockerfile.nginx
+      dockerfile: ./e2e/docker/Dockerfile.nginx
     image: application/nginx
   web:
     build:
       context: ..
-      dockerfile: ./docker/Dockerfile.web
+      dockerfile: ./e2e/docker/Dockerfile.web
     image: application/web
     environment:
       BASE_URL: ${BASE_URL:-http://localhost:4001}

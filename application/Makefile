@@ -27,11 +27,11 @@ ifneq ($(PORTS),)
 endif
 
 # docker-compose configuration
-DOCKER_COMPOSE = -f docker/docker-compose.yml
-TEST_COMPOSE = $(DOCKER_COMPOSE) -f docker/docker-compose.test.yml
-PRE_COMPOSE = $(DOCKER_COMPOSE) -f docker/docker-compose.pre.yml
-DEV_COMPOSE = $(TEST_COMPOSE) -f docker/docker-compose.dev.yml
-E2E_COMPOSE = $(DEV_COMPOSE) -f docker/docker-compose.e2e.yml
+DOCKER_COMPOSE = -f e2e/docker/docker-compose.yml
+TEST_COMPOSE = $(DOCKER_COMPOSE) -f e2e/docker/docker-compose.test.yml
+PRE_COMPOSE = $(DOCKER_COMPOSE) -f e2e/docker/docker-compose.pre.yml
+DEV_COMPOSE = $(TEST_COMPOSE) -f e2e/docker/docker-compose.dev.yml
+E2E_COMPOSE = $(DEV_COMPOSE) -f e2e/docker/docker-compose.e2e.yml
 
 # targets
 .PHONY: ? sh up run logs stop down test chrome test-e2e build backend integration provision
@@ -96,7 +96,7 @@ check: ## Verify and setup docker dependencies  (docker)
 	@(((docker images | grep application/nodejs) > /dev/null 2>&1) || make backend) || true
 
 backend: ## Build base docker-image  (docker)
-	@docker build -t application/nodejs --target nodejs -f docker/Dockerfile.backend .
+	@docker build -t application/nodejs --target nodejs -f e2e/docker/Dockerfile.backend .
 
 integration: check ## Env for frontend-development and QA  (docker)
 	@docker-compose $(E2E_COMPOSE) up -d --force-recreate $(PORT_FLAGS)
