@@ -3,8 +3,6 @@
 const isDocker = process.cwd() === '/app';
 
 const env = process.env.NODE_ENV || 'development';
-const database = process.env.DB_NAME || 'user_dev';
-const username = process.env.POSTGRES_USER || 'postgres';
 const logging = env === 'test' || process.env.REMOVE_LOG === 'YES' ? false : require('logro').logger; // eslint-ignore
 
 const config = module.exports = {
@@ -22,8 +20,8 @@ if (['test', 'development'].includes(env)) {
   config.storage = `${__dirname}/db.sqlite`;
   config.dialect = 'sqlite';
 } else {
-  config.database = database;
-  config.username = username;
+  config.database = process.env.DB_NAME || 'user_dev';
+  config.username = process.env.POSTGRES_USER || 'postgres';
   config.password = process.env.POSTGRES_PASSWORD || '*secret*';
   config.host = process.env.DB_HOST || (isDocker ? 'db' : 'localhost');
   config.port = process.env.DB_PORT || 5432;

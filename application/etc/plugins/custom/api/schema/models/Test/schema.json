@@ -1,0 +1,18 @@
+{
+  "id": "Test",
+  "options": {
+    "tableName": "tests",
+    "paranoid": true
+  },
+  "properties": {
+    "id": {
+      "$ref": "dataTypes#/definitions/primaryKey"
+    },
+    "label": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "label"
+  ]
+}
