@@ -26,14 +26,6 @@
     "verified": {
       "type": "boolean",
       "default": false
-    },
-    "is_admin": {
-      "type": "boolean",
-      "default": false
-    },
-    "is_root": {
-      "type": "boolean",
-      "default": false
     }
   },
   "required": [

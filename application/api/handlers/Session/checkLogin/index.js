@@ -22,7 +22,7 @@ module.exports = ({ User, Session }) => async function checkLogin({ request }) {
 
   return {
     token: session.token,
-    expirationDate: session.expirationDate.toISOString(),
+    expirationDate: session.expirationDate,
     user: {
       id: session.userId,
       email: session.email,

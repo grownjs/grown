@@ -5,6 +5,6 @@ module.exports = ({ Session }) => async function login({ request }) {
   return {
     user: user.getRaw(),
     token: session.token,
-    expirationDate: session.expirationDate.toISOString(),
+    expirationDate: session.expirationDate,
   };
 };

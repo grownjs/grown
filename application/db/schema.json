@@ -1,5 +1,5 @@
 {
-  "description": "Migration from 2020-06-20T13:31:09.377Z",
+  "description": "Migration from 2020-06-20T14:02:33.575Z",
   "definitions": {
     "Session": {
       "id": "Session",
@@ -66,14 +66,6 @@
             "verified": {
               "type": "boolean",
               "default": false
-            },
-            "is_admin": {
-              "type": "boolean",
-              "default": false
-            },
-            "is_root": {
-              "type": "boolean",
-              "default": false
             }
           },
           "required": [
@@ -131,14 +123,6 @@
               "type": "string"
             },
             "verified": {
-              "type": "boolean",
-              "default": false
-            },
-            "is_admin": {
-              "type": "boolean",
-              "default": false
-            },
-            "is_root": {
               "type": "boolean",
               "default": false
             }
@@ -381,14 +365,6 @@
           "type": "string"
         },
         "verified": {
-          "type": "boolean",
-          "default": false
-        },
-        "is_admin": {
-          "type": "boolean",
-          "default": false
-        },
-        "is_root": {
           "type": "boolean",
           "default": false
         }

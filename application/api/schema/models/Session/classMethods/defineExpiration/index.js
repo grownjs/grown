@@ -1,4 +1,5 @@
 const TIME = {
+  ROOT: 90,
   ADMIN: 45,
   GUEST: 15,
   USER: 30,
@@ -13,5 +14,9 @@ function expirationTime(time) {
 }
 
 module.exports = function defineExpiration(role) {
+  if (typeof TIME[role] !== 'number') {
+    throw new Error(`Missing TIME for role ${role}`);
+  }
+
   return expirationTime(TIME[role]);
 };

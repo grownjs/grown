@@ -55,6 +55,9 @@ install: deps
 setup: install
 	@lerna bootstrap
 
+app\:%:
+	@make -C application $*
+
 link\:%:
 	@rm -rf $(PWD)/application/node_modules/@grown/$*
 	@ln -s $(PWD)/packages/$* $(PWD)/application/node_modules/@grown/

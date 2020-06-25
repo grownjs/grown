@@ -5,7 +5,7 @@ module.exports = ({ Session }) => async function checkToken({ request }) {
 
   return {
     token: session.token,
-    expirationDate: session.expirationDate.toISOString(),
+    expirationDate: session.expirationDate,
     user: {
       id: session.userId,
       email: session.email,

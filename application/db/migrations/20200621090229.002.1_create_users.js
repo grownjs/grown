@@ -27,12 +27,6 @@ module.exports = {
         verified: {
           type: dataTypes.BOOLEAN,
         },
-        is_admin: {
-          type: dataTypes.BOOLEAN,
-        },
-        is_root: {
-          type: dataTypes.BOOLEAN,
-        },
         deletedAt: {
           type: dataTypes.DATE,
         },

@@ -2,7 +2,7 @@
   {
     "email": "admin@email.com",
     "password": "Password1$",
-    "role": "ADMIN",
+    "role": "ROOT",
     "verified": true
   },
   {

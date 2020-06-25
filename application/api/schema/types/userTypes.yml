@@ -4,6 +4,7 @@ definitions:
   accessRole:
     type: string
     enum:
+      - ROOT
       - ADMIN
       - USER
       - GUEST

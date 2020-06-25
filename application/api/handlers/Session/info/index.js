@@ -28,6 +28,6 @@ module.exports = ({ Session }) => async function info({ request }) {
       platform: session.user.platform,
     },
     token: session.token,
-    expirationDate: session.expirationDate.toISOString(),
+    expirationDate: session.expirationDate,
   };
 };
