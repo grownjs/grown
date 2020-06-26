@@ -5,9 +5,16 @@ const Shopfish = require('grown')();
 const GRPC = Shopfish.use(require('@grown/grpc'));
 const Models = Shopfish.use(require('../apps/default/api/models'));
 
+let sites;
+const { Sites } = require('./shared');
+const createServer = require('./server');
+
 Shopfish('ApplicationServer', {
   getServer() {
-    return require('./server')(Shopfish, require('./shared'));
+    return createServer(Shopfish, require('./shared'));
+  },
+  getSites() {
+    return sites || (sites = new Sites(path.join(Shopfish.cwd, 'apps')));
   },
 });
 
@@ -19,7 +26,7 @@ Shopfish('GRPC.Gateway', {
 
 Shopfish('Services', {
   include: [
-    GRPC.Gateway.setup(Shopfish.load(path.join(Shopfish.cwd, 'apps/default/api/handlers')), { timeout: 10 }),
+    GRPC.Gateway.setup(Shopfish.load(Shopfish.ApplicationServer.getSites().find('handlers')), { timeout: 10 }),
   ],
   getSchema(ref) {
     const [name, id] = ref.split('.');

@@ -1,5 +1,6 @@
 const log = require('logro').createLogger(__filename);
 const path = require('path');
+
 const start = new Date();
 
 module.exports = (Shopfish, { Plugin }) => {
@@ -69,7 +70,7 @@ module.exports = (Shopfish, { Plugin }) => {
   server.mount('/api/v1/graphql', Shopfish.GraphQL.setup([
     path.join(Shopfish.cwd, 'etc/schema/common.gql'),
     path.join(Shopfish.cwd, 'etc/schema/generated/index.gql'),
-  ], Shopfish.load(path.join(Shopfish.cwd, 'apps/default/api/schema/graphql'))));
+  ], Shopfish.load(Shopfish.ApplicationServer.getSites().find('graphql'))));
 
   server.plug([
     require('express-useragent').express(),

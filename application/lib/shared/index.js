@@ -10,12 +10,32 @@ class Sites {
           ? require(configFile)
           : {};
 
-        return { id, config };
+        return { id, config, baseDir };
       });
   }
 
+  get enabled() {
+    return this.all.filter(site => site.config.enabled);
+  }
+
+  get paths() {
+    return this.all.reduce((memo, cur) => {
+      const graphql = path.join(cur.baseDir, cur.id, 'api/schema/graphql');
+      const handlers = path.join(cur.baseDir, cur.id, 'api/handlers');
+
+      if (Plugin.isDir(graphql)) memo.push(graphql);
+      if (Plugin.isDir(handlers)) memo.push(handlers);
+
+      return memo;
+    }, []);
+  }
+
+  find(sub) {
+    return this.paths.filter(x => x.includes(sub));
+  }
+
   locate({ req }, fallback) {
-    const enabled = this.all.filter(site => site.config.enabled).sort((a, b) => (b.config.match ? 1 : (a.config.match ? -1 : 0)));
+    const enabled = this.enabled.sort((a, b) => (b.config.match ? 1 : (a.config.match ? -1 : 0)));
     const hostname = req.headers.host || '';
 
     fallback = fallback || req.url.split('/')[1];

@@ -1,4 +1,4 @@
-const { Sites, Plugin } = require('~/lib/shared');
+const { Plugin } = require('~/lib/shared');
 
 class AdminPlugin extends Plugin {
   async onAdmin(ctx, site) {
@@ -35,7 +35,7 @@ class AdminPlugin extends Plugin {
 }
 
 module.exports = (Shopfish, config) => {
-  const siteManager = new Sites(`${Shopfish.cwd}/apps`);
+  const siteManager = Shopfish.ApplicationServer.getSites();
   const pluginInstance = new AdminPlugin({
     enabled: config.admin,
     name: 'adminPlugin',
