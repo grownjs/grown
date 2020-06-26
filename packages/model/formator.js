@@ -15,14 +15,14 @@ module.exports = Grown => {
           ? this.database(req)
           : this.database;
 
-        if (!database) {
+        if (!(database && database.sequelize)) {
           res.write('Database was not given\n');
           res.end();
           return;
         }
 
-        if (!(database.sequelize && database.sequelize._resolved)) {
-          res.write(`Not connected to '${found.database.sequelize.options.identifier}' database\n`);
+        if (!database.sequelize._resolved) {
+          res.write(`Not connected to '${database.sequelize.options.identifier}' database\n`);
           res.end();
           return;
         }
