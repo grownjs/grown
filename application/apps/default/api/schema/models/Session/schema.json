@@ -2,6 +2,7 @@
   "id": "Session",
   "options": {
     "tableName": "sessions",
+    "database": "default",
     "paranoid": false
   },
   "properties": {

@@ -2,6 +2,7 @@
   "id": "Token",
   "options": {
     "tableName": "tokens",
+    "database": "default",
     "paranoid": false
   },
   "properties": {

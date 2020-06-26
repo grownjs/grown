@@ -2,6 +2,7 @@
   "id": "User",
   "options": {
     "tableName": "users",
+    "database": "default",
     "paranoid": true
   },
   "properties": {

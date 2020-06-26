@@ -1,13 +1,12 @@
 const path = require('path');
 
 const Shopfish = require('grown')();
-
 const GRPC = Shopfish.use(require('@grown/grpc'));
-const Models = Shopfish.use(require('../apps/default/api/models'));
 
+let repos;
 let sites;
-const { Sites } = require('./shared');
 const createServer = require('./server');
+const { Plug, Sites } = require('./shared');
 
 Shopfish('ApplicationServer', {
   getServer() {
@@ -15,6 +14,9 @@ Shopfish('ApplicationServer', {
   },
   getSites() {
     return sites || (sites = new Sites(path.join(Shopfish.cwd, 'apps')));
+  },
+  start() {
+    return Promise.all(repos.map(x => x.connect()));
   },
 });
 
@@ -24,6 +26,8 @@ Shopfish('GRPC.Gateway', {
   ],
 });
 
+repos = Shopfish.ApplicationServer.getSites().find('models').map(x => Shopfish.use(require(x)));
+
 Shopfish('Services', {
   include: [
     GRPC.Gateway.setup(Shopfish.load(Shopfish.ApplicationServer.getSites().find('handlers')), { timeout: 10 }),
@@ -31,13 +35,13 @@ Shopfish('Services', {
   getSchema(ref) {
     const [name, id] = ref.split('.');
 
-    return Models.get(name).getSchema(id);
+    return Shopfish.Models.get(name).getSchema(id);
   },
   getMailer() {
     return require('./mailer');
   },
   getModel(name) {
-    return Models.get(name);
+    return Shopfish.Models.get(name);
   },
 });
 

@@ -21,8 +21,10 @@ class Sites {
   get paths() {
     return this.all.reduce((memo, cur) => {
       const graphql = path.join(cur.baseDir, cur.id, 'api/schema/graphql');
+      const models = path.join(cur.baseDir, cur.id, 'api/models.js');
       const handlers = path.join(cur.baseDir, cur.id, 'api/handlers');
 
+      if (Plugin.isFile(models)) memo.push(models);
       if (Plugin.isDir(graphql)) memo.push(graphql);
       if (Plugin.isDir(handlers)) memo.push(handlers);
 

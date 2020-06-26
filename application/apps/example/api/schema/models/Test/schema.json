@@ -2,6 +2,7 @@
   "id": "Test",
   "options": {
     "tableName": "tests",
+    "database": "example",
     "paranoid": true
   },
   "properties": {

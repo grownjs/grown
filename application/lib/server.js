@@ -77,8 +77,22 @@ module.exports = (Shopfish, { Plugin }) => {
     require('logro').getExpressLogger(),
     Shopfish.Model.Formator({
       prefix: '/db',
-      options: { attributes: false },
-      database: req => Shopfish.Model.DB[(req.site && req.site.config.database) || 'default'],
+      options: {
+        attributes: false,
+        connections: Object.keys(require('~/etc/schema/generated')),
+      },
+      database: req => {
+        const matches = req.url.match(/^\/([a-z]\w+)(|\/.*?)$/);
+
+        if (matches && Shopfish.Model.DB[matches[1]]) {
+          req.originalUrl = req.url;
+          req.url = matches[2] || '/';
+
+          return Shopfish.Model.DB[matches[1]];
+        }
+
+        return Shopfish.Model.DB.default;
+      },
     }),
     Shopfish.Session.Auth.use('/auth', {
       facebook: {
@@ -103,7 +117,7 @@ module.exports = (Shopfish, { Plugin }) => {
     }),
   ]);
 
-  server.on('start', () => Shopfish.Models.connect().then(() => Shopfish.Services.start()).then(main));
+  server.on('start', () => Shopfish.ApplicationServer.start().then(() => Shopfish.Services.start()).then(main));
   server.on('listen', ctx => log.info(`API started after ${(new Date() - start) / 1000} seconds`, { endpoint: ctx.location.href }));
 
   return server;

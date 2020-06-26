@@ -3,7 +3,7 @@
 // in the case the plugin exposes and api, or just expose their models to the whole system?
 
 module.exports = async Shopfish => {
-  const db = require('../api/models')(Shopfish);
+  const db = Shopfish.MyModels;
 
   await db.connect();
   await db.sync();

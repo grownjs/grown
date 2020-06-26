@@ -16,7 +16,7 @@ const config = module.exports = {
   },
 };
 
-if (['test', 'development'].includes(env)) {
+if (env === 'test') {
   config.storage = `${__dirname}/db.sqlite`;
   config.dialect = 'sqlite';
 } else {
