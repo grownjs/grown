@@ -24,12 +24,12 @@ module.exports = (Shopfish, { Plugin }) => {
   }
 
   const hooks = Plugin.from(path.join(Shopfish.cwd, 'apps'), cb => cb(Shopfish, config))
-    .map(plugin => (Shopfish.ApplicationServer[plugin.name] = plugin, plugin));
+    .map(plugin => (Shopfish.ApplicationServer[plugin.name] = plugin, plugin)); // eslint-disable-line
 
   function hook(name, ...args) {
-    hooks.forEach(hook => {
-      if (hook.enabled && typeof hook[name] === 'function') {
-        hook[name](...args);
+    hooks.forEach(_hook => {
+      if (_hook.enabled && typeof _hook[name] === 'function') {
+        _hook[name](...args);
       }
     });
   }

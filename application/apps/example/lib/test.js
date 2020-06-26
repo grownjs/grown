@@ -14,6 +14,7 @@ module.exports = async Shopfish => {
 
   console.log(c);
   console.log(d.get());
+  console.log(Shopfish.argv);
 
   await db.disconnect();
 };

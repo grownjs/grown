@@ -27,9 +27,6 @@
       email: confirmEmail,
       token: router.params.token,
     }, () => {
-      newPassword = null;
-      confirmPassword = null;
-
       setTimeout(() => {
         navigateTo(back);
       }, 1000);

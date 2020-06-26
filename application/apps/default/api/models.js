@@ -1,6 +1,6 @@
 const path = require('path');
 
-module.exports = (Shopfish, x) => {
+module.exports = Shopfish => {
   Shopfish.use(require('@grown/model/db'));
   Shopfish.use(require('@grown/model/cli'));
 
