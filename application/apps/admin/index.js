@@ -36,11 +36,10 @@ class AdminPlugin extends Plugin {
 
 module.exports = (Shopfish, config) => {
   const siteManager = Shopfish.ApplicationServer.getSites();
-  const pluginInstance = new AdminPlugin({
+  const pluginInstance = new AdminPlugin(Shopfish, {
     enabled: config.admin,
     name: 'adminPlugin',
     siteManager,
-    ...Shopfish,
   });
 
   return pluginInstance;

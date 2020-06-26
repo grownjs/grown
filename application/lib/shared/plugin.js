@@ -3,8 +3,11 @@ const path = require('path');
 const Util = require('./util');
 
 class Plugin {
-  constructor(props) {
+  constructor(Shopfish, props) {
     Object.assign(this, props);
+    Object.keys(Shopfish).forEach(key => {
+      if (/^[A-Z]/.test(key)) this[key] = Shopfish[key];
+    });
   }
 
   static from(fullDir, cb) {
