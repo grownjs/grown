@@ -9,7 +9,7 @@ const createServer = require('./server');
 
 Shopfish('ApplicationServer', {
   getServer() {
-    return createServer(Shopfish, require('./shared'));
+    return createServer(Shopfish);
   },
   getSites() {
     return sites || (sites = new Sites(path.join(Shopfish.cwd, 'apps'))); // eslint-disable-line

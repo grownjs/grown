@@ -1,6 +1,6 @@
 const {
   SessionNotFound,
-} = require('~/lib/shared/exceptions');
+} = require('~/lib/shared');
 
 module.exports = ({ Session }) => async function info({ request }) {
   const { params } = request;

@@ -1,7 +1,7 @@
 const {
   UserNotFound,
   EmailMismatch,
-} = require('~/lib/shared/exceptions');
+} = require('~/lib/shared');
 
 module.exports = ({ Token, User }) => async function validateToken(email, token) {
   const user = await User.findOne({ where: { email } });

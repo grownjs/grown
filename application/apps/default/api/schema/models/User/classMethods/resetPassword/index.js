@@ -1,6 +1,6 @@
 const {
   PasswordMismatch,
-} = require('~/lib/shared/exceptions');
+} = require('~/lib/shared');
 
 module.exports = ({ bcrypt, User, Token }) => async function setPassword(token, newPassword, confirmPassword) {
   const { userId } = await Token.verify(token, 'RECOVER_PASSWORD');

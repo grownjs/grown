@@ -1,7 +1,7 @@
 const {
   PasswordMismatch,
   OldPasswordMismatch,
-} = require('~/lib/shared/exceptions');
+} = require('~/lib/shared');
 
 module.exports = ({ bcrypt, User }) => async function updatePassword(userId, oldPassword, newPassword, confirmPassword) {
   let user;

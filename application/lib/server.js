@@ -3,7 +3,7 @@ const path = require('path');
 
 const start = new Date();
 
-module.exports = (Shopfish, { Plugin }) => {
+module.exports = Shopfish => {
   Shopfish.use(require('@grown/model'));
   Shopfish.use(require('@grown/router'));
   Shopfish.use(require('@grown/render'));
@@ -23,6 +23,7 @@ module.exports = (Shopfish, { Plugin }) => {
     server.plug(require('body-parser').urlencoded({ extended: false }));
   }
 
+  const { Plugin } = require('./shared');
   const hooks = Plugin.from(path.join(Shopfish.cwd, 'apps'), cb => cb(Shopfish, config))
     .map(plugin => (Shopfish.ApplicationServer[plugin.name] = plugin, plugin)); // eslint-disable-line
 
