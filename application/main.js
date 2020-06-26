@@ -1,5 +1,5 @@
 if (require.main === module) {
-  const Shopfish = require('./etc');
+  const Shopfish = require('./lib');
 
   Shopfish.ApplicationServer.getServer()
     .listen(Shopfish.argv.flags.port || 3000)

@@ -20,9 +20,10 @@
     "build:mail": "mailor build etc/mailer/templates -d etc/mailer/generated",
     "mocha": "NODE_ENV=test _mocha -c --exit --recursive",
     "schema": "npm run schema-to:json && npm run schema-to:graphql && npm run schema-to:protobuf",
-    "schema-to:json": "json-schema-to -tw api/schema -pbc index --json",
-    "schema-to:graphql": "json-schema-to -tw api/schema -pc index --graphql",
-    "schema-to:protobuf": "json-schema-to -tw api/schema -pc index --protobuf -br ../common -k API",
+    "preschema": "copyfiles 'apps/*/api/schema/**/*.{yml,json}' etc/schema -u 4",
+    "schema-to:json": "json-schema-to -tw etc/schema -pbc index --json",
+    "schema-to:graphql": "json-schema-to -tw etc/schema -pc index --graphql",
+    "schema-to:protobuf": "json-schema-to -tw etc/schema -pc index --protobuf -br ../common -k API",
     "dev": "tarima watch -p 4001 -P '/db,/api,/auth,/admin -> 3000'",
     "dist": "tarima -mqe $NODE_ENV",
     "size": "npm run dist && size-limit",
@@ -46,19 +47,10 @@
     }
   ],
   "tarima": {
-    "from": [
-      "web/front",
-      "etc/tenants",
-      "etc/plugins"
-    ],
+    "from": "apps",
     "public": "build",
-    "copy": [
-      "web/public/**"
-    ],
-    "rename": [
-      "**/front/**:{fullpath/2}",
-      "**/etc/**:{fullpath/3}"
-    ],
+    "rename": [],
+    "copy": [],
     "filter": [
       "!_*",
       "!**/_*",
@@ -151,6 +143,7 @@
     "@grown/session": "^0.0.6",
     "@grown/static": "^0.0.4",
     "@grown/tarima": "^0.0.10",
+    "copyfiles": "^2.3.0",
     "express-useragent": "^1.0.12",
     "grown": "^1.1.9",
     "is-docker": "^2.0.0",

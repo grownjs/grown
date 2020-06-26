@@ -18,3 +18,5 @@ generated
 screenshots
 asciidocfx*
 node_modules
+etc/schema/types
+etc/schema/models

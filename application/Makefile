@@ -3,8 +3,9 @@ PWD=$(shell pwd)
 
 # default settings
 run := unit
+app := default
 report := html
-models := api/models
+models := apps/$(app)/api/models
 profile := $(notdir $(PWD))
 
 # dotenv support
@@ -171,7 +172,7 @@ watch: deps ## Enable nodemon watching of sources  (host)
 	@(npm run watch 2>&1 | npm run logs) & npm run watch:mail
 
 clean: ## Remove cache and generated artifacts  (host)
-	@$(call iif,rm -r pgdata build api/schema/generated lib/mailer/generated,Built artifacts were deleted,Artifacts already deleted)
+	@$(call iif,rm -r pgdata build etc/schema/generated etc/mailer/generated,Built artifacts were deleted,Artifacts already deleted)
 	@$(call iif,unlink .tarima,Cache file was deleted,Cache file already deleted)
 	@$(call iif,rm -f logs/*.log,Logs were deleted,Logs already deleted)
 

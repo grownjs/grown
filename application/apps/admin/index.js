@@ -1,0 +1,47 @@
+const { Sites, Plugin } = require('~/lib/shared');
+
+class AdminPlugin extends Plugin {
+  async onAdmin(ctx, site) {
+    const { render } = await ctx.bundle('admin/views/panel');
+
+    return ctx.render('layout', {
+      body: render({
+        plugins: this.siteManager.all,
+        matches: ctx.req.site.id,
+        current: site.id,
+      }),
+      pkg: this.pkg,
+      env: process.env,
+      base: `/${site.id}/`,
+      scripts: `<script src="/assets/${site.id}.js"></script>`,
+      styles: `<link rel="stylesheet" href="/assets/${site.id}.css" />`,
+    });
+  }
+
+  routeMappings(map) {
+    const routes = map()
+      .get('/api/status', ({ req, res }) => {
+        res.write(JSON.stringify(req.headers, null, 2));
+        res.status(200);
+      });
+
+    this.siteManager.all.forEach(site => {
+      routes.get(`/${site.id}`, ctx => this.onAdmin(ctx, site));
+      routes.get(`/${site.id}/*path`, ctx => this.onAdmin(ctx, site));
+    });
+
+    return routes;
+  }
+}
+
+module.exports = (Shopfish, config) => {
+  const siteManager = new Sites(`${Shopfish.cwd}/apps`);
+  const pluginInstance = new AdminPlugin({
+    enabled: config.admin,
+    name: 'adminPlugin',
+    siteManager,
+    ...Shopfish,
+  });
+
+  return pluginInstance;
+};

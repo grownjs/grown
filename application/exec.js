@@ -1,4 +1,4 @@
-require('logro').setForbiddenFields(require('./api/forbidden.json'));
+require('logro').setForbiddenFields(require('./lib/config/forbidden'));
 
 const fs = require('fs');
 const path = require('path');
@@ -10,7 +10,7 @@ async function run() {
     const callback = require(path.resolve(main));
 
     if (typeof callback === 'function') {
-      await callback(require('./etc'), require('./etc/shared'));
+      await callback(require('./lib'), require('./lib/shared'));
     }
   }
 }
