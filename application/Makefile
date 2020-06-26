@@ -5,6 +5,7 @@ PWD=$(shell pwd)
 run := unit
 app := default
 report := html
+dbpath := apps/$(app)/db
 models := apps/$(app)/api/models
 profile := $(notdir $(PWD))
 
@@ -160,13 +161,13 @@ repl: deps ## Interactive console  (host)
 	@npm run grown -- repl models:$(models)
 
 seed: deps ## Run custom seeders  (host)
-	@npm run grown -- backup models:$(models) --load db/seeders/$(NODE_ENV)
+	@npm run grown -- backup models:$(models) --load $(dbpath)/seeders/$(NODE_ENV)
 
 reset: deps ## Run integration_seeds  (host)
-	@node db/integration_seeds
+	@node exec $(dbpath)/integration_seeds
 
 clear: deps ## Run integration_seeds with --clear  (host)
-	@node db/integration_seeds --clear
+	@node exec $(dbpath)/integration_seeds --clear
 
 watch: deps ## Enable nodemon watching of sources  (host)
 	@(npm run watch 2>&1 | npm run logs) & npm run watch:mail
@@ -177,8 +178,8 @@ clean: ## Remove cache and generated artifacts  (host)
 	@$(call iif,rm -f logs/*.log,Logs were deleted,Logs already deleted)
 
 prune: ## Remove schema files and migrations  (host)
-	@$(call iif,rm -r db/migrations/*.js,Migrations deleted,Migrations already deleted)
-	@$(call iif,rm -r db/schema*,Schema deleted,Schema already deleted)
+	@$(call iif,rm -r $(dbpath)/migrations/*.js,Migrations deleted,Migrations already deleted)
+	@$(call iif,rm -r $(dbpath)/schema*,Schema deleted,Schema already deleted)
 
 deps: ## Check for installed dependencies  (host)
 	@$(call ls,node_modules,npm i)
@@ -198,7 +199,7 @@ schema: deps ## Generate sources from given schemas  (host)
 templates: deps ## Regenerate mailing templates  (host)
 	@npm run build:mail
 
-database: deps ## Start database for development  (host)
+database: schema ## Start database for development  (host)
 	@make -s migrate-up reset
 
 migrate-%: deps ## Generic method to run migrate-tasks  (host)

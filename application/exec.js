@@ -11,6 +11,7 @@ async function run() {
     const callback = require(path.resolve(main));
 
     if (typeof callback === 'function') {
+      await Shopfish.ApplicationServer.start();
       await callback(Shopfish, require('./lib/shared'));
     }
   }

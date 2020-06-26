@@ -1,10 +1,11 @@
 {
-  "description": "Migration from 2020-06-20T14:02:33.575Z",
+  "description": "Migration from 2020-06-26T14:05:00.066Z",
   "definitions": {
     "Session": {
       "id": "Session",
       "options": {
         "tableName": "sessions",
+        "database": "default",
         "paranoid": false
       },
       "properties": {
@@ -28,6 +29,7 @@
           "enum": [
             "ADMIN",
             "GUEST",
+            "ROOT",
             "USER"
           ]
         },
@@ -35,6 +37,7 @@
           "id": "User",
           "options": {
             "tableName": "users",
+            "database": "default",
             "paranoid": true
           },
           "properties": {
@@ -57,6 +60,7 @@
               "enum": [
                 "ADMIN",
                 "GUEST",
+                "ROOT",
                 "USER"
               ]
             },
@@ -94,6 +98,7 @@
           "id": "User",
           "options": {
             "tableName": "users",
+            "database": "default",
             "paranoid": true
           },
           "properties": {
@@ -116,6 +121,7 @@
               "enum": [
                 "ADMIN",
                 "GUEST",
+                "ROOT",
                 "USER"
               ]
             },
@@ -301,6 +307,7 @@
       "id": "Token",
       "options": {
         "tableName": "tokens",
+        "database": "default",
         "paranoid": false
       },
       "properties": {
@@ -336,6 +343,7 @@
       "id": "User",
       "options": {
         "tableName": "users",
+        "database": "default",
         "paranoid": true
       },
       "properties": {
@@ -358,6 +366,7 @@
           "enum": [
             "ADMIN",
             "GUEST",
+            "ROOT",
             "USER"
           ]
         },
@@ -400,6 +409,7 @@
         "enum": [
           "ADMIN",
           "GUEST",
+          "ROOT",
           "USER"
         ]
       },
