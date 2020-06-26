@@ -19,7 +19,7 @@ module.exports = {
           type: dataTypes.DATE,
         },
         role: {
-          type: dataTypes.ENUM('ADMIN', 'GUEST', 'USER'),
+          type: dataTypes.ENUM('ADMIN', 'GUEST', 'ROOT', 'USER'),
         },
         // user <User>
         userId: {

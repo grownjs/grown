@@ -199,7 +199,7 @@ schema: deps ## Generate sources from given schemas  (host)
 templates: deps ## Regenerate mailing templates  (host)
 	@npm run build:mail
 
-database: schema ## Start database for development  (host)
+database: deps ## Start database for development  (host)
 	@make -s migrate-up reset
 
 migrate-%: deps ## Generic method to run migrate-tasks  (host)
@@ -209,5 +209,5 @@ migrate: deps ## Run & apply pending migrations	  (host)
 	@make -s migrate-up
 	@make -s migrate-apply
 
-refresh: deps ## Autogenerate new migration files  (host)
+models: deps ## Autogenerate new migration files  (host)
 	@make -s migrate-make
