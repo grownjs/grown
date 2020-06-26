@@ -11,7 +11,7 @@ module.exports = ({
       <meta name="package" content="${pkg.name} v${pkg.version}" />
       <meta name="revision" content="${env.GIT_REVISION}" />
       <meta name="viewport" content="width=device-width, initial-scale=1" />
-      <title>${title || 'Administration'}</title>
+      <title>${title || 'Shopfish'}</title>
       ${styles || ''}
     </head>
     <body id="app">${body || ''}</body>

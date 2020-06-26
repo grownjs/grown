@@ -75,6 +75,10 @@ module.exports = (Shopfish, { Plugin }) => {
   server.plug([
     require('express-useragent').express(),
     require('logro').getExpressLogger(),
+    Shopfish.Static({
+      from_folders: path.join(Shopfish.cwd, 'apps'),
+      filter: ctx => ctx.req.url.includes('/public/'),
+    }),
     Shopfish.Model.Formator({
       prefix: '/db',
       options: {
@@ -107,13 +111,10 @@ module.exports = (Shopfish, { Plugin }) => {
       },
     }),
     Shopfish.Render.Views({
-      view_folders: path.join(Shopfish.cwd, 'lib'),
+      view_folders: path.join(Shopfish.cwd, 'apps'),
     }),
     Shopfish.Router.Mappings({
       routes: map => hook('routeMappings', map),
-    }),
-    Shopfish.Static({
-      from_folders: [path.join(Shopfish.cwd, 'apps')],
     }),
   ]);
 

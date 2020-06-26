@@ -4,7 +4,7 @@ class AdminPlugin extends Plugin {
   async onAdmin(ctx, site) {
     const { render } = await ctx.bundle('admin/views/panel');
 
-    return ctx.render('layout', {
+    return ctx.render('admin/views/layout', {
       body: render({
         plugins: this.siteManager.all,
         matches: ctx.req.site.id,
@@ -39,6 +39,7 @@ module.exports = (Shopfish, config) => {
   const pluginInstance = new AdminPlugin(Shopfish, {
     enabled: config.admin,
     name: 'adminPlugin',
+    pkg: Shopfish.pkg,
     siteManager,
   });
 
