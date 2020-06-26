@@ -18,5 +18,6 @@ generated
 screenshots
 asciidocfx*
 node_modules
+etc/mailer/*
 etc/schema/types
 etc/schema/models

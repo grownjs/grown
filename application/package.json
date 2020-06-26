@@ -16,8 +16,8 @@
     "lint": "eslint --ext js,svelte apps e2e lib *.js",
     "debug": "ndb npm run watch --",
     "watch": "nodemon --ignore '{build,logs,web,e2e}/**' --ignore '**/generated/**' --ignore Makefile",
-    "watch:mail": "mailor watch etc/mailer/templates -d etc/mailer/generated --no-open",
-    "build:mail": "mailor build etc/mailer/templates -d etc/mailer/generated",
+    "watch:mail": "mailor watch 'apps/*/web/mailer/templates' -d etc/mailer/generated --no-open",
+    "build:mail": "mailor build 'apps/*/web/mailer/templates' -d etc/mailer/generated",
     "mocha": "NODE_ENV=test _mocha -c --exit --recursive",
     "schema": "npm run schema-to:json && npm run schema-to:graphql && npm run schema-to:protobuf",
     "preschema": "copyfiles 'apps/*/api/schema/**/*.{yml,json}' etc/schema -u 4",
@@ -58,7 +58,7 @@
       "!**/_*",
       "!**/_*/**",
       "!**/{index.js,settings.json}",
-      "!**/{db,api,lib,views,shared,public,components}/**"
+      "!**/{db,api,lib,views,mailer,shared,public,components}/**"
     ],
     "bundle": "**/assets/**",
     "ignoreFiles": [
@@ -150,7 +150,7 @@
     "grown": "^1.1.9",
     "is-docker": "^2.0.0",
     "logro": "^0.1.9",
-    "mailor": "^0.1.0",
+    "mailor": "^0.1.1",
     "pg": "^7.9.0",
     "rand-token": "^0.4.0",
     "therror": "^4.1.1"
