@@ -74,7 +74,7 @@ function ServerRequest(req, res) {
 
   this.body = {};
   this.url = req.getUrl() || '/';
-  this.query = req.getQuery();
+  this.query = qs.parse(req.getQuery());
   this.method = req.getMethod().toUpperCase();
   this.headers = _util._extend({}, req.headers);
   this.rawHeaders = [];
