@@ -14,15 +14,16 @@ module.exports = (Grown, util) => ({
 
       return Models.connect()
         .then(() => {
-          const models = Models.models || [];
+          const models = Object.keys(Models.models);
           const count = models.length;
 
+
           models.forEach(m => {
-            ctx.repl.context[m.name] = m;
+            ctx.repl.context[m] = Models.models[m];
           });
 
           const suffix = count === 1 ? '' : 's';
-          const modelNames = models.map(m => m.name).join(', ');
+          const modelNames = models.join(', ');
 
           ctx.logger.printf('{% info %s model%s found: %} %s\r\n', count, suffix, modelNames);
         });
