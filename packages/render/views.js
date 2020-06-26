@@ -326,9 +326,14 @@ module.exports = (Grown, util) => {
               .then(() => self.render.call(this, src, data))
               .catch(e => `${e.type || e.name}:\n${e.message}`)
               .then(body => {
+                this.res.status(200);
+                this.res._halted = true;
+
                 if (typeof this.end === 'function') {
                   this.resp_body = body;
                 } else {
+                  this.res.setHeader('Content-Type', 'text/html');
+                  this.res.setHeader('Content-Length', body.length);
                   this.res.write(body);
                 }
               });
