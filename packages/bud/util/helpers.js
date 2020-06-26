@@ -33,10 +33,6 @@ function findFile(src, paths, throws) {
 
 function scanDir(src, callback) {
   return callback((ctx, hooks) => {
-    if (!fs.existsSync(src)) {
-      throw new Error(`Invalid source to scan, given '${src}'`);
-    }
-
     return new Resolver(ctx || null, src, hooks);
   });
 }
