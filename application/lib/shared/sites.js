@@ -43,7 +43,7 @@ class Sites {
 
     fallback = fallback || req.url.split('/')[1];
 
-    return enabled.find(site => !site.config.match || site.config.match.some(str => hostname.includes(str)))
+    return enabled.find(site => site.config.match && site.config.match.some(str => hostname.includes(str)))
       || (fallback && enabled.find(site => site.id === fallback))
       || null;
   }

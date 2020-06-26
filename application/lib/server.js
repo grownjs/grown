@@ -77,7 +77,6 @@ module.exports = (Shopfish, { Plugin }) => {
     require('logro').getExpressLogger(),
     Shopfish.Static({
       from_folders: path.join(Shopfish.cwd, 'apps'),
-      filter: ctx => ctx.req.url.includes('/public/'),
     }),
     Shopfish.Model.Formator({
       prefix: '/db',
