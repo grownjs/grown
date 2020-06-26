@@ -5,8 +5,6 @@
 .jscpd
 .env
 *.log
-*.css
-*.html
 *.todo
 *.sqlite
 codecov.sh
