@@ -61,11 +61,11 @@ module.exports = Shopfish => {
       prefix: '/db',
       options: {
         attributes: false,
-        connections: req => ((!req.site || !req.site.config.db) ? Object.keys(Shopfish.Model.DB._registry) : null),
+        connections: req => (!req.site && Object.keys(Shopfish.Model.DB._registry)),
       },
       database: req => {
         const matches = req.url.match(/^\/([a-z]\w+)(|\/.*?)$/);
-        const target = req.site && req.site.config.db;
+        const target = req.site && req.site.id;
 
         if (matches && Shopfish.Model.DB._registry[matches[1]]) {
           req.originalUrl = req.url;
