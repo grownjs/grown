@@ -37,6 +37,19 @@ module.exports = (Grown, util) => {
   return Grown('Upload', {
     _processForm,
 
+    $install(ctx) {
+      if (this.save_directory) {
+        ctx.mount(conn => conn.upload_files({
+          keepExtensions: true,
+          multiples: false,
+          maxFields: 10,
+          maxFileSize: this.max_file_size,
+          maxFieldsSize: this.max_field_size,
+          uploadDir: this.save_directory,
+        }));
+      }
+    },
+
     $mixins() {
       const self = this;
 
