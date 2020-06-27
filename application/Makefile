@@ -157,9 +157,13 @@ kill: deps ## Stop started services by port-number  (host)
 dist: deps ## Build artifacts for production  (host)
 	@npm run build:mail && npm run schema && npm run dist
 
+%\:repl:
+	@make -S repl app=$*
 repl: deps ## Interactive console  (host)
 	@npm run grown -- repl models:$(models)
 
+%\:seed:
+	@make -S seed app=$*
 seed: deps ## Run custom seeders  (host)
 	@npm run grown -- backup models:$(models) --load $(dbpath)/seeders/$(NODE_ENV)
 
@@ -205,9 +209,13 @@ database: deps ## Start database for development  (host)
 migrate-%: deps ## Generic method to run migrate-tasks  (host)
 	@npm run grown -- migrate models:$(models) --$(subst :, --,$*)
 
+%\:migrate:
+	@make -S migrate app=$*
 migrate: deps ## Run & apply pending migrations	  (host)
 	@make -s migrate-up
 	@make -s migrate-apply
 
+%\:models:
+	@make -S models app=$*
 models: deps ## Autogenerate new migration files  (host)
 	@make -s migrate-make
