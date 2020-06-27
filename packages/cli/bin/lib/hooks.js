@@ -17,9 +17,8 @@ module.exports = (Grown, util) => ({
           const models = Object.keys(Models.models);
           const count = models.length;
 
-
           models.forEach(m => {
-            ctx.repl.context[m] = Models.models[m];
+            ctx.repl.context[m] = Models.get(m);
           });
 
           const suffix = count === 1 ? '' : 's';
