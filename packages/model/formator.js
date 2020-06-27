@@ -38,7 +38,7 @@ module.exports = Grown => {
         }
 
         return found.middleware(req, res, next);
-      });
+      }, this.filter);
     },
   });
 };
