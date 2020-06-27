@@ -2,8 +2,7 @@
 
 const debug = require('debug')('grown:uws');
 
-const STATUS_CODES = require('http').STATUS_CODES;
-
+const { STATUS_CODES, IncomingMessage } = require('http');
 const { Transform, Readable } = require('stream');
 
 const uWS = require('uWebsockets.js');
@@ -68,6 +67,13 @@ function readBody(req, res, cb) {
 
 function ServerRequest(req, res) {
   Transform.call(this);
+
+  // this would patch added methods to native req, e.g. passport
+  const keys = ['login', 'logIn', 'logout', 'logOut', 'isAuthenticated', 'isUnauthenticated'];
+
+  keys.forEach(key => {
+    this[key] = IncomingMessage.prototype[key];
+  });
 
   this._writableState.objectMode = true;
   this._readableState.objectMode = false;
