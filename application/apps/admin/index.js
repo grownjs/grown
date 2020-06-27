@@ -2,10 +2,10 @@ const { Plugin } = require('~/lib/shared');
 
 class AdminPlugin extends Plugin {
   async onAdmin(ctx, site) {
-    const { render } = await ctx.bundle('admin/views/panel');
+    const panelView = await ctx.bundle('admin/views/panel');
 
     return ctx.render('admin/views/layout', {
-      body: render({
+      body: panelView({
         plugins: this.siteManager.all,
         current: site.id,
       }),

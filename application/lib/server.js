@@ -4,33 +4,16 @@ const path = require('path');
 const start = new Date();
 
 module.exports = Shopfish => {
-  Shopfish.use(require('@grown/model'));
-  Shopfish.use(require('@grown/router'));
-  Shopfish.use(require('@grown/render'));
-  Shopfish.use(require('@grown/tarima'));
-  Shopfish.use(require('@grown/static'));
-  Shopfish.use(require('@grown/graphql'));
-  Shopfish.use(require('@grown/session/auth'));
-
+  const { Plugin } = require('./shared');
   const config = require('./config');
 
-  const server = new Shopfish({
-    cors: Shopfish.env !== 'production',
-  });
-
-  if (process.env.U_WEBSOCKETS_SKIP) {
-    server.plug(require('body-parser').json({ limit: '5mb' }));
-    server.plug(require('body-parser').urlencoded({ extended: false }));
-  }
-
-  const { Plugin } = require('./shared');
   const hooks = Plugin.from(path.join(Shopfish.cwd, 'apps'), cb => cb(Shopfish, config))
     .map(plugin => (Shopfish.ApplicationServer[plugin.name] = plugin, plugin)); // eslint-disable-line
 
   function hook(name, ...args) {
     hooks.forEach(_hook => {
       if (_hook.enabled && typeof _hook[name] === 'function') {
-        _hook[name](...args);
+        _hook[name](...args, Shopfish);
       }
     });
   }
@@ -39,7 +22,24 @@ module.exports = Shopfish => {
     hook('onStart', ctx);
   }
 
+  const server = new Shopfish({
+    cors: Shopfish.env !== 'production',
+  });
+
   hook('onInit', server);
+
+  Shopfish.use(require('@grown/model'));
+  Shopfish.use(require('@grown/router'));
+  Shopfish.use(require('@grown/render'));
+  Shopfish.use(require('@grown/tarima'));
+  Shopfish.use(require('@grown/static'));
+  Shopfish.use(require('@grown/graphql'));
+  Shopfish.use(require('@grown/session/auth'));
+
+  if (process.env.U_WEBSOCKETS_SKIP) {
+    server.plug(require('body-parser').json({ limit: '5mb' }));
+    server.plug(require('body-parser').urlencoded({ extended: false }));
+  }
 
   server.plug([
     require('express-useragent').express(),
@@ -83,7 +83,7 @@ module.exports = Shopfish => {
     }),
     Shopfish.Session.Auth.use('/auth', {
       facebook: {
-        enabled: req => (req.site ? !!req.site.config.facebook : true),
+        enabled: req => (req.site ? req.site.config.facebook !== false : true),
         credentials: req => (req.site ? req.site.config.facebook : config.facebook),
       },
     }, (type, userInfo) => Shopfish.Services.API.Session.checkLogin({ params: { type, auth: userInfo } })),
