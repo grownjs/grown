@@ -16,7 +16,7 @@ module.exports = ({ bcrypt, User }) => async function verify(email, password, us
   }
 
   const user = await User.findOne(query);
-  const result = user
+  const result = (user && user.password)
     ? await bcrypt.compare(password, user.password)
     : false;
 
