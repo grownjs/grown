@@ -41,58 +41,41 @@ module.exports = Shopfish => {
 
   hook('onInit', server);
 
+  server.plug([
+    require('express-useragent').express(),
+    require('logro').getExpressLogger(),
+    Shopfish.Static({
+      from_folders: path.join(Shopfish.cwd, 'build'),
+    }),
+  ]);
+
   server.mount(ctx => {
     const site = Shopfish.ApplicationServer.adminPlugin.siteManager.locate(ctx);
-    const fileName = ctx.req.url.split('?')[0];
-
-    if (site && site.config.root && fileName === '/') {
-      ctx.req.originalUrl = ctx.req.url;
-      ctx.req.url = site.config.root;
-    }
-
-    if (site && Array.isArray(site.config.rewrite)) {
-      site.config.rewrite.some(pattern => {
-        const [prefix, suffix] = pattern.split(':');
-        const trailingSlash = prefix.substr(-1) === '/' ? '/' : '';
-
-        if (ctx.req.url.indexOf(prefix) === 0) {
-          ctx.req.originalUrl = ctx.req.url;
-          ctx.req.url = ctx.req.url.replace(prefix, `/${site.id}${suffix}${trailingSlash}`);
-          return true;
-        }
-        return false;
-      });
-    }
 
     ctx.req.site = site;
     hook('onRequest', ctx);
   });
 
-  server.mount('/api/v1/graphql', Shopfish.GraphQL.setup([
-    path.join(Shopfish.cwd, 'etc/schema/common.gql'),
-    path.join(Shopfish.cwd, 'etc/schema/generated/index.gql'),
-  ], Shopfish.load(Shopfish.ApplicationServer.getSites().find('graphql'))));
-
   server.plug([
-    require('express-useragent').express(),
-    require('logro').getExpressLogger(),
-    Shopfish.Static({
-      from_folders: path.join(Shopfish.cwd, 'apps'),
-    }),
     Shopfish.Model.Formator({
       prefix: '/db',
       options: {
         attributes: false,
-        connections: Object.keys(require('~/etc/schema/generated')),
+        connections: req => ((!req.site || !req.site.config.db) ? Object.keys(Shopfish.Model.DB._registry) : null),
       },
       database: req => {
         const matches = req.url.match(/^\/([a-z]\w+)(|\/.*?)$/);
+        const target = req.site && req.site.config.db;
 
-        if (matches && Shopfish.Model.DB[matches[1]]) {
+        if (matches && Shopfish.Model.DB._registry[matches[1]]) {
           req.originalUrl = req.url;
           req.url = matches[2] || '/';
 
           return Shopfish.Model.DB[matches[1]];
+        }
+
+        if (target && Shopfish.Model.DB._registry[target]) {
+          return Shopfish.Model.DB[target];
         }
 
         return Shopfish.Model.DB.default;
@@ -104,17 +87,51 @@ module.exports = Shopfish => {
         credentials: req => (req.site ? req.site.config.facebook : config.facebook),
       },
     }, (type, userInfo) => Shopfish.Services.API.Session.checkLogin({ params: { type, auth: userInfo } })),
+  ]);
+
+  server.mount('/api/v1/graphql', Shopfish.GraphQL.setup([
+    path.join(Shopfish.cwd, 'etc/schema/common.gql'),
+    path.join(Shopfish.cwd, 'etc/schema/generated/index.gql'),
+  ], Shopfish.load(Shopfish.ApplicationServer.getSites().find('graphql'))));
+
+  server.mount(ctx => {
+    const { url, site } = ctx.req;
+    const fileName = url.split('?')[0];
+
+    if (site && site.config.root && fileName === '/') {
+      ctx.req.originalUrl = url;
+      ctx.req.url = site.config.root;
+    }
+
+    if (site && Array.isArray(site.config.rewrite)) {
+      site.config.rewrite.some(pattern => {
+        const [prefix, suffix] = pattern.split(':');
+        const trailingSlash = prefix.substr(-1) === '/' ? '/' : '';
+
+        if (url.indexOf(prefix) === 0) {
+          ctx.req.originalUrl = url;
+          ctx.req.url = url.replace(prefix, `/${site.id}${suffix}${trailingSlash}`);
+          return true;
+        }
+        return false;
+      });
+    }
+  });
+
+  server.plug([
     Shopfish.Tarima.Bundler({
-      bundle_options: {
-        ...Shopfish.pkg.tarima.bundleOptions,
-        working_directory: path.join(Shopfish.cwd, 'apps'),
-      },
+      bundle_options: Shopfish.pkg.tarima.bundleOptions,
+      working_directory: path.join(Shopfish.cwd, 'apps'),
+      compile_extensions: ['pug'],
     }),
     Shopfish.Render.Views({
       view_folders: path.join(Shopfish.cwd, 'apps'),
     }),
     Shopfish.Router.Mappings({
       routes: map => hook('routeMappings', map),
+    }),
+    Shopfish.Static({
+      from_folders: path.join(Shopfish.cwd, 'apps'),
     }),
   ]);
 

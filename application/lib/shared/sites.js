@@ -4,6 +4,7 @@ const Util = require('./util');
 
 class Sites {
   constructor(baseDir) {
+    this.cwd = baseDir;
     this.all = Util.readdir(baseDir)
       .map(id => {
         const configFile = path.join(baseDir, id, 'settings.json');
@@ -11,7 +12,7 @@ class Sites {
           ? require(configFile)
           : {};
 
-        return { id, config, baseDir };
+        return { id, config };
       });
   }
 
@@ -21,9 +22,9 @@ class Sites {
 
   get paths() {
     return this.all.reduce((memo, cur) => {
-      const graphql = path.join(cur.baseDir, cur.id, 'api/schema/graphql');
-      const models = path.join(cur.baseDir, cur.id, 'api/models.js');
-      const handlers = path.join(cur.baseDir, cur.id, 'api/handlers');
+      const graphql = path.join(this.cwd, cur.id, 'api/schema/graphql');
+      const models = path.join(this.cwd, cur.id, 'api/models.js');
+      const handlers = path.join(this.cwd, cur.id, 'api/handlers');
 
       if (Util.isFile(models)) memo.push(models);
       if (Util.isDir(graphql)) memo.push(graphql);

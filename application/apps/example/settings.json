@@ -7,5 +7,6 @@
   "rewrite": [
     "/:/public"
   ],
-  "root": "/index.html"
+  "root": "/index.html",
+  "db": "example"
 }

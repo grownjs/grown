@@ -7,7 +7,6 @@ class AdminPlugin extends Plugin {
     return ctx.render('admin/views/layout', {
       body: render({
         plugins: this.siteManager.all,
-        matches: ctx.req.site && ctx.req.site.id,
         current: site.id,
       }),
       pkg: this.pkg,
