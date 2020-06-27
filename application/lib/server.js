@@ -86,7 +86,17 @@ module.exports = Shopfish => {
         enabled: req => (req.site ? req.site.config.facebook !== false : true),
         credentials: req => (req.site ? req.site.config.facebook : config.facebook),
       },
-    }, (type, userInfo) => Shopfish.Services.API.Session.checkLogin({ params: { type, auth: userInfo } })),
+    }, (type, userInfo) => Shopfish.Services.API.Session.checkLogin({
+      params: {
+        type,
+        auth: {
+          id: userInfo.id,
+          name: userInfo.name,
+          email: userInfo.email,
+          picture: userInfo.picture ? userInfo.picture.data.url : '',
+        },
+      },
+    })),
   ]);
 
   server.mount('/api/v1/graphql', Shopfish.GraphQL.setup([

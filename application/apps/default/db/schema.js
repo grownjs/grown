@@ -35,6 +35,9 @@ module.exports = {
           primaryKey: true,
           autoIncrement: true,
         },
+        picture: {
+          type: dataTypes.STRING,
+        },
         platform: {
           type: dataTypes.STRING,
         },

@@ -7,12 +7,17 @@ module.exports = ({ User, Session }) => async function checkLogin({ request }) {
       identifier: auth.id,
     },
     defaults: {
+      picture: auth.picture,
       email: auth.email,
       role: 'GUEST',
       verified: true,
     },
     hooks: false,
   });
+
+  if (auth.picture !== user.picture) {
+    await user.update({ picture: auth.picture });
+  }
 
   const session = await Session.create({
     userId: user.id,

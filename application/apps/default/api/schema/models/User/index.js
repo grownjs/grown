@@ -10,6 +10,6 @@ module.exports = {
     'ui:append': false,
   },
   $attributes: {
-    findAll: ['email', 'role', 'verified', 'platform'],
+    findAll: ['email', 'role', 'verified', 'picture', 'platform'],
   },
 };

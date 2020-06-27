@@ -1,5 +1,5 @@
 {
-  "description": "Migration from 2020-06-26T18:04:18.519Z",
+  "description": "Migration from 2020-06-27T05:37:28.910Z",
   "definitions": {
     "Session": {
       "id": "Session",
@@ -45,6 +45,9 @@
               "type": "integer",
               "primaryKey": true,
               "autoIncrement": true
+            },
+            "picture": {
+              "type": "string"
             },
             "platform": {
               "type": "string"
@@ -106,6 +109,9 @@
               "type": "integer",
               "primaryKey": true,
               "autoIncrement": true
+            },
+            "picture": {
+              "type": "string"
             },
             "platform": {
               "type": "string"
@@ -200,6 +206,9 @@
         "email": {
           "type": "string",
           "format": "email"
+        },
+        "picture": {
+          "type": "string"
         }
       }
     },
@@ -222,6 +231,9 @@
             "email": {
               "type": "string",
               "format": "email"
+            },
+            "picture": {
+              "type": "string"
             }
           }
         }
@@ -252,6 +264,9 @@
                 "email": {
                   "type": "string",
                   "format": "email"
+                },
+                "picture": {
+                  "type": "string"
                 }
               }
             }
@@ -351,6 +366,9 @@
           "type": "integer",
           "primaryKey": true,
           "autoIncrement": true
+        },
+        "picture": {
+          "type": "string"
         },
         "platform": {
           "type": "string"
