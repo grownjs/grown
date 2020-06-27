@@ -40,7 +40,7 @@
 
 <In modal visible autofocus on:cancel={clear} on:submit={doSignUp}>
   <div>
-    <button nofocus on:click={clear}>&times;</button>
+    <button type="button" nofocus on:click={clear}>&times;</button>
     <h2>Create a new account</h2>
     <label>
       Email: <input type="email" bind:value={email} required autocomplete="current-email" />

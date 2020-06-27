@@ -45,7 +45,7 @@
 <Route path="/password-recovery">
   <In modal visible autofocus id="password-recovery" on:cancel={clear} on:submit={doUpdate}>
     <div>
-      <button nofocus on:click={clear}>&times;</button>
+      <button type="button" nofocus on:click={clear}>&times;</button>
       <h2>Password recovery</h2>
       <label>
         E-mail address: <input type="email" bind:value={email} required autocomplete="current-email" />

@@ -50,7 +50,7 @@
 <div {id} class={className || cssClass}>
   <In modal visible autofocus id="password-reset" on:cancel={clear}>
     <div>
-      <button nofocus on:click={clear}>&times;</button>
+      <button type="button" nofocus on:click={clear}>&times;</button>
       <h2>{label}</h2>
       <label>
         New password: <input type="password" bind:value={newPassword} autocomplete="new-password" />

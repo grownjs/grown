@@ -68,7 +68,7 @@
 <Route path="/password-change">
   <In modal visible autofocus id="password-change" on:cancel={clear} on:submit={doUpdate}>
     <div>
-      <button nofocus on:click={clear}>&times;</button>
+      <button type="button" nofocus on:click={clear}>&times;</button>
       <h2>Change password</h2>
       <label>
         Current password: <input type="password" bind:value={password} required autocomplete="current-password" />
