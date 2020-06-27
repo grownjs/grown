@@ -100,10 +100,16 @@ module.exports = (Grown, util) => {
       const name = `${path.basename(src).replace(/\.\w+$/, '')}.js`;
 
       // use the internal resolution algorithm for imported sources
-      const code = `import x from '${path.join(options.working_directory || '', src)}'; export default x;`;
+      const code = `import x from '${path.join(this.working_directory || '', src)}'; export default x;`;
+      const tpl = tarima.parse(name, code, options);
+
+      // force client compilation for any given extensions
+      (this.compile_extensions || []).forEach(ext => {
+        tpl.params.options.extensions[ext] = 'js';
+      });
 
       // prepare the source for bundling, see other extensions
-      tarima.parse(name, code, options).bundle((err, output) => {
+      tpl.bundle((err, output) => {
         /* istanbul ignore else */
         if (err) {
           return reject(err);
