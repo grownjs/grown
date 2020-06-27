@@ -30,7 +30,7 @@ function remoteAddressToString(address) {
   }
 }
 
-function readBody(req, res, cb) {
+function setStream(req) {
   const stream = new Readable();
 
   stream._read = () => true;
@@ -40,17 +40,33 @@ function readBody(req, res, cb) {
   };
 
   req.pipe = stream.pipe.bind(stream);
+  req.on = stream.on.bind(stream);
   req.stream = stream;
+}
 
+function prepBody(req, res, cb) {
+  res.onData((part, end) => {
+    const slice = part.slice(part.byteOffset, part.byteLength);
+
+    req.stream.push(new Uint8Array(slice));
+
+    if (end) {
+      req.stream.push(null);
+      cb();
+    }
+  });
+}
+
+function readBody(req, res, cb) {
   let buffer;
   res.onData((part, end) => {
     const chunk = Buffer.from(part);
     const slice = part.slice(part.byteOffset, part.byteLength);
 
-    stream.push(new Uint8Array(slice));
+    req.stream.push(new Uint8Array(slice));
 
     if (end) {
-      stream.push(null);
+      req.stream.push(null);
 
       if (buffer) {
         cb(Buffer.concat([buffer, chunk]).toString('utf8'));
@@ -96,7 +112,7 @@ function ServerRequest(req, res) {
 
 _util.inherits(ServerRequest, Transform);
 
-function ServerResponse(resp) {
+function ServerResponse(req, resp) {
   Transform.call(this);
 
   this._buffer = [];
@@ -110,8 +126,8 @@ function ServerResponse(resp) {
   this.statusMessage = STATUS_CODES[this.statusCode];
 
   resp.onAborted(() => {
-    if (this.stream) {
-      this.stream._abort();
+    if (req.stream) {
+      req.stream._abort();
     }
 
     this.aborted = true;
@@ -211,7 +227,7 @@ module.exports = function _uws(ctx, options, callback, protocolName) {
       });
 
       const _req = new ServerRequest(req, res);
-      const _resp = new ServerResponse(res);
+      const _resp = new ServerResponse(_req, res);
 
       const next = (data, cb) => {
         if (typeof data === 'string' && data.length) {
@@ -224,12 +240,13 @@ module.exports = function _uws(ctx, options, callback, protocolName) {
 
       const type = req.getHeader('content-type');
 
+      setStream(_req);
       if (type.includes('/json')) {
-        readBody(req, res, data => next(data, JSON.parse));
+        readBody(_req, res, data => next(data, JSON.parse));
       } else if (type.includes('/x-www-form-urlencoded')) {
-        readBody(req, res, data => next(data, qs.parse));
+        readBody(_req, res, data => next(data, qs.parse));
       } else {
-        next();
+        prepBody(_req, res, next);
       }
     });
 
