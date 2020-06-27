@@ -6,7 +6,7 @@
   } from 'svql';
 
   import Auth from './Auth.svelte';
-  import SignUp from '../pages/SignUp.svelte';
+  import CreateAccount from '../user/CreateAccount.svelte';
   import RecoverPassword from '../user/RecoverPassword.svelte';
   import { LOGIN_REQUEST } from '../../shared/queries';
 
@@ -46,6 +46,8 @@
       disabled = false;
     });
   });
+
+  let visible;
 </script>
 
 <Status
@@ -57,29 +59,33 @@
 />
 
 {#if !$state.isLogged}
-  <Link href="/sign-up">Create a new account</Link> | <Link href="/login">{label}</Link>
+  <Link href="/sign-up">Create a new account</Link>
+  <Link href="/login">{label}</Link>
 
   <div class="menu">
     <Auth nodebug />
-    <RecoverPassword>Try requesting for a</RecoverPassword>
+    Try requesting for a <Link href="/password-recovery">password recovery</Link>.
   </div>
 
-  <Route exact path="/sign-up" component={SignUp} />
-
+  <RecoverPassword />
+  <Route exact path="/sign-up" component={CreateAccount} />
   <Route exact path="/login">
     <In modal visible autofocus id="login" on:cancel={clear} on:submit={doLogin}>
-      <h2>Login</h2>
-      <label>
-        Email: <input type="email" bind:value={email} required autocomplete="current-email" />
-      </label>
-      <label>
-        Password: <input type="password" bind:value={password} required autocomplete="current-password" />
-      </label>
-      <button {disabled} type="submit">Log in</button> or <Link href={back} on:click={clear}>cancel</Link>
-
-      <hr />
-
-      <a href="/auth/facebook">Login with Facebook</a>
+      <div>
+        <button nofocus on:click={clear}>&times;</button>
+        <h2>Login</h2>
+        <label>
+          Email: <input type="email" bind:value={email} required autocomplete="current-email" />
+        </label>
+        <label>
+          Password: <input type="password" bind:value={password} required autocomplete="current-password" />
+        </label>
+        <span>
+          <button {disabled} type="submit">Log in</button> or <Link href={back} on:click={clear}>cancel</Link>
+        </span>
+        <hr />
+        <a href="/auth/facebook">Login with Facebook</a>
+      </div>
     </In>
   </Route>
 {/if}

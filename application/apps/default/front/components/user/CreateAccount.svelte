@@ -1,4 +1,5 @@
-<script>  import { In, Status, mutation } from 'svql';
+<script>//
+  import { In, Status, mutation } from 'svql';
   import { Link, navigateTo } from 'yrv';
 
   import { SIGNUP_REQUEST } from '../../shared/queries';
@@ -38,15 +39,20 @@
 />
 
 <In modal visible autofocus on:cancel={clear} on:submit={doSignUp}>
-  <h2>Create a new account</h2>
-  <label>
-    Email: <input type="email" bind:value={email} required autocomplete="current-email" />
-  </label>
-  <label>
-    Password: <input type="password" bind:value={password} required autocomplete="current-password" />
-  </label>
-  <label>
-    Confirm new password: <input type="password" bind:value={confirmPassword} required autocomplete="confirm-password" />
-  </label>
-  <button {disabled} type="submit">Request for access</button> or <Link href={back} on:click={clear}>cancel</Link>
+  <div>
+    <button nofocus on:click={clear}>&times;</button>
+    <h2>Create a new account</h2>
+    <label>
+      Email: <input type="email" bind:value={email} required autocomplete="current-email" />
+    </label>
+    <label>
+      Password: <input type="password" bind:value={password} required autocomplete="current-password" />
+    </label>
+    <label>
+      Confirm new password: <input type="password" bind:value={confirmPassword} required autocomplete="confirm-password" />
+    </label>
+    <span>
+      <button {disabled} type="submit">Request for access</button> or <Link href={back} on:click={clear}>cancel</Link>
+    </span>
+  </div>
 </In>

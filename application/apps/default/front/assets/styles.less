@@ -33,8 +33,15 @@ form {
   }
 }
 
-button {
+button,
+textarea,
+input[type=text],
+input[type=email],
+input[type=submit],
+input[type=button],
+input[type=password] {
   padding: 5px;
+  border: 1px solid silver;
   background-color: transparent;
 }
 
@@ -45,8 +52,12 @@ label {
 
   input {
     display: block;
-    padding: 5px;
     width: 100%;
+  }
+
+  + span {
+    display: inline-block;
+    margin-top: 1em;
   }
 }
 
@@ -66,6 +77,29 @@ label {
 
 .auto {
   flex: 1 1 auto;
+}
+
+.nav {
+  position: relative;
+
+  .sub {
+    padding-right: 30px;
+
+    &::after {
+      position: absolute;
+      content: '￬';
+      bottom: 0;
+      right: 10px;
+      top: 0;
+      height: 25px;
+      margin: auto 0;
+      z-index: -1;
+    }
+
+    &:hover::after {
+      content: '￪';
+    }
+  }
 }
 
 .menu {
@@ -111,4 +145,37 @@ label {
 
 .body {
   padding: 10px;
+}
+
+.overlay {
+  .wrapper {
+    form {
+      > div {
+        position: relative;
+
+        > button {
+          position: absolute;
+          right: 0;
+          top: 0;
+          border: 0;
+          padding: 0;
+        }
+      }
+    }
+  }
+
+  @media screen and (max-width: 420px) {
+    .wrapper {
+      width: 100%;
+      height: 100%;
+
+      form > div {
+        max-width: calc(100vw - 40px);
+      }
+    }
+  }
+}
+
+.noselect {
+  user-select: none;
 }

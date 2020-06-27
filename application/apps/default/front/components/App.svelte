@@ -29,13 +29,13 @@
   });
 </script>
 
-<nav class="menu">
+<nav class="nav menu noselect">
   <Router nofallback>
     <ul class="flex reset">
       <li class="auto">
         <Link href="/">Home</Link>
       </li>
-      <li>
+      <li class="sub">
         <Login />
         <Logout />
       </li>

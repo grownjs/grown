@@ -49,13 +49,16 @@
 
 <div {id} class={className || cssClass}>
   <In modal visible autofocus id="password-reset" on:cancel={clear}>
-    <h2>{label}</h2>
-    <label>
-      New password: <input type="password" bind:value={newPassword} autocomplete="new-password" />
-    </label>
-    <label>
-      Confirm new password: <input type="password" bind:value={confirmPassword} autocomplete="confirm-password" />
-    </label>
-    <button on:click={doReset}>Reset</button> or <Link href={back}>cancel</Link>
+    <div>
+      <button nofocus on:click={clear}>&times;</button>
+      <h2>{label}</h2>
+      <label>
+        New password: <input type="password" bind:value={newPassword} autocomplete="new-password" />
+      </label>
+      <label>
+        Confirm new password: <input type="password" bind:value={confirmPassword} autocomplete="confirm-password" />
+      </label>
+      <button on:click={doReset}>Reset</button> or <Link href={back}>cancel</Link>
+    </div>
   </In>
 </div>

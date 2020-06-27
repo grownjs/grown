@@ -7,14 +7,8 @@
   import { RECOVER_PASSWORD_REQUEST } from '../../shared/queries';
 
   let disabled;
-  let cssClass = '';
-
-  export let id = '';
-  export let className = '';
-  export { cssClass as class };
 
   export let back = '/';
-  export let label = 'password recovery';
 
   let email = null;
   let updating = null;
@@ -48,17 +42,17 @@
   otherwise="Password recovery was successfully sent..."
 />
 
-<div {id} class={className || cssClass}>
-  <slot />
-  <Link href="/password-recovery">{label}</Link>
-</div>
-
 <Route path="/password-recovery">
   <In modal visible autofocus id="password-recovery" on:cancel={clear} on:submit={doUpdate}>
-    <h2>Password recovery</h2>
-    <label>
-      E-mail address: <input type="email" bind:value={email} required autocomplete="current-email" />
-    </label>
-    <button {disabled} type="submit">Request change</button> or <Link href={back} on:click={clear}>cancel</Link>
+    <div>
+      <button nofocus on:click={clear}>&times;</button>
+      <h2>Password recovery</h2>
+      <label>
+        E-mail address: <input type="email" bind:value={email} required autocomplete="current-email" />
+      </label>
+      <span>
+        <button {disabled} type="submit">Request change</button> or <Link href={back} on:click={clear}>cancel</Link>
+      </span>
+    </div>
   </In>
 </Route>

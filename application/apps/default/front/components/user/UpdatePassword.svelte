@@ -67,16 +67,21 @@
 
 <Route path="/password-change">
   <In modal visible autofocus id="password-change" on:cancel={clear} on:submit={doUpdate}>
-    <h2>Change password</h2>
-    <label>
-      Current password: <input type="password" bind:value={password} required autocomplete="current-password" />
-    </label>
-    <label>
-      New password: <input type="password" bind:value={newPassword} required autocomplete="new-password" />
-    </label>
-    <label>
-      Confirm new password: <input type="password" bind:value={confirmPassword} required autocomplete="confirm-password" />
-    </label>
-    <button {disabled} type="submit">Update</button> or <Link href={back} on:click={clear}>cancel</Link>
+    <div>
+      <button nofocus on:click={clear}>&times;</button>
+      <h2>Change password</h2>
+      <label>
+        Current password: <input type="password" bind:value={password} required autocomplete="current-password" />
+      </label>
+      <label>
+        New password: <input type="password" bind:value={newPassword} required autocomplete="new-password" />
+      </label>
+      <label>
+        Confirm new password: <input type="password" bind:value={confirmPassword} required autocomplete="confirm-password" />
+      </label>
+      <span>
+        <button {disabled} type="submit">Update</button> or <Link href={back} on:click={clear}>cancel</Link>
+      </span>
+    </div>
   </In>
 </Route>

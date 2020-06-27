@@ -43,10 +43,15 @@
 
 <div {id} class={className || cssClass}>
   <In modal visible autofocus id="validate-token" on:cancel={clear}>
-    <h2>{label}</h2>
-    <label>
-      E-mail: <input type="email" bind:value={confirmEmail} />
-    </label>
-    <button on:click={doConfirm}>Confirm</button> or <Link href={back}>cancel</Link>
+    <div>
+      <button nofocus on:click={clear}>&times;</button>
+      <h2>{label}</h2>
+      <label>
+        E-mail: <input type="email" bind:value={confirmEmail} />
+      </label>
+      <span>
+        <button on:click={doConfirm}>Confirm</button> or <Link href={back}>cancel</Link>
+      </span>
+    </div>
   </In>
 </div>
