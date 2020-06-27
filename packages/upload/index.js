@@ -23,7 +23,15 @@ module.exports = (Grown, util) => {
           conn.req.body = util.extendValues({}, data, conn.req.body);
 
           // expose uploaded files
-          conn.req.files = files;
+          conn.req.files = Object.keys(files).reduce((memo, key) => {
+            memo[key] = {
+              filePath: files[key].path,
+              fileName: files[key].name,
+              fileSize: files[key].size,
+              fileType: files[key].type,
+            };
+            return memo;
+          }, {});
 
           // mark as parsed
           conn.req._body = true;
@@ -41,8 +49,8 @@ module.exports = (Grown, util) => {
       if (this.save_directory) {
         ctx.mount(conn => conn.upload_files({
           keepExtensions: true,
-          multiples: false,
-          maxFields: 10,
+          multiples: true,
+          maxFields: 0,
           maxFileSize: this.max_file_size,
           maxFieldsSize: this.max_field_size,
           uploadDir: this.save_directory,
