@@ -178,7 +178,17 @@ module.exports = (Grown, util) => {
             RE_BUNDLE_EXTENSIONS.test(src)
               ? this._bundleCache(_cwd, src, () => this._bundleRender(src, this._bundleOptions(_cwd, 'iife', data, this.bundle_options)))
               : this._bundleCache(_cwd, src, () => this._bundleView(src, this._bundleOptions(_cwd, 'cjs', data, this.bundle_options)))
-          ));
+          ))
+          .then(tpl => {
+            const fn = tpl.render;
+
+            fn.source = tpl.source;
+            fn.locals = tpl.locals;
+            fn.result = tpl.result;
+            fn.relative = tpl.caches[0].filepath;
+            fn.filepath = path.join(_cwd, fn.relative);
+            return fn;
+          });
       };
 
       return {
