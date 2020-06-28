@@ -12,7 +12,8 @@ async function run() {
 
     if (typeof callback === 'function') {
       await Shopfish.ApplicationServer.start();
-      await callback(Shopfish, require('./lib/shared'));
+      await callback(Shopfish);
+      process.exit();
     }
   }
 }

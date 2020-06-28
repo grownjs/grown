@@ -37,7 +37,9 @@
 />
 
 {#if $state.me}
-  <span>Hello, {$state.me.email}</span>
+  <span>
+    Hello, {$state.me.email}
+  </span>
   <UpdatePassword class="menu">
     <button {disabled} on:click|preventDefault={doLogout}>Log out</button>
     {#if !$state.me.platform} or {/if}

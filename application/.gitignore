@@ -8,6 +8,7 @@
 *.todo
 *.sqlite
 codecov.sh
+tmp
 build
 pgdata
 chrome

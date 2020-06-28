@@ -5,8 +5,7 @@
 module.exports = async Shopfish => {
   const db = Shopfish.MyModels;
 
-  await db.connect();
-  await db.sync();
+  await db.sync({ force: true });
   await db.get('Test').create({ label: 'Foo' });
 
   const c = await db.get('Test').count();
@@ -15,6 +14,4 @@ module.exports = async Shopfish => {
   console.log(c);
   console.log(d.get());
   console.log(Shopfish.argv);
-
-  await db.disconnect();
 };

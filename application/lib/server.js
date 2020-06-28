@@ -33,6 +33,7 @@ module.exports = Shopfish => {
   Shopfish.use(require('@grown/render'));
   Shopfish.use(require('@grown/tarima'));
   Shopfish.use(require('@grown/static'));
+  Shopfish.use(require('@grown/upload'));
   Shopfish.use(require('@grown/graphql'));
   Shopfish.use(require('@grown/session/auth'));
 
@@ -46,6 +47,9 @@ module.exports = Shopfish => {
     require('logro').getExpressLogger(),
     Shopfish.Static({
       from_folders: path.join(Shopfish.cwd, 'build'),
+    }),
+    Shopfish.Upload({
+      save_directory: path.join(Shopfish.cwd, 'tmp/uploads'),
     }),
   ]);
 
@@ -61,6 +65,7 @@ module.exports = Shopfish => {
       prefix: '/db',
       options: {
         attributes: false,
+        uploadDir: 'tmp/uploads',
         connections: req => (!req.site && Object.keys(Shopfish.Model.DB._registry)),
       },
       database: req => {

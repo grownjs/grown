@@ -46,8 +46,6 @@
       disabled = false;
     });
   });
-
-  let visible;
 </script>
 
 <Status

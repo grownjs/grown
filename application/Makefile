@@ -173,6 +173,9 @@ reset: deps ## Run integration_seeds  (host)
 clear: deps ## Run integration_seeds with --clear  (host)
 	@node exec $(dbpath)/integration_seeds --clear
 
+exec: deps ## Run local scripts through the system  (host)
+	@node exec $(script)
+
 watch: deps ## Enable nodemon watching of sources  (host)
 	@(npm run watch 2>&1 | npm run logs) & npm run watch:mail
 
