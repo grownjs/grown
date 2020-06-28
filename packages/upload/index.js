@@ -1,5 +1,7 @@
 'use strict';
 
+const fs = require('fs');
+const path = require('path');
 const debug = require('debug')('grown:upload');
 
 module.exports = (Grown, util) => {
@@ -9,7 +11,23 @@ module.exports = (Grown, util) => {
     debug('#%s Processing uploaded files', conn.pid);
 
     return new Promise((resolve, reject) => {
-      const form = new IncomingForm(opts || {});
+      if (conn.req._body) {
+        resolve();
+        return;
+      }
+
+      const form = new IncomingForm({
+        uploadDir: path.join(Grown.cwd, 'tmp'),
+        keepExtensions: true,
+        multiples: true,
+        maxFields: 0,
+        ...opts,
+      });
+
+      if (!fs.existsSync(form.uploadDir)) {
+        throw new Error(`Missing directory '${form.uploadDir}'`);
+        return;
+      }
 
       form.parse(conn.req, (err, data, files) => {
         if (err) {
@@ -25,10 +43,10 @@ module.exports = (Grown, util) => {
           // expose uploaded files
           conn.req.files = Object.keys(files).reduce((memo, key) => {
             memo[key] = {
-              filePath: files[key].path,
-              fileName: files[key].name,
-              fileSize: files[key].size,
-              fileType: files[key].type,
+              path: files[key].path,
+              name: files[key].name,
+              size: files[key].size,
+              type: files[key].type,
             };
             return memo;
           }, {});
@@ -48,9 +66,6 @@ module.exports = (Grown, util) => {
     $install(ctx) {
       if (this.save_directory) {
         ctx.mount(conn => conn.upload_files({
-          keepExtensions: true,
-          multiples: true,
-          maxFields: 0,
           maxFileSize: this.max_file_size,
           maxFieldsSize: this.max_field_size,
           uploadDir: this.save_directory,
