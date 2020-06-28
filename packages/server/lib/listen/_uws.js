@@ -30,7 +30,7 @@ function remoteAddressToString(address) {
   }
 }
 
-function setStream(req) {
+function setStream(req, cb) {
   const stream = new Readable();
 
   stream._read = () => true;
@@ -240,7 +240,7 @@ module.exports = function _uws(ctx, options, callback, protocolName) {
 
       const type = req.getHeader('content-type');
 
-      setStream(_req);
+      setStream(_req, next);
       if (type.includes('/json')) {
         readBody(_req, res, data => next(data, JSON.parse));
       } else if (type.includes('/x-www-form-urlencoded')) {
