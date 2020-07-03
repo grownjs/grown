@@ -8,11 +8,5 @@ module.exports = (cwd, argv) => {
 
   Grown.use(require('@grown/server'));
 
-  const dir = path.join(process.cwd(), 'node_modules/@grown');
-
-  if (fs.existsSync(dir)) {
-    Grown.bind('@grown/', dir);
-  }
-
   return Grown;
 };

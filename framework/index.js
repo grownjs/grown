@@ -3,8 +3,19 @@
 const fs = require('fs');
 const path = require('path');
 
-async function main(opts) {
-  const Grown = require('./lib')(require('..')(), opts || {});
+function getInstance(cwd, opts) {
+  const Grown = require('..')(cwd);
+  const node_modules = path.join(cwd, 'node_modules/@grown');
+
+  if (fs.existsSync(node_modules)) {
+    Grown.bind('@grown/', node_modules);
+  }
+
+  return require('./lib')(Grown, opts || {});
+}
+
+async function main(cwd, opts) {
+  const Grown = getInstance(cwd, opts);
 
   Grown.ApplicationServer.getServer()
     .listen(Grown.argv.flags.port || 3000)
@@ -14,8 +25,8 @@ async function main(opts) {
     });
 }
 
-async function exec(opts) {
-  const Grown = require('./lib')(require('..')(), opts || {});
+async function exec(cwd, opts) {
+  const Grown = getInstance(cwd, opts);
   const script = Grown.argv._[0];
 
   if (script && fs.existsSync(script)) {
