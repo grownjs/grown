@@ -19,6 +19,9 @@ module.exports = ($, cwd, argv, util) => {
   $('Grown.use', cb => cb($.Grown, util), false);
   $('Grown.do', util.wrap, false);
 
+  // exposes helper for aliasing
+  Object.defineProperty($.Grown, 'bind', { value: require('global-or-local').bind });
+
   const env = _env.config({ path: path.join(cwd, '.env') });
 
   /* istanbul ignore else */
