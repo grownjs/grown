@@ -16,10 +16,10 @@ async function main(opts) {
 
 async function exec(opts) {
   const Grown = require('./lib')(require('..')(), opts || {});
-  const main = Grown.argv._[0];
+  const script = Grown.argv._[0];
 
-  if (main && fs.existsSync(main)) {
-    const callback = require(path.resolve(main));
+  if (script && fs.existsSync(script)) {
+    const callback = require(path.resolve(script));
 
     if (typeof callback === 'function') {
       await Grown.ApplicationServer.start();

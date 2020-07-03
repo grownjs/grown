@@ -2,6 +2,6 @@
 
 /* global describe, it */
 
-describe('Grown.Crop', () => {
+describe('Grown (framework)', () => {
   it('FIXME');
 });

@@ -3,6 +3,7 @@
 .env
 .DS_Store
 codecov.sh
+.nyc_output
 build
 coverage
 node_modules

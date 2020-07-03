@@ -3,10 +3,10 @@ const { Plugin } = require('../../lib/shared');
 class AdminPlugin extends Plugin {
   async onAdmin(ctx, site) {
     const panelView = await ctx.bundle('admin/views/panel');
-    const allModels = this.siteManager.all.reduce((memo, site) => {
-      if (this.Grown.Model.DB[site.id]) {
-        if (!memo[site.id]) memo[site.id] = [];
-        memo[site.id].push(Object.keys(this.Grown.Model.DB[site.id].models));
+    const allModels = this.siteManager.all.reduce((memo, x) => {
+      if (this.Grown.Model.DB[x.id]) {
+        if (!memo[x.id]) memo[x.id] = [];
+        memo[x.id].push(Object.keys(this.Grown.Model.DB[x.id].models));
       }
       return memo;
     }, {});
@@ -32,9 +32,9 @@ class AdminPlugin extends Plugin {
         res.status(200);
       });
 
-    this.siteManager.all.forEach(site => {
-      routes.get(`/${site.id}`, ctx => this.onAdmin(ctx, site));
-      routes.get(`/${site.id}/*path`, ctx => this.onAdmin(ctx, site));
+    this.siteManager.all.forEach(x => {
+      routes.get(`/${x.id}`, ctx => this.onAdmin(ctx, x));
+      routes.get(`/${x.id}/*path`, ctx => this.onAdmin(ctx, x));
     });
 
     return routes;
