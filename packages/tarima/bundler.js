@@ -13,9 +13,10 @@ module.exports = (Grown, util) => {
 
   const _temp = {};
 
-  function _bundleOptions(cwd, format, locals, defaults) {
-    const _opts = util.extendValues({}, defaults || {});
+  function _bundleOptions(cwd, format, locals, options) {
+    const _opts = util.extendValues({}, options.bundleOptions || {});
 
+    _opts.paths = options.includePath || [];
     _opts.locals = util.extendValues({}, locals, _opts.locals || {});
 
     // allow interop for front-end bundles
@@ -100,7 +101,7 @@ module.exports = (Grown, util) => {
       const name = `${path.basename(src).replace(/\.\w+$/, '')}.js`;
 
       // use the internal resolution algorithm for imported sources
-      const code = `import x from '${path.join(this.working_directory || '', src)}'; export default x;`;
+      const code = `import x from '${src}'; export default x;`;
       const tpl = tarima.parse(name, code, options);
 
       // force client compilation for any given extensions
@@ -173,11 +174,16 @@ module.exports = (Grown, util) => {
           return Promise.reject(new Error(`Invalid source ${src}`));
         }
 
+        const opts = {
+          includePath: this.include_path,
+          bundleOptions: this.bundle_options,
+        };
+
         return Promise.resolve()
           .then(() => (
             RE_BUNDLE_EXTENSIONS.test(src)
-              ? this._bundleCache(_cwd, src, () => this._bundleRender(src, this._bundleOptions(_cwd, 'iife', data, this.bundle_options)))
-              : this._bundleCache(_cwd, src, () => this._bundleView(src, this._bundleOptions(_cwd, 'cjs', data, this.bundle_options)))
+              ? this._bundleCache(_cwd, src, () => this._bundleRender(src, this._bundleOptions(_cwd, 'iife', data, opts)))
+              : this._bundleCache(_cwd, src, () => this._bundleView(src, this._bundleOptions(_cwd, 'cjs', data, opts)))
           ))
           .then(tpl => {
             const fn = tpl.render;
