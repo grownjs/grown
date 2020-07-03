@@ -3,13 +3,21 @@ const { Plugin } = require('~/lib/shared');
 class AdminPlugin extends Plugin {
   async onAdmin(ctx, site) {
     const panelView = await ctx.bundle('admin/views/panel');
+    const allModels = this.siteManager.all.reduce((memo, site) => {
+      if (this.Shopfish.Model.DB[site.id]) {
+        if (!memo[site.id]) memo[site.id] = [];
+        memo[site.id].push(Object.keys(this.Shopfish.Model.DB[site.id].models));
+      }
+      return memo;
+    }, {});
 
     return ctx.render('admin/views/layout', {
       body: panelView({
+        models: allModels,
         plugins: this.siteManager.all,
-        current: site.id,
+        selected: site.id,
       }),
-      pkg: this.pkg,
+      pkg: this.Shopfish.pkg,
       env: process.env,
       base: `/${site.id}/`,
       scripts: `<script src="/assets/${site.id}.js"></script>`,
@@ -35,11 +43,11 @@ class AdminPlugin extends Plugin {
 
 module.exports = (Shopfish, config) => {
   const siteManager = Shopfish.ApplicationServer.getSites();
-  const pluginInstance = new AdminPlugin(Shopfish, {
+  const pluginInstance = new AdminPlugin({
     enabled: config.admin,
     name: 'adminPlugin',
-    pkg: Shopfish.pkg,
     siteManager,
+    Shopfish,
   });
 
   return pluginInstance;
