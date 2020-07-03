@@ -168,39 +168,6 @@ describe('Grown (bud)', () => {
     });
   });
 
-  describe('#eff', () => {
-    it('can create a scope with state-based reactivity', () => {
-      const test = require('../index')();
-      const results = [];
-
-      return new Promise(ok => {
-        test.eff(state => {
-          const x = state(0);
-          const y = state(() => x() + 1);
-          const z = state(() => x() + y());
-
-          const off = state.subscribe(() => {
-            results.push({ x: x(), y: y(), z: z() });
-          });
-
-          x(0);
-          x(3);
-
-          setTimeout(() => {
-            x(10);
-            off();
-            x(12);
-            ok();
-          });
-        });
-      }).then(() => {
-        expect(results).to.eql([
-          { x: 3, y: 4, z: 7 },
-        ]);
-      });
-    });
-  });
-
   describe('#use', () => {
     it('can load new module definitions', () => {
       Grown.use(($, util) => {
