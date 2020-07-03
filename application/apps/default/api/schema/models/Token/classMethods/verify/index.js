@@ -1,6 +1,6 @@
 const {
   TokenExpired,
-} = require('~/lib/shared');
+} = require('~/lib/errors');
 
 module.exports = ({ Token }) => async function verify(token, type) {
   const query = {

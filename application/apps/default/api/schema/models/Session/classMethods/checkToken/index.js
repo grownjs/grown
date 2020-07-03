@@ -1,6 +1,6 @@
 const {
   SessionExpired,
-} = require('~/lib/shared');
+} = require('~/lib/errors');
 
 module.exports = ({ Session }) => async function checkToken(token) {
   const session = await Session.findOne({

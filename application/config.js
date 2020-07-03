@@ -1,5 +1,4 @@
 module.exports = {
-  admin: true,
   facebook: {
     clientID: process.env.FB_CLIENT_ID,
     clientSecret: process.env.FB_CLIENT_SECRET,

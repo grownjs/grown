@@ -1,6 +1,6 @@
 const {
   UserNotFound,
-} = require('~/lib/shared');
+} = require('~/lib/errors');
 
 module.exports = ({ User }) => async function getUser(id, email) {
   const query = {

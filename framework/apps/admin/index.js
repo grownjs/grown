@@ -1,12 +1,12 @@
-const { Plugin } = require('~/lib/shared');
+const { Plugin } = require('../../lib/shared');
 
 class AdminPlugin extends Plugin {
   async onAdmin(ctx, site) {
     const panelView = await ctx.bundle('admin/views/panel');
     const allModels = this.siteManager.all.reduce((memo, site) => {
-      if (this.Shopfish.Model.DB[site.id]) {
+      if (this.Grown.Model.DB[site.id]) {
         if (!memo[site.id]) memo[site.id] = [];
-        memo[site.id].push(Object.keys(this.Shopfish.Model.DB[site.id].models));
+        memo[site.id].push(Object.keys(this.Grown.Model.DB[site.id].models));
       }
       return memo;
     }, {});
@@ -17,7 +17,7 @@ class AdminPlugin extends Plugin {
         plugins: this.siteManager.all,
         selected: site.id,
       }),
-      pkg: this.Shopfish.pkg,
+      pkg: this.Grown.pkg,
       env: process.env,
       base: `/${site.id}/`,
       scripts: `<script src="/assets/${site.id}.js"></script>`,
@@ -41,13 +41,13 @@ class AdminPlugin extends Plugin {
   }
 }
 
-module.exports = (Shopfish, config) => {
-  const siteManager = Shopfish.ApplicationServer.getSites();
+module.exports = (Grown, config) => {
+  const siteManager = Grown.ApplicationServer.getSites();
   const pluginInstance = new AdminPlugin({
-    enabled: config.admin,
+    enabled: config.admin || true,
     name: 'adminPlugin',
     siteManager,
-    Shopfish,
+    Grown,
   });
 
   return pluginInstance;

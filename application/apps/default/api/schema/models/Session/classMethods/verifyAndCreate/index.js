@@ -1,7 +1,7 @@
 const {
   UserNotVerified,
   PasswordMismatch,
-} = require('~/lib/shared');
+} = require('~/lib/errors');
 
 module.exports = ({ Session, User }) => async function verifyAndCreate(email, password) {
   const user = await User.verify(email, password);

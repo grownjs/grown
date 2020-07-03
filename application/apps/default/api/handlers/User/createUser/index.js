@@ -1,6 +1,6 @@
 const {
   PasswordMismatch,
-} = require('~/lib/shared');
+} = require('~/lib/errors');
 
 module.exports = ({ User, Token, mailer }) => async function createUser({ request }) {
   const {

@@ -1,6 +1,6 @@
 const {
   UserNotFound,
-} = require('~/lib/shared');
+} = require('~/lib/errors');
 
 module.exports = ({ bcrypt, User }) => async function verify(email, password, userId) {
   const query = {
