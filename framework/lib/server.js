@@ -6,6 +6,11 @@ const start = new Date();
 module.exports = (Grown, opts) => {
   const { Plugin } = require('./shared');
 
+  const shared_folders = [
+    path.join(Grown.cwd, 'apps'),
+    path.join(__dirname, '../apps'),
+  ];
+
   const config = require(path.join(Grown.cwd, 'config'));
   const hooks = [];
 
@@ -152,18 +157,18 @@ module.exports = (Grown, opts) => {
 
   server.plug([
     Grown.Tarima.Bundler({
+      include_path: shared_folders,
       bundle_options: Grown.pkg.tarima.bundleOptions,
-      working_directory: path.join(Grown.cwd, 'apps'),
-      compile_extensions: ['pug'],
+      compile_extensions: ['pug', 'hbs', 'ejs'],
     }),
     Grown.Render.Views({
-      view_folders: path.join(Grown.cwd, 'apps'),
+      view_folders: shared_folders,
     }),
     Grown.Router.Mappings({
       routes: map => hook('routeMappings', map),
     }),
     Grown.Static({
-      from_folders: path.join(Grown.cwd, 'apps'),
+      from_folders: shared_folders,
     }),
   ]);
 

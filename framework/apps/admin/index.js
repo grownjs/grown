@@ -44,7 +44,7 @@ class AdminPlugin extends Plugin {
 module.exports = (Grown, config) => {
   const siteManager = Grown.ApplicationServer.getSites();
   const pluginInstance = new AdminPlugin({
-    enabled: config.admin || true,
+    enabled: config.admin,
     name: 'adminPlugin',
     siteManager,
     Grown,

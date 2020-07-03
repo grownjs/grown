@@ -3,17 +3,16 @@ const path = require('path');
 const Util = require('./util');
 
 class Sites {
-  constructor(baseDir) {
-    this.cwd = baseDir;
-    this.all = Util.readdir(baseDir)
-      .map(id => {
-        const configFile = path.join(baseDir, id, 'settings.json');
-        const config = Util.isFile(configFile)
-          ? require(configFile)
-          : {};
+  constructor(fromDirs) {
+    this.all = fromDirs.reduce((memo, dir) => memo.concat(Util.readdir(dir).map(id => {
+      const baseDir = path.join(dir, id);
+      const configFile = path.join(baseDir, 'settings.json');
+      const config = Util.isFile(configFile)
+        ? require(configFile)
+        : {};
 
-        return { id, config };
-      });
+      return { id, config, baseDir };
+    })), []);
   }
 
   get enabled() {
@@ -21,10 +20,10 @@ class Sites {
   }
 
   get paths() {
-    return this.all.reduce((memo, cur) => {
-      const graphql = path.join(this.cwd, cur.id, 'api/schema/graphql');
-      const models = path.join(this.cwd, cur.id, 'api/models.js');
-      const handlers = path.join(this.cwd, cur.id, 'api/handlers');
+    return this.all.reduce((memo, x) => {
+      const graphql = path.join(x.baseDir, 'api/schema/graphql');
+      const models = path.join(x.baseDir, 'api/models.js');
+      const handlers = path.join(x.baseDir, 'api/handlers');
 
       if (Util.isFile(models)) memo.push(models);
       if (Util.isDir(graphql)) memo.push(graphql);
