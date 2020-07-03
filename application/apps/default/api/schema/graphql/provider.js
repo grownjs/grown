@@ -4,7 +4,9 @@ module.exports = {
       return this.Services.API.Session.checkToken({ params: { token } });
     }, {
       input: (req, data, definition) => {
-        return this.Services.getSchema(definition).validate(data.input);
+        const [name, id] = definition.split('.');
+
+        return this.Models.get(name).getSchema(id).validate(data.input);
       },
     });
   },

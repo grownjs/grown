@@ -3,12 +3,12 @@ module.exports = {
     return this.Services.getMailer();
   },
   getUser() {
-    return this.Services.getModel('User');
+    return this.Models.get('User');
   },
   getToken() {
-    return this.Services.getModel('Token');
+    return this.Models.get('Token');
   },
   getSession() {
-    return this.Services.getModel('Session');
+    return this.Models.get('Session');
   },
 };

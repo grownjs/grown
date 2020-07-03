@@ -1,10 +1,6 @@
 module.exports = {
   $schema: require('./schema.json'),
-  $uiSchema: {
-    url: {
-      'ui:component': 'FileUpload',
-    },
-  },
+  $uiSchema: require('./uiSchema.json'),
   $attributes: {
     findAll: ['url', 'label'],
   },

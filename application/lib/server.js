@@ -66,6 +66,9 @@ module.exports = Shopfish => {
       options: {
         attributes: false,
         uploadDir: 'tmp/uploads',
+        onUpload: ({ field, payload, metadata }) => {
+          payload[field] = `/${metadata.filePath.replace('tmp/uploads', '')}`;
+        },
         connections: req => (!req.site && Object.keys(Shopfish.Model.DB._registry)),
       },
       database: req => {
