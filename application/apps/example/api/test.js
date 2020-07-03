@@ -2,9 +2,7 @@
 // also, it can work in standalone mode, so user can access this database from outside?
 // in the case the plugin exposes and api, or just expose their models to the whole system?
 
-module.exports = async Shopfish => {
-  const db = Shopfish.MyModels;
-
+module.exports = async ({ MyModels: db }) => {
   await db.sync({ force: true });
   await db.get('Test').create({ label: 'Foo' });
 
@@ -13,5 +11,4 @@ module.exports = async Shopfish => {
 
   console.log(c);
   console.log(d.get());
-  console.log(Shopfish.argv);
 };

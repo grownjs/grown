@@ -1,29 +1,7 @@
 'use strict';
 
-// const fs = require('fs');
-// const path = require('path');
-
-// async function run() {
-//   const Grown = require('@grown/crop');
-//   const main = Grown.argv._[0];
-
-//   if (main && fs.existsSync(main)) {
-//     const callback = require(path.resolve(main));
-
-//     if (typeof callback === 'function') {
-//       await Grown.ApplicationServer.start();
-//       await callback(Grown);
-//       process.exit();
-//     }
-//   }
-// }
-// run();
-
-
-// const Grown =
-
-// Grown.ApplicationServer.getServer()
-
+const fs = require('fs');
+const path = require('path');
 
 async function main(opts) {
   const Grown = require('./lib')(require('..')(), opts || {});
@@ -36,8 +14,19 @@ async function main(opts) {
     });
 }
 
-async function exec() {
-  console.log('EXEC');
+async function exec(opts) {
+  const Grown = require('./lib')(require('..')(), opts || {});
+  const main = Grown.argv._[0];
+
+  if (main && fs.existsSync(main)) {
+    const callback = require(path.resolve(main));
+
+    if (typeof callback === 'function') {
+      await Grown.ApplicationServer.start();
+      await callback(Grown);
+      process.exit();
+    }
+  }
 }
 
 module.exports = { main, exec };
