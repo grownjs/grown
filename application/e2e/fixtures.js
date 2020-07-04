@@ -1,5 +1,5 @@
 import { oneOf } from 'bdd-tc/matchers';
 
-import Users from '../db/integration_fixtures/users';
+import $ from '../apps/default/db/integration_fixtures';
 
-export const adminUser = oneOf(Users, 'email', 'admin@email.com');
+export const adminUser = oneOf($.users, 'email', 'admin@email.com');

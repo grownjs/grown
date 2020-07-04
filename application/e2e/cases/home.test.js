@@ -1,4 +1,4 @@
-import { Selector } from 'testcafe';
+import { $ } from 'bdd-tc';
 
 import config from '../config.js';
 
@@ -8,5 +8,5 @@ fixture('Home')
   .page(config.url);
 
 test('should start the application', async t => {
-  await t.expect(Selector('.body').find('h3').withText('Hey, please log in.').exists).ok();
+  await t.expect($('.body').find('h1').withText('HOME').exists).ok();
 });
