@@ -11,7 +11,13 @@ function getInstance(cwd, opts) {
     Grown.bind('@grown/', node_modules);
   }
 
-  return require('./lib')(Grown, opts || {});
+  opts = opts || {};
+  opts.shared_folders = [
+    path.join(cwd, 'apps'),
+    path.join(__dirname, 'apps'),
+  ];
+
+  return require('./app')(Grown, opts);
 }
 
 async function main(cwd, opts) {

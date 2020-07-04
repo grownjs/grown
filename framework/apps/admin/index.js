@@ -1,4 +1,4 @@
-const { Plugin } = require('../../lib/shared');
+const { Plugin } = require('../../shared');
 
 class AdminPlugin extends Plugin {
   async onAdmin(ctx, site) {

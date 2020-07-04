@@ -6,24 +6,18 @@ const start = new Date();
 module.exports = (Grown, opts) => {
   const { Plugin } = require('./shared');
 
-  const shared_folders = [
-    path.join(Grown.cwd, 'apps'),
-    path.join(__dirname, '../apps'),
-  ];
-
-  const config = require(path.join(Grown.cwd, 'config'));
+  const defaults = require(path.join(Grown.cwd, 'config'));
   const hooks = [];
 
   function add(dir) {
-    Plugin.from(dir, cb => cb(Grown, config))
+    Plugin.from(dir, cb => cb(Grown, defaults))
       .forEach(plugin => {
         Grown.ApplicationServer[plugin.name] = plugin;
         hooks.push(plugin);
       });
   }
 
-  add(path.join(__dirname, '../apps'));
-  add(path.join(Grown.cwd, 'apps'));
+  opts.shared_folders.forEach(add);
 
   function hook(name, ...args) {
     hooks.forEach(_hook => {
@@ -106,7 +100,7 @@ module.exports = (Grown, opts) => {
     Grown.Session.Auth.use('/auth', {
       facebook: {
         enabled: req => (req.site ? req.site.config.facebook !== false : true),
-        credentials: req => (req.site ? req.site.config.facebook : config.facebook),
+        credentials: req => (req.site ? req.site.config.facebook : defaults.facebook),
       },
     }, (type, userInfo) => Grown.Services.API.Session.checkLogin({
       params: {
@@ -157,18 +151,18 @@ module.exports = (Grown, opts) => {
 
   server.plug([
     Grown.Tarima.Bundler({
-      include_path: shared_folders,
+      include_path: opts.shared_folders,
       bundle_options: Grown.pkg.tarima.bundleOptions,
       compile_extensions: ['pug', 'hbs', 'ejs'],
     }),
     Grown.Render.Views({
-      view_folders: shared_folders,
+      view_folders: opts.shared_folders,
     }),
     Grown.Router.Mappings({
       routes: map => hook('routeMappings', map),
     }),
     Grown.Static({
-      from_folders: shared_folders,
+      from_folders: opts.shared_folders,
     }),
   ]);
 

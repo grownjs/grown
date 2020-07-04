@@ -4,17 +4,12 @@ module.exports = (Grown, opts) => {
   let sites;
   const { Sites } = require('./shared');
 
-  const shared_folders = [
-    path.join(Grown.cwd, 'apps'),
-    path.join(__dirname, '../apps'),
-  ];
-
   Grown('ApplicationServer', {
     getServer() {
       return require('./server')(Grown, opts);
     },
     getSites() {
-      return sites || (sites = new Sites(shared_folders));
+      return sites || (sites = new Sites(opts.shared_folders));
     },
     start() {
       return Promise.all(Grown.ApplicationServer.getSites().find('models').map(x => Grown.use(require(x)).connect()));
