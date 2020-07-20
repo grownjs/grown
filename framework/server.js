@@ -1,10 +1,11 @@
-const log = require('logro').createLogger(__filename);
-const path = require('path');
-
 const start = new Date();
+const path = require('path');
 
 module.exports = (Grown, opts) => {
   const { Plugin } = require('./shared');
+
+  const app = path.basename(Grown.cwd);
+  const log = require('logro').createLogger(app);
 
   const defaults = require(path.join(Grown.cwd, 'config'));
   const hooks = [];
