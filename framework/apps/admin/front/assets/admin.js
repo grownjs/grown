@@ -1,1 +1,1 @@
-console.log('OSOMS');
+console.log(42);
