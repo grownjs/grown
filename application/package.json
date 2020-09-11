@@ -99,7 +99,7 @@
     },
     "pluginOptions": {
       "lr": {
-        "timeout": 1000
+        "timeout": 260
       }
     }
   },
@@ -131,6 +131,7 @@
     "sqlite3": "^4.1.0",
     "svelte": "^3.22.2",
     "svql": "0.0.28",
+    "tarima": "^4.7.15",
     "terser": "^4.3.8",
     "testcafe": "^1.6.0",
     "uglify-es": "^3.3.9",
@@ -154,7 +155,6 @@
     "mailor": "^0.1.1",
     "pg": "^7.9.0",
     "rand-token": "^0.4.0",
-    "tarima": "^4.7.13",
     "therror": "^4.1.1"
   }
 }
