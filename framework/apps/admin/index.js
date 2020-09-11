@@ -6,13 +6,15 @@ class AdminPlugin extends Plugin {
     const allModels = this.siteManager.all.reduce((memo, x) => {
       if (this.Grown.Model.DB[x.id]) {
         if (!memo[x.id]) memo[x.id] = [];
-        memo[x.id].push(Object.keys(this.Grown.Model.DB[x.id].models));
+        memo[x.id].push(...Object.keys(this.Grown.Model.DB[x.id].models));
       }
       return memo;
     }, {});
 
     return ctx.render('admin/views/layout', {
       body: panelView({
+        path: require('path'),
+        env: process.env,
         models: allModels,
         plugins: this.siteManager.all,
         selected: site.id,
