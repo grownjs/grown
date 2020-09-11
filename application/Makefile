@@ -1,5 +1,5 @@
 # current working directory
-PWD=$(shell pwd)
+PWD := $(shell pwd)
 
 # default settings
 run := unit
@@ -7,7 +7,6 @@ app := default
 report := html
 dbpath := apps/$(app)/db
 models := apps/$(app)/api/models
-profile := $(notdir $(PWD))
 
 # dotenv support
 ifneq ($(wildcard .env),)
@@ -25,15 +24,15 @@ MAILDEV ?= YES
 .EXPORT_ALL_VARIABLES:
 
 ifneq ($(PORTS),)
-	PORT_FLAGS = -p $(subst $(shell echo ','), -p ,$(PORTS))
+	PORT_FLAGS := -p $(subst $(shell echo ','), -p ,$(PORTS))
 endif
 
 # docker-compose configuration
-DOCKER_COMPOSE = -f e2e/docker/docker-compose.yml
-TEST_COMPOSE = $(DOCKER_COMPOSE) -f e2e/docker/docker-compose.test.yml
-PRE_COMPOSE = $(DOCKER_COMPOSE) -f e2e/docker/docker-compose.pre.yml
-DEV_COMPOSE = $(TEST_COMPOSE) -f e2e/docker/docker-compose.dev.yml
-E2E_COMPOSE = $(DEV_COMPOSE) -f e2e/docker/docker-compose.e2e.yml
+DOCKER_COMPOSE := -f e2e/docker/docker-compose.yml
+TEST_COMPOSE := $(DOCKER_COMPOSE) -f e2e/docker/docker-compose.test.yml
+PRE_COMPOSE := $(DOCKER_COMPOSE) -f e2e/docker/docker-compose.pre.yml
+DEV_COMPOSE := $(TEST_COMPOSE) -f e2e/docker/docker-compose.dev.yml
+E2E_COMPOSE := $(DEV_COMPOSE) -f e2e/docker/docker-compose.e2e.yml
 
 # targets
 .PHONY: ? sh up run logs stop down test chrome test-e2e build backend integration provision
@@ -49,12 +48,7 @@ define iif
   @(($(1) > /dev/null 2>&1) && printf "\r* $(2)\n") || printf "\r* $(3)\n"
 endef
 
-define fig
-	@(figlet $(1)! 2> /dev/null) || printf "\n  Welcome to $(1)!\n  -- get http://www.figlet.org/ to see a nice fig ;-)\n\n"
-endef
-
 ?: Makefile
-	@$(call fig,$(profile))
 	@awk -F':.*?##' '/^[^ @:]+:.*##/{gsub("%","*",$$1);gsub("\\\\",":*",$$1);printf "\033[36m%13s\033[0m %s\n",$$1,$$2}' $<
 
 	@printf "\n  Examples:"
