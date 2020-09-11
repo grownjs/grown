@@ -1,5 +1,7 @@
 'use strict';
 
+const src = __dirname;
+
 const fs = require('fs');
 const path = require('path');
 
@@ -46,4 +48,4 @@ async function exec(cwd, opts) {
   }
 }
 
-module.exports = { main, exec };
+module.exports = { src, main, exec };
