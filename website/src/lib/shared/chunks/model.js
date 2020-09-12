@@ -24,4 +24,4 @@ const Grown = require('@grown/bud')();
 
 Grown.use(require('@grown/server'));
 
-const server = new Grown();
+const server = new Grown(); // eslint-disable-line

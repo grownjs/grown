@@ -2,7 +2,7 @@ require('@grpc/proto-loader');
 require('grpc');
 
 const fs = require('fs');
-const assert = require('assert');
+const assert = require('assert'); // eslint-disable-line
 
 fs.mkdirSync('./handlers');
 fs.mkdirSync('./handlers/Test');
@@ -28,4 +28,4 @@ fs.writeFileSync('./index.proto', `
   }
 `);
 
-const Grown = require('@grown/bud')();
+const Grown = require('@grown/bud')(); // eslint-disable-line

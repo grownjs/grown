@@ -1,5 +1,5 @@
 const fs = require('fs');
-const assert = require('assert');
+const assert = require('assert'); // eslint-disable-line
 
 fs.mkdirSync('./tasks');
 fs.writeFileSync('./tasks/example.js',
@@ -11,6 +11,7 @@ fs.writeFileSync('./tasks/example.js',
   };`);
 
 const stripAnsi = require('strip-ansi');
+
 const toString = value => String(Buffer.from(value));
 const normalizeText = msg => stripAnsi(msg.replace(/[\r\n\b]/g, ''));
 

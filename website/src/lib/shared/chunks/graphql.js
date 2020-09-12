@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const assert = require('assert');
+const assert = require('assert'); // eslint-disable-line
 
 fs.mkdirSync('./app');
 fs.mkdirSync('./app/handlers');
