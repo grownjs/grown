@@ -14,7 +14,7 @@ endif
 
 test-ci:
 	@make -C application lint
-	@make test-all
+	@make lint test-all
 
 test-all:
 	@make $(RUNNER):bud $(RUNNER):cli $(RUNNER):grpc $(RUNNER):graphql $(RUNNER):model
