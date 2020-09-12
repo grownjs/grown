@@ -50,9 +50,9 @@ server.mount('/', Grown.GraphQL
     Grown.load(`${__dirname}/handlers`)));
 ```
 
-> Try asking with your GraphQL client: `query { truth }` &mdash; or try requesting through this [`link`](/?body=query{truth}).
+> Click <kbd>► RUN</kbd> and then ask with your GraphQL client: `query { truth }` &mdash; or try requesting through [`this link`](/?body=query{truth}).
 
-<iframe id="target" name="external"></iframe>
+<div id="target"></div>
 
 ### Public methods <var>static</var>
 

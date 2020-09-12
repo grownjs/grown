@@ -34,9 +34,9 @@ server.mount(ctx => {
 });
 ```
 
-> Try requesting the endpoint as `application/json` or [`click here`](/) to perform a regular request.
+> Click <kbd>► RUN</kbd> and try requesting the endpoint as `application/json` &mdash; or use [`this link`](/) to perform a regular request.
 
-<iframe id="target" name="external"></iframe>
+<div id="target"></div>
 
 ## Request
 

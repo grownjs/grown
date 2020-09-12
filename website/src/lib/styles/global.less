@@ -160,5 +160,21 @@ ul.reset {
 }
 
 #target {
+  position: relative;
   display: none;
+
+  &::before {
+    background-color: white;
+    content: attr(data-label);
+    position: absolute;
+    font-size: 12px;
+    padding: 2px 4px;
+    left: 6px;
+    top: -12px;
+  }
+
+  iframe {
+    padding: 5px;
+    border: 1px dashed @hi-gray;
+  }
 }

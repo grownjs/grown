@@ -33,9 +33,9 @@ server.mount(conn => {
 });
 ```
 
-> Try requesting through [`this link`](/).
+> Click <kbd>► RUN</kbd> and try requesting through [`this link`](/).
 
-<iframe id="target" name="external"></iframe>
+<div id="target"></div>
 
 ### Methods <var>mixin</var>
 

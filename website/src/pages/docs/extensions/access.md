@@ -59,9 +59,9 @@ server.mount(ctx => {
 });
 ```
 
-> Try loading different URLs like [`/etc`](/etc) or [`/login`](/login) in your browser.
+> Click <kbd>► RUN</kbd> and try loading different URLs like [`/etc`](/etc) or [`/login`](/login) in your browser.
 
-<iframe id="target" name="external"></iframe>
+<div id="target"></div>
 
 ---
 

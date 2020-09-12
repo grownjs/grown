@@ -42,7 +42,7 @@ server.listen(8080);
 
 > Once you click <kbd>► RUN</kbd> try opening [`this link`](/) in your browser.
 
-<iframe id="target" name="external"></iframe>
+<div id="target"></div>
 
 ---
 
