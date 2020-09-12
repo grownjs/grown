@@ -19,7 +19,7 @@
   ],
   "scripts": {
     "dev": "npm run test:unit -- -w",
-    "lint": "eslint *.js framework packages/*/*.js $(find packages -type d -d 2 | grep -vE 'node_modules|coverage|nyc_output')",
+    "lint": "eslint *.js framework packages/*/*.js $(find packages -type d -depth 2 -maxdepth 2 | grep -vE 'node_modules|coverage|nyc_output')",
     "test": "npm run coverage -- npm run test:unit --",
     "test:ci": "npm test && nyc report -r lcov",
     "test:dev": "npm test && nyc report -r html",
