@@ -271,7 +271,7 @@
         </div>
       </aside>
     </main>
-    <script>window.__runkit__ = {"preamble":"require('sqlite3');\nconst fs = require('fs');\nfs.mkdirSync('./models');\nfs.mkdirSync('./models/Test');\nfs.writeFileSync('./models/Test/schema.json', `{\n  \"id\": \"ExampleModel\",\n  \"type\": \"object\",\n  \"properties\": {\n    \"value\": {\n      \"type\": \"string\"\n    }\n  }\n}`);\nfs.writeFileSync('./models/Test/index.js', `\n  module.exports = {\n    $schema: require('./schema')\n  };\n`);\nconst Grown = require('@grown/bud')();\nGrown.use(require('@grown/server'));\nconst server = new Grown();\n"};</script>
+    <script>window.__runkit__ = {"preamble":{"contents":"require('sqlite3');\n\nconst fs = require('fs');\n\nfs.mkdirSync('./models');\nfs.mkdirSync('./models/Test');\nfs.writeFileSync('./models/Test/schema.json', `{\n  \"id\": \"ExampleModel\",\n  \"type\": \"object\",\n  \"properties\": {\n    \"value\": {\n      \"type\": \"string\"\n    }\n  }\n}`);\n\nfs.writeFileSync('./models/Test/index.js', `\n  module.exports = {\n    $schema: require('./schema')\n  };\n`);\n\nconst Grown = require('@grown/bud')();\n\nGrown.use(require('@grown/server'));\n\nconst server = new Grown(); // eslint-disable-line\n"}};</script>
     <script src="//embed.runkit.com"></script>
     <script src="scripts.js"></script>
   </body>

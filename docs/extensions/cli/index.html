@@ -241,7 +241,7 @@ Additional args after <code>--</code> are executed as a shell command, returns a
         </div>
       </aside>
     </main>
-    <script>window.__runkit__ = {"preamble":"const fs = require('fs');\nconst assert = require('assert');\nfs.mkdirSync('./tasks');\nfs.writeFileSync('./tasks/example.js',\n  `module.exports = {\n    description: 'Example task',\n    callback() {\n      console.log('It works.')\n    },\n  };`);\nconst stripAnsi = require('strip-ansi');\nconst toString = value => String(Buffer.from(value));\nconst normalizeText = msg => stripAnsi(msg.replace(/[\\r\\n\\b]/g, ''));\nprocess.stdout.write = msg => console.log(normalizeText(toString(msg)));\n"};</script>
+    <script>window.__runkit__ = {"preamble":{"contents":"const fs = require('fs');\nconst assert = require('assert'); // eslint-disable-line\n\nfs.mkdirSync('./tasks');\nfs.writeFileSync('./tasks/example.js',\n  `module.exports = {\n    description: 'Example task',\n    callback() {\n      console.log('It works.')\n    },\n  };`);\n\nconst stripAnsi = require('strip-ansi');\n\nconst toString = value => String(Buffer.from(value));\nconst normalizeText = msg => stripAnsi(msg.replace(/[\\r\\n\\b]/g, ''));\n\nprocess.stdout.write = msg => console.log(normalizeText(toString(msg)));\n"}};</script>
     <script src="//embed.runkit.com"></script>
     <script src="scripts.js"></script>
   </body>

@@ -55,7 +55,7 @@ function links(baseURL) {
       source: sourceCode,
       mode: isEndpoint && 'endpoint',
       title: snippet.title || 'Untitled',
-      preamble: snippet.preamble
+      preamble: snippet.preamble.contents
         + (isEndpoint ? '\nexports.endpoint=(req,res)=>{res.end()}' : ''),
       environment: [{ name: 'U_WEBSOCKETS_SKIP', value: 'true' }],
       gutterStyle: 'none',
