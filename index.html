@@ -15,10 +15,22 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Sorts+Mill+Goudy">
   </head>
   <body class="reset">
+    <script>
+      /* eslint-disable */
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+      
+      ga('create', '', 'auto');
+      ga('send', 'pageview');
+      /* eslint-enable */
+      
+    </script>
     <main id="wrapper">
       <div class="body" id="content">
         <main><a id="menu" href="./#sidebar">&#9776;</a>
-          <h1>Installation <small><a href="//github.com/pateketrueke/grown/blob/master/website/src/index.md" target="_blank">✎</a></small></h1><p>I suggest you installing NodeJS through NVM, using <code>8.16.2</code> or higher is fine.</p>
+          <h1>Installation <small><a href="//github.com/grownjs/grown/blob/master/website/src/index.md" target="_blank">✎</a></small></h1><p>I suggest you installing NodeJS through NVM, using <code>8.16.2</code> or higher is fine.</p>
 <p>See: <a href="https://github.com/creationix/nvm#installation">NVM installation instructions</a></p>
 <p>Once done, install the main <code>grown</code> dependency:</p>
 <pre class="hljs"><code class="lang-bash">$ npm install grown --save
@@ -34,12 +46,18 @@
 
 <span class="hljs-comment">// append middleware</span>
 server.mount(<span class="hljs-function"><span class="hljs-params">ctx</span> =&gt;</span> {
-  ctx.res.end(<span class="hljs-string">'&lt;pre&gt;It works!&lt;/pre&gt;'</span>);
+  ctx.res.write(<span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>().toISOString());
+  ctx.res.end();
 });
 
 <span class="hljs-comment">// starts the web-server</span>
 server.listen(<span class="hljs-number">8080</span>);
 </code></pre>
+<blockquote>
+<p>Once you click <kbd>► RUN</kbd> try opening <a href="/"><code>this link</code></a> in your browser.</p>
+</blockquote>
+<iframe id="target" name="_external"></iframe>
+
 <hr>
 <p>➯ Next: <a href="./docs">APIs &rangle; The interface</a></p>
 
@@ -50,7 +68,7 @@ server.listen(<span class="hljs-number">8080</span>);
           <h1><strong><a class="here" href="./">Grown</a></strong>
           </h1>
           <p>Experimental DSL for web-apps</p>
-          <div class="sp"><a href="//travis-ci.org/pateketrueke/grown" target="_blank"><img src="//api.travis-ci.org/pateketrueke/grown.svg"></a><a href="//codecov.io/gh/pateketrueke/grown" target="_blank"><img src="//codecov.io/gh/pateketrueke/grown/branch/master/graph/badge.svg"></a></div>
+          <div class="sp"><a href="//travis-ci.org/grownjs/grown" target="_blank"><img src="//api.travis-ci.org/grownjs/grown.svg"></a><a href="//codecov.io/gh/grownjs/grown" target="_blank"><img src="//codecov.io/gh/grownjs/grown/branch/master/graph/badge.svg"></a></div>
           <ul class="mt reset">
             <li>
               <h3 class="reset">APIs</h3>

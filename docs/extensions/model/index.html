@@ -15,10 +15,22 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Sorts+Mill+Goudy">
   </head>
   <body class="reset">
+    <script>
+      /* eslint-disable */
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+      
+      ga('create', '', 'auto');
+      ga('send', 'pageview');
+      /* eslint-enable */
+      
+    </script>
     <main id="wrapper">
       <div class="body" id="content">
         <main><a id="menu" href="./docs/extensions/model/#sidebar">&#9776;</a>
-          <h1>Model <small><a href="//github.com/pateketrueke/grown/blob/master/website/src/pages/docs/extensions/model.md" target="_blank">✎</a></small></h1><p>Declare and validate your models using JSON-Schema definitions.</p>
+          <h1>Model <small><a href="//github.com/grownjs/grown/blob/master/website/src/pages/docs/extensions/model.md" target="_blank">✎</a></small></h1><p>Declare and validate your models using JSON-Schema definitions.</p>
 <pre class="hljs"><code class="lang-js"><span class="hljs-comment">/* @runkit */</span>
 <span class="hljs-comment">// register extension</span>
 <span class="hljs-keyword">const</span> Model = Grown.use(<span class="hljs-built_in">require</span>(<span class="hljs-string">'@grown/model'</span>));
@@ -41,6 +53,15 @@
   <span class="hljs-attr">dialect</span>: <span class="hljs-string">'sqlite'</span>,
   <span class="hljs-attr">storage</span>: <span class="hljs-string">':memory:'</span>,
 });
+
+<span class="hljs-comment">// direct access to your sequelize-models</span>
+<span class="hljs-keyword">await</span> ExampleModel.sync();
+<span class="hljs-keyword">await</span> ExampleModel.count();
+</code></pre>
+<p>Repositories are built by scanning source files in any given directory, e.g.</p>
+<pre class="hljs"><code class="lang-js"><span class="hljs-comment">/* @runkit */</span>
+<span class="hljs-comment">// register extension</span>
+<span class="hljs-keyword">const</span> Model = Grown.use(<span class="hljs-built_in">require</span>(<span class="hljs-string">'@grown/model'</span>));
 
 <span class="hljs-comment">// ./models/Test/index.js</span>
 <span class="hljs-comment">// module.exports = {</span>
@@ -76,17 +97,12 @@
   <span class="hljs-attr">prefix</span>: <span class="hljs-string">'/db'</span>,
 });
 
-server.plug(API);
-
 <span class="hljs-comment">// connect the repository</span>
 <span class="hljs-keyword">await</span> repo.connect();
 <span class="hljs-keyword">await</span> repo.sync();
 
-<span class="hljs-comment">// direct access to your models</span>
-<span class="hljs-built_in">console</span>.log(repo.models.TestModel);
-
 <span class="hljs-comment">// access model as a RESTful resource</span>
-<span class="hljs-keyword">const</span> TestRepo = API.from(repo.models.TestModel);
+<span class="hljs-keyword">const</span> TestRepo = API.from(repo.models.ExampleModel);
 <span class="hljs-keyword">const</span> testCount = <span class="hljs-keyword">await</span> TestRepo.count();
 
 <span class="hljs-built_in">console</span>.log(testCount);
@@ -94,6 +110,10 @@ server.plug(API);
 <span class="hljs-comment">// close connection</span>
 <span class="hljs-keyword">await</span> repo.disconnect();
 </code></pre>
+<p>In the example above we&#39;re using <code>API</code> as our RESTful adapter, we can also <code>plug()</code> it in our server application, e.g. <code>server.plug(API)</code> &mdash; that would mount the <code>/db</code> endpoint.</p>
+<blockquote>
+<p>Repos are built using <a href="https://github.com/tacoss/sastre"><code>sastre</code></a> &mdash; check it out for further info.</p>
+</blockquote>
 <h2 id="cli">CLI</h2>
 <h3 id="public-methods-var-static-var">Public methods <var>static</var></h3>
 <ul>
@@ -111,7 +131,7 @@ server.plug(API);
 <li><code>bundle(options)</code> &mdash; Returns a repository built on top of given <code>models</code> directory and <code>database</code> options as connection.</li>
 </ul>
 <blockquote>
-<p>Repos have only four methods: <code>disconnect</code>, <code>connect</code>, <code>sync</code> and <code>get</code> &mdash; also <code>connection</code>, <code>sequelize</code>, <code>schemas</code> and <code>models</code> are available as properties.</p>
+<p>Repos has the following methods/props: <code>disconnect()</code>, <code>connect()</code>, <code>sync()</code>, <code>get(model)</code>, <code>connection</code>, <code>sequelize</code>, <code>schemas</code>, <code>models</code> and <code>$refs</code>.</p>
 </blockquote>
 <h3 id="private-props-var-static-var">Private* props <var>static</var></h3>
 <ul>
@@ -156,7 +176,7 @@ server.plug(API);
           <h1><a href="./">Grown</a>
           </h1>
           <p>Experimental DSL for web-apps</p>
-          <div class="sp"><a href="//travis-ci.org/pateketrueke/grown" target="_blank"><img src="//api.travis-ci.org/pateketrueke/grown.svg"></a><a href="//codecov.io/gh/pateketrueke/grown" target="_blank"><img src="//codecov.io/gh/pateketrueke/grown/branch/master/graph/badge.svg"></a></div>
+          <div class="sp"><a href="//travis-ci.org/grownjs/grown" target="_blank"><img src="//api.travis-ci.org/grownjs/grown.svg"></a><a href="//codecov.io/gh/grownjs/grown" target="_blank"><img src="//codecov.io/gh/grownjs/grown/branch/master/graph/badge.svg"></a></div>
           <ul class="mt reset">
             <li>
               <h3 class="reset">APIs</h3>
@@ -251,7 +271,7 @@ server.plug(API);
         </div>
       </aside>
     </main>
-    <script>window.__runkit__ = {"preamble":"const fs = require('fs');\nfs.mkdirSync('./models');\nfs.mkdirSync('./models/Test');\nfs.writeFileSync('./models/Test/schema.json', `{\n  \"id\": \"ExampleModel\",\n  \"type\": \"object\",\n  \"properties\": {\n    \"value\": {\n      \"type\": \"string\"\n    }\n  }\n}`);\nfs.writeFileSync('./models/Test/index.js', `\n  module.exports = {\n    $schema: require('./schema')\n  };\n`);\nconst Grown = require('@grown/bud')();\nGrown.use(require('@grown/server'));\nconst server = new Grown();\n"};</script>
+    <script>window.__runkit__ = {"preamble":"require('sqlite3');\nconst fs = require('fs');\nfs.mkdirSync('./models');\nfs.mkdirSync('./models/Test');\nfs.writeFileSync('./models/Test/schema.json', `{\n  \"id\": \"ExampleModel\",\n  \"type\": \"object\",\n  \"properties\": {\n    \"value\": {\n      \"type\": \"string\"\n    }\n  }\n}`);\nfs.writeFileSync('./models/Test/index.js', `\n  module.exports = {\n    $schema: require('./schema')\n  };\n`);\nconst Grown = require('@grown/bud')();\nGrown.use(require('@grown/server'));\nconst server = new Grown();\n"};</script>
     <script src="//embed.runkit.com"></script>
     <script src="scripts.js"></script>
   </body>
