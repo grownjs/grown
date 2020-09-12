@@ -72,7 +72,7 @@ clean: install
 	@lerna clean -y
 
 lint: deps
-	@npm run lint
+	@npm run lint && echo "Done."
 
 deps: package*.json
 	@(((ls node_modules | grep .) > /dev/null 2>&1) || npm i) || true
