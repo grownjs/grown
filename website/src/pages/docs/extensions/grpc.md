@@ -1,6 +1,6 @@
 ---
 title: GRPC
-$render: ../../../lib/layouts/default.pug
+$render: ~/src/lib/layouts/default.pug
 runkit:
   preamble: |
     require('@grpc/proto-loader');

@@ -1,6 +1,6 @@
 ---
 title: Render
-$render: ../../../lib/layouts/default.pug
+$render: ~/src/lib/layouts/default.pug
 runkit:
   endpoint: true
   preamble: |

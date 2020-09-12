@@ -1,6 +1,6 @@
 ---
 title: Extensions
-$render: ../../lib/layouts/default.pug
+$render: ~/src/lib/layouts/default.pug
 ---
 
 Most functionality can be added through the `Grown` container, e.g. `api/index.js`

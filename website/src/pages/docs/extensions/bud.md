@@ -1,6 +1,6 @@
 ---
 title: Bud
-$render: ../../../lib/layouts/default.pug
+$render: ~/src/lib/layouts/default.pug
 runkit:
   preamble: |
     const fs = require('fs');

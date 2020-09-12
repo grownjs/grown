@@ -1,6 +1,6 @@
 ---
 title: Web
-$render: ../../lib/layouts/default.pug
+$render: ~/src/lib/layouts/default.pug
 ---
 
 ---

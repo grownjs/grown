@@ -1,7 +1,7 @@
 ---
 title: Logger
-$render: ../../../lib/layouts/default.pug
-runkit: !include ../../../lib/shared/runkit/server.yml
+$render: ~/src/lib/layouts/default.pug
+runkit: !include ~/src/lib/shared/runkit/server.yml
 ---
 
 Enable shared and custom logging in your applications.

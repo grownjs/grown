@@ -1,6 +1,6 @@
 ---
 title: REPL
-$render: ../../../lib/layouts/default.pug
+$render: ~/src/lib/layouts/default.pug
 ---
 
 ---

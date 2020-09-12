@@ -1,6 +1,6 @@
 ---
 title: Command line
-$render: ../../lib/layouts/default.pug
+$render: ~/src/lib/layouts/default.pug
 ---
 
 Make sure you write a script like the shown below, e.g. `your-app/server.js`
