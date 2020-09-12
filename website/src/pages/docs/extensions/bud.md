@@ -2,14 +2,7 @@
 title: Bud
 $render: ~/src/lib/layouts/default.pug
 runkit:
-  preamble: |
-    const fs = require('fs');
-    const assert = require('assert');
-    fs.mkdirSync('./exts');
-    fs.mkdirSync('./exts/Test');
-    fs.mkdirSync('./exts/Test/handler');
-    fs.writeFileSync('./exts/Test/handler/index.js',
-      'module.exports = function () { return 42; };');
+  preamble: !include ~/src/lib/shared/chunks/bud.js
 ---
 
 The foundation of the whole framework is this, it provides the DSL

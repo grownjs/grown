@@ -2,28 +2,7 @@
 title: Model
 $render: ~/src/lib/layouts/default.pug
 runkit:
-  preamble: |
-    require('sqlite3');
-    const fs = require('fs');
-    fs.mkdirSync('./models');
-    fs.mkdirSync('./models/Test');
-    fs.writeFileSync('./models/Test/schema.json', `{
-      "id": "ExampleModel",
-      "type": "object",
-      "properties": {
-        "value": {
-          "type": "string"
-        }
-      }
-    }`);
-    fs.writeFileSync('./models/Test/index.js', `
-      module.exports = {
-        $schema: require('./schema')
-      };
-    `);
-    const Grown = require('@grown/bud')();
-    Grown.use(require('@grown/server'));
-    const server = new Grown();
+  preamble: !include ~/src/lib/shared/chunks/model.js
 ---
 
 Declare and validate your models using JSON-Schema definitions.
