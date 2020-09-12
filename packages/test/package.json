@@ -6,15 +6,12 @@
   "license": "MIT",
   "scripts": {
     "dev": "npm run test:unit -- -w",
-    "lint": "eslint tests *.js",
     "test": "npm run coverage -- npm run test:unit --",
     "test:ci": "npm test && nyc report -r lcov",
     "test:dev": "npm test && nyc report -r html",
     "test:run": "NODE_ENV=test _mocha --exit --recursive -bR spec --colors",
     "test:unit": "npm run test:run tests/*.test.js --",
-    "coverage": "nyc -s -x '**/tests/**' -x '**/*.test.js'",
-    "pretest": "npm run lint",
-    "pretest:ci": "npm run lint"
+    "coverage": "nyc -s -x '**/tests/**' -x '**/*.test.js'"
   },
   "publishConfig": {
     "access": "public"
@@ -25,9 +22,6 @@
     "mock-res": "^0.5.0"
   },
   "devDependencies": {
-    "eslint": "^5.9.0",
-    "eslint-config-airbnb-base": "^13.1.0",
-    "eslint-plugin-import": "^2.14.0",
     "mocha": "^6.2.1",
     "nyc": "^15.1.0"
   }

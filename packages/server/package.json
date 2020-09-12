@@ -6,15 +6,12 @@
   "main": "index.js",
   "scripts": {
     "dev": "npm run test:unit -- -w",
-    "lint": "eslint lib tests *.js",
     "test": "npm run coverage -- npm run test:unit --",
     "test:ci": "npm test && nyc report -r lcov",
     "test:dev": "npm test && nyc report -r html",
     "test:run": "NODE_ENV=test _mocha --exit --recursive -bR spec --colors",
     "test:unit": "npm run test:run tests/*.test.js --",
-    "coverage": "nyc -s -x '**/tests/**' -x '**/*.test.js'",
-    "pretest": "npm run lint",
-    "pretest:ci": "npm run lint"
+    "coverage": "nyc -s -x '**/tests/**' -x '**/*.test.js'"
   },
   "publishConfig": {
     "access": "public"
@@ -28,9 +25,6 @@
     "acorn": ">=5.7.4",
     "body-parser": "^1.19.0",
     "chai": "^4.2.0",
-    "eslint": "^5.9.0",
-    "eslint-config-airbnb-base": "^13.1.0",
-    "eslint-plugin-import": "^2.14.0",
     "httpie": "^1.1.2",
     "kind-of": ">=6.0.3",
     "minimist": ">=0.2.1",
