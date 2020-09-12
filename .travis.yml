@@ -10,9 +10,7 @@ node_js:
   - 14
 install:
   - make setup
-before_script:
-  - npm i uNetworking/uWebSockets.js#v18.4.0
 script:
-  - make
+  - make U_WEBSOCKETS_SKIP=true
 notifications:
   email: false
