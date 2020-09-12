@@ -1,4 +1,4 @@
-/* global fetch, target, RunKit, __runkit__ */
+/* global target, RunKit, __runkit__ */
 function links(baseURL) {
   if (typeof target === 'undefined') return;
   target.style.display = 'block';
