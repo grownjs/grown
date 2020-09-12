@@ -13,7 +13,6 @@ endif
 .EXPORT_ALL_VARIABLES:
 
 test-ci:
-	@make -C application lint
 	@make lint test-all
 
 test-all:
@@ -72,6 +71,7 @@ clean: install
 	@lerna clean -y
 
 lint: deps
+	@make -C application lint
 	@npm run lint && echo "Done."
 
 deps: package*.json

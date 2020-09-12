@@ -13,7 +13,7 @@
     "grown": "grown",
     "start": "node .",
     "logs": "logrof --",
-    "lint": "eslint --ext js,svelte apps e2e lib *.js",
+    "lint": "eslint --ext js,pug,svelte apps e2e lib *.js",
     "debug": "ndb npm run watch --",
     "watch": "nodemon --ignore '{build,logs,tmp,e2e,front}/**' --ignore '**/generated/**' --ignore Makefile",
     "watch:mail": "mailor watch 'apps/*/mailer/templates' -d etc/mailer/generated --no-open",
