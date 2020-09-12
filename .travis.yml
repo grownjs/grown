@@ -13,6 +13,6 @@ install:
 before_script:
   - npm i uNetworking/uWebSockets.js#v18.4.0
 script:
-  - make test-ci
+  - make
 notifications:
   email: false

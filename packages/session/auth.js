@@ -49,7 +49,7 @@ module.exports = (Grown, util) => {
         }
 
         const [baseUri, searchQuery] = req.url.split('?');
-        const [, _prefix, type, action] = baseUri.split('/');
+        const [,, type, action] = baseUri.split('/');
 
         if (!type) {
           next(new Error('Missing authorization'));

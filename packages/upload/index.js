@@ -26,7 +26,6 @@ module.exports = (Grown, util) => {
 
       if (!fs.existsSync(form.uploadDir)) {
         throw new Error(`Missing directory '${form.uploadDir}'`);
-        return;
       }
 
       form.parse(conn.req, (err, data, files) => {

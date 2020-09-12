@@ -7,10 +7,10 @@ const path = require('path');
 
 function getInstance(cwd, opts) {
   const Grown = require('..')(cwd);
-  const node_modules = path.join(cwd, 'node_modules/@grown');
+  const nodeModules = path.join(cwd, 'nodeModules/@grown');
 
-  if (fs.existsSync(node_modules)) {
-    Grown.bind('@grown/', node_modules);
+  if (fs.existsSync(nodeModules)) {
+    Grown.bind('@grown/', nodeModules);
   }
 
   opts = opts || {};

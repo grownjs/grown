@@ -9,7 +9,7 @@ module.exports = (Grown, opts) => {
       return require('./server')(Grown, opts);
     },
     getSites() {
-      return sites || (sites = new Sites(opts.shared_folders));
+      return sites || (sites = new Sites(opts.shared_folders)); // eslint-disable-line
     },
     start() {
       return Promise.all(Grown.ApplicationServer.getSites().find('models').map(x => Grown.use(require(x)).connect()));
