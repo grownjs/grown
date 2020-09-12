@@ -66,7 +66,7 @@ dev\:%:
 	@cd packages/$(subst dev:,,$*) && npm run dev
 
 test\:%:
-	@cd packages/$(subst test:,,$@) && npm run $(TASK)
+	@lerna run $(TASK) --scope @grown/$(subst test:,,$@)
 
 clean: install
 	@lerna clean -y

@@ -4,13 +4,15 @@ branches:
   only:
     - master
 node_js:
-  - 8
-  - 9
   - 10
   - 11
   - 12
   - 14
+install:
+  - make setup
+before_script:
+  - npm i uNetworking/uWebSockets.js#v18.4.0
 script:
-  - make ci
+  - make test-ci
 notifications:
   email: false

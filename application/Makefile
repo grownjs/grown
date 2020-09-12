@@ -37,7 +37,7 @@ E2E_COMPOSE := $(DEV_COMPOSE) -f e2e/docker/docker-compose.e2e.yml
 # targets
 .PHONY: ? sh up run logs stop down test chrome test-e2e build backend integration provision
 .PHONY: ci test-ci cov all dev e2e lint kill dist repl seed reset clear watch clean prune deps
-.PHONY: purge install schema templates database migration
+.PHONY: purge schema templates database migration
 
 # utils
 define ls
@@ -190,9 +190,6 @@ purge: ## Remove all from node_modules/*  (host)
 	@rm -rf node_modules/.{bin,cache}
 	@rm -rf node_modules/*
 	@echo "OK"
-
-install: ## Install global dependencies  (host)
-	@npm i -g fkill-cli nodemon ndb
 
 schema: deps ## Generate sources from given schemas  (host)
 	@npm run schema
