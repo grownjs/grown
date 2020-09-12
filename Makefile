@@ -57,6 +57,9 @@ setup: install
 app\:%:
 	@make -C application $*
 
+web\:%:
+	@make -C website $*
+
 link\:%:
 	@rm -rf $(PWD)/application/node_modules/@grown/$*
 	@ln -s $(PWD)/packages/$* $(PWD)/application/node_modules/@grown/
