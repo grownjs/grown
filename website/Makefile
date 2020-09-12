@@ -1,91 +1,98 @@
-# current working directory
+#
+# Current working directory
+#
 PWD=$(shell pwd)
 
-# defaults
-src := build
-from := master
-target := gh-pages
-message := Release: $(shell date)
-
-# templates
-_src=src/$(patsubst res%,resources%,$(patsubst page%,pages%,$*))
-_dir=$(patsubst %/,%,$(_src)/$(NAME))
-_base=$(dir $(_dir))
-
-# directories
-dirname=$(patsubst %/,%,$(_base))
-filepath=$(patsubst $(_base),,$(_dir))
+#
+# Defaults
+#
+src=build
+from=master
+target=gh-pages
+message=Release: $(shell date)
 
 # environment vars
-NODE_ENV := development
+ROOT=/
+NODE_ENV=development
 
 # export vars
 export NODE_ENV ROOT
 
-# targets
-.PHONY: ? deps purge dev dist clean deploy has_body
+#
+# Targets
+#
+.PHONY: ? add rm dev test deps clean prune dist pages deploy
 
-# utils
+#
+# Utils
+#
 define iif
-  @(($(1) > /dev/null 2>&1) && printf "\r* $(2)\n") || printf "\r* $(3)\n"
+	@(($1 > /dev/null 2>&1) && printf "\r* $2\n") || printf "\r* $3\n"
 endef
 
-# display all targets-with-help in this file
+#
+# Display all targets in this file
+#
 ?: Makefile
-	@(figlet grown! 2> /dev/null) || printf "\n  Welcome to grown!\n  -- get http://www.figlet.org/ to see a nice banner ;-)\n\n"
 	@awk -F':.*?##' '/^[a-z\\%!:-]+:.*##/{gsub("%","*",$$1);gsub("\\\\",":*",$$1);printf "\033[36m%8s\033[0m %s\n",$$1,$$2}' $<
-	@printf "\n  Examples:"
-	@printf "\n    make add:page NAME=example.md BODY='# It works!'"
-	@printf "\n    make rm:Dockerfile"
-	@printf "\n    make clean dev"
-	@printf "\n\n"
 
-dev: deps ## Start development scripts
+#
+# Development tasks
+#
+dev: deps ## Start development
 	@npm run dev
 
-test: ## Lint to reduce mistakes and smells
+#
+# Testing tasks
+#
+test: deps ## Test for syntax issues
 	@npm run check
 
-dist: deps ## Build artifact for production
-	@(git worktree remove $(src) --force > /dev/null 2>&1) || true
-	@git worktree add $(src) $(target)
-	@cd $(src) && rm -rf *
-	@npm run dist
+#
+# Build task
+#
+dist: deps ## Compile sources for production
+	@NODE_ENV=production npm run dist -- -f
 
+#
+# Check dependencies
+#
+deps: ## Check for installed dependencies
+	@(((ls node_modules | grep .) > /dev/null 2>&1) || npm i) || true
+
+#
+# Cleanup
+#
 clean: ## Remove cache and generated artifacts
 	@$(call iif,rm -r $(src),Built artifacts were deleted,Artifacts already deleted)
 	@$(call iif,unlink .tarima,Cache file was deleted,Cache file already deleted)
 
-deploy: $(src) ## Push built artifacts to github!
-	@cd $(src) && git add . && git commit -m "$(message)"
-	@git push origin $(target) -f
-
-deps: ## Check for installed dependencies
-	@(((ls node_modules | grep .) > /dev/null 2>&1) || npm i) || true
-
-purge: clean ## Remove all from node_modules/*
+#
+# Clean dependencies
+#
+prune: clean ## Remove all stuff from node_modules/*
 	@printf "\r* Removing all dependencies... "
 	@rm -rf node_modules/.{bin,cache}
 	@rm -rf node_modules/*
 	@echo "OK"
 
-add\:%: ## Create files, scripts or resources
-	@make -s name_not_$* has_body
-	@mkdir -p $(dirname)
-	@echo "$(BODY)" > $(PWD)/$(filepath)
-	@printf "\r* File $(filepath) was created\n"
+#
+# GitHub Pages branch
+#
+pages: ## Fetch or create the target branch
+	@(git fetch origin $(target) 2> /dev/null || (\
+		git checkout --orphan $(target);\
+		git rm -rf . > /dev/null;\
+		git commit --allow-empty -m "initial commit";\
+		git checkout $(from)))
 
-rm\:%: ## Remove **any** stuff from your workspace
-	@make -s name_not_$*
-	@$(call iif,rm -r $(PWD)/$(filepath),File $(filepath) was deleted,Failed to delete $(filepath))
-	@$(call iif,rmdir $(PWD)/$(dirname),Parent directory clear,Parent directory is not empty...)
-
-# input validations
-has_body:
-ifeq ($(BODY),)
-	@echo "* Missing file contents, e.g. BODY=test" && exit 1
-endif
-
-name_not_%:
-	@((echo $* $(NAME) | grep -vE '^(lib|page|res)$$') > /dev/null 2>&1) \
-		|| (echo "* Missing file path, e.g. NAME=test" && exit 1)
+#
+# Deployment to GitHub Pages
+#
+deploy: pages ## Prepare and push changes on target branch
+	@(mv $(src) .backup > /dev/null 2>&1) || true
+	@(git worktree remove $(src) --force > /dev/null 2>&1) || true
+	@(git worktree add $(src) $(target) && (cp -r .backup/* $(src) > /dev/null 2>&1)) || true
+	@cd $(src) && git add . && git commit -m "$(message)" || true
+	@(mv .backup $(src) > /dev/null 2>&1) || true
+	@git push origin $(target) -f || true
