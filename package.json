@@ -27,7 +27,7 @@
     "test:unit": "npm run test:run framework/tests/*.test.js --",
     "coverage": "nyc -s -x '**/tests/**' -x '**/*.test.js'",
     "pretest": "npm run lint",
-    "pretest:ci": "npm run lint"
+    "pretest:ci": "npm run pretest"
   },
   "publishConfig": {
     "access": "public"

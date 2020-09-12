@@ -13,7 +13,8 @@ endif
 .EXPORT_ALL_VARIABLES:
 
 test-ci:
-	@make lint test-all
+	@make -C application lint
+	@make test-all
 
 test-all:
 	@make $(RUNNER):bud $(RUNNER):cli $(RUNNER):grpc $(RUNNER):graphql $(RUNNER):model
@@ -72,7 +73,6 @@ clean: install
 
 lint: deps
 	@npm run lint
-	@make -C application lint
 
 deps: package*.json
 	@(((ls node_modules | grep .) > /dev/null 2>&1) || npm i) || true
