@@ -8,12 +8,21 @@ function links(baseURL) {
   if (typeof target === 'undefined') { return; }
 
   target.style.display = 'block';
+  target.dataset.label = 'ready';
+  target.innerHTML = '<iframe name="external"></iframe>';
+
+  target.firstChild.addEventListener('load', function () {
+    target.dataset.label = 'response:';
+  });
 
   [].slice.call(document.querySelectorAll('a>code')).forEach(function (node) {
     if (!node.dataset.href) { node.dataset.href = node.parentNode.href.replace(location.origin, ''); }
 
     node.parentNode.setAttribute('target', 'external');
     node.parentNode.setAttribute('href', baseURL + node.dataset.href);
+    node.parentNode.addEventListener('click', function () {
+      target.dataset.label = 'waiting...';
+    });
   });
 }
 

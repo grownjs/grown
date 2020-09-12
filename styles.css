@@ -274,5 +274,19 @@ ul.reset .pl {
   background-color: #FBFBFB !important;
 }
 #target {
+  position: relative;
   display: none;
+}
+#target::before {
+  background-color: white;
+  content: attr(data-label);
+  position: absolute;
+  font-size: 12px;
+  padding: 2px 4px;
+  left: 6px;
+  top: -12px;
+}
+#target iframe {
+  padding: 5px;
+  border: 1px dashed #90A4AE;
 }
