@@ -33,11 +33,11 @@
     "access": "public"
   },
   "bugs": {
-    "url": "https://github.com/pateketrueke/grown/issues"
+    "url": "https://github.com/grownjs/grown/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/pateketrueke/grown.git"
+    "url": "git+https://github.com/grownjs/grown.git"
   },
   "devDependencies": {
     "chai": "^4.2.0",

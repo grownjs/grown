@@ -110,7 +110,7 @@ Now you can invoke this task using `grown words` or `node script.js words` depen
 
 Formatting for task descriptions is enouraged to have its body indented with two spaces, to help readability.
 
-See: [built-in tasks](https://github.com/pateketrueke/grown/tree/master/packages/cli/bin/tasks) from CLI module
+See: [built-in tasks](https://github.com/grownjs/grown/tree/master/packages/cli/bin/tasks) from CLI module
 
 ---
 

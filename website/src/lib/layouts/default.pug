@@ -1,7 +1,7 @@
 - var segment = self && self.parent.split('/').slice(2).join('/').replace(/\.\w+$/, '')
 - var url = `/${segment || ''}`;
 
-- var gitBase = 'github.com/pateketrueke/grown/blob/master/website/src';
+- var gitBase = 'github.com/grownjs/grown/blob/master/website/src';
 - var gitUrl = `//${gitBase}${(url === '/' ? '/index' : '/pages' + url) + '.md'}`
 
 mixin linkTo(href, title)
