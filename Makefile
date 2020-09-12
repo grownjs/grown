@@ -34,9 +34,9 @@ codecov:
 
 coverage\:%:
 	@mkdir -p build/coverage
-	@(sed 's|$(PWD)/packages/$(subst coverage:,,$*)/||g' packages/$(subst coverage:,,$*)/coverage/lcov.info \
-		| sed 's|^SF:|SF:packages/$(subst coverage:,,$*)/|g' \
-		> build/coverage/$(subst coverage:,,$*).info) || true
+	@((sed 's|$(PWD)/packages/$(subst coverage:,,$*)/||g' packages/$(subst coverage:,,$*)/coverage/lcov.info \
+			| sed 's|^SF:|SF:packages/$(subst coverage:,,$*)/|g' \
+			> build/coverage/$(subst coverage:,,$*).info) > /dev/null 2>&1) || true
 
 publish:
 	@make -C website dist deploy
