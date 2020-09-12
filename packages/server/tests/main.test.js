@@ -142,10 +142,10 @@ describe('Grown.Server', () => {
         });
 
         it('should responds with 501 as default', done => {
-          g.listen(async app => {
+          g.listen(3000, async app => {
             let err;
             try {
-              await get('http://0.0.0.0:80');
+              await get('http://0.0.0.0:3000');
             } catch (e) {
               err = e;
             }
@@ -160,8 +160,8 @@ describe('Grown.Server', () => {
 
         it('should responds with 200 if ctx.res.status() is called', done => {
           g.mount(ctx => ctx.res.status(200).end());
-          g.listen(async app => {
-            const { statusCode } = await get('http://0.0.0.0:80');
+          g.listen(3000, async app => {
+            const { statusCode } = await get('http://0.0.0.0:3000');
 
             expect(statusCode).to.eql(200);
             app.close();
@@ -175,8 +175,8 @@ describe('Grown.Server', () => {
             ctx.res.status(200).end();
           });
 
-          g.listen(async app => {
-            const { data } = await post('http://0.0.0.0:80', {
+          g.listen(3000, async app => {
+            const { data } = await post('http://0.0.0.0:3000', {
               headers: {
                 'Content-Type': 'multipart/x-www-form-urlencoded',
               },
@@ -195,8 +195,8 @@ describe('Grown.Server', () => {
             ctx.res.status(200).end();
           });
 
-          g.listen(async app => {
-            const { data } = await post('http://0.0.0.0:80', {
+          g.listen(3000, async app => {
+            const { data } = await post('http://0.0.0.0:3000', {
               headers: {
                 'Content-Type': 'application/json',
               },
@@ -220,9 +220,9 @@ describe('Grown.Server', () => {
             ctx.res.status(200).end();
           });
 
-          g.listen(async app => {
-            const { data: a } = await get('http://0.0.0.0:80/ko');
-            const { data: b } = await get('http://0.0.0.0:80/x');
+          g.listen(3000, async app => {
+            const { data: a } = await get('http://0.0.0.0:3000/ko');
+            const { data: b } = await get('http://0.0.0.0:3000/x');
 
             expect(a).to.eql('OK');
             expect(b).to.eql('):');
@@ -250,8 +250,8 @@ describe('Grown.Server', () => {
           ctx.res.status(200).end();
         });
 
-        g.listen(async app => {
-          const { data } = await post('http://0.0.0.0:80', {
+        g.listen(3000, async app => {
+          const { data } = await post('http://0.0.0.0:3000', {
             headers: {
               'Content-Type': 'application/json',
             },
@@ -276,9 +276,9 @@ describe('Grown.Server', () => {
           ctx.res.status(200).end();
         });
 
-        g.listen(async app => {
-          const { data: a } = await get('http://0.0.0.0:80/x');
-          const { data: b } = await get('http://0.0.0.0:80/ko');
+        g.listen(3000, async app => {
+          const { data: a } = await get('http://0.0.0.0:3000/x');
+          const { data: b } = await get('http://0.0.0.0:3000/ko');
 
           expect(a).to.eql('):');
           expect(b).to.eql('OK');
