@@ -11,6 +11,6 @@ node_js:
 install:
   - make setup
 script:
-  - make test-all U_WEBSOCKETS_SKIP=true
+  - make test-ci U_WEBSOCKETS_SKIP=true
 notifications:
   email: false
