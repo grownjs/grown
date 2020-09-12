@@ -82,7 +82,7 @@
     "minimist": ">=1.2.2",
     "pug": "^2.0.0-beta11",
     "talavera": "^0.8.0",
-    "tarima": "^4.7.15",
+    "tarima": "^4.8.0",
     "terser": "^4.6.6"
   }
 }
