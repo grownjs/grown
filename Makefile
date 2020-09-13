@@ -13,7 +13,7 @@ endif
 .EXPORT_ALL_VARIABLES:
 
 test-ci:
-	@make lint test-all
+	@make check test-all
 
 test-all:
 	@make $(RUNNER):bud $(RUNNER):cli $(RUNNER):grpc $(RUNNER):graphql $(RUNNER):model
