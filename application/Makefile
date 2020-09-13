@@ -212,7 +212,7 @@ migrate: deps ## Run & apply pending migrations	  (host)
 	@make -s migrate-up
 	@make -s migrate-apply
 
-%\:models:
-	@make -S models app=$*
-models: deps ## Autogenerate new migration files  (host)
+%\:migrations:
+	@make -S migrations app=$*
+migrations: deps ## Autogenerate new migration files  (host)
 	@make -s migrate-make
