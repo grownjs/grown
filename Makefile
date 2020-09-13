@@ -17,15 +17,15 @@ test-ci:
 	@make -s check test-all app:ci
 
 test-all:
-	@make $(RUNNER):bud $(RUNNER):cli $(RUNNER):grpc $(RUNNER):graphql $(RUNNER):model
-	@make $(RUNNER):repl $(RUNNER):test $(RUNNER):conn $(RUNNER):server $(RUNNER):access $(RUNNER):session
-	@make $(RUNNER):logger $(RUNNER):render $(RUNNER):router $(RUNNER):static $(RUNNER):tarima $(RUNNER):upload
+	@make -s $(RUNNER):bud $(RUNNER):cli $(RUNNER):grpc $(RUNNER):graphql $(RUNNER):model
+	@make -s $(RUNNER):repl $(RUNNER):test $(RUNNER):conn $(RUNNER):server $(RUNNER):access $(RUNNER):session
+	@make -s $(RUNNER):logger $(RUNNER):render $(RUNNER):router $(RUNNER):static $(RUNNER):tarima $(RUNNER):upload
 
 ci: deps
 	@make -s clean setup test-ci codecov
 
 testc\:%:
-	@make -s test:$(subst testc:,,$*) coverage:$(subst testc:,,$*)
+	@make -s test:$* coverage:$*
 
 codecov:
 	@curl -s https://codecov.io/bash > codecov.sh
@@ -69,7 +69,7 @@ dev\:%:
 	@cd packages/$(subst dev:,,$*) && npm run dev
 
 test\:%:
-	@lerna run $(TASK) --scope @grown/$(subst test:,,$@)
+	@lerna run $(TASK) --scope @grown/$*
 
 clean: install
 	@lerna clean -y --ignore grown
