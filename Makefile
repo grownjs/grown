@@ -75,8 +75,8 @@ clean: install
 	@lerna clean -y --ignore grown
 
 check: deps
-	@npm run lint
 	@make -C application lint
+	@npm run lint
 	@echo "Done."
 
 deps: package*.json
