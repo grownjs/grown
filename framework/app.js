@@ -18,6 +18,8 @@ module.exports = (Grown, opts) => {
 
   const extensions = [];
 
+  extensions.push(require('./http')(Grown, opts));
+
   if (opts.grpc !== false) {
     const GRPC = Grown.use(require('@grown/grpc'));
 
