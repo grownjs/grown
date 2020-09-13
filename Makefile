@@ -1,5 +1,6 @@
 TASK ?= test
 RUNNER ?= test
+NODE_ENV ?= test
 
 ifdef CI
 	TASK=test:ci
@@ -10,10 +11,11 @@ ifneq ($(wildcard .env),)
 include .env
 endif
 
-.EXPORT_ALL_VARIABLES:
+export NODE_ENV
 
 test-ci:
-	@make check test-all app:ci
+	@make -s check test-all
+	@make -s app:database app:ci
 
 test-all:
 	@make $(RUNNER):bud $(RUNNER):cli $(RUNNER):grpc $(RUNNER):graphql $(RUNNER):model
