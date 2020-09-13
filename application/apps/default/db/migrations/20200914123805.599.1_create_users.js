@@ -9,6 +9,12 @@ module.exports = {
           primaryKey: true,
           autoIncrement: true,
         },
+        name: {
+          type: dataTypes.STRING,
+        },
+        picture: {
+          type: dataTypes.STRING,
+        },
         platform: {
           type: dataTypes.STRING,
         },
