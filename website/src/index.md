@@ -3,9 +3,7 @@ title: Installation
 $render: ~/src/lib/layouts/default.pug
 runkit:
   endpoint: true
-  preamble: |
-    require('@grown/bud');
-    require('@grown/server');
+  preamble: !include ~/src/lib/shared/chunks/main.js
 ---
 
 I suggest you installing NodeJS through NVM, using `8.16.2` or higher is fine.
