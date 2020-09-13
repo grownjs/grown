@@ -7,9 +7,13 @@ module.exports = {
     identifier: {
       'ui:hidden': true,
     },
+    picture: {
+      'ui:template': [['span', '{@embed:this}']],
+      'ui:component': 'FileUpload',
+    },
     'ui:append': false,
   },
   $attributes: {
-    findAll: ['email', 'role', 'verified', 'picture', 'platform'],
+    findAll: ['email', 'name', 'role', 'verified', 'picture', 'platform'],
   },
 };

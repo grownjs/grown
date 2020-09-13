@@ -9,6 +9,9 @@
     "id": {
       "$ref": "dataTypes#/definitions/primaryKey"
     },
+    "name": {
+      "type": "string"
+    },
     "picture": {
       "type": "string"
     },

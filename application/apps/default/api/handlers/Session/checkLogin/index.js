@@ -1,4 +1,4 @@
-module.exports = ({ User, Session }) => async function checkLogin({ request }) {
+module.exports = ({ http, User, Session }) => async function checkLogin({ request }) {
   const { params: { type, auth } } = request;
 
   const [user] = await User.findOrCreate({
@@ -7,16 +7,19 @@ module.exports = ({ User, Session }) => async function checkLogin({ request }) {
       identifier: auth.id,
     },
     defaults: {
-      picture: auth.picture,
       email: auth.email,
+      name: auth.name,
       role: 'GUEST',
       verified: true,
     },
     hooks: false,
   });
 
-  if (auth.picture !== user.picture) {
-    await user.update({ picture: auth.picture });
+  if (!user.picture && auth.picture) {
+    const filePath = `${user.platform}_${user.identifier}_${Date.now()}.png`;
+    const destFile = await http.download(auth.picture, filePath);
+
+    await user.update({ picture: destFile });
   }
 
   const session = await Session.create({
@@ -26,12 +29,15 @@ module.exports = ({ User, Session }) => async function checkLogin({ request }) {
   });
 
   return {
-    token: session.token,
-    expirationDate: session.expirationDate,
     user: {
       id: session.userId,
-      email: session.email,
       role: session.role,
+      email: session.email,
+      name: user.name,
+      picture: user.picture,
+      platform: user.platform,
     },
+    token: session.token,
+    expirationDate: session.expirationDate,
   };
 };

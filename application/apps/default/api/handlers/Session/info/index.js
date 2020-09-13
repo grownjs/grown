@@ -25,6 +25,7 @@ module.exports = ({ Session }) => async function info({ request }) {
       id: session.userId,
       role: session.role,
       email: session.email,
+      name: session.user.name,
       picture: session.user.picture,
       platform: session.user.platform,
     },

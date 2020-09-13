@@ -41,6 +41,9 @@
     Hello, {$state.me.email}
   </span>
   <UpdatePassword class="menu">
+    {#if $state.me.picture}
+      <img height="64" alt={$state.me.name} src={$state.me.picture} />
+    {/if}
     <button {disabled} on:click|preventDefault={doLogout}>Log out</button>
     {#if !$state.me.platform} or {/if}
   </UpdatePassword>

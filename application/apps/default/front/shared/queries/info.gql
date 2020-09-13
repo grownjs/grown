@@ -5,6 +5,7 @@ query {
     user {
       id
       role
+      name
       email
       picture
       platform
