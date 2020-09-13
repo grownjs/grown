@@ -3,7 +3,7 @@
 const isDocker = require('is-docker');
 
 const env = process.env.NODE_ENV || 'development';
-const logging = env === 'test' || process.env.REMOVE_LOG === 'YES' ? false : require('logro').logger; // eslint-ignore
+const logging = process.env.REMOVE_LOG === 'YES' ? false : require('logro').logger; // eslint-ignore
 
 const config = module.exports = {
   env,
