@@ -4,6 +4,9 @@
     "node": true,
     "browser": true
   },
+  "plugins": [
+    "pug"
+  ],
   "extends": "airbnb-base",
   "parserOptions": {
     "sourceType": "module"

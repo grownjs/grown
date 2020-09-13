@@ -73,9 +73,11 @@ test\:%:
 clean: install
 	@lerna clean -y
 
-lint: deps
+check: deps
+	@npm run lint
 	@make -C application lint
-	@npm run lint && echo "Done."
+	@make -C website test
+	@echo "Done."
 
 deps: package*.json
 	@(((ls node_modules | grep .) > /dev/null 2>&1) || npm i) || true
