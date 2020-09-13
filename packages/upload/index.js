@@ -25,7 +25,11 @@ module.exports = (Grown, util) => {
       });
 
       if (!fs.existsSync(form.uploadDir)) {
-        throw new Error(`Missing directory '${form.uploadDir}'`);
+        try {
+          fs.mkdirSync(form.uploadDir);
+        } catch (e) {
+          throw new Error(`Failed to create directory '${form.uploadDir}'`);
+        }
       }
 
       form.parse(conn.req, (err, data, files) => {
