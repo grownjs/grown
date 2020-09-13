@@ -72,7 +72,7 @@ test\:%:
 	@lerna run $(TASK) --scope @grown/$(subst test:,,$@)
 
 clean: install
-	@lerna clean -y
+	@lerna clean -y --ignore grown
 
 check: deps
 	@npm run lint
