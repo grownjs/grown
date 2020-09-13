@@ -100,8 +100,8 @@ module.exports = (Grown, opts) => {
     }),
     Grown.Session.Auth.use('/auth', {
       facebook: {
-        enabled: req => (req.site ? req.site.config.facebook !== false : true),
-        credentials: req => (req.site ? req.site.config.facebook : defaults.facebook),
+        enabled: req => (req.site && req.site.config.facebook !== false) || true,
+        credentials: req => (req.site && req.site.config.facebook) || defaults.facebook,
       },
     }, (type, userInfo) => Grown.Services.API.Session.checkLogin({
       params: {
