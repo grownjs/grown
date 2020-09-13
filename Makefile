@@ -11,7 +11,9 @@ ifneq ($(wildcard .env),)
 include .env
 endif
 
-export NODE_ENV
+GIT_REVISION=$(shell git rev-parse --short=7 HEAD)
+
+export NODE_ENV GIT_REVISION
 
 test-ci:
 	@make -s check test-all

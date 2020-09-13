@@ -15,6 +15,10 @@ message=Release: $(shell date)
 ROOT=/
 NODE_ENV=development
 
+ifneq ($(wildcard .env),)
+include .env
+endif
+
 # export vars
 export NODE_ENV ROOT
 

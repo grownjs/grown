@@ -30,7 +30,7 @@ html
     script(src='https://css3-mediaqueries-js.googlecode.com/svn/trunk/css3-mediaqueries.js')
     <![endif]-->
 
-    title Grown // #{title || Untitled}
+    title Grown // #{title || Untitled} (##{env.GIT_REVISION})
     link(rel='stylesheet' href='styles.css')
     link(rel='stylesheet' href='https://unpkg.com/highlight.js/styles/default.css')
     link(rel='stylesheet' href='https://fonts.googleapis.com/css?family=Sorts+Mill+Goudy')
@@ -43,7 +43,7 @@ html
         m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
         })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
 
-        ga('create', '#{env.GA}', 'auto');
+        ga('create', '#{env.UA_CODE}', 'auto');
         ga('send', 'pageview');
         /* eslint-enable */
 
