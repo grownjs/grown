@@ -130,12 +130,10 @@ all: deps ## Single-shot development workspace  (host)
 	@make -s up service=db
 	@make -s schema templates database dev
 
-dev: deps ## Develop NodeJS application only  (host)
-	@make :3000! :4001! :1080! :1081!
+dev: kill ## Develop NodeJS application only  (host)
 	@make -s watch & npm run dev
 
-api: deps
-	@make :3000! :4001! :1080! :1081!
+api: kill
 	@npm run watch
 
 e2e: deps ## Headlessly run E2E tests  (host)
