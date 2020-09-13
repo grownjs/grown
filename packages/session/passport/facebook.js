@@ -6,7 +6,7 @@ module.exports = ({ options, credentials }, req, cb) => {
   credentials.profileFields = credentials.profileFields || ['id', 'displayName', 'email'];
 
   passport.use(new FacebookStrategy(credentials, ($1, $2, profile, done) => Promise.resolve()
-    .then(() => cb('facebook', profile._json)).then(userInfo => done(null, userInfo))));
+    .then(() => cb('facebook', profile)).then(userInfo => done(null, userInfo))));
 
   options = options || {};
   options.session = false;

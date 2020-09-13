@@ -103,14 +103,14 @@ module.exports = (Grown, opts) => {
         enabled: req => (req.site ? req.site.config.facebook !== false : true),
         credentials: req => (req.site && req.site.config.facebook) || defaults.facebook,
       },
-    }, (type, userInfo) => Grown.Services.API.Session.checkLogin({
+    }, (type, profile) => Grown.Services.API.Session.checkLogin({
       params: {
         type,
         auth: {
-          id: userInfo.id,
-          name: userInfo.name,
-          email: userInfo.email,
-          picture: userInfo.picture ? userInfo.picture.data.url : '',
+          id: profile.id,
+          name: profile.displayName,
+          email: profile.emails[0].value,
+          picture: profile.photos[0] ? profile.photos[0].value : null,
         },
       },
     })),
