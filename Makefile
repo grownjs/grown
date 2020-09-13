@@ -77,7 +77,6 @@ clean: install
 check: deps
 	@npm run lint
 	@make -C application lint
-	@make -C website test
 	@echo "Done."
 
 deps: package*.json
