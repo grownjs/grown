@@ -111,7 +111,7 @@ provision: check ## Env for production or staging servers  (docker)
 	@printf "\n\n"
 
 %!: ## Kill services by name or port number with fkill  (host)
-	@fkill -s $*
+	@fkill -fs $*
 
 %\:%: ## Invoke tasks by service name  (host)
 %\:sh %\:up %\:run %\:logs %\:stop %\:down %\:test %\:build:

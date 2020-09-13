@@ -14,7 +14,8 @@ endif
 export NODE_ENV
 
 test-ci:
-	@make -s check test-all app:ci
+	@make -s check test-all
+	@make -sC application ci
 
 test-all:
 	@make -s $(RUNNER):bud $(RUNNER):cli $(RUNNER):grpc $(RUNNER):graphql $(RUNNER):model
@@ -54,9 +55,6 @@ install: deps
 
 setup: install
 	@lerna bootstrap
-
-app\:%:
-	@make -C application $*
 
 web\:%:
 	@make -C website $*
