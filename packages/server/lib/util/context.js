@@ -99,8 +99,6 @@ function buildPubsub() {
       function $once() {
         try {
           return cb.apply(null, arguments);
-        } catch (_e) {
-          throw _e;
         } finally {
           ee(e).splice(k, 1);
         }

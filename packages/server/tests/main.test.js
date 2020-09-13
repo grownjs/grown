@@ -11,7 +11,7 @@ let g;
 describe('Grown.Server', () => {
   beforeEach(() => {
     Grown = require('../../bud')();
-    Grown.use(require('../'));
+    Grown.use(require('..'));
     Grown.use(require('../../test'));
   });
 
