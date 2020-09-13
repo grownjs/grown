@@ -8,7 +8,7 @@ ifdef CI
 endif
 
 ifneq ($(wildcard .env),)
-include .env
+	include .env
 endif
 
 GIT_REVISION=$(shell git rev-parse --short=7 HEAD)
