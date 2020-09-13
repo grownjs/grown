@@ -19,7 +19,7 @@
   ],
   "scripts": {
     "dev": "npm run test:unit -- -w",
-    "lint": "eslint $(git ls-files | grep -vE 'application|website' | grep -E '(js|pug)$')",
+    "lint": "eslint $(git ls-files | grep -vE 'application' | grep -E '(js|pug)$')",
     "test": "npm run coverage -- npm run test:unit --",
     "test:ci": "npm test && nyc report -r lcov",
     "test:dev": "npm test && nyc report -r html",
