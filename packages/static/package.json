@@ -13,5 +13,8 @@
   },
   "dependencies": {
     "serve-static": "^1.13.1"
+  },
+  "devDependencies": {
+    "mocha": "^7.2.0"
   }
 }
