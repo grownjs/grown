@@ -1,6 +1,7 @@
 # Grown
 
 ![Build status](https://github.com/grownjs/grown/workflows/build/badge.svg)
+[![Build status](https://api.travis-ci.org/grownjs/grown.svg)](https://travis-ci.org/grownjs/grown)
 [![NPM version](https://badge.fury.io/js/grown.png)](http://badge.fury.io/js/grown)
 [![codecov](https://codecov.io/gh/grownjs/grown/branch/master/graph/badge.svg)](https://codecov.io/gh/grownjs/grown)
 
