@@ -1,6 +1,6 @@
 {
   "name": "@grown/access",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "main": "index.js",
   "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
   "license": "MIT",
@@ -21,7 +21,7 @@
   },
   "devDependencies": {
     "chai": "^4.2.0",
-    "grown": "^1.1.9",
+    "grown": "^1.1.10",
     "minimist": ">=1.2.2",
     "mocha": "^7.2.0",
     "nyc": "^15.1.0"

@@ -1,6 +1,6 @@
 {
   "name": "@grown/cli",
-  "version": "0.0.26",
+  "version": "0.0.27",
   "main": "index.js",
   "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
   "license": "MIT",
@@ -17,9 +17,9 @@
     "access": "public"
   },
   "dependencies": {
-    "@grown/bud": "^0.0.22",
-    "@grown/logger": "^0.0.10",
-    "@grown/repl": "^0.0.8"
+    "@grown/bud": "^0.0.23",
+    "@grown/logger": "^0.0.11",
+    "@grown/repl": "^0.0.9"
   },
   "devDependencies": {
     "chai": "^4.2.0",
