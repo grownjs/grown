@@ -17,11 +17,16 @@ endif
 GIT_REVISION ?= $(shell git rev-parse --short=7 HEAD)
 POSTGRES_USER ?= $(shell whoami)
 
+E2E_FLAGS ?= --app "make dev" --app-init-delay 10000 -S -s e2e/screenshots
 BASE_URL ?= http://localhost:4001
 NODE_ENV ?= development
 MAILDEV ?= YES
 
-.EXPORT_ALL_VARIABLES:
+export GIT_REVISION POSTGRES_USER BASE_URL NODE_ENV MAILDEV
+
+ifneq ($(SHOT),)
+	E2E_FLAGS := --take-snapshot $(E2E_FLAGS)
+endif
 
 ifneq ($(PORTS),)
 	PORT_FLAGS := -p $(subst $(shell echo ','), -p ,$(PORTS))
@@ -137,8 +142,8 @@ api: kill
 	@npm run watch
 
 e2e: deps ## Headlessly run E2E tests  (host)
-	@npm run test:e2e -- e2e/cases
-	@npm run test:bdd -- --take-snapshot -S -s e2e/screenshots
+	@npm run test:e2e -- e2e/cases $(E2E_FLAGS)
+	@npm run test:bdd -- $(E2E_FLAGS)
 
 lint: deps ## Run ESLint on all source files  (host)
 	@npm run lint
