@@ -17,15 +17,15 @@
     "access": "public"
   },
   "dependencies": {
-    "graphql": "^14.1.1",
-    "graphql-tools": "^4.0.4"
+    "graphql": "^15.3.0",
+    "graphql-tools": "^6.2.2"
   },
   "devDependencies": {
     "chai": "^4.2.0",
     "grown": "^1.1.9",
     "lodash": ">=4.17.11",
     "minimist": ">=1.2.2",
-    "mocha": "^5.2.0",
+    "mocha": "^8.1.3",
     "nyc": "^15.1.0"
   }
 }

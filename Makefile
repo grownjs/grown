@@ -14,8 +14,7 @@ endif
 export NODE_ENV
 
 test-ci:
-	@make -s check test-all
-	@make -s app:database app:ci
+	@make -s check test-all app:ci
 
 test-all:
 	@make $(RUNNER):bud $(RUNNER):cli $(RUNNER):grpc $(RUNNER):graphql $(RUNNER):model

@@ -120,7 +120,7 @@ provision: check ## Env for production or staging servers  (docker)
 npm\:%: ## Invoke NPM commands  (host)
 	@npm $(subst :, ,$*) $(NPM_FLAGS)
 
-ci: deps ## Run all-tests and report coverage results! :wink:  (host)
+ci: templates database schema ## Run all-tests and report coverage results! :wink:  (host)
 	@make -s test-ci run=unit
 	@make -s test-ci run=functional
 
