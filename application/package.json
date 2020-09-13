@@ -34,7 +34,7 @@
     "test:bdd": "npm run bdd -- npm run test:e2e --",
     "test:e2e": "testcafe --color ${BROWSER:-chrome:headless}",
     "test:e2e:remote": "testcafe --color --ports 9505,9506 remote:1",
-    "test:unit": "npm run mocha -- -bR spec '{api,lib}/**/*.test.js'",
+    "test:unit": "npm run mocha -- -bR spec '{apps,lib}/**/*.test.js'",
     "test:functional": "npm run mocha -- -t 180000 -bR spec 'e2e/integration/**/*.test.js'",
     "test:coverage": "nyc --silent -x '**/{fixtures}/**' -x '**/fixtures.js' -x '**/*.test.js'",
     "test:coverage:unit": "npm run test:coverage -- npm run test:unit --",
@@ -59,7 +59,7 @@
       "!**/_*",
       "!**/_*/**",
       "!**/{index.js,settings.json}",
-      "!**/{db,api,lib,views,mailer,shared,public,components}/**"
+      "!**/{db,api,lib,tests,views,mailer,shared,public,components}/**"
     ],
     "bundle": "**/assets/**",
     "ignoreFiles": [
