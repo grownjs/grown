@@ -32,10 +32,10 @@
         <main><a id="menu" href="./docs/command-line/#sidebar">&#9776;</a>
           <h1>Command line <small><a href="//github.com/grownjs/grown/blob/master/website/src/pages/docs/command-line.md" target="_blank">✎</a></small></h1><p>Make sure you write a script like the shown below, e.g. <code>your-app/server.js</code></p>
 <pre class="hljs"><code class="lang-js"><span class="hljs-comment">// require and create a Grown-container</span>
-<span class="hljs-keyword">const</span> Grown = <span class="hljs-built_in">require</span>(<span class="hljs-string">'grown'</span>)();
+<span class="hljs-keyword">const</span> Grown = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;grown&#x27;</span>)();
 
 <span class="hljs-comment">// exports for external usage</span>
-<span class="hljs-keyword">const</span> initServer = <span class="hljs-built_in">module</span>.exports = <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+<span class="hljs-keyword">const</span> initServer = <span class="hljs-built_in">module</span>.exports = <span class="hljs-function">() =&gt;</span> {
   <span class="hljs-comment">// create the web-server instance</span>
   <span class="hljs-keyword">const</span> server = <span class="hljs-keyword">new</span> Grown();
 
@@ -48,7 +48,7 @@
   initServer()
     .listen(Grown.argv.flags.port || <span class="hljs-number">8080</span>)
     .catch(<span class="hljs-function"><span class="hljs-params">e</span> =&gt;</span> {
-      <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'E_FATAL'</span>, e);
+      <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&#x27;E_FATAL&#x27;</span>, e);
       process.exit(<span class="hljs-number">1</span>);
     });
 }
@@ -56,16 +56,16 @@
 <p>Run your server manually with <code>node your-app/server.js</code> or with <code>npm start</code>.</p>
 <p>For the latter add the following script to your <code>package.json</code> file:</p>
 <pre class="hljs"><code class="lang-json">{
-  <span class="hljs-attr">"scripts"</span>: {
-    <span class="hljs-attr">"start"</span>: <span class="hljs-string">"grown up"</span>
+  <span class="hljs-attr">&quot;scripts&quot;</span>: {
+    <span class="hljs-attr">&quot;start&quot;</span>: <span class="hljs-string">&quot;grown up&quot;</span>
   }
 }
 </code></pre>
 <p>Try <code>npx grown --help</code> to get more usage info.</p>
 <blockquote>
 <p>Also, you can setup a <code>bin/grown</code> executable with the following content:</p>
-<pre class="hljs"><code class="lang-bash"><span class="hljs-comment">#!/usr/bin/env node</span>
-require(<span class="hljs-string">'grown/cli.js'</span>);
+<pre class="hljs"><code class="lang-bash"><span class="hljs-meta">#!/usr/bin/env node</span>
+require(<span class="hljs-string">&#x27;grown/cli.js&#x27;</span>);
 </code></pre>
 <p>Test it out!</p>
 </blockquote>

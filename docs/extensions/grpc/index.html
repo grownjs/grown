@@ -33,10 +33,10 @@
           <h1>GRPC <small><a href="//github.com/grownjs/grown/blob/master/website/src/pages/docs/extensions/grpc.md" target="_blank">✎</a></small></h1><p>Setup micro-services talking through gRPC calls.</p>
 <pre class="hljs"><code class="lang-js"><span class="hljs-comment">/* @runkit */</span>
 <span class="hljs-comment">// register extension</span>
-<span class="hljs-keyword">const</span> GRPC = Grown.use(<span class="hljs-built_in">require</span>(<span class="hljs-string">'@grown/grpc'</span>));
+<span class="hljs-keyword">const</span> GRPC = Grown.use(<span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;@grown/grpc&#x27;</span>));
 
 <span class="hljs-comment">// ./index.proto</span>
-<span class="hljs-comment">// syntax = "proto3";</span>
+<span class="hljs-comment">// syntax = &quot;proto3&quot;;</span>
 <span class="hljs-comment">// package API;</span>
 <span class="hljs-comment">// service Test {</span>
 <span class="hljs-comment">//   rpc is(Input) returns (Output) {}</span>
@@ -68,7 +68,7 @@
 
 <span class="hljs-keyword">const</span> result = <span class="hljs-keyword">await</span> gateway.API.Test.is({ <span class="hljs-attr">truth</span>: <span class="hljs-number">42</span> });
 
-<span class="hljs-built_in">console</span>.log(<span class="hljs-string">'GOT:'</span>, result);
+<span class="hljs-built_in">console</span>.log(<span class="hljs-string">&#x27;GOT:&#x27;</span>, result);
 </code></pre>
 <h2 id="loader">Loader</h2>
 <h3 id="public-methods-var-static-var">Public methods <var>static</var></h3>

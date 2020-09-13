@@ -33,10 +33,10 @@
           <h1>Access <small><a href="//github.com/grownjs/grown/blob/master/website/src/pages/docs/extensions/access.md" target="_blank">✎</a></small></h1><p>Allow or deny access on certain resources from your application, e.g.</p>
 <pre class="hljs"><code class="lang-js"><span class="hljs-comment">/* @runkit */</span>
 <span class="hljs-comment">// register extension</span>
-Grown.use(<span class="hljs-built_in">require</span>(<span class="hljs-string">'@grown/access'</span>));
+Grown.use(<span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;@grown/access&#x27;</span>));
 
 <span class="hljs-comment">// overload definition</span>
-Grown(<span class="hljs-string">'Access'</span>, {
+Grown(<span class="hljs-string">&#x27;Access&#x27;</span>, {
   <span class="hljs-attr">access_filter</span>: <span class="hljs-function"><span class="hljs-params">ctx</span> =&gt;</span> {
     <span class="hljs-comment">// retrieve role from the URL</span>
     <span class="hljs-keyword">const</span> matches = ctx.req.url.match(<span class="hljs-regexp">/[&amp;?]role=(\w+)/</span>);
@@ -51,21 +51,21 @@ Grown(<span class="hljs-string">'Access'</span>, {
 server.plug([
   Grown.Access.rules({
     <span class="hljs-attr">roles</span>: [
-      <span class="hljs-string">'Guest.User.Admin'</span>,
+      <span class="hljs-string">&#x27;Guest.User.Admin&#x27;</span>,
     ],
     <span class="hljs-attr">resources</span>: {
       <span class="hljs-comment">// this rule will block all requests</span>
-      Website: <span class="hljs-string">'/**'</span>,
+      <span class="hljs-attr">Website</span>: <span class="hljs-string">&#x27;/**&#x27;</span>,
 
       <span class="hljs-comment">// but only these requests will be allowed</span>
-      Public: <span class="hljs-regexp">/^\/(?:login|logout|public)/</span>,
+      <span class="hljs-attr">Public</span>: <span class="hljs-regexp">/^\/(?:login|logout|public)/</span>,
     },
     <span class="hljs-attr">permissions</span>: {
       <span class="hljs-attr">Website</span>: {
-        <span class="hljs-comment">// User and its parents' roles get access too!</span>
-        User: <span class="hljs-string">'allow'</span>,
+        <span class="hljs-comment">// User and its parents&#x27; roles get access too!</span>
+        <span class="hljs-attr">User</span>: <span class="hljs-string">&#x27;allow&#x27;</span>,
       },
-      <span class="hljs-attr">Public</span>: <span class="hljs-string">'allow'</span>,
+      <span class="hljs-attr">Public</span>: <span class="hljs-string">&#x27;allow&#x27;</span>,
     },
   }),
 ]);
@@ -73,12 +73,12 @@ server.plug([
 <span class="hljs-comment">// once Access is plugged on the server</span>
 <span class="hljs-comment">// all new middleware gets protected by default</span>
 server.mount(<span class="hljs-function"><span class="hljs-params">ctx</span> =&gt;</span> {
-  ctx.res.write(<span class="hljs-string">'You are welcome!'</span>);
+  ctx.res.write(<span class="hljs-string">&#x27;You are welcome!&#x27;</span>);
 
   <span class="hljs-comment">// validate against undefined rules</span>
-  <span class="hljs-keyword">return</span> ctx.check(<span class="hljs-string">'Foo'</span>, <span class="hljs-string">'Bar'</span>, <span class="hljs-string">'baz'</span>)
-    .catch(<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
-      ctx.res.write(<span class="hljs-string">'\nNot here...'</span>);
+  <span class="hljs-keyword">return</span> ctx.check(<span class="hljs-string">&#x27;Foo&#x27;</span>, <span class="hljs-string">&#x27;Bar&#x27;</span>, <span class="hljs-string">&#x27;baz&#x27;</span>)
+    .catch(<span class="hljs-function">() =&gt;</span> {
+      ctx.res.write(<span class="hljs-string">&#x27;\nNot here...&#x27;</span>);
     });
 });
 </code></pre>

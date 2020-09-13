@@ -32,7 +32,7 @@
         <main><a id="menu" href="./docs/extensions/#sidebar">&#9776;</a>
           <h1>Extensions <small><a href="//github.com/grownjs/grown/blob/master/website/src/pages/docs/extensions.md" target="_blank">✎</a></small></h1><p>Most functionality can be added through the <code>Grown</code> container, e.g. <code>api/index.js</code></p>
 <pre class="hljs"><code class="lang-js"><span class="hljs-built_in">module</span>.exports = <span class="hljs-function"><span class="hljs-params">Grown</span> =&gt;</span> {
-  <span class="hljs-keyword">return</span> Grown(<span class="hljs-string">'API'</span>, {
+  <span class="hljs-keyword">return</span> Grown(<span class="hljs-string">&#x27;API&#x27;</span>, {
     <span class="hljs-attr">include</span>: [
       Grown.load(<span class="hljs-string">`<span class="hljs-subst">${__dirname}</span>/controllers`</span>),
     ],
@@ -49,16 +49,16 @@
 <h2 id="using-extensions">Using extensions</h2>
 <p>Now, you can register those extensions on your main application, e.g.</p>
 <pre class="hljs"><code class="lang-js"><span class="hljs-comment">// register an extension</span>
-Grown.use(<span class="hljs-built_in">require</span>(<span class="hljs-string">'./api'</span>));
+Grown.use(<span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;./api&#x27;</span>));
 
 <span class="hljs-comment">// both calls are equivalent</span>
 <span class="hljs-built_in">console</span>.log(Grown.API.Home.name);
-<span class="hljs-built_in">console</span>.log(Grown(<span class="hljs-string">'API.Home.name'</span>));
+<span class="hljs-built_in">console</span>.log(Grown(<span class="hljs-string">&#x27;API.Home.name&#x27;</span>));
 </code></pre>
 <p>Built-in extensions are registered the same way:</p>
-<pre class="hljs"><code class="lang-js">Grown.use(<span class="hljs-built_in">require</span>(<span class="hljs-string">'@grown/session'</span>));
-Grown.use(<span class="hljs-built_in">require</span>(<span class="hljs-string">'@grown/router'</span>));
-Grown.use(<span class="hljs-built_in">require</span>(<span class="hljs-string">'@grown/test'</span>));
+<pre class="hljs"><code class="lang-js">Grown.use(<span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;@grown/session&#x27;</span>));
+Grown.use(<span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;@grown/router&#x27;</span>));
+Grown.use(<span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;@grown/test&#x27;</span>));
 <span class="hljs-comment">// etc.</span>
 </code></pre>
 <hr>

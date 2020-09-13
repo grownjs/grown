@@ -33,14 +33,14 @@
           <h1>Logger <small><a href="//github.com/grownjs/grown/blob/master/website/src/pages/docs/extensions/logger.md" target="_blank">✎</a></small></h1><p>Enable shared and custom logging in your applications.</p>
 <pre class="hljs"><code class="lang-js"><span class="hljs-comment">/* @runkit */</span>
 <span class="hljs-comment">// register extension</span>
-<span class="hljs-keyword">const</span> Logger = Grown.use(<span class="hljs-built_in">require</span>(<span class="hljs-string">'@grown/logger'</span>));
+<span class="hljs-keyword">const</span> Logger = Grown.use(<span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;@grown/logger&#x27;</span>));
 
-Logger.getLogger().info(<span class="hljs-string">'This works?'</span>);
-Logger.setLevel(<span class="hljs-string">'debug'</span>);
+Logger.getLogger().info(<span class="hljs-string">&#x27;This works?&#x27;</span>);
+Logger.setLevel(<span class="hljs-string">&#x27;debug&#x27;</span>);
 
 <span class="hljs-comment">// always show, not restricted by level</span>
-Logger.message(<span class="hljs-string">'OK'</span>);
-Logger.error(<span class="hljs-string">'ERROR'</span>);
+Logger.message(<span class="hljs-string">&#x27;OK&#x27;</span>);
+Logger.error(<span class="hljs-string">&#x27;ERROR&#x27;</span>);
 
 <span class="hljs-comment">// register middleware</span>
 server.plug(Grown.Logger);
@@ -48,11 +48,11 @@ server.plug(Grown.Logger);
 <span class="hljs-comment">// use with server</span>
 server.mount(<span class="hljs-function"><span class="hljs-params">conn</span> =&gt;</span> {
   <span class="hljs-comment">// shown, because `debug &gt; info`</span>
-  conn.logger.info(<span class="hljs-string">'INFO'</span>);
-  conn.logger.debug(<span class="hljs-string">'DEBUG'</span>);
+  conn.logger.info(<span class="hljs-string">&#x27;INFO&#x27;</span>);
+  conn.logger.debug(<span class="hljs-string">&#x27;DEBUG&#x27;</span>);
 
   <span class="hljs-comment">// not shown, because `verbose &gt; debug`</span>
-  conn.logger.verbose(<span class="hljs-string">'VERBOSE'</span>);
+  conn.logger.verbose(<span class="hljs-string">&#x27;VERBOSE&#x27;</span>);
 });
 </code></pre>
 <blockquote>

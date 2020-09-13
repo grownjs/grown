@@ -33,8 +33,8 @@
           <h1>Bud <small><a href="//github.com/grownjs/grown/blob/master/website/src/pages/docs/extensions/bud.md" target="_blank">✎</a></small></h1><p>The foundation of the whole framework is this, it provides the DSL
 used by all extensions, expose common utils, etc.</p>
 <pre class="hljs"><code class="lang-js"><span class="hljs-comment">/* @runkit */</span>
-<span class="hljs-keyword">const</span> Grown = <span class="hljs-built_in">require</span>(<span class="hljs-string">'@grown/bud'</span>)();
-<span class="hljs-keyword">const</span> Util = <span class="hljs-built_in">require</span>(<span class="hljs-string">'@grown/bud/util'</span>);
+<span class="hljs-keyword">const</span> Grown = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;@grown/bud&#x27;</span>)();
+<span class="hljs-keyword">const</span> Util = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;@grown/bud/util&#x27;</span>);
 
 <span class="hljs-comment">// extends the Grown-container</span>
 Grown.use(<span class="hljs-function">(<span class="hljs-params">$, util</span>) =&gt;</span> {
@@ -51,9 +51,9 @@ Grown.use(<span class="hljs-function">(<span class="hljs-params">$, util</span>)
   });
 
   <span class="hljs-comment">// any errors thrown here will reject</span>
-  <span class="hljs-comment">// the created promise, also they'll be</span>
+  <span class="hljs-comment">// the created promise, also they&#x27;ll be</span>
   <span class="hljs-comment">// logged through `Util.getLogger().error`</span>
-  <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'E_FAILURE'</span>);
+  <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">&#x27;E_FAILURE&#x27;</span>);
 });
 
 cb();
@@ -67,9 +67,9 @@ cb();
 <span class="hljs-keyword">const</span> Exts = Grown.load(<span class="hljs-string">`<span class="hljs-subst">${__dirname}</span>/exts`</span>);
 
 <span class="hljs-comment">// locate the dependency</span>
-assert(Exts.get(<span class="hljs-string">'Test'</span>).handler() === <span class="hljs-number">42</span>);
+assert(Exts.get(<span class="hljs-string">&#x27;Test&#x27;</span>).handler() === <span class="hljs-number">42</span>);
 
-<span class="hljs-comment">// don't do this!</span>
+<span class="hljs-comment">// don&#x27;t do this!</span>
 <span class="hljs-comment">// new Grown();</span>
 </code></pre>
 <blockquote>

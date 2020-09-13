@@ -33,7 +33,7 @@
           <h1>GraphQL <small><a href="//github.com/grownjs/grown/blob/master/website/src/pages/docs/extensions/graphql.md" target="_blank">✎</a></small></h1><p>Build high-level endpoints for your API consumers.</p>
 <pre class="hljs"><code class="lang-js"><span class="hljs-comment">/* @runkit */</span>
 <span class="hljs-comment">// register extension</span>
-Grown.use(<span class="hljs-built_in">require</span>(<span class="hljs-string">'@grown/graphql'</span>));
+Grown.use(<span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;@grown/graphql&#x27;</span>));
 
 <span class="hljs-comment">// ./index.gql</span>
 <span class="hljs-comment">// type Mutation { noop: Int }</span>
@@ -45,7 +45,7 @@ Grown.use(<span class="hljs-built_in">require</span>(<span class="hljs-string">'
 <span class="hljs-comment">// };</span>
 
 <span class="hljs-comment">// mount our GraphQL API</span>
-server.mount(<span class="hljs-string">'/'</span>, Grown.GraphQL
+server.mount(<span class="hljs-string">&#x27;/&#x27;</span>, Grown.GraphQL
   .setup([<span class="hljs-string">`<span class="hljs-subst">${__dirname}</span>/index.gql`</span>],
     Grown.load(<span class="hljs-string">`<span class="hljs-subst">${__dirname}</span>/handlers`</span>)));
 </code></pre>

@@ -33,13 +33,13 @@
           <h1>CLI <small><a href="//github.com/grownjs/grown/blob/master/website/src/pages/docs/extensions/cli.md" target="_blank">✎</a></small></h1><p>Manage your database setup, start or interact with your application, etc.</p>
 <pre class="hljs"><code class="lang-js"><span class="hljs-comment">/* @runkit */</span>
 <span class="hljs-comment">// require and create a Grown-container</span>
-<span class="hljs-keyword">const</span> Grown = <span class="hljs-built_in">require</span>(<span class="hljs-string">'@grown/bud'</span>)();
+<span class="hljs-keyword">const</span> Grown = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;@grown/bud&#x27;</span>)();
 
 <span class="hljs-comment">// register extension</span>
-Grown.use(<span class="hljs-built_in">require</span>(<span class="hljs-string">'@grown/cli'</span>));
+Grown.use(<span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;@grown/cli&#x27;</span>));
 
 <span class="hljs-comment">// overload definition</span>
-Grown(<span class="hljs-string">'CLI'</span>, {
+Grown(<span class="hljs-string">&#x27;CLI&#x27;</span>, {
   <span class="hljs-attr">task_folders</span>: [
     <span class="hljs-string">`<span class="hljs-subst">${__dirname}</span>/tasks`</span>,
   ],
@@ -47,15 +47,15 @@ Grown(<span class="hljs-string">'CLI'</span>, {
 
 <span class="hljs-comment">// e.g. ./tasks/example.js</span>
 <span class="hljs-comment">// module.exports = {</span>
-<span class="hljs-comment">//   description: 'Example task',</span>
+<span class="hljs-comment">//   description: &#x27;Example task&#x27;,</span>
 <span class="hljs-comment">//   callback() {</span>
-<span class="hljs-comment">//     console.log('It works.')</span>
+<span class="hljs-comment">//     console.log(&#x27;It works.&#x27;)</span>
 <span class="hljs-comment">//   },</span>
 <span class="hljs-comment">// };</span>
 
 <span class="hljs-comment">// e.g. `node script.js example -- ls tasks`</span>
-Grown.argv._ = [<span class="hljs-string">'example'</span>];
-Grown.argv.raw = [<span class="hljs-string">'ls'</span>, <span class="hljs-string">'tasks'</span>];
+Grown.argv._ = [<span class="hljs-string">&#x27;example&#x27;</span>];
+Grown.argv.raw = [<span class="hljs-string">&#x27;ls&#x27;</span>, <span class="hljs-string">&#x27;tasks&#x27;</span>];
 
 <span class="hljs-comment">// take the first non-param value</span>
 <span class="hljs-keyword">const</span> taskName = Grown.argv._.shift();
@@ -93,17 +93,17 @@ Grown.argv.raw = [<span class="hljs-string">'ls'</span>, <span class="hljs-strin
     <span class="hljs-keyword">const</span> words = Grown.argv._.slice();
 
     <span class="hljs-keyword">if</span> (!words.length) {
-      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'Missing words'</span>);
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">&#x27;Missing words&#x27;</span>);
     }
 
-    <span class="hljs-keyword">let</span> output = words.join(<span class="hljs-string">' '</span>);
+    <span class="hljs-keyword">let</span> output = words.join(<span class="hljs-string">&#x27; &#x27;</span>);
 
     <span class="hljs-keyword">if</span> (Grown.argv.flags.mirror) {
-      output = output.split(<span class="hljs-string">''</span>).reverse().join(<span class="hljs-string">''</span>);
+      output = output.split(<span class="hljs-string">&#x27;&#x27;</span>).reverse().join(<span class="hljs-string">&#x27;&#x27;</span>);
     }
 
     <span class="hljs-keyword">if</span> (Grown.argv.flags.reverse) {
-      output = words.reverse().join(<span class="hljs-string">' '</span>);
+      output = words.reverse().join(<span class="hljs-string">&#x27; &#x27;</span>);
     }
 
     Grown.Logger.message(output);

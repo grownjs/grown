@@ -33,7 +33,7 @@
           <h1>Conn <small><a href="//github.com/grownjs/grown/blob/master/website/src/pages/docs/extensions/conn.md" target="_blank">✎</a></small></h1><p>High level details for the current connection. ⚓</p>
 <pre class="hljs"><code class="lang-js"><span class="hljs-comment">/* @runkit */</span>
 <span class="hljs-comment">// register extension</span>
-Grown.use(<span class="hljs-built_in">require</span>(<span class="hljs-string">'@grown/conn'</span>));
+Grown.use(<span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;@grown/conn&#x27;</span>));
 
 <span class="hljs-comment">// register middleware</span>
 server.plug(Grown.Conn);
@@ -42,7 +42,7 @@ server.plug(Grown.Conn);
 server.mount(<span class="hljs-function"><span class="hljs-params">ctx</span> =&gt;</span> {
   <span class="hljs-keyword">if</span> (ctx.is_json) {
     <span class="hljs-keyword">return</span> ctx.json({
-      <span class="hljs-attr">status</span>: <span class="hljs-string">'ok'</span>,
+      <span class="hljs-attr">status</span>: <span class="hljs-string">&#x27;ok&#x27;</span>,
       <span class="hljs-attr">result</span>: ctx.req_headers,
     });
   }

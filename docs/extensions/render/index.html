@@ -33,24 +33,24 @@
           <h1>Render <small><a href="//github.com/grownjs/grown/blob/master/website/src/pages/docs/extensions/render.md" target="_blank">✎</a></small></h1><p>Print out your views and templates as response.</p>
 <pre class="hljs"><code class="lang-js"><span class="hljs-comment">/* @runkit */</span>
 <span class="hljs-comment">// register extension</span>
-Grown.use(<span class="hljs-built_in">require</span>(<span class="hljs-string">'@grown/render'</span>));
+Grown.use(<span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;@grown/render&#x27;</span>));
 
 <span class="hljs-comment">// ./views/default.js</span>
 <span class="hljs-comment">// module.exports = data =&gt;</span>
 <span class="hljs-comment">//   `&lt;html&gt;&lt;body&gt;${data.contents}&lt;/body&gt;&lt;/html&gt;`;</span>
 
 <span class="hljs-comment">// ./views/Home/index.js</span>
-<span class="hljs-comment">// module.exports = (_, h) =&gt; h('h1', null, 'It works!');</span>
+<span class="hljs-comment">// module.exports = (_, h) =&gt; h(&#x27;h1&#x27;, null, &#x27;It works!&#x27;);</span>
 
 <span class="hljs-comment">// ./views/About/about.js</span>
-<span class="hljs-comment">// module.exports = () =&gt; '&lt;h1&gt;About...&lt;/h1&gt;';</span>
+<span class="hljs-comment">// module.exports = () =&gt; &#x27;&lt;h1&gt;About...&lt;/h1&gt;&#x27;;</span>
 
 <span class="hljs-comment">// ./views/Errors/not_found.js</span>
-<span class="hljs-comment">// module.exports = () =&gt; '&lt;h1&gt;404&lt;/h1&gt;';</span>
+<span class="hljs-comment">// module.exports = () =&gt; &#x27;&lt;h1&gt;404&lt;/h1&gt;&#x27;;</span>
 
 <span class="hljs-comment">// setup middleware...</span>
 server.plug(Grown.Render({
-  <span class="hljs-attr">template</span>: <span class="hljs-string">'default'</span>,
+  <span class="hljs-attr">template</span>: <span class="hljs-string">&#x27;default&#x27;</span>,
   <span class="hljs-attr">view_folders</span>: [
     <span class="hljs-string">`<span class="hljs-subst">${__dirname}</span>/views`</span>
   ],
@@ -58,15 +58,15 @@ server.plug(Grown.Render({
 
 server.mount(<span class="hljs-function"><span class="hljs-params">ctx</span> =&gt;</span> {
   <span class="hljs-comment">// you can append/prepende to the head and body tags</span>
-  ctx.append(<span class="hljs-string">'head'</span>, () =&gt; <span class="hljs-string">`&lt;title&gt;URL: <span class="hljs-subst">${ctx.req.url}</span>&lt;/title&gt;`</span>);
-  ctx.append(<span class="hljs-string">'head'</span>, () =&gt; <span class="hljs-string">'&lt;style&gt;*{margin:0}&lt;/style&gt;'</span>);
+  ctx.append(<span class="hljs-string">&#x27;head&#x27;</span>, <span class="hljs-function">() =&gt;</span> <span class="hljs-string">`&lt;title&gt;URL: <span class="hljs-subst">${ctx.req.url}</span>&lt;/title&gt;`</span>);
+  ctx.append(<span class="hljs-string">&#x27;head&#x27;</span>, <span class="hljs-function">() =&gt;</span> <span class="hljs-string">&#x27;&lt;style&gt;*{margin:0}&lt;/style&gt;&#x27;</span>);
 
-  <span class="hljs-keyword">if</span> (ctx.req.url === <span class="hljs-string">'/'</span>) {
-    ctx.render(<span class="hljs-string">'Home/index'</span>);
-  } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (ctx.req.url === <span class="hljs-string">'/about'</span>) {
-    ctx.render(<span class="hljs-string">'About/about'</span>);
+  <span class="hljs-keyword">if</span> (ctx.req.url === <span class="hljs-string">&#x27;/&#x27;</span>) {
+    ctx.render(<span class="hljs-string">&#x27;Home/index&#x27;</span>);
+  } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (ctx.req.url === <span class="hljs-string">&#x27;/about&#x27;</span>) {
+    ctx.render(<span class="hljs-string">&#x27;About/about&#x27;</span>);
   } <span class="hljs-keyword">else</span> {
-    ctx.render(<span class="hljs-string">'Errors/not_found'</span>);
+    ctx.render(<span class="hljs-string">&#x27;Errors/not_found&#x27;</span>);
   }
 });
 </code></pre>

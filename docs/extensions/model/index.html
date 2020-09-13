@@ -33,16 +33,16 @@
           <h1>Model <small><a href="//github.com/grownjs/grown/blob/master/website/src/pages/docs/extensions/model.md" target="_blank">✎</a></small></h1><p>Declare and validate your models using JSON-Schema definitions.</p>
 <pre class="hljs"><code class="lang-js"><span class="hljs-comment">/* @runkit */</span>
 <span class="hljs-comment">// register extension</span>
-<span class="hljs-keyword">const</span> Model = Grown.use(<span class="hljs-built_in">require</span>(<span class="hljs-string">'@grown/model'</span>));
+<span class="hljs-keyword">const</span> Model = Grown.use(<span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;@grown/model&#x27;</span>));
 
 <span class="hljs-comment">// declares a single entity model</span>
-<span class="hljs-keyword">const</span> Example = Model.Entity.define(<span class="hljs-string">'Test'</span>, {
+<span class="hljs-keyword">const</span> Example = Model.Entity.define(<span class="hljs-string">&#x27;Test&#x27;</span>, {
   <span class="hljs-attr">$schema</span>: {
-    <span class="hljs-attr">id</span>: <span class="hljs-string">'TestExample'</span>,
-    <span class="hljs-attr">type</span>: <span class="hljs-string">'object'</span>,
+    <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;TestExample&#x27;</span>,
+    <span class="hljs-attr">type</span>: <span class="hljs-string">&#x27;object&#x27;</span>,
     <span class="hljs-attr">properties</span>: {
       <span class="hljs-attr">value</span>: {
-        <span class="hljs-attr">type</span>: <span class="hljs-string">'string'</span>,
+        <span class="hljs-attr">type</span>: <span class="hljs-string">&#x27;string&#x27;</span>,
       },
     },
   },
@@ -50,8 +50,8 @@
 
 <span class="hljs-comment">// connect database for this model only</span>
 <span class="hljs-keyword">const</span> ExampleModel = <span class="hljs-keyword">await</span> Example.connect({
-  <span class="hljs-attr">dialect</span>: <span class="hljs-string">'sqlite'</span>,
-  <span class="hljs-attr">storage</span>: <span class="hljs-string">':memory:'</span>,
+  <span class="hljs-attr">dialect</span>: <span class="hljs-string">&#x27;sqlite&#x27;</span>,
+  <span class="hljs-attr">storage</span>: <span class="hljs-string">&#x27;:memory:&#x27;</span>,
 });
 
 <span class="hljs-comment">// direct access to your sequelize-models</span>
@@ -61,20 +61,20 @@
 <p>Repositories are built by scanning source files in any given directory, e.g.</p>
 <pre class="hljs"><code class="lang-js"><span class="hljs-comment">/* @runkit */</span>
 <span class="hljs-comment">// register extension</span>
-<span class="hljs-keyword">const</span> Model = Grown.use(<span class="hljs-built_in">require</span>(<span class="hljs-string">'@grown/model'</span>));
+<span class="hljs-keyword">const</span> Model = Grown.use(<span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;@grown/model&#x27;</span>));
 
 <span class="hljs-comment">// ./models/Test/index.js</span>
 <span class="hljs-comment">// module.exports = {</span>
-<span class="hljs-comment">//   $schema: require('./schema')</span>
+<span class="hljs-comment">//   $schema: require(&#x27;./schema&#x27;)</span>
 <span class="hljs-comment">// };</span>
 
 <span class="hljs-comment">// ./models/Test/schema.json</span>
 <span class="hljs-comment">// {</span>
-<span class="hljs-comment">//   "id": "TestModel",</span>
-<span class="hljs-comment">//   "type": "object",</span>
-<span class="hljs-comment">//   "properties": {</span>
-<span class="hljs-comment">//     "value": {</span>
-<span class="hljs-comment">//       "type": "string"</span>
+<span class="hljs-comment">//   &quot;id&quot;: &quot;TestModel&quot;,</span>
+<span class="hljs-comment">//   &quot;type&quot;: &quot;object&quot;,</span>
+<span class="hljs-comment">//   &quot;properties&quot;: {</span>
+<span class="hljs-comment">//     &quot;value&quot;: {</span>
+<span class="hljs-comment">//       &quot;type&quot;: &quot;string&quot;</span>
 <span class="hljs-comment">//     }</span>
 <span class="hljs-comment">//   }</span>
 <span class="hljs-comment">// }</span>
@@ -83,10 +83,10 @@
 <span class="hljs-keyword">const</span> repo = Grown.Model.DB.bundle({
   <span class="hljs-attr">models</span>: <span class="hljs-string">`<span class="hljs-subst">${__dirname}</span>/models`</span>,
   <span class="hljs-attr">database</span>: {
-    <span class="hljs-attr">identifier</span>: <span class="hljs-string">'test'</span>,
+    <span class="hljs-attr">identifier</span>: <span class="hljs-string">&#x27;test&#x27;</span>,
     <span class="hljs-attr">config</span>: {
-      <span class="hljs-attr">dialect</span>: <span class="hljs-string">'sqlite'</span>,
-      <span class="hljs-attr">storage</span>: <span class="hljs-string">':memory:'</span>
+      <span class="hljs-attr">dialect</span>: <span class="hljs-string">&#x27;sqlite&#x27;</span>,
+      <span class="hljs-attr">storage</span>: <span class="hljs-string">&#x27;:memory:&#x27;</span>
     }
   }
 });
@@ -94,7 +94,7 @@
 <span class="hljs-comment">// expose RESTful endpoint to your models</span>
 <span class="hljs-keyword">const</span> API = Grown.Model.Formator({
   <span class="hljs-attr">database</span>: Grown.Model.DB.test,
-  <span class="hljs-attr">prefix</span>: <span class="hljs-string">'/db'</span>,
+  <span class="hljs-attr">prefix</span>: <span class="hljs-string">&#x27;/db&#x27;</span>,
 });
 
 <span class="hljs-comment">// connect the repository</span>
