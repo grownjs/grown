@@ -55,10 +55,13 @@ module.exports = (Grown, opts) => {
     require('express-useragent').express(),
     require('logro').getExpressLogger(),
     Grown.Static({
-      from_folders: path.join(Grown.cwd, 'build'),
+      from_folders: [
+        path.join(Grown.cwd, 'build'),
+        path.join(Grown.cwd, 'tmp'),
+      ],
     }),
     Grown.Upload({
-      save_directory: path.join(Grown.cwd, 'tmp/uploads'),
+      save_directory: path.join(Grown.cwd, 'tmp/files'),
     }),
   ]);
 
@@ -74,9 +77,9 @@ module.exports = (Grown, opts) => {
       prefix: '/db',
       options: {
         attributes: false,
-        uploadDir: 'tmp/uploads',
+        uploadDir: 'tmp/files',
         onUpload: ({ field, payload, metadata }) => {
-          payload[field] = `/${metadata.filePath.replace('tmp/uploads', '')}`;
+          payload[field] = metadata.filePath.replace('tmp/', '');
         },
         connections: req => (!req.site && Object.keys(Grown.Model.DB._registry)),
       },
