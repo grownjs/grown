@@ -117,7 +117,7 @@
     "eslint-plugin-pug": "^1.1.1",
     "eslint-plugin-svelte3": "^2.7.3",
     "eslint-utils": ">=1.4.1",
-    "json-schema-to": "^0.0.22",
+    "json-schema-to": "^0.0.23",
     "kind-of": ">=6.0.3",
     "less": "^3.8.1",
     "less-plugin-autoprefix": "^2.0.0",
@@ -132,7 +132,7 @@
     "sqlite3": "^5.0.0",
     "svelte": "^3.22.2",
     "svql": "0.0.28",
-    "tarima": "^4.8.1",
+    "tarima": "^4.8.2",
     "testcafe": "^1.6.0",
     "uglify-es": "^3.3.9",
     "yrv": "^0.0.30"
