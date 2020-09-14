@@ -3,18 +3,21 @@
     "email": "admin@email.com",
     "password": "Password1$",
     "role": "ROOT",
+    "name": "Site Owner",
     "verified": true
   },
   {
     "email": "update_password@email.com",
     "password": "Password1$",
     "role": "ADMIN",
+    "name": "Administrator",
     "verified": true
   },
   {
     "email": "non_verified@email.com",
     "password": "Password1$",
     "role": "USER",
+    "name": "John Doe",
     "verified": false
   }
 ]
