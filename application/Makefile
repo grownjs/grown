@@ -201,7 +201,8 @@ templates: deps ## Regenerate mailing templates  (host)
 	@npm run build:mail
 
 database: deps ## Start database for development  (host)
-	@make -s migrate-up reset
+	@rm -rf $(dbpath)/db.sqlite
+	@make -s migrate-create reset
 
 migrate-%: deps ## Generic method to run migrate-tasks  (host)
 	@npm run grown -- migrate models:$(models) --$(subst :, --,$*)
