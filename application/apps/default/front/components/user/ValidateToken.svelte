@@ -1,7 +1,7 @@
 <script>
   import { In, Status, mutation } from 'svql';
   import { Link, navigateTo } from 'yrv';
-  import { CONFIRM_ACCESS_TOKEN } from '../../shared/queries';
+  import { VALIDATE_TOKEN } from '~/etc/schema/generated/queries';
 
   let cssClass = '';
 
@@ -22,7 +22,7 @@
     navigateTo(back);
   }
 
-  const doConfirm = mutation(CONFIRM_ACCESS_TOKEN, commit => function validateTokenRequest$() {
+  const doConfirm = mutation(VALIDATE_TOKEN, commit => function validateTokenRequest$() {
     updating = commit({
       email: confirmEmail,
       token: router.params.token,

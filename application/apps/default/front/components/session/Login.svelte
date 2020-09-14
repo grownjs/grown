@@ -8,7 +8,7 @@
   import Auth from './Auth.svelte';
   import CreateAccount from '../user/CreateAccount.svelte';
   import RecoverPassword from '../user/RecoverPassword.svelte';
-  import { LOGIN_REQUEST } from '../../shared/queries';
+  import { LOGIN } from '~/etc/schema/generated/queries';
 
   export let back = '/';
   export let label = 'Login';
@@ -25,7 +25,7 @@
     navigateTo(back);
   }
 
-  const doLogin = mutation(LOGIN_REQUEST, commit => function login$() {
+  const doLogin = mutation(LOGIN, commit => function login$() {
     disabled = true;
     login = commit({ email, password }, data => {
       email = null;

@@ -6,14 +6,14 @@
   import { navigateTo } from 'yrv';
 
   import UpdatePassword from '../user/UpdatePassword.svelte';
-  import { LOGOUT_REQUEST } from '../../shared/queries';
+  import { LOGOUT } from '~/etc/schema/generated/queries';
 
   export let back = '/';
 
   let logout;
   let disabled;
 
-  const doLogout = mutation(LOGOUT_REQUEST, commit => function logout$() {
+  const doLogout = mutation(LOGOUT, commit => function logout$() {
     disabled = true;
     logout = commit(() => {
       $state.me = null;
@@ -42,7 +42,10 @@
   </span>
   <UpdatePassword class="menu">
     {#if $state.me.picture}
-      <img height="64" alt={$state.me.name} src={$state.me.picture} />
+      <figure>
+        <img height="96" alt={$state.me.name} src={$state.me.picture} />
+        {#if $state.me.name}<figcaption>{$state.me.name}</figcaption>{/if}
+      </figure>
     {/if}
     <button {disabled} on:click|preventDefault={doLogout}>Log out</button>
     {#if !$state.me.platform} or {/if}

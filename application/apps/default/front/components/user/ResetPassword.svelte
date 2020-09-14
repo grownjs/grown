@@ -1,7 +1,7 @@
 <script>
   import { In, Status, mutation } from 'svql';
   import { Link, navigateTo } from 'yrv';
-  import { RESET_PASSWORD_REQUEST } from '../../shared/queries';
+  import { RESET_PASSWORD } from '~/etc/schema/generated/queries';
 
   let cssClass = '';
 
@@ -24,7 +24,7 @@
     navigateTo(back);
   }
 
-  const doReset = mutation(RESET_PASSWORD_REQUEST, commit => function resetPasswordRequest$() {
+  const doReset = mutation(RESET_PASSWORD, commit => function resetPasswordRequest$() {
     updating = commit({
       newPassword,
       confirmPassword,

@@ -4,7 +4,7 @@
   } from 'svql';
 
   import { Route, Link, navigateTo } from 'yrv';
-  import { RECOVER_PASSWORD_REQUEST } from '../../shared/queries';
+  import { RECOVER_PASSWORD } from '~/etc/schema/generated/queries';
 
   let disabled;
 
@@ -19,7 +19,7 @@
     navigateTo(back);
   }
 
-  const doUpdate = mutation(RECOVER_PASSWORD_REQUEST, commit => function recoverPasswordRequest$() {
+  const doUpdate = mutation(RECOVER_PASSWORD, commit => function recoverPasswordRequest$() {
     disabled = true;
     updating = commit({ email }, () => {
       email = null;

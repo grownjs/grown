@@ -1,11 +1,11 @@
 <script>
   import { Failure, state, query } from 'svql';
-  import { ME_INFO } from '../../shared/queries';
+  import { INFO } from '~/etc/schema/generated/queries';
 
   export let label = 'Do you have an account?';
   export let nodebug = false;
 
-  $state.info = query(ME_INFO, result => {
+  $state.info = query(INFO, result => {
     $state.me = result.info && result.info.user;
     $state.isLogged = true;
   });

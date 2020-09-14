@@ -4,7 +4,7 @@
   } from 'svql';
 
   import { Route, Link, navigateTo } from 'yrv';
-  import { UPDATE_PASSWORD_REQUEST } from '../../shared/queries';
+  import { UPDATE_PASSWORD } from '~/etc/schema/generated/queries';
 
   let disabled;
   let cssClass = '';
@@ -29,7 +29,7 @@
     navigateTo(back);
   }
 
-  const doUpdate = mutation(UPDATE_PASSWORD_REQUEST, commit => function updatePasswordRequest$() {
+  const doUpdate = mutation(UPDATE_PASSWORD, commit => function updatePasswordRequest$() {
     disabled = true;
     updating = commit({
       oldPassword: password,

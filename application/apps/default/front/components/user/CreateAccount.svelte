@@ -2,7 +2,7 @@
   import { In, Status, mutation } from 'svql';
   import { Link, navigateTo } from 'yrv';
 
-  import { SIGNUP_REQUEST } from '../../shared/queries';
+  import { CREATE_USER } from '~/etc/schema/generated/queries';
 
   export let back = '/';
 
@@ -20,7 +20,7 @@
     navigateTo(back);
   }
 
-  const doSignUp = mutation(SIGNUP_REQUEST, commit => function signUp$() {
+  const doSignUp = mutation(CREATE_USER, commit => function signUp$() {
     disabled = true;
     signUp = commit({ email, password, confirmPassword }, () => {
       clear();
