@@ -17,7 +17,7 @@ module.exports = Grown => {
           fs.unlink(dest);
           reject(err);
         });
-    })
+    });
   }
 
   return {
