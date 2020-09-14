@@ -28,10 +28,12 @@
       "$ref": "userTypes#/definitions/accessRole"
     },
     "password": {
-      "type": "string"
+      "type": "string",
+      "query": false
     },
     "verified": {
       "type": "boolean",
+      "query": false,
       "default": false
     }
   },

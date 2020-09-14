@@ -23,7 +23,7 @@
     "preschema": "copyfiles 'apps/*/api/schema/**/*.{yml,json}' etc/schema -u 4",
     "schema-to": "json-schema-to -tw etc/schema -i uiSchema",
     "schema-to:json": "npm run schema-to -- -pbc index --json",
-    "schema-to:graphql": "npm run schema-to -- -pc index --graphql",
+    "schema-to:graphql": "npm run schema-to -- -qpc index --graphql",
     "schema-to:protobuf": "npm run schema-to -- -pc index --protobuf -br ../common -k API",
     "dev": "npm run bundler -- watch -p 4001 -P '/db,/api,/auth,/files,/admin -> 3000'",
     "dist": "npm run bundler -- -mqe $NODE_ENV",

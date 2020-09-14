@@ -4,6 +4,7 @@ service:
   calls:
   - get: info
     resp: Me
+    query: null
     input: TokenParams
     params: TokenRequest
   - set: login
@@ -15,10 +16,12 @@ service:
     params: TokenRequest
   - get: checkToken
     resp: Me
+    query: false
     input: TokenParams
     params: TokenRequest
   - get: checkLogin
     resp: Me
+    query: false
     input: CheckParams
     params: CheckRequest
 
