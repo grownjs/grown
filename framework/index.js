@@ -48,4 +48,9 @@ async function exec(cwd, opts) {
   }
 }
 
-module.exports = { src, main, exec };
+module.exports = function configure() {
+  this.opts.from.push(`${src}/apps`);
+  this.opts.rename.unshift('**/framework/**:{fullpath/5}');
+};
+
+Object.assign(module.exports, { main, exec });

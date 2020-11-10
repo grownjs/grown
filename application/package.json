@@ -27,7 +27,7 @@
     "schema-to:protobuf": "npm run schema-to -- -pc index --protobuf -br ../common -k API",
     "dev": "npm run bundler -- watch -p 4001 -P '/db,/api,/auth,/files,/admin -> 3000'",
     "dist": "npm run bundler -- -mqe $NODE_ENV",
-    "bundler": "tarima -l ./bundler.js --no-browser",
+    "bundler": "tarima -l grown/framework --no-browser",
     "size": "npm run dist && size-limit",
     "test": "npm run test:unit && npm run test:functional --",
     "bdd": "bdd-tc e2e/features --",
