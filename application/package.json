@@ -27,7 +27,7 @@
     "schema-to:protobuf": "npm run schema-to -- -pc index --protobuf -br ../common -k API",
     "dev": "npm run bundler -- watch -p 4001 -P '/db,/api,/auth,/files,/admin -> 3000'",
     "dist": "npm run bundler -- -mqe $NODE_ENV",
-    "bundler": "tarima -l ./bundler.js",
+    "bundler": "tarima -l ./bundler.js --no-browser",
     "size": "npm run dist && size-limit",
     "test": "npm run test:unit && npm run test:functional --",
     "bdd": "bdd-tc e2e/features --",
@@ -132,7 +132,7 @@
     "sqlite3": "^5.0.0",
     "svelte": "^3.22.2",
     "svql": "0.0.28",
-    "tarima": "^4.8.2",
+    "tarima": "^4.9.0",
     "testcafe": "^1.6.0",
     "uglify-es": "^3.3.9",
     "yrv": "^0.0.30"
