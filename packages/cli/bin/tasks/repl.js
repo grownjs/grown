@@ -4,7 +4,7 @@
 
 const USAGE_INFO = `
 
-  Start the console
+  Interactive console
 
   --load  Optional. Run scripts into the REPL
 

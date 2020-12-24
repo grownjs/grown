@@ -32,7 +32,6 @@ module.exports = (Grown, util) => {
 
   const logger = util.getLogger();
 
-  const autoDirs = ['front', 'public', 'pages'];
   const mainPkg = path.join(Grown.cwd, 'package.json');
   const appPkg = (fs.existsSync(mainPkg) && require(mainPkg)) || {};
   const baseDir = path.resolve(Grown.cwd, path.dirname(appPkg.main || mainPkg));
@@ -41,9 +40,7 @@ module.exports = (Grown, util) => {
     /* istanbul ignore else */
     if (!this._start) {
       const taskDirs = util.flattenArgs(this.task_folders || path.join(baseDir, 'tasks'));
-      const taskFiles = this._collectTasks(taskDirs,
-        fs.existsSync(path.join(Grown.cwd, 'app')) ? path.join(__dirname, 'bin/tasks') : null,
-        autoDirs.some(x => fs.existsSync(path.join(Grown.cwd, x))) ? path.join(__dirname, 'app/tasks') : null);
+      const taskFiles = this._collectTasks(taskDirs, path.join(__dirname, 'bin/tasks'));
 
       util.extendValues(this._tasks, taskFiles);
 
@@ -150,8 +147,7 @@ module.exports = (Grown, util) => {
         }
 
         return x;
-      })
-      .forEach(x => {
+      }).forEach(x => {
         const task = require(this._tasks[x]);
         const desc = (task.description || '').trim().split('\n')[0];
         const pad = new Array((maxLength + 1) - x.length).join(' ');
@@ -200,10 +196,14 @@ module.exports = (Grown, util) => {
     process.exit(1);
   }
 
-  function _onExit(statusCode) {
+  function _onExit(statusCode, sigInt) {
     /* istanbul ignore else */
     if (!statusCode) {
       logger.printf('\r\r{% end Done %}\n');
+    }
+
+    if (sigInt) {
+      process.exit(130);
     }
   }
 
@@ -250,7 +250,7 @@ module.exports = (Grown, util) => {
       /* istanbul ignore next */
       if (!this._start) {
         process.on('unhandledRejection', err => _onError(err));
-        process.on('SIGINT', this._onExit);
+        process.on('SIGINT', e => this._onExit(e, true));
         process.on('exit', this._onExit);
       }
 

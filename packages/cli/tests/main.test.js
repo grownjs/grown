@@ -168,7 +168,7 @@ describe('Grown.CLI', () => {
     it('should fail if --app is empty', () => {
       return cmd('app', bin('up')).then(({ stdout, stderr, failure }) => {
         expect(stderr).to.eql('');
-        expect(stdout).to.contain('[up] (TypeError) serverFactory is not a function');
+        expect(stdout).to.contain('[up] (Error) Invalid application');
         expect(failure).not.to.be.null;
       });
     });
@@ -176,7 +176,7 @@ describe('Grown.CLI', () => {
     it('should fail if --app is broken', () => {
       return cmd('app', bin('up --app broken')).then(({ stdout, stderr, failure }) => {
         expect(stderr).to.eql('');
-        expect(stdout).to.contain("[up] (TypeError) Cannot read property 'listen' of undefined");
+        expect(stdout).to.contain('[up] (Error) Missing listen()');
         expect(failure).not.to.be.null;
       });
     });

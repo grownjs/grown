@@ -4,7 +4,7 @@
 
 const USAGE_INFO = `
 
-  Manage your database
+  Tasks for database management
 
   models:PATH  Entry file exporting models
 

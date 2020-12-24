@@ -6,7 +6,7 @@ const path = require('path');
 
 const USAGE_INFO = `
 
-  Start the server
+  Runs the app-server
 
   -p, --port   Optional. Server's port (default: 8080)
   -h, --host   Optional. Server's host name (default: 0.0.0.0)
