@@ -23,7 +23,6 @@
   },
   "devDependencies": {
     "chai": "^4.2.0",
-    "grown": "^1.1.10",
     "lodash": ">=4.17.11",
     "minimist": ">=1.2.2",
     "mocha": "^7.2.0",

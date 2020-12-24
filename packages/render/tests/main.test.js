@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-expressions */
 const { expect } = require('chai');
 
-const Grown = require('grown')();
+const Grown = require('../../..')();
 
 Grown.use(require('../../test'));
 Grown.use(require('..'));

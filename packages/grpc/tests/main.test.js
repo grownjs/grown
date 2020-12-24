@@ -2,7 +2,7 @@
 const { expect } = require('chai');
 const path = require('path');
 
-const Grown = require('grown')();
+const Grown = require('../../..')();
 
 Grown.use(require('..'));
 
