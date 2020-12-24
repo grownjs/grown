@@ -13,7 +13,7 @@
     "cli",
     "cli.js",
     "index.js",
-    "framework/apps",
+    "framework/app",
     "framework/lib",
     "framework/*.js"
   ],

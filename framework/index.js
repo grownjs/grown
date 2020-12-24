@@ -15,8 +15,8 @@ function getInstance(cwd, opts) {
 
   opts = opts || {};
   opts.shared_folders = [
-    path.join(cwd, 'apps'),
-    path.join(__dirname, 'apps'),
+    path.join(cwd, 'app'),
+    path.join(__dirname, 'app'),
   ];
 
   return require('./app')(Grown, opts);
@@ -49,7 +49,7 @@ async function exec(cwd, opts) {
 }
 
 module.exports = function configure() {
-  this.opts.from.push(`${src}/apps`);
+  this.opts.from.push(`${src}/app`);
   this.opts.rename.unshift('**/framework/**:{fullpath/5}');
 };
 

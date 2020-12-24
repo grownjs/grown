@@ -5,8 +5,8 @@ PWD := $(shell pwd)
 run := unit
 app := default
 report := html
-dbpath := apps/$(app)/db
-models := apps/$(app)/api/models
+dbpath := app/$(app)/db
+models := app/$(app)/api/models
 
 # dotenv support
 ifneq ($(wildcard .env),)
