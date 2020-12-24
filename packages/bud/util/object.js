@@ -12,7 +12,7 @@ function flattenArgs() {
 
     if (item instanceof Array) {
       args = item.concat(args);
-    } else {
+    } else if (typeof item !== undefined && item !== null) {
       out.push(item);
     }
   }
