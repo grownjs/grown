@@ -2,7 +2,7 @@ const path = require('path');
 
 module.exports = (Grown, opts) => {
   let sites;
-  const { Sites } = require('./shared');
+  const { Sites } = require('./lib');
 
   Grown('ApplicationServer', {
     getServer() {
@@ -18,7 +18,7 @@ module.exports = (Grown, opts) => {
 
   const extensions = [];
 
-  extensions.push(require('./http')(Grown, opts));
+  extensions.push(require('./http')(Grown));
 
   if (opts.grpc !== false) {
     const GRPC = Grown.use(require('@grown/grpc'));

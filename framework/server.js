@@ -2,7 +2,7 @@ const start = new Date();
 const path = require('path');
 
 module.exports = (Grown, opts) => {
-  const { Plugin } = require('./shared');
+  const { Plugin } = require('./lib');
 
   const app = path.basename(Grown.cwd);
   const log = require('logro').createLogger(app);
