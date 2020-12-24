@@ -32,6 +32,7 @@ module.exports = (Grown, util) => {
 
   const logger = util.getLogger();
 
+  const autoDirs = ['front', 'public', 'pages'];
   const mainPkg = path.join(Grown.cwd, 'package.json');
   const appPkg = (fs.existsSync(mainPkg) && require(mainPkg)) || {};
   const baseDir = path.resolve(Grown.cwd, path.dirname(appPkg.main || mainPkg));
@@ -40,7 +41,9 @@ module.exports = (Grown, util) => {
     /* istanbul ignore else */
     if (!this._start) {
       const taskDirs = util.flattenArgs(this.task_folders || path.join(baseDir, 'tasks'));
-      const taskFiles = this._collectTasks(taskDirs, path.join(__dirname, 'bin/tasks'));
+      const taskFiles = this._collectTasks(taskDirs,
+        fs.existsSync(path.join(Grown.cwd, 'app')) ? path.join(__dirname, 'bin/tasks') : null,
+        autoDirs.some(x => fs.existsSync(path.join(Grown.cwd, x))) ? path.join(__dirname, 'app/tasks') : null);
 
       util.extendValues(this._tasks, taskFiles);
 
@@ -134,26 +137,27 @@ module.exports = (Grown, util) => {
 
   function _showHelp(taskName) {
     if (!taskName) {
-      logger.printf('\n  {% gray Tasks: %}\n');
+      const keys = Object.keys(this._tasks);
+
+      logger.printf('\n  {% gray %s %}\n', keys.length ? 'Tasks:' : 'No tasks found.');
 
       let maxLength = 0;
 
-      Object.keys(this._tasks).sort()
-        .map(x => {
-          /* istanbul ignore else */
-          if (x.length > maxLength) {
-            maxLength = x.length;
-          }
+      keys.map(x => {
+        /* istanbul ignore else */
+        if (x.length > maxLength) {
+          maxLength = x.length;
+        }
 
-          return x;
-        })
-        .forEach(x => {
-          const task = require(this._tasks[x]);
-          const desc = (task.description || '').trim().split('\n')[0];
-          const pad = new Array((maxLength + 1) - x.length).join(' ');
+        return x;
+      })
+      .forEach(x => {
+        const task = require(this._tasks[x]);
+        const desc = (task.description || '').trim().split('\n')[0];
+        const pad = new Array((maxLength + 1) - x.length).join(' ');
 
-          logger.printf('    {% green %s %} %s {% gray # %s %}\n', x, pad, desc);
-        });
+        logger.printf('    {% green %s %} %s {% gray # %s %}\n', x, pad, desc);
+      });
 
       logger.printf('\n  {% gray  %s %}\n', ARGV_FLAGS.trim());
     } else {
