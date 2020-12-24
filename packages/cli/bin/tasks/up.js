@@ -23,7 +23,16 @@ module.exports = {
   description: USAGE_INFO,
   callback(Grown) {
     const serverFactory = require(path.resolve(Grown.cwd, Grown.argv.flags.app));
+
+    if (typeof serverFactory !== 'function') {
+      throw new Error(`Invalid application, given '${typeof serverFactory}'`);
+    }
+
     const server = serverFactory();
+
+    if (!server || typeof server.listen !== 'function') {
+      throw new Error(`Missing listen() method, given '${typeof (server ? server.listen : server)}'`);
+    }
 
     let _protocol = 'http';
 
