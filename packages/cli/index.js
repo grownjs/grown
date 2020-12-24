@@ -250,7 +250,7 @@ module.exports = (Grown, util) => {
       /* istanbul ignore next */
       if (!this._start) {
         process.on('unhandledRejection', err => _onError(err));
-        process.on('SIGINT', () => process.exit());
+        process.on('SIGINT', this._onExit);
         process.on('exit', this._onExit);
       }
 
