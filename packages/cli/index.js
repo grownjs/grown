@@ -196,15 +196,13 @@ module.exports = (Grown, util) => {
     process.exit(1);
   }
 
-  function _onExit(statusCode, sigInt) {
+  function _onExit(statusCode) {
     /* istanbul ignore else */
     if (!statusCode) {
       logger.printf('\r\r{% end Done %}\n');
     }
 
-    if (sigInt) {
-      process.exit(130);
-    }
+    process.exit(statusCode);
   }
 
   function _exec(argv, callback) {
@@ -222,7 +220,7 @@ module.exports = (Grown, util) => {
 
       child.on(_close, exitCode => {
         if (exitCode !== 0) {
-          process.exit(1);
+          _onExit(1);
         } else {
           callback();
         }
@@ -250,7 +248,7 @@ module.exports = (Grown, util) => {
       /* istanbul ignore next */
       if (!this._start) {
         process.on('unhandledRejection', err => _onError(err));
-        process.on('SIGINT', e => this._onExit(e, true));
+        process.on('SIGINT', this._onExit);
         process.on('exit', this._onExit);
       }
 
