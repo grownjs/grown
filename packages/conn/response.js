@@ -328,6 +328,7 @@ module.exports = (Grown, util) => {
             });
 
             return new Promise((resolve, reject) => {
+              this.res.statusCode = 200;
               file.on('error', reject);
               file.on('end', resolve);
               file.pipe(this.res);
