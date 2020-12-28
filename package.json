@@ -56,9 +56,9 @@
     "testdouble": "^3.12.4"
   },
   "dependencies": {
-    "@grown/bud": "^0.0.23",
-    "@grown/cli": "^0.0.27",
-    "@grown/conn": "^0.0.8",
+    "@grown/bud": "^0.0.24",
+    "@grown/cli": "^0.0.28",
+    "@grown/conn": "^0.0.9",
     "@grown/server": "^0.0.17"
   }
 }
