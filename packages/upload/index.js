@@ -66,8 +66,9 @@ module.exports = (Grown, util) => {
   return Grown('Upload', {
     _processForm,
 
-    $install(ctx) {
+    $install(ctx, options) {
       if (this.save_directory) {
+        options.uploads = true;
         ctx.mount(conn => conn.upload_files({
           maxFileSize: this.max_file_size,
           maxFieldsSize: this.max_field_size,
