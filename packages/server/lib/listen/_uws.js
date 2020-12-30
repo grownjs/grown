@@ -53,7 +53,7 @@ function convertFrom(obj) {
               : Buffer.from(value).toString('utf8');
           }
           return value;
-        }
+        },
       });
     }
   });
@@ -272,20 +272,18 @@ module.exports = function _uws(ctx, options, callback, protocolName) {
       setStream(_req, next);
       if (this._options.uploads) {
         prepBody(_req, res, next);
+      } if (type.includes('/json')) {
+        readBody(_req, res, data => next(data, JSON.parse));
+      } else if (type.includes('/x-www-form-urlencoded')) {
+        readBody(_req, res, data => next(data, qs.parse));
+      } else if (type.includes('/form-data')) {
+        readBody(_req, res, data => {
+          _req.body = convertFrom(uWS.getParts(data, type));
+          _req._body = true;
+          next();
+        });
       } else {
-        if (type.includes('/json')) {
-          readBody(_req, res, data => next(data, JSON.parse));
-        } else if (type.includes('/x-www-form-urlencoded')) {
-          readBody(_req, res, data => next(data, qs.parse));
-        } else if (type.includes('/form-data')) {
-          readBody(_req, res, data => {
-            _req.body = convertFrom(uWS.getParts(data, type));
-            _req._body = true;
-            next();
-          });
-        } else {
-          prepBody(_req, res, next);
-        }
+        prepBody(_req, res, next);
       }
     });
 
