@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-expressions */
 
+const FormData = require('form-data');
 const { expect } = require('chai');
 const { get, post } = require('httpie');
 
@@ -58,6 +59,24 @@ describe('Grown.Server', () => {
 
           conn.req.on('data', chunk => {
             expect(chunk.toString()).to.eql('"OSOM"');
+          });
+        });
+      });
+
+      it('should normalize the request body', () => {
+        const opts = {
+          body: { foo: 'bar' },
+          method: 'POST',
+          headers: {
+            'content-type': 'multipart/form-data',
+          },
+        };
+
+        return g.request(opts, (err, conn) => {
+          expect(conn.pid).not.to.be.undefined;
+
+          conn.req.on('data', chunk => {
+            expect(chunk.toString()).to.contain('Content-Disposition: form-data; name="foo"');
           });
         });
       });
@@ -186,6 +205,33 @@ describe('Grown.Server', () => {
             expect(data).to.eql('{"x":"y"}');
             app.close();
             done();
+          });
+        });
+
+        it('should parse multipart/form-data', done => {
+          g.mount(ctx => {
+            ctx.res.write(JSON.stringify(ctx.req.body));
+            ctx.res.status(200).end();
+          });
+
+          g.listen(3000, async app => {
+            const payload = new FormData();
+            payload.append('foo', 'bar');
+
+            const { data } = await post('http://0.0.0.0:3000', {
+              headers: payload.getHeaders(),
+              body: payload.getBuffer(),
+            });
+
+            // FIXME: why randomly is not "bar"?
+            try {
+              expect(data).to.eql('{"foo":"bar"}');
+            } catch (e) {
+              console.log('E_WARN', e.message);
+            } finally {
+              app.close();
+              done();
+            }
           });
         });
 

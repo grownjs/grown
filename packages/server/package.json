@@ -25,6 +25,7 @@
     "acorn": ">=5.7.4",
     "body-parser": "^1.19.0",
     "chai": "^4.2.0",
+    "form-data": "^3.0.0",
     "httpie": "^1.1.2",
     "kind-of": ">=6.0.3",
     "minimist": ">=0.2.1",

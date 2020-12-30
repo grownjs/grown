@@ -30,6 +30,36 @@ function remoteAddressToString(address) {
   }
 }
 
+function convertFrom(obj) {
+  const data = Object.create(null);
+  const values = {};
+
+  obj.forEach(chunk => {
+    let value = values[chunk.name];
+
+    if (value && !Array.isArray(value)) {
+      value = values[chunk.name] = [value];
+    }
+
+    if (!values[chunk.name]) {
+      value = values[chunk.name] = chunk.data;
+      Object.defineProperty(data, chunk.name, {
+        configurable: false,
+        enumerable: true,
+        get: () => {
+          if (value instanceof ArrayBuffer) {
+            value = Array.isArray(value)
+              ? value.map(x => Buffer.from(x).toString('utf8'))
+              : Buffer.from(value).toString('utf8');
+          }
+          return value;
+        }
+      });
+    }
+  });
+  return data;
+}
+
 function setStream(req, cb) {
   const stream = new Readable();
 
@@ -215,7 +245,6 @@ module.exports = function _uws(ctx, options, callback, protocolName) {
   }
 
   this.close = () => uWS.us_listen_socket_close(app._self);
-
   app.listen(ctx.host, ctx.port, socket => {
     debug('#%s Server was started and listening at port', process.pid, ctx.port);
 
@@ -245,6 +274,12 @@ module.exports = function _uws(ctx, options, callback, protocolName) {
         readBody(_req, res, data => next(data, JSON.parse));
       } else if (type.includes('/x-www-form-urlencoded')) {
         readBody(_req, res, data => next(data, qs.parse));
+      } else if (type.includes('/form-data')) {
+        readBody(_req, res, data => {
+          _req.body = convertFrom(uWS.getParts(data, type));
+          _req._body = true;
+          next();
+        });
       } else {
         prepBody(_req, res, next);
       }
