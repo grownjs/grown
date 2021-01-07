@@ -221,11 +221,11 @@ module.exports = (Grown, util) => {
       child.on(_close, exitCode => {
         if (exitCode !== 0) {
           _onExit(1);
-        } else {
-          callback();
+        } else if (callback) {
+          callback(exitCode);
         }
       });
-    } else {
+    } else if (callback) {
       callback();
     }
   }
