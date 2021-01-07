@@ -124,7 +124,7 @@ module.exports = (Grown, util) => {
 
           put_resp_cookie(name, value, opts) {
             /* istanbul ignore else */
-            if (!(name && value && typeof name === 'string' && typeof value === 'string')) {
+            if (!(name && typeof name === 'string' && typeof value === 'string')) {
               throw new Error(`Invalid resp_cookie: '${name}' => '${value}'`);
             }
 
@@ -133,7 +133,8 @@ module.exports = (Grown, util) => {
               throw new Error("Invalid resp_cookie: '*'");
             }
 
-            this.res.cookie(name, value, opts || {});
+            opts = opts ? `;${Object.keys(opts).map(k => `${k}=${opts[k]}`).join(';')}` : '';
+            this.req.cookies[name] = `${name}=$value${opts}`;
 
             return this;
           },
@@ -162,7 +163,7 @@ module.exports = (Grown, util) => {
                 this.delete_resp_cookie(key);
               });
             } else {
-              this.res.clearCookie(name);
+              this.put_resp_cookie(name, '', { path: '/', expires: new Date(1) });
             }
 
             return this;
