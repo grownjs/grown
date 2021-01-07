@@ -1,5 +1,6 @@
 'use strict';
 
+const qs = require('qs');
 const typeIs = require('type-is');
 const accepts = require('accepts');
 
@@ -69,7 +70,7 @@ module.exports = (Grown, util) => {
           },
 
           query_string() {
-            return this.req.url.split('?')[1] || '';
+            return qs.stringify(this.req.query).replace(/=$/, '');
           },
 
           query_params() {
