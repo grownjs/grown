@@ -16,8 +16,16 @@ module.exports = (Grown, util) => {
 
     $install(ctx) {
       ctx.mount('cookie-parser', cookieParser(this.session_secret, this.cookie_options || {}));
-      ctx.mount('cookie-session', cookieSession(this.session_options));
-      ctx.mount('connect-flash', connectFlash());
+
+      /* istanbul ignore else */
+      if (this.session_cookies !== false) {
+        ctx.mount('cookie-session', cookieSession(this.session_options));
+      }
+
+      /* istanbul ignore else */
+      if (this.session_messages !== false) {
+        ctx.mount('connect-flash', connectFlash());
+      }
 
       ctx.mount('Session#pipe', conn => {
         /* istanbul ignore else */
@@ -25,7 +33,7 @@ module.exports = (Grown, util) => {
           return;
         }
 
-        conn.state.flash_messages = conn.req.flash();
+        conn.state.flash_messages = conn.req.flash && conn.req.flash();
         conn.state.csrf_token = conn.csrf_token;
 
         /* istanbul ignore else */
