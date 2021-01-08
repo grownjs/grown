@@ -8,6 +8,9 @@ const url = require('url');
 const mime = require('mime');
 const send = require('send');
 const path = require('path');
+const https = require('https');
+const http = require('http');
+const fs = require('fs');
 
 module.exports = (Grown, util) => {
   function _finishRequest(ctx, body) {
@@ -300,6 +303,22 @@ module.exports = (Grown, util) => {
             }
 
             return this.send(value);
+          },
+
+          get_file(_url, filePath) {
+            return new Promise((resolve, reject) => {
+              const dest = path.resolve(filePath);
+              const file = fs.createWriteStream(dest);
+
+              (_url.indexOf('https:') !== -1 ? https : http)
+                .get(_url, response => {
+                  response.pipe(file);
+                  file.on('finish', () => file.close(() => resolve(dest)));
+                }).on('error', err => {
+                  fs.unlink(dest);
+                  reject(err);
+                });
+            });
           },
 
           send_file(entry, mimeType) {
