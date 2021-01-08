@@ -43,18 +43,13 @@ function convertFrom(obj) {
 
     if (!values[chunk.name]) {
       value = values[chunk.name] = chunk.data;
-      Object.defineProperty(data, chunk.name, {
-        configurable: false,
-        enumerable: true,
-        get: () => {
-          if (value instanceof ArrayBuffer) {
-            value = Array.isArray(value)
-              ? value.map(x => Buffer.from(x).toString('utf8'))
-              : Buffer.from(value).toString('utf8');
-          }
-          return value;
-        },
-      });
+      if (value instanceof ArrayBuffer) {
+        data[chunk.name] = Array.isArray(value)
+          ? value.map(x => Buffer.from(x).toString('utf8'))
+          : Buffer.from(value).toString('utf8');
+      } else {
+        data[chunk.name] = value;
+      }
     }
   });
   return data;
