@@ -1,6 +1,6 @@
 {
   "name": "grown",
-  "version": "1.1.14",
+  "version": "1.1.15",
   "homepage": "https://soypache.co/grown/",
   "description": "Experimental DSL for web-apps",
   "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
