@@ -57,9 +57,9 @@
   },
   "dependencies": {
     "@grown/bud": "^0.0.24",
-    "@grown/cli": "0.0.29",
-    "@grown/conn": "0.0.11",
-    "@grown/server": "^0.0.19",
-    "@grown/session": "0.0.9"
+    "@grown/cli": "^0.0.29",
+    "@grown/conn": "^0.0.11",
+    "@grown/server": "^0.0.20",
+    "@grown/session": "^0.0.9"
   }
 }
