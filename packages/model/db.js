@@ -65,7 +65,7 @@ module.exports = (Grown, util) => {
       const $ = Grown.load(options.models, {
         before: (_name, definition) => {
           // always add it as model!
-          DB[name].add(definition);
+          return DB[name].add(definition, true);
         },
         after: (_name, definition) => {
           if (DB[name].sequelize._resolved && DB[name].$refs[_name]) {
