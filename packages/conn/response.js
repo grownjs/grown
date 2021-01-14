@@ -307,19 +307,27 @@ module.exports = (Grown, util) => {
 
           get_file(_url, filePath) {
             return new Promise((resolve, reject) => {
-              const dest = path.resolve(filePath);
-              const file = fs.createWriteStream(dest);
+              let dest;
+              let file;
 
               (_url.indexOf('https:') !== -1 ? https : http)
-                .get(_url, response => {
-                  response.pipe(file);
-                  file.on('finish', () => file.close(() => resolve(dest)));
+                .get(_url, async response => {
+                  if (response.statusCode >= 300 && response.statusCode < 400) {
+                    response = await get(url.resolve(_url, response.headers.location));
+                  }
+
+                  if (filePath) {
+                    dest = path.resolve(filePath);
+                    file = fs.createWriteStream(dest);
+                    response.pipe(file);
+                    file.on('finish', () => file.close(() => resolve(dest)));
+                  } else resolve(response);
                 }).on('error', err => {
-                  fs.unlink(dest);
+                  if (dest) fs.unlinkSync(dest);
                   reject(err);
                 });
             });
-          },
+          }
 
           send_file(entry, mimeType) {
             /* istanbul ignore else */
