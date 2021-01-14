@@ -3,8 +3,37 @@
 module.exports = (Grown, util) => {
   const JSONSchemaSequelizer = require('json-schema-sequelizer');
 
+  const _registry = Object.create(null);
+
+  function _decorate(source, target) {
+    /* istanbul ignore else */
+    if (!target._resolved) {
+      target._resolved = true;
+
+      /* istanbul ignore else */
+      if (source.hooks) {
+        Object.keys(source.hooks).forEach(key => {
+          /* istanbul ignore else */
+          if (!target.options.hooks[key]) {
+            target.options.hooks[key] = [];
+          }
+
+          /* istanbul ignore else */
+          if (!target.options.hooks[key].includes(source.hooks[key])) {
+            target.options.hooks[key].push(source.hooks[key]);
+          }
+        });
+      }
+
+      Object.assign(target, source.classMethods);
+      Object.assign(target.prototype, source.instanceMethods);
+    }
+    return target;
+  }
+
   return Grown('Model.DB', {
-    _registry: {},
+    _registry,
+    _decorate,
 
     registered(name) {
       return this._registry[name] instanceof JSONSchemaSequelizer;
@@ -42,13 +71,13 @@ module.exports = (Grown, util) => {
 
       // scan and load/define models
       const $ = Grown.load(options.models, {
-        before(_name, definition) {
+        before: (_name, definition) => {
           // always add it as model!
           DB[name].add(definition);
         },
-        after(_name, definition) {
-          if (DB[name].sequelize._resolved) {
-            return DB[name].models[_name];
+        after: (_name, definition) => {
+          if (DB[name].sequelize._resolved && DB[name].$refs[_name]) {
+            return this._decorate(definition, DB[name].models[_name]);
           }
 
           // no connection? return it as Entity definition
@@ -56,43 +85,18 @@ module.exports = (Grown, util) => {
         },
       });
 
-      // reassign values
-      DB[name].ready(() => {
-        Object.assign($.values, DB[name].models);
-      });
-
-      function get(model) {
+      function get(model, refresh) {
         const target = DB[name].sequelize._resolved
           ? DB[name].models[model]
           : $.get(model);
 
-        /* istanbul ignore else */
-        if (!target._resolved) {
-          const source = $.get(model);
-
-          /* istanbul ignore else */
-          if (source.hooks) {
-            Object.keys(source.hooks).forEach(key => {
-              /* istanbul ignore else */
-              if (!target.options.hooks[key]) {
-                target.options.hooks[key] = [];
-              }
-
-              /* istanbul ignore else */
-              if (!target.options.hooks[key].includes(source.hooks[key])) {
-                target.options.hooks[key].push(source.hooks[key]);
-              }
-            });
-          }
-
-          Object.assign(target, source.classMethods);
-          Object.assign(target.prototype, source.instanceMethods);
-
-          target._resolved = true;
-        }
-
-        return Grown.Model.Entity._wrap(model, target, DB[name].schemas);
+        return Grown.Model.Entity._wrap(model, this._decorate($.get(model, refresh), target), DB[name].schemas);
       }
+
+      // reassign values
+      DB[name].ready(() => {
+        Object.keys(DB[name].$refs).forEach(k => get.call(this, k, true));
+      });
 
       return Grown(`Model.DB.${name}.repository`, {
         get connection() { return DB[name].sequelize.options; },
@@ -104,7 +108,7 @@ module.exports = (Grown, util) => {
         disconnect: () => DB[name].close(),
         connect: () => DB[name].connect(),
         sync: opts => DB[name].sync(opts),
-        get: model => get(model),
+        get: m => get.call(this, m),
       });
     },
   });

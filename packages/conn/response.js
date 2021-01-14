@@ -109,7 +109,7 @@ module.exports = (Grown, util) => {
       (_url.indexOf('https:') !== -1 ? https : http)
         .get(_url, async response => {
           if (response.statusCode >= 300 && response.statusCode < 400) {
-            response = await get(url.resolve(_url, response.headers.location));
+            response = await this._fetchFile(url.resolve(_url, response.headers.location));
           }
 
           if (filePath) {
