@@ -11,24 +11,21 @@ module.exports = (Grown, util) => {
     },
 
     register(name, params) {
-      if (this._registry[name]) {
-        throw new Error(`Database '${name}' already registred!`);
+      if (!this._registry[name]) {
+        if (!params || !params.config) {
+          throw new Error(`Missing configuration for '${name}' connection!`);
+        }
+
+        if (!params.config.identifier) {
+          params.config.identifier = name;
+        }
+
+        const opts = (params.use_env_variable && process.env[params.use_env_variable]) || params.config;
+
+        this._registry[name] = new JSONSchemaSequelizer(opts, params.refs, params.cwd);
+
+        util.readOnlyProperty(this, name, () => this._registry[name]);
       }
-
-      if (!params || !params.config) {
-        throw new Error(`Missing configuration for '${name}' connection!`);
-      }
-
-      if (!params.config.identifier) {
-        params.config.identifier = name;
-      }
-
-      const opts = (params.use_env_variable && process.env[params.use_env_variable]) || params.config;
-
-      this._registry[name] = new JSONSchemaSequelizer(opts, params.refs, params.cwd);
-
-      util.readOnlyProperty(this, name, () => this._registry[name]);
-
       return this;
     },
 
