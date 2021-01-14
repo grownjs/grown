@@ -72,8 +72,10 @@ module.exports = (Grown, util) => {
               return;
             }
 
-            // FIXME: setup url-back
-            res.setHeader('Location', `/?token=${req.user.token || ''}`);
+            const prefix = types[type].redirect || '/';
+            const param = types[type].parameter || 'token';
+
+            res.setHeader('Location', `${prefix}?${param}=${req.user.token || ''}`);
             res.status(302).end();
           });
           return;
