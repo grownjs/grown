@@ -5,23 +5,15 @@ module.exports = (Grown, util) => {
 
   const _registry = Object.create(null);
 
-  function _decorate(source, target) {
+  function _decorate(source, target, resolve) {
     /* istanbul ignore else */
     if (!target._resolved) {
-      target._resolved = true;
+      target._resolved = resolve;
 
       /* istanbul ignore else */
       if (source.hooks) {
         Object.keys(source.hooks).forEach(key => {
-          /* istanbul ignore else */
-          if (!target.options.hooks[key]) {
-            target.options.hooks[key] = [];
-          }
-
-          /* istanbul ignore else */
-          if (!target.options.hooks[key].includes(source.hooks[key])) {
-            target.options.hooks[key].push(source.hooks[key]);
-          }
+          target.options.hooks[key] = [].concat(source.hooks[key]);
         });
       }
 
@@ -90,12 +82,14 @@ module.exports = (Grown, util) => {
           ? DB[name].models[model]
           : $.get(model);
 
-        return Grown.Model.Entity._wrap(model, this._decorate($.get(model, refresh), target), DB[name].schemas);
+        return Grown.Model.Entity._wrap(model, this._decorate($.get(model, refresh), target, true), DB[name].schemas);
       }
 
       // reassign values
       DB[name].ready(() => {
-        Object.keys(DB[name].$refs).forEach(k => get.call(this, k, true));
+        Object.keys(DB[name].$refs).forEach(k => {
+          if (DB[name].$refs[k].$references) get.call(this, k, true);
+        });
       });
 
       return Grown(`Model.DB.${name}.repository`, {
