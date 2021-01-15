@@ -140,6 +140,7 @@ _util.inherits(ServerRequest, Transform);
 function ServerResponse(req, resp) {
   Transform.call(this);
 
+  this._sent = [];
   this._buffer = [];
   this._headers = {};
   this._pending = false;
@@ -212,11 +213,17 @@ ServerResponse.prototype.writeHead = function writeHead(statusCode, reason, head
   this.statusMessage = reason || STATUS_CODES[statusCode] || 'unknown';
 
   /* istanbul ignore else */
-  if (headers) {
-    Object.keys(headers).forEach(key => {
-      this._response.writeHeader(key, headers[key]);
-    });
-  }
+  Object.assign(this._headers, headers);
+  Object.keys(this._headers).forEach(key => {
+    if (Array.isArray(this._headers[key])) {
+      this._headers[key].forEach(h => {
+        this._response.writeHeader(key, h.toString());
+      });
+    } else {
+      this._response.writeHeader(key, this._headers[key].toString());
+    }
+    delete this._headers[key];
+  });
 };
 
 ServerResponse.prototype.setHeader = function setHeader(name, value) {
