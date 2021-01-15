@@ -140,7 +140,6 @@ _util.inherits(ServerRequest, Transform);
 function ServerResponse(req, resp) {
   Transform.call(this);
 
-  this._sent = [];
   this._buffer = [];
   this._headers = {};
   this._pending = false;
@@ -167,13 +166,6 @@ function ServerResponse(req, resp) {
     Object.keys(this._headers).forEach(key => {
       head[key.toLowerCase()] = this._headers[key];
     });
-
-    // FIXME: this does not work through proxy-middleware!
-    if (body.length && process.env.NODE_ENV === 'production') {
-      head['content-length'] = body.length.toString();
-    } else {
-      delete head['content-length'];
-    }
 
     resp.cork(() => {
       resp.writeStatus(`${this.statusCode} ${STATUS_CODES[this.statusCode]}`);
@@ -219,7 +211,7 @@ ServerResponse.prototype.writeHead = function writeHead(statusCode, reason, head
       this._headers[key].forEach(h => {
         this._response.writeHeader(key, h.toString());
       });
-    } else {
+    } else if (key !== 'content-length') {
       this._response.writeHeader(key, this._headers[key].toString());
     }
     delete this._headers[key];
