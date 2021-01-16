@@ -5,15 +5,15 @@ module.exports = (Grown, util) => {
 
   const _registry = Object.create(null);
 
-  function _decorate(source, target, resolve) {
+  function _decorate(source, target) {
     /* istanbul ignore else */
     if (!target._resolved) {
-      target._resolved = resolve;
+      target._resolved = true;
 
       /* istanbul ignore else */
       if (source.hooks) {
         Object.keys(source.hooks).forEach(key => {
-          target.options.hooks[key] = [].concat(source.hooks[key]);
+          target.addHook(key, source.hooks[key]);
         });
       }
 
@@ -82,7 +82,7 @@ module.exports = (Grown, util) => {
           ? DB[name].models[model]
           : $.get(model);
 
-        return Grown.Model.Entity._wrap(model, this._decorate($.get(model, refresh), target, true), DB[name].schemas);
+        return Grown.Model.Entity._wrap(model, this._decorate($.get(model, refresh), target), DB[name].schemas);
       }
 
       // reassign values
