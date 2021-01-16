@@ -310,7 +310,7 @@ module.exports = (Grown, util) => {
             }
 
             /* istanbul ignore else */
-            if (timeout) {
+            if (typeof timeout === 'number') {
               const meta = `<meta http-equiv="refresh" content="${timeout};url=${location}">${body || ''}`;
 
               return this.end(302, meta);
