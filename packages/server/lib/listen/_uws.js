@@ -208,11 +208,11 @@ ServerResponse.prototype.writeHead = function writeHead(statusCode, reason, head
   Object.assign(this._headers, headers);
   Object.keys(this._headers).forEach(key => {
     if (Array.isArray(this._headers[key])) {
-      this._headers[key].forEach(h => {
-        this._response.writeHeader(key, h.toString());
+      this._headers[key].forEach(header => {
+        this._response.writeHeader(key, String(header));
       });
     } else if (key !== 'content-length') {
-      this._response.writeHeader(key, this._headers[key].toString());
+      this._response.writeHeader(key, String(this._headers[key]));
     }
     delete this._headers[key];
   });
