@@ -75,6 +75,14 @@ module.exports = (Grown, util) => {
 
           put_session(name, value) {
             /* istanbul ignore else */
+            if (typeof name == 'object') {
+              Object.keys(name).forEach(key => {
+                this.put_session(key, name[key]);
+              });
+              return this;
+            }
+
+            /* istanbul ignore else */
             if (!(name && typeof name === 'string')) {
               throw new Error(`Invalid put_session: '${name}' => '${value}'`);
             }
