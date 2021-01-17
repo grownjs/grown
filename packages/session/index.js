@@ -75,7 +75,7 @@ module.exports = (Grown, util) => {
 
           put_session(name, value) {
             /* istanbul ignore else */
-            if (typeof name == 'object') {
+            if (typeof name === 'object') {
               Object.keys(name).forEach(key => {
                 this.put_session(key, name[key]);
               });
