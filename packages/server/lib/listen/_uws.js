@@ -31,28 +31,27 @@ function remoteAddressToString(address) {
 }
 
 function convertFrom(obj) {
-  const data = Object.create(null);
-  const values = {};
+  const values = Object.create(null);
 
   obj.forEach(chunk => {
-    let value = values[chunk.name];
+    const value = values[chunk.name];
 
     if (value && !Array.isArray(value)) {
-      value = values[chunk.name] = [value];
+      values[chunk.name] = [value];
+    }
+
+    let result = chunk.data;
+    if (result instanceof ArrayBuffer) {
+      result = Buffer.from(result).toString('utf8');
     }
 
     if (!values[chunk.name]) {
-      value = values[chunk.name] = chunk.data;
-      if (value instanceof ArrayBuffer) {
-        data[chunk.name] = Array.isArray(value)
-          ? value.map(x => Buffer.from(x).toString('utf8'))
-          : Buffer.from(value).toString('utf8');
-      } else {
-        data[chunk.name] = value;
-      }
+      values[chunk.name] = result;
+    } else {
+      values[chunk.name].push(result);
     }
   });
-  return data;
+  return values;
 }
 
 function setStream(req, cb) {
