@@ -104,7 +104,7 @@ module.exports = (Grown, util) => {
             }
 
             if (name === '*') {
-              this.req.session = {};
+              this.req.session = null;
             } else {
               delete this.req.session[name];
             }
