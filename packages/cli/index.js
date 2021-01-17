@@ -206,28 +206,30 @@ module.exports = (Grown, util) => {
   }
 
   function _exec(argv, callback) {
-    if (argv.length) {
-      const child = spawn(argv[0], argv.slice(1));
+    return new Promise((resolve, reject) => {
+      if (argv.length) {
+        const child = spawn(argv[0], argv.slice(1));
 
-      // clear previous logs...
-      process.stdout.write('\x1b[K\r');
+        // clear previous logs...
+        process.stdout.write('\x1b[K\r');
 
-      child.stdout.pipe(process.stdout);
-      child.stderr.pipe(process.stderr);
+        child.stdout.pipe(process.stdout);
+        child.stderr.pipe(process.stderr);
 
-      /* istanbul ignore next */
-      const _close = process.version.split('.')[1] === '6' ? 'exit' : 'close';
+        /* istanbul ignore next */
+        const _close = process.version.split('.')[1] === '6' ? 'exit' : 'close';
 
-      child.on(_close, exitCode => {
-        if (exitCode !== 0) {
-          _onExit(1);
-        } else if (callback) {
-          callback(exitCode);
-        }
-      });
-    } else if (callback) {
-      callback();
-    }
+        child.on(_close, exitCode => {
+          if (exitCode !== 0) {
+            reject(this._onExit(1));
+          } else if (callback) {
+            resolve(callback(exitCode));
+          }
+        });
+      } else if (callback) {
+        resolve(callback());
+      }
+    });
   }
 
   return Grown('CLI', {
