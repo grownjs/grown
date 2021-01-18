@@ -10,18 +10,22 @@ function die(conn, error, options) {
 
   /* istanbul ignore else */
   if (options('env') !== 'production' && failure.code > 499) {
-    process.stderr.write(`${util.format('#%s Fatal. %s', conn.pid, error.stack)}\n`);
+    process.stderr.write(`${util.format('#%s Failure. %s', conn.pid, error.stack)}\n`);
   }
 
-  /* istanbul ignore else */
-  if (failure.summary) {
-    conn.res.setHeader('X-Failure', `${failure.summary} (${failure.message})`);
-  }
+  try {
+    /* istanbul ignore else */
+    if (failure.summary) {
+      conn.res.setHeader('X-Failure', `${failure.summary} (${failure.message})`);
+    }
 
-  conn.res.statusMessage = failure.statusMessage || STATUS_CODES[failure.code];
-  conn.res.statusCode = failure.statusCode || failure.code;
-  conn.res.write(conn.res.statusMessage);
-  conn.res.end();
+    conn.res.statusMessage = failure.statusMessage || STATUS_CODES[failure.code];
+    conn.res.statusCode = failure.statusCode || failure.code;
+    conn.res.write(conn.res.statusMessage);
+    conn.res.end();
+  } catch (e) {
+    console.error('E_DIE', e);
+  }
 }
 
 function buildSettings(data) {
