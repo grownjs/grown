@@ -30,7 +30,6 @@ module.exports = (Grown, util) => {
         /* istanbul ignore else */
         if (!ctx.res._header) {
           ctx.res.setHeader('Content-Type', ctx.content_type);
-          ctx.res.writeHead(ctx.res.statusCode);
         }
 
         return new Promise((resolve, reject) => {
@@ -60,7 +59,6 @@ module.exports = (Grown, util) => {
       if (!ctx.res._header) {
         ctx.res.setHeader('Content-Type', `${ctx.content_type}; charset=${ctx.resp_charset}`);
         ctx.res.setHeader('Content-Length', Buffer.byteLength(body || ''));
-        ctx.res.writeHead(ctx.res.statusCode);
       }
 
       ctx.res.write(body || '');
@@ -74,31 +72,33 @@ module.exports = (Grown, util) => {
       throw new Error('Already finished');
     }
 
-    let _code = code;
-
-    /* istanbul ignore else */
-    if (typeof code === 'string' || code instanceof Buffer) {
-      _code = ctx.status_code;
-      message = code;
-    }
-
-    /* istanbul ignore else */
-    if (code instanceof Error) {
-      message = code.message || code.toString();
-      _code = code.statusCode || 500;
-    }
-
-    /* istanbul ignore else */
-    if (!ctx.has_body) {
-      ctx.resp_body = message || ctx.resp_body;
-    }
-
-    /* istanbul ignore else */
     if (!ctx.has_status) {
-      ctx.status_code = typeof _code === 'number' ? _code : ctx.status_code;
-    }
+      let _code = code;
 
-    return ctx.send(ctx.resp_body);
+      /* istanbul ignore else */
+      if (typeof code === 'string' || code instanceof Buffer) {
+        _code = ctx.status_code;
+        message = code;
+      }
+
+      /* istanbul ignore else */
+      if (code instanceof Error) {
+        message = code.message || code.toString();
+        _code = code.statusCode || 500;
+      }
+
+      /* istanbul ignore else */
+      if (!ctx.has_body) {
+        ctx.resp_body = message || ctx.resp_body;
+      }
+
+      /* istanbul ignore else */
+      if (!ctx.has_status) {
+        ctx.status_code = typeof _code === 'number' ? _code : ctx.status_code;
+      }
+      return ctx.send(ctx.resp_body);
+    }
+    return ctx;
   }
 
   function _fetchFile(_url, filePath) {
