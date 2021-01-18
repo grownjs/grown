@@ -313,12 +313,12 @@ module.exports = (Grown, util) => {
             if (typeof timeout === 'number') {
               const meta = `<meta http-equiv="refresh" content="${timeout};url=${location}">${body || ''}`;
 
-              return this.end(302, meta);
+              return this.end(301, meta);
             }
 
             debug('#%s Done. Redirection was found', this.pid);
 
-            return this.put_resp_header('Location', self._fixURL(location)).end(302);
+            return this.put_resp_header('Location', self._fixURL(location)).end(301);
           },
 
           json(value) {

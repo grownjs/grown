@@ -76,7 +76,7 @@ module.exports = (Grown, util) => {
             const param = types[type].parameter || 'token';
 
             res.setHeader('Location', `${prefix}?${param}=${req.user.token || ''}`);
-            res.status(302).end();
+            res.status(301).end();
           });
           return;
         }
