@@ -124,9 +124,9 @@ module.exports = (Grown, util) => {
         Grown.argv.flags.app = this._findApplication();
       }
 
-      return logger(taskName, () => new Promise(next => {
-        this._exec(Grown.argv.raw, () => next(this.run(taskName)));
-      })).catch(e => this._onError(e, taskName));
+      return logger(taskName, () => {
+        return this._exec(Grown.argv.raw, () => this.run(taskName));
+      }).catch(e => this._onError(e, taskName));
     }
 
     logger.write(GROWN_TXT);
@@ -205,16 +205,24 @@ module.exports = (Grown, util) => {
     process.exit(statusCode);
   }
 
-  function _exec(argv, callback) {
+  function _exec(argv, callback, environment) {
+    if (typeof callback === 'object') {
+      environment = callback;
+      callback = undefined;
+    }
+
     return new Promise((resolve, reject) => {
       if (argv.length) {
-        const child = spawn(argv[0], argv.slice(1));
+        const child = spawn(argv[0], argv.slice(1), {
+          stdio: 'inherit',
+          env: {
+            ...process.env,
+            ...environment,
+          }
+        });
 
         // clear previous logs...
         process.stdout.write('\x1b[K\r');
-
-        child.stdout.pipe(process.stdout);
-        child.stderr.pipe(process.stderr);
 
         /* istanbul ignore next */
         const _close = process.version.split('.')[1] === '6' ? 'exit' : 'close';
@@ -222,12 +230,12 @@ module.exports = (Grown, util) => {
         child.on(_close, exitCode => {
           if (exitCode !== 0) {
             reject(this._onExit(1));
-          } else if (callback) {
-            resolve(callback(exitCode));
+          } else {
+            resolve(callback && callback(exitCode));
           }
         });
-      } else if (callback) {
-        resolve(callback());
+      } else {
+        resolve(callback && callback());
       }
     });
   }
