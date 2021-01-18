@@ -218,7 +218,7 @@ module.exports = (Grown, util) => {
           env: {
             ...process.env,
             ...environment,
-          }
+          },
         });
 
         // clear previous logs...
