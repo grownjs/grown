@@ -42,7 +42,7 @@ function convertFrom(obj) {
 
     let result = chunk.data;
     if (result instanceof ArrayBuffer) {
-      result = Buffer.from(result).toString('utf8');
+      result = Buffer.from(result).toString('utf8').replace(/\0/g, '');
     }
 
     if (!values[chunk.name]) {
