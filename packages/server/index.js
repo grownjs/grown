@@ -132,8 +132,8 @@ function _grownFactory($, util, options) {
       this.once('begin', () => this.emit('start'));
       this.once('listen', () => this.emit('start'));
 
-      if (options.cors) {
-        _mount.call(scope, (req, res, next) => {
+      _mount.call(scope, (req, res, next) => {
+        if (options.cors) {
           res.setHeader('Access-Control-Allow-Origin', '*');
           res.setHeader('Access-Control-Allow-Headers',
             'Authorization, X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Allow-Request-Method');
@@ -144,10 +144,15 @@ function _grownFactory($, util, options) {
             res.status(200).end();
             return;
           }
+        }
 
-          next();
-        });
-      }
+        if (req.method === 'POST' && req.query._method) {
+          req.method = req.query._method;
+          delete req.query._method;
+        }
+
+        next();
+      });
     },
     methods: {
       run(request, callback) {
