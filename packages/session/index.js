@@ -29,15 +29,7 @@ module.exports = (Grown, util) => {
 
       ctx.mount('Session#pipe', conn => {
         /* istanbul ignore else */
-        if (conn.is_json || conn.req.method !== 'GET') {
-          return;
-        }
-
-        conn.state.flash_messages = conn.req.flash && conn.req.flash();
-        conn.state.csrf_token = conn.csrf_token;
-
-        /* istanbul ignore else */
-        if (conn.is_xhr) {
+        if (conn.is_xhr && conn.csrf_token) {
           conn.put_resp_header('X-CSRF-Token', conn.csrf_token);
         }
       });
@@ -73,6 +65,19 @@ module.exports = (Grown, util) => {
             return this;
           },
 
+          get_flash(type) {
+            const msgs = this.req.flash && this.req.flash(type);
+
+            if (Array.isArray(msgs)) {
+              return msgs.map(value => ({ type, value }));
+            }
+
+            return Object.keys(msgs).reduce((memo, key) => {
+              memo.push(...msgs[key].map(value => ({ type: key, value })));
+              return memo;
+            }, []);
+          },
+
           put_session(name, value) {
             /* istanbul ignore else */
             if (typeof name === 'object') {
@@ -105,6 +110,7 @@ module.exports = (Grown, util) => {
 
             if (name === '*') {
               this.req.session = null;
+              this.req.session = {};
             } else {
               delete this.req.session[name];
             }
