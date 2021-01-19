@@ -61,7 +61,7 @@ module.exports = (Grown, util) => {
       const name = (options.database && options.database.identifier) || 'default';
       const DB = Grown.Model.DB.register(name, options.database);
 
-      if (options.database.hooks) {
+      if (options.database.hooks && !DB[name].sequelize._resolved) {
         Object.keys(options.database.hooks).forEach(key => {
           DB[name].sequelize.addHook(key, options.database.hooks[key]);
         });
