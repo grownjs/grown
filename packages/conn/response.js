@@ -72,33 +72,30 @@ module.exports = (Grown, util) => {
       throw new Error('Already finished');
     }
 
-    if (!ctx.has_status) {
-      let _code = code;
+    let _code = code;
 
-      /* istanbul ignore else */
-      if (typeof code === 'string' || code instanceof Buffer) {
-        _code = ctx.status_code;
-        message = code;
-      }
-
-      /* istanbul ignore else */
-      if (code instanceof Error) {
-        message = code.message || code.toString();
-        _code = code.statusCode || 500;
-      }
-
-      /* istanbul ignore else */
-      if (!ctx.has_body) {
-        ctx.resp_body = message || ctx.resp_body;
-      }
-
-      /* istanbul ignore else */
-      if (!ctx.has_status) {
-        ctx.status_code = typeof _code === 'number' ? _code : ctx.status_code;
-      }
-      return ctx.send(ctx.resp_body);
+    /* istanbul ignore else */
+    if (typeof code === 'string' || code instanceof Buffer) {
+      _code = ctx.status_code;
+      message = code;
     }
-    return ctx;
+
+    /* istanbul ignore else */
+    if (code instanceof Error) {
+      message = code.message || code.toString();
+      _code = code.statusCode || 500;
+    }
+
+    /* istanbul ignore else */
+    if (!ctx.has_body) {
+      ctx.resp_body = message || ctx.resp_body;
+    }
+
+    /* istanbul ignore else */
+    if (!ctx.has_status) {
+      ctx.status_code = typeof _code === 'number' ? _code : ctx.status_code;
+    }
+    return ctx.send(ctx.resp_body);
   }
 
   function _fetchFile(_url, filePath) {
@@ -311,14 +308,17 @@ module.exports = (Grown, util) => {
 
             /* istanbul ignore else */
             if (typeof timeout === 'number') {
-              const meta = `<meta http-equiv="refresh" content="${timeout};url=${location}">${body || ''}`;
+              this.reso_body = `<meta http-equiv="refresh" content="${timeout};url=${location}">${body || ''}`;
+              this.status_code = 301;
 
-              return this.end(301, meta);
+              return this;
             }
 
             debug('#%s Done. Redirection was found', this.pid);
 
-            return this.put_resp_header('Location', self._fixURL(location)).end(301);
+            this.put_resp_header('Location', self._fixURL(location));
+            this.status_code = 301;
+            return this;
           },
 
           json(value) {
