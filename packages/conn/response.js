@@ -308,7 +308,7 @@ module.exports = (Grown, util) => {
 
             /* istanbul ignore else */
             if (typeof timeout === 'number') {
-              this.reso_body = `<meta http-equiv="refresh" content="${timeout};url=${location}">${body || ''}`;
+              this.resp_body = `<meta http-equiv="refresh" content="${timeout};url=${location}">${body || ''}`;
               this.status_code = 301;
 
               return this;
