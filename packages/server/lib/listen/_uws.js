@@ -241,7 +241,27 @@ module.exports = function _uws(ctx, options, callback, protocolName) {
   app.listen(ctx.host, ctx.port, socket => {
     debug('#%s Server was started and listening at port', process.pid, ctx.port);
 
+    const _clients = [];
+
+    ctx.clients = () => _clients;
     app._self = socket;
+    app.ws('/*', {
+      maxPayloadLength: 16 * 1024 * 1024,
+      compression: 0,
+      idleTimeout: 10,
+      open: ws => {
+        Object.assign(ws, this._.buildPubsub());
+        _clients.push(ws);
+        this._events.emit('connection', ws);
+      },
+      close: ws => {
+        ws.emit('disconnect', ws);
+        _clients.splice(_clients.indexOf(ws), 1);
+      },
+      message: (ws, payload) => {
+        ws.emit('message', String.fromCharCode.apply(null, new Uint8Array(payload)));
+      },
+    });
     app.any('/*', (res, req) => {
       req.headers = { host: ctx.host };
       req.forEach((k, v) => {
@@ -282,4 +302,6 @@ module.exports = function _uws(ctx, options, callback, protocolName) {
 
     callback.call(this);
   });
+
+  return app;
 };

@@ -8,7 +8,5 @@ module.exports = function $server(ctx, options, callback) {
 
   debug('#%s Initializing <%s> protocol', process.pid, ctx.location.protocol);
 
-  const protocolName = ctx.location.protocol.replace(':', '');
-
-  useApp.call(this, ctx, options, callback, protocolName);
+  return useApp.call(this, ctx, options, callback, ctx.location.protocol.replace(':', ''));
 };

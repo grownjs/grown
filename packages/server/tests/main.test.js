@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-expressions */
 
 const FormData = require('form-data');
+const WebSocket = require('ws');
 const { expect } = require('chai');
 const { get, post } = require('httpie');
 
@@ -276,20 +277,50 @@ describe('Grown.Server', () => {
             done();
           });
         });
+
+        it('should handle web-sockets', done => {
+          const evts = [];
+
+          g.on('connection', ws => {
+            ws.on('message', x => evts.push(x));
+            ws.send('STUFF');
+          });
+
+          g.listen(3000, async app => {
+            const ws = new WebSocket('ws://0.0.0.0:3000');
+
+            ws.on('open', () => {
+              ws.send(JSON.stringify({ foo: 42 }));
+            });
+            ws.on('message', data => {
+              evts.push(data);
+              setTimeout(() => ws.terminate(), 100);
+            });
+
+            ws.on('close', () => evts.push('close'));
+
+            setTimeout(() => {
+              expect(evts).to.eql(['STUFF', '{"foo":42}', 'close']);
+              expect(app.clients()).to.eql([]);
+              app.close();
+              done();
+            }, 200);
+          });
+        });
       });
     }
 
     describe('HTTP(s)', () => {
       beforeEach(() => {
         process.env.U_WEBSOCKETS_SKIP = 'true';
+        g = Grown.new();
       });
 
       afterEach(() => {
         process.env.U_WEBSOCKETS_SKIP = '';
       });
 
-      it('should fallback to native modules if U_WEBSOCKETS_SKIP is set', done => {
-        g = Grown.new();
+      it('should fallback to nodejs modules if U_WEBSOCKETS_SKIP is set', done => {
         g.plug(require('body-parser').json());
         g.mount(ctx => {
           ctx.res.write(JSON.stringify(ctx.req.body));
@@ -311,7 +342,6 @@ describe('Grown.Server', () => {
       });
 
       it('should handle mount-points', done => {
-        g = Grown.new();
         g.mount('/ko', ctx => {
           ctx.res.write('OK');
           ctx.res.status(200).end();
@@ -330,6 +360,36 @@ describe('Grown.Server', () => {
           expect(b).to.eql('OK');
           app.close();
           done();
+        });
+      });
+
+      it('should handle web-sockets', done => {
+        const evts = [];
+
+        g.on('connection', ws => {
+          ws.on('message', x => evts.push(x));
+          ws.send('STUFF');
+        });
+
+        g.listen(3000, async app => {
+          const ws = new WebSocket('ws://0.0.0.0:3000');
+
+          ws.on('open', () => {
+            ws.send(JSON.stringify({ foo: 42 }));
+          });
+          ws.on('message', data => {
+            evts.push(data);
+            setTimeout(() => ws.terminate(), 100);
+          });
+
+          ws.on('close', () => evts.push('close'));
+
+          setTimeout(() => {
+            expect(evts).to.eql(['STUFF', '{"foo":42}', 'close']);
+            expect(app.clients()).to.eql([]);
+            app.close();
+            done();
+          }, 200);
         });
       });
     });

@@ -19,7 +19,8 @@
   "dependencies": {
     "debug": "^4.1.0",
     "querystring": "^0.2.0",
-    "uWebSockets.js": "github:uNetworking/uWebSockets.js#v18.14.0"
+    "uWebSockets.js": "github:uNetworking/uWebSockets.js#v18.14.0",
+    "ws": "^7.4.2"
   },
   "devDependencies": {
     "acorn": ">=5.7.4",

@@ -1,9 +1,15 @@
 /* global beforeEach, describe, it */
 
+const td = require('testdouble');
+const { expect } = require('chai');
 const Grown = require('../../bud')();
 
 Grown.use(require('../../server'));
 Grown.use(require('..'));
+
+function tick(ms) {
+  return new Promise(ok => setTimeout(ok, ms));
+}
 
 describe('Grown.Test', () => {
   let server;
@@ -22,6 +28,30 @@ describe('Grown.Test', () => {
       return server.request('/', (err, conn) => {
         conn.res.ok(err, '<!DOCTYPE html>');
       });
+    });
+  });
+
+  describe('Sockets', () => {
+    let wss;
+    beforeEach(() => {
+      wss = server.sockets();
+    });
+    afterEach(() => {
+      wss.stop();
+    });
+
+    it('should allow to test web-sockets', async () => {
+      const callback = td.func('onmessage');
+
+      wss.on('connection', ws => {
+        ws.on('message', callback);
+      });
+
+      const client = wss.connect();
+      client.send();
+
+      await tick(50);
+      expect(td.explain(callback).callCount).to.eql(1);
     });
   });
 });
