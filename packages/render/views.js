@@ -275,11 +275,11 @@ module.exports = (Grown, util) => {
     view_folders: [],
 
     // setup extensions
-    $install(ctx, options) {
+    $install(ctx, scope) {
       const defaults = {
         directories: util.flattenArgs(this.view_folders),
+        environment: scope._options('env'),
         fallthrough: this.fallthrough,
-        environment: options('env'),
       };
 
       const self = this;
@@ -301,7 +301,7 @@ module.exports = (Grown, util) => {
 
         return ctx.emit('before_render', this, tpl)
           .catch(e => {
-            ctx.emit('failure', e, options);
+            ctx.emit('failure', e, scope._options);
           })
           .then(() => {
             return tpl.contents;

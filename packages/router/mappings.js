@@ -94,13 +94,13 @@ module.exports = (Grown, util) => {
     _dispatchRoutes,
     _groupRoutes,
 
-    $install(ctx, options) {
+    $install(ctx, scope) {
       const routeMappings = require('route-mappings');
 
       const _router = routeMappings();
 
       // compile fast-routes
-      ctx.once('start', () => this._groupRoutes(ctx, options));
+      ctx.once('start', () => this._groupRoutes(ctx, scope._options));
 
       ctx.mount('Router.Mappings#pipe', (conn, _options) => {
         try {

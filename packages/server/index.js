@@ -217,7 +217,7 @@ function _grownFactory($, util, options) {
 
             /* istanbul ignore else */
             if (typeof p.$install === 'function') {
-              util.flattenArgs(p.$install.call(p, this, scope._options)).forEach(def => {
+              util.flattenArgs(p.$install.call(p, this, scope)).forEach(def => {
                 /* istanbul ignore else */
                 if (Object.prototype.toString.call(def) === '[object Object]') {
                   util.mergeDefinitionsInto.call(p, this, def);
