@@ -241,9 +241,6 @@ module.exports = function _uws(ctx, options, callback, protocolName) {
   app.listen(ctx.host, ctx.port, socket => {
     debug('#%s Server was started and listening at port', process.pid, ctx.port);
 
-    const _clients = [];
-
-    ctx.clients = () => _clients;
     app._self = socket;
     app.ws('/*', {
       maxPayloadLength: 16 * 1024 * 1024,
@@ -251,15 +248,15 @@ module.exports = function _uws(ctx, options, callback, protocolName) {
       idleTimeout: 10,
       open: ws => {
         Object.assign(ws, this._.buildPubsub());
-        _clients.push(ws);
-        this._events.emit('connection', ws);
+        this._clients.push(ws);
+        this._events.emit('open', ws);
       },
       close: ws => {
-        ws.emit('disconnect', ws);
-        _clients.splice(_clients.indexOf(ws), 1);
+        this._events.emit('close', ws);
+        this._clients.splice(this._clients.indexOf(ws), 1);
       },
-      message: (ws, payload) => {
-        ws.emit('message', String.fromCharCode.apply(null, new Uint8Array(payload)));
+      message: (ws, payload, isBinary) => {
+        ws.send(payload, isBinary);
       },
     });
     app.any('/*', (res, req) => {
@@ -283,7 +280,7 @@ module.exports = function _uws(ctx, options, callback, protocolName) {
       const type = req.getHeader('content-type');
 
       setStream(_req, next);
-      if (this._options.uploads) {
+      if (this._uploads) {
         prepBody(_req, res, next);
       } else if (type.includes('/json')) {
         readBody(_req, res, data => next(data, JSON.parse));

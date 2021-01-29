@@ -238,7 +238,7 @@ describe('Grown.Server', () => {
         it('should handle web-sockets', done => {
           const evts = [];
 
-          g.on('connection', ws => {
+          g.on('open', ws => {
             ws.on('message', x => evts.push(x));
             ws.send('STUFF');
           });
@@ -258,7 +258,7 @@ describe('Grown.Server', () => {
 
             setTimeout(() => {
               expect(evts).to.eql(['STUFF', '{"foo":42}', 'close']);
-              expect(app.clients()).to.eql([]);
+              expect(g.clients()).to.eql([]);
               app.close();
               done();
             }, 200);
@@ -323,7 +323,7 @@ describe('Grown.Server', () => {
       it('should handle web-sockets', done => {
         const evts = [];
 
-        g.on('connection', ws => {
+        g.on('open', ws => {
           ws.on('message', x => evts.push(x));
           ws.send('STUFF');
         });
@@ -343,7 +343,7 @@ describe('Grown.Server', () => {
 
           setTimeout(() => {
             expect(evts).to.eql(['STUFF', '{"foo":42}', 'close']);
-            expect(app.clients()).to.eql([]);
+            expect(g.clients()).to.eql([]);
             app.close();
             done();
           }, 200);

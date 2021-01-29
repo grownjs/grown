@@ -25,7 +25,6 @@ module.exports = function _http(ctx, options, callback, protocolName) {
   }
 
   const { host, port } = ctx;
-  const _clients = [];
 
   this.close = () => _protocol.close();
 
@@ -36,16 +35,15 @@ module.exports = function _http(ctx, options, callback, protocolName) {
 
     _protocol.on('upgrade', (request, socket, head) => {
       wss.handleUpgrade(request, socket, head, ws => {
-        _clients.push(ws);
         ws.on('close', () => {
-          ws.emit('disconnect', ws);
-          _clients.splice(_clients.indexOf(ws), 1);
+          this._events.emit('close', ws);
+          this._clients.splice(this._clients.indexOf(ws), 1);
         });
-        this._events.emit('connection', ws);
+        this._clients.push(ws);
+        this._events.emit('open', ws);
       });
     });
 
-    ctx.clients = () => _clients;
     callback.call(this);
   });
 

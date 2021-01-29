@@ -40,6 +40,7 @@ function _grownFactory($, util, options) {
   scope._hosts = {};
   scope._servers = {};
 
+  scope._clients = [];
   scope._pipeline = [];
   scope._extensions = [];
 
@@ -70,7 +71,8 @@ function _grownFactory($, util, options) {
           this.res._halted = true;
         }
 
-        return scope._events.emit('before_send', null, this, scope._options)
+        return Promise.resolve()
+          .then(() => scope._events.emit('before_send', null, this, scope._options))
           .then(() => typeof cb === 'function' && cb(this, scope._options))
           .catch(e => {
             scope._events.emit('failure', e, scope._options);
@@ -239,6 +241,8 @@ function _grownFactory($, util, options) {
       mount: _mount.bind(scope),
 
       listen: _listen.bind(scope),
+
+      clients: () => scope._clients,
     },
   };
 }

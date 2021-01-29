@@ -77,7 +77,8 @@ module.exports = function $listen(location, params, cb) {
         _close = this.close ? this.close.bind(this, _server.location) : null;
       }
 
-      _listen()
+      Promise.resolve()
+        .then(() => _listen())
         .then(() => debug('#%s Done. Starting application', process.pid))
         .then(() => resolve(_server))
         .then(() => cb && cb(_server))

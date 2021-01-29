@@ -1,4 +1,4 @@
-/* global beforeEach, describe, it */
+/* global beforeEach, afterEach, describe, it */
 
 const td = require('testdouble');
 const { expect } = require('chai');
@@ -43,14 +43,14 @@ describe('Grown.Test', () => {
     it('should allow to test web-sockets', async () => {
       const callback = td.func('onmessage');
 
-      wss.on('connection', ws => {
+      server.on('open', ws => {
         ws.on('message', callback);
       });
 
       const client = wss.connect();
       client.send();
 
-      await tick(50);
+      await tick(5);
       expect(td.explain(callback).callCount).to.eql(1);
     });
   });
