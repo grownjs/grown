@@ -15,16 +15,9 @@
     "index.js"
   ],
   "scripts": {
-    "dev": "npm run test:unit -- -w",
-    "lint": "eslint $(git ls-files | grep -vE 'application' | grep -E '(js|pug)$')",
-    "test": "npm run coverage -- npm run test:unit --",
-    "test:ci": "npm test && nyc report -r lcov",
-    "test:dev": "npm test && nyc report -r html",
-    "test:run": "NODE_ENV=test _mocha --exit --recursive -bR spec --colors",
-    "test:unit": "npm run test:run framework/tests/*.test.js --",
-    "coverage": "nyc -s -x '**/tests/**' -x '**/*.test.js'",
-    "pretest": "npm run lint",
-    "pretest:ci": "npm run pretest"
+    "test": "node test & (sleep 1; curl 0.0.0.0:8080/die || exit 2)",
+    "lint": "eslint $(git ls-files | grep -E '(js|pug)$')",
+    "pretest": "npm run lint"
   },
   "publishConfig": {
     "access": "public"
@@ -37,20 +30,15 @@
     "url": "git+https://github.com/grownjs/grown.git"
   },
   "devDependencies": {
-    "chai": "^4.2.0",
     "eslint": "^7.9.0",
     "eslint-config-airbnb-base": "^14.2.0",
     "eslint-plugin-import": "^2.14.0",
-    "eslint-plugin-pug": "^1.2.2",
+    "eslint-plugin-pug": "^1.2.3",
     "lerna": "^3.22.1",
     "lodash": ">=4.17.11",
     "lodash.template": ">=4.5.0",
     "mem": ">=4.0.0",
-    "minimist": ">=1.2.2",
-    "mocha": "^7.2.0",
-    "nyc": "^15.1.0",
-    "std-mocks": "^1.0.1",
-    "testdouble": "^3.12.4"
+    "minimist": ">=1.2.2"
   },
   "dependencies": {
     "@grown/bud": "^0.0.27",
