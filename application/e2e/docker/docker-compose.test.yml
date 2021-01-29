@@ -1,7 +1,0 @@
-version: "3.4"
-
-services:
-  web:
-    command: "database watch"
-    environment:
-      NODE_ENV: test

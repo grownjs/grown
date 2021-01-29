@@ -1,6 +1,0 @@
-{
-  "url": {
-    "ui:template": [["span", "{@embed:this}"]],
-    "ui:component": "FileUpload"
-  }
-}

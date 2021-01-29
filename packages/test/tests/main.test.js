@@ -50,7 +50,7 @@ describe('Grown.Test', () => {
       const client = wss.connect();
       client.send();
 
-      await tick(5);
+      await tick(20);
       expect(td.explain(callback).callCount).to.eql(1);
     });
   });

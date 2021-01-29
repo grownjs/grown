@@ -1,8 +1,0 @@
-each items, key in models
-  p #{key}: #{items.join(', ')}
-
-each plug in plugins
-  summary
-    | #{plug.id}: #{path.relative(env.PWD, plug.baseDir)}
-    details
-      pre= JSON.stringify(plug.config, null, 2)

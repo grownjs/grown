@@ -17,7 +17,6 @@ export NODE_ENV GIT_REVISION
 
 test-ci:
 	@make -s check test-all
-	@make -sC application ci
 
 test-all:
 	@make -s $(RUNNER):bud $(RUNNER):cli $(RUNNER):grpc $(RUNNER):graphql $(RUNNER):model
@@ -46,7 +45,7 @@ publish:
 
 release: install
 	@mv lerna.json lerna.json_backup
-	@cat lerna.json_backup | grep -v application > lerna.json
+	@cat lerna.json_backup | grep -v '"."' > lerna.json
 	@git update-index --assume-unchanged lerna.json
 	@lerna publish || true
 	@mv lerna.json_backup lerna.json
@@ -61,10 +60,6 @@ setup: install
 web\:%:
 	@make -C website $*
 
-link\:%:
-	@rm -rf $(PWD)/application/node_modules/@grown/$*
-	@ln -s $(PWD)/packages/$* $(PWD)/application/node_modules/@grown/
-
 dev\:%:
 	@cd packages/$(subst dev:,,$*) && npm run dev
 
@@ -75,7 +70,6 @@ clean: install
 	@lerna clean -y --ignore grown
 
 check: deps
-	@make -C application lint
 	@npm run lint
 	@echo "Done."
 

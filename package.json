@@ -12,10 +12,7 @@
   "files": [
     "cli",
     "cli.js",
-    "index.js",
-    "framework/app",
-    "framework/lib",
-    "framework/*.js"
+    "index.js"
   ],
   "scripts": {
     "dev": "npm run test:unit -- -w",
@@ -58,6 +55,6 @@
   "dependencies": {
     "@grown/bud": "^0.0.26",
     "@grown/cli": "^0.0.33",
-    "@grown/server": "^0.0.27"
+    "@grown/server": "^0.0.28"
   }
 }

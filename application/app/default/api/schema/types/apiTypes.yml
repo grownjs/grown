@@ -1,8 +1,0 @@
-id: apiTypes
-
-definitions:
-  SuccessfulResponse:
-    properties:
-      success:
-        type: boolean
-    required: [success]
