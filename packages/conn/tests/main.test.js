@@ -275,18 +275,10 @@ describe('Grown.Conn', () => {
         },
       };
 
-      let emit;
-
-      server.plug({
-        $install(ctx) {
-          emit = (evt, _ctx, opts) => ctx.emit(evt, _ctx, opts);
-        },
-      });
-
       server.mount(conn => {
         conn.state.title = 'Untitled';
 
-        return emit('before_render', conn, template);
+        return server.emit('before_render', conn, template);
       });
 
       return server.request('/', (err, conn) => conn.res.ok(err, 200));
