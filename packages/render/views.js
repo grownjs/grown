@@ -299,7 +299,8 @@ module.exports = (Grown, util) => {
           contents: self.partial(src, data),
         };
 
-        return ctx.emit('before_render', this, tpl)
+        return Promise.resolve()
+          .then(() => ctx.emit('before_render', this, tpl))
           .catch(e => {
             ctx.emit('failure', e, scope._options);
           })

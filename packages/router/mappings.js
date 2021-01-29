@@ -55,7 +55,8 @@ module.exports = (Grown, util) => {
 
     this._mappings = ctx.router.mappings;
 
-    return ctx.emit('before_routes', ctx, _routes)
+    return Promise.resolve()
+      .then(() => ctx.emit('before_routes', ctx, _routes))
       .catch(e => {
         ctx.emit('failure', e, options);
       })
