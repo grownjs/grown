@@ -110,49 +110,6 @@ describe('Grown.Server', () => {
 
         expect(g.on('x', cb).off('x', cb)).to.eql(g);
       });
-
-      it('will emit asynchronously', () => {
-        let call = null;
-
-        g.on('async', () => {
-          return new Promise(ok => {
-            setTimeout(() => {
-              call = true;
-              ok();
-            }, 100);
-          });
-        });
-
-        return g.emit('async').then(() => {
-          expect(call).to.eql(true);
-        });
-      });
-
-      it('will emit in sequence', () => {
-        const call = [];
-
-        g.on('async-seq', () => {
-          return new Promise(ok => {
-            setTimeout(() => {
-              call.push(1);
-              ok();
-            }, 200);
-          });
-        });
-
-        g.on('async-seq', () => {
-          return new Promise(ok => {
-            setTimeout(() => {
-              call.push(2);
-              ok();
-            }, 100);
-          });
-        });
-
-        return g.emit('async-seq').then(() => {
-          expect(call).to.eql([1, 2]);
-        });
-      });
     });
 
     if (!process.env.U_WEBSOCKETS_SKIP) {
