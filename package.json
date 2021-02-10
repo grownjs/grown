@@ -43,6 +43,6 @@
   "dependencies": {
     "@grown/bud": "^0.0.27",
     "@grown/cli": "^0.0.34",
-    "@grown/server": "^0.0.29"
+    "@grown/server": "^0.0.30"
   }
 }
