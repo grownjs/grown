@@ -248,7 +248,9 @@ module.exports = function _uws(ctx, options, callback, protocolName) {
       compression: 0,
       idleTimeout: 10,
       open: ws => {
-        Object.assign(ws, this._.buildPubsub());
+        Object.assign(ws, this._.buildPubsub(), {
+          address: remoteAddressToString(ws.getRemoteAddress()),
+        });
         this._clients.push(ws);
         this._events.emit('open', ws);
       },
@@ -256,8 +258,8 @@ module.exports = function _uws(ctx, options, callback, protocolName) {
         this._events.emit('close', ws);
         this._clients.splice(this._clients.indexOf(ws), 1);
       },
-      message: (ws, payload, isBinary) => {
-        ws.send(payload, isBinary);
+      message: (ws, payload) => {
+        ws.emit('message', String.fromCharCode.apply(null, new Uint8Array(payload)));
       },
     });
     app.any('/*', (res, req) => {
