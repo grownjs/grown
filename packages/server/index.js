@@ -135,6 +135,7 @@ function _grownFactory($, util, options) {
     init() {
       util.mergeMethodsInto.call(this, this, scope._events);
 
+      this.once('start', () => this.plug(options.plug))
       this.once('begin', () => this.emit('start'));
       this.once('listen', () => this.emit('start'));
 
