@@ -56,6 +56,7 @@ module.exports = function $listen(location, params, cb) {
   _server.close = () => {
     /* istanbul ignore else */
     if (_close) {
+      this._events.emit('end', _server);
       _close();
     }
   };
