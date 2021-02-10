@@ -247,7 +247,7 @@ describe('Grown.Server', () => {
             const ws = new WebSocket('ws://0.0.0.0:3000');
 
             ws.on('open', () => {
-              ws.send(JSON.stringify({ foo: 42 }));
+              ws.json({ foo: 42 });
             });
             ws.on('message', data => {
               evts.push(data);
