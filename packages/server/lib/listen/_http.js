@@ -5,7 +5,9 @@ const qs = require('querystring');
 const WebSocket = require('ws');
 
 const $host = require('./host');
-const { send, sendFile, sendJSON, setStatus } = require('./util');
+const {
+  send, sendFile, sendJSON, setStatus,
+} = require('./util');
 
 module.exports = function _http(ctx, options, callback, protocolName) {
   const cb = (req, res) => {

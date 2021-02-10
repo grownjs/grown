@@ -27,7 +27,7 @@ function setStatus(code) {
 
 function send(data) {
   if (typeof data !== 'string') {
-    sendJSON(data)
+    sendJSON(data);
     return;
   }
 

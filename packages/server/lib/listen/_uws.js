@@ -9,7 +9,9 @@ const uWS = require('uWebsockets.js');
 const qs = require('querystring');
 
 const _util = require('util');
-const { send, sendFile, sendJSON, setStatus } = require('./util');
+const {
+  send, sendFile, sendJSON, setStatus,
+} = require('./util');
 
 const $host = require('./host');
 

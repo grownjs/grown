@@ -9,7 +9,7 @@ module.exports = (Grown, util) => {
     const req = new MockReq(options);
 
     req.connection = {
-      remoteAddress: options.headers['host'] || '0.0.0.0',
+      remoteAddress: options.headers.host || '0.0.0.0',
     };
 
     // keep given body if it's already an object!
