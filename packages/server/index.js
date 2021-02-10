@@ -92,6 +92,10 @@ function _grownFactory($, util, options) {
     props: {
       env: () => _environment,
 
+      get is_finished() {
+        return this.res.finished === true;
+      },
+
       // read-only
       get halted() {
         return (this.res && this.res._halted) || this.has_body || this.has_status;
