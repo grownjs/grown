@@ -41,8 +41,7 @@ module.exports = (Grown, util) => {
           },
 
           remote_ip() {
-            // FIXME:
-            return '0.0.0.0';
+            return this.req.connection.remoteAddress || '0.0.0.0';
           },
 
           method() {
