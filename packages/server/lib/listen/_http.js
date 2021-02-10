@@ -5,12 +5,13 @@ const qs = require('querystring');
 const WebSocket = require('ws');
 
 const $host = require('./host');
-const { send, sendFile, setStatus } = require('./util');
+const { send, sendFile, sendJSON, setStatus } = require('./util');
 
 module.exports = function _http(ctx, options, callback, protocolName) {
   const cb = (req, res) => {
     req.query = req.query || qs.parse(req.url.split('?')[1]);
     res.send = send.bind(res);
+    res.json = sendJSON.bind(res);
     res.status = setStatus.bind(res);
     res.sendFile = sendFile.bind(res);
 

@@ -13,6 +13,12 @@ function sendFile(src, opts) {
   });
 }
 
+function sendJSON(data) {
+  this.setHeader('content-type', 'application/json');
+  this.write(JSON.stringify(data));
+  this.end();
+}
+
 function setStatus(code) {
   this.statusCode = code;
   this.statusMessage = STATUS_CODES[code] || 'unknown';
@@ -21,7 +27,8 @@ function setStatus(code) {
 
 function send(data) {
   if (typeof data !== 'string') {
-    data = JSON.stringify(data);
+    sendJSON(data)
+    return;
   }
 
   if (typeof data !== 'undefined') {
@@ -34,5 +41,6 @@ function send(data) {
 module.exports = {
   send,
   sendFile,
+  sendJSON,
   setStatus,
 };

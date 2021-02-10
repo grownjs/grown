@@ -9,7 +9,7 @@ const uWS = require('uWebsockets.js');
 const qs = require('querystring');
 
 const _util = require('util');
-const { send, sendFile, setStatus } = require('./util');
+const { send, sendFile, sendJSON, setStatus } = require('./util');
 
 const $host = require('./host');
 
@@ -180,6 +180,7 @@ function ServerResponse(req, resp) {
 _util.inherits(ServerResponse, Transform);
 
 ServerResponse.prototype.send = send;
+ServerResponse.prototype.json = sendJSON;
 ServerResponse.prototype.status = setStatus;
 ServerResponse.prototype.sendFile = sendFile;
 
