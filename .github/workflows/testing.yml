@@ -13,8 +13,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-      - uses: tacoss/nodejs@master
-        env:
-          U_WEBSOCKETS_SKIP: true
-        with:
-          args: make ci
+      - uses: actions/setup-node@v1
+      - run: make ci

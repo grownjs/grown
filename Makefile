@@ -20,11 +20,15 @@ test-ci:
 
 test-all:
 	@make -s $(RUNNER):bud $(RUNNER):cli $(RUNNER):grpc $(RUNNER):graphql $(RUNNER):model
-	@make -s $(RUNNER):repl $(RUNNER):test $(RUNNER):conn $(RUNNER):server $(RUNNER):access $(RUNNER):session
+	@make -s $(RUNNER):repl $(RUNNER):test $(RUNNER):conn $(RUNNER):access $(RUNNER):session
 	@make -s $(RUNNER):logger $(RUNNER):render $(RUNNER):router $(RUNNER):static $(RUNNER):tarima $(RUNNER):upload
 
+test-server:
+	@(cd packages/server && npm link uWebSockets.js)
+	@make -s $(RUNNER):server U_WEBSOCKETS_PATH=$(shell node -e 'console.log(require.resolve("uWebSockets.js"))')
+
 ci: deps
-	@make -s clean setup test-ci codecov
+	@make -s clean setup test-ci ci-deps test-server codecov
 
 testc\:%:
 	@make -s test:$* coverage:$*
@@ -75,3 +79,6 @@ check: deps
 
 deps: package*.json
 	@(((ls node_modules | grep .) > /dev/null 2>&1) || npm i) || true
+
+ci-deps:
+	@npm i -g $(shell cat packages/server/package.json | jq '.dependencies["uWebSockets.js"]')
