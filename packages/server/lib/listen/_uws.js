@@ -84,25 +84,20 @@ function prepBody(req, res, cb) {
 }
 
 function readBody(req, res, cb) {
-  let buffer;
+  let buffer = Buffer.from('');
   res.onData((part, end) => {
     const chunk = Buffer.from(part);
-    const slice = part.slice(part.byteOffset, part.byteLength);
 
-    req.stream.push(new Uint8Array(slice));
+    if (req.stream) {
+      const slice = part.slice(part.byteOffset, part.byteLength);
 
+      req.stream.push(new Uint8Array(slice));
+    }
+
+    buffer = Buffer.concat([buffer, chunk]);
     if (end) {
-      req.stream.push(null);
-
-      if (buffer) {
-        cb(Buffer.concat([buffer, chunk]).toString('utf8'));
-      } else {
-        cb(chunk.toString('utf8'));
-      }
-    } else if (buffer) {
-      buffer = Buffer.concat([buffer, chunk]);
-    } else {
-      buffer = Buffer.concat([chunk]);
+      if (req.stream) req.stream.push(null);
+      cb(buffer.toString());
     }
   });
 }
