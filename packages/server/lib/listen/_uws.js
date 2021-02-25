@@ -44,7 +44,7 @@ function convertFrom(obj) {
 
     let result = chunk.data;
     if (result instanceof ArrayBuffer) {
-      result = Buffer.from(result).toString('utf8').replace(/\0/g, '');
+      result = Buffer.from(result).toString('utf8');
     }
 
     if (!values[chunk.name]) {
@@ -97,7 +97,7 @@ function readBody(req, res, cb) {
     buffer = Buffer.concat([buffer, chunk]);
     if (end) {
       if (req.stream) req.stream.push(null);
-      cb(buffer.toString());
+      cb(buffer);
     }
   });
 }
@@ -269,6 +269,7 @@ module.exports = function _uws(ctx, options, callback, protocolName) {
       const _resp = new ServerResponse(_req, res);
 
       const next = (data, cb) => {
+        if (data instanceof Buffer) data = data.toString('utf8');
         if (typeof data === 'string' && data.length) {
           _req.body = cb(data);
           _req._body = true;

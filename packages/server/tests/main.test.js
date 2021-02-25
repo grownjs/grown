@@ -181,15 +181,9 @@ describe('Grown.Server', () => {
               body: payload.getBuffer(),
             });
 
-            // FIXME: why randomly is not "bar"?
-            try {
-              expect(data).to.eql('{"foo":"bar"}');
-            } catch (e) {
-              console.log('E_WARN', e.message);
-            } finally {
-              app.close();
-              done();
-            }
+            expect(data).to.eql('{"foo":"bar"}');
+            app.close();
+            done();
           });
         });
 
