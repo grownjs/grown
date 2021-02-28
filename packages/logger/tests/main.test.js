@@ -19,28 +19,14 @@ describe('Grown.Logger', () => {
     });
   });
 
-  it('should reformat printed items', () => {
-    Grown.Logger.message('- Item');
-    expect(buffer[0]).to.contain('─ Item');
+  it('should wrap all messages', () => {
+    Grown.Logger.message('OK');
+    expect(buffer[0]).to.contain('\rOK\u001b[K\n');
   });
 
-  it('should reformat printed messages', () => {
-    Grown.Logger.message('Hello world');
-    expect(buffer[0]).to.contain('› Hello world');
-  });
-
-  it('should reformat printed exceptions', () => {
-    Grown.Logger.error('Just an exception');
-    expect(buffer[0]).to.contain('─ Just an exception');
-  });
-
-  it('should reformat printed write/read info', () => {
-    Grown.Logger.message('write stuff');
-
-    return Promise.resolve().then(() => {
-      expect(buffer[0]).to.eql('\b');
-      expect(buffer[1]).to.contain('✔ stuff');
-    });
+  it('should colorize error messages', () => {
+    Grown.Logger.error('ERR');
+    expect(buffer[0]).to.contain('\r\u001b[31mERR\u001b[39m\u001b[K\n');
   });
 
   it('should decorate server and connection', () => {

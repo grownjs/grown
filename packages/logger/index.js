@@ -27,18 +27,12 @@ module.exports = (Grown, util) => {
     return _utils.timeDiff(ctx._startTime);
   }
 
-  function _errorLog(text) {
-    _logger.printf('\r\r{% error %s %}\n', text);
+  function _errorLog(...args) {
+    _logger.printf('\r{%red. %s%}\n', args.join(''));
   }
 
-  function _msgLog(text) {
-    if (text.charAt() === '-') {
-      _logger.printf('\r\r{% item %s %}\n', text.substr(1).trim());
-    } else if (text.indexOf('read ') === 0 || text.indexOf('write ') === 0) {
-      _logger(text.split(' ').shift(), text.split(' ').slice(1).join(' '));
-    } else {
-      _logger.printf('\r\r{% log %s %}\n', text);
-    }
+  function _msgLog(text, ...args) {
+    _logger.printf(`\r${text}\n`, ...args);
   }
 
   return Grown('Logger', util.extendValues({
@@ -96,12 +90,12 @@ module.exports = (Grown, util) => {
       _logger = Logger.setLogger(stdout).getLogger(12);
     },
 
-    message(log) {
-      this._msgLog(log);
+    message(...args) {
+      this._msgLog(...args);
     },
 
-    error(log) {
-      this._errorLog(log);
+    error(...args) {
+      this._errorLog(...args);
     },
   }, Logger));
 };
