@@ -68,11 +68,25 @@ module.exports = (Grown, util) => {
 
       ctx.on('finished', conn => {
         const time = this._elapsedTime(conn);
+        const guid = conn.req.guid || '-';
         const code = conn.res.statusCode;
         const method = conn.req.method;
         const url = conn.req.url;
 
-        _logger.debug('{% green %s %} %s {% yellow %s %} {% gray (%s) %}\r\n', method, url, code, time);
+        let prefix;
+        if (conn.req.originalUrl) {
+          prefix = conn.req.url !== '/' ? conn.req.originalUrl.substr(0, conn.req.originalUrl.length - conn.req.url.length) : conn.req.originalUrl;
+        }
+
+        let color = 'red';
+        if (code < 500) color = 'yellow';
+        if (code < 400) color = 'green';
+
+        if (prefix) {
+          _logger.debug(`{% bold %s %} {% blue. %s %}{% blueBright. %s %} {% gray. %s %} {% ${color} %s %} {% magenta (%s) %}\r\n`, method, prefix, url, guid, code, time);
+        } else {
+          _logger.debug(`{% bold %s %} {% blueBright. %s %} {% gray. %s %} {% ${color} %s %} {% magenta (%s) %}\r\n`, method, url, guid, code, time);
+        }
       });
 
       return this.$mixins();
