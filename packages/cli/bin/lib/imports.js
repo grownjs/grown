@@ -25,7 +25,7 @@ module.exports = (Grown, util, ctx) => {
   const suffix = count === 1 ? '' : 's';
 
   Grown.Logger.getLogger()
-    .printf('{% info %s symbol%s found: %} %s\r\n', count, suffix, names.join(', '));
+    .printf('\r{% info. %s symbol%s found: %} %s\n', count, suffix, names.join(', '));
 
   return container;
 };

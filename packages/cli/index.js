@@ -221,12 +221,9 @@ module.exports = (Grown, util) => {
         });
 
         // clear previous logs...
-        process.stdout.write('\r\x1b[K');
+        process.stdout.write('\x1b[K');
 
-        /* istanbul ignore next */
-        const _close = process.version.split('.')[1] === '6' ? 'exit' : 'close';
-
-        child.on(_close, exitCode => {
+        child.on('close', exitCode => {
           if (exitCode !== 0) {
             reject(this._onExit(1));
           } else {

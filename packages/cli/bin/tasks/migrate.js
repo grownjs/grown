@@ -62,7 +62,7 @@ module.exports = {
 
     function fail(e) {
       Grown.Logger.getLogger()
-        .printf('\r{% error %s %}\r\n', e.stack);
+        .printf('\r{% error. %s %}\n', e.stack);
     }
 
     return Promise.resolve()
@@ -73,7 +73,7 @@ module.exports = {
         }
 
         Grown.Logger.getLogger()
-          .printf('\r{% error Unknown %s action, add --help for usage info %}\r\n', cmd);
+          .printf('\r{% error. Unknown %s action, add --help for usage info %}\n', cmd);
 
         process.exit(1);
       })

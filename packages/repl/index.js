@@ -130,7 +130,7 @@ module.exports = (Grown, util) => {
           e = util.cleanError(e, Grown.cwd);
         }
 
-        Logger.getLogger().info('\r{% error %s %}\r\n', e.stack || e.message);
+        Logger.getLogger().info('\r{% error. %s %}\n', e.stack || e.message);
         callback();
       });
   }
@@ -178,7 +178,7 @@ module.exports = (Grown, util) => {
       });
 
       const logger = Logger.getLogger()
-        .info('\r{% log Loading %s... %}', hooks.join(', '));
+        .info('\r{% log. Loading %s... %}', hooks.join(', '));
 
       // FIXME: enable extensions?
       const ctx = {
@@ -190,14 +190,14 @@ module.exports = (Grown, util) => {
         /* istanbul ignore else */
         if (e.errors) {
           e.errors.forEach(err => {
-            logger.info('{% exception %s (%s) %}\r\n', err.message, err.type);
+            logger.info('\r{% exception. %s (%s) %}\n', err.message, err.type);
           });
         }
 
         /* istanbul ignore else */
         if (e.original) {
-          logger.info('{% failure %s %}\r\n', e.original.detail);
-          logger.info('{% failure %s %}\r\n', e.original.message);
+          logger.info('\r{% failure. %s %}\n', e.original.detail);
+          logger.info('\r{% failure. %s %}\n', e.original.message);
         }
 
         /* istanbul ignore else */
@@ -205,7 +205,7 @@ module.exports = (Grown, util) => {
           e = util.cleanError(e, Grown.cwd);
         }
 
-        logger.info('\r{% error %s %}\r\n', e.stack || e.message);
+        logger.info('\r{% error. %s %}\n', e.stack || e.message);
       }
 
       Object.keys(this._cmds).forEach(cmd => {
