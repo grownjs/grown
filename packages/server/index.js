@@ -135,9 +135,11 @@ function _grownFactory($, util, options) {
     init() {
       util.mergeMethodsInto.call(this, this, scope._events);
 
-      this.once('start', () => this.plug(options.plug));
-      this.once('begin', () => this.emit('start'));
-      this.once('listen', () => this.emit('start'));
+      process.nextTick(() => {
+        this.once('start', () => this.plug(options.plug));
+        this.once('begin', () => this.emit('start'));
+        this.once('listen', () => this.emit('start'));
+      });
 
       _mount.call(scope, (req, res, next) => {
         if (options.cors) {

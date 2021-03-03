@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-expressions */
 
+const td = require('testdouble');
 const FormData = require('form-data');
 const WebSocket = require('ws');
 const { expect } = require('chai');
@@ -258,6 +259,19 @@ describe('Grown.Server', () => {
             }, 200);
           });
         });
+
+        it('should fire startup events', done => {
+          const ev = td.func('callback');
+
+          g.on('done', ev);
+          g.on('start', ev);
+          g.on('listen', ev);
+          g.listen(3000, app => {
+            expect(td.explain(ev).callCount).to.eql(3);
+            app.close();
+            done();
+          });
+        });
       });
     }
 
@@ -341,6 +355,19 @@ describe('Grown.Server', () => {
             app.close();
             done();
           }, 200);
+        });
+      });
+
+      it('should fire startup events', done => {
+        const ev = td.func('callback');
+
+        g.on('done', ev);
+        g.on('start', ev);
+        g.on('listen', ev);
+        g.listen(3000, app => {
+          expect(td.explain(ev).callCount).to.eql(3);
+          app.close();
+          done();
         });
       });
     });

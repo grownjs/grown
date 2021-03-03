@@ -81,9 +81,8 @@ module.exports = function $listen(location, params, cb) {
       Promise.resolve()
         .then(() => _listen())
         .then(() => debug('#%s Done. Starting application', process.pid))
-        .then(() => resolve(_server))
+        .then(() => resolve(_server) || _done())
         .then(() => cb && cb(_server))
-        .then(() => _done())
         .catch(reject);
     }
 
