@@ -97,7 +97,11 @@ function buildPubsub() {
 
       /* istanbul ignore else */
       if (ee(e)._sent) {
-        throw new Error(`Event '${e}' already emitted`);
+        try {
+          cb();
+        } finally {
+          return this;
+        }
       }
 
       function $once() {
