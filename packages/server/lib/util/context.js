@@ -100,7 +100,7 @@ function buildPubsub() {
         try {
           cb();
         } finally {
-          return this;
+          return this; // eslint-disable-line
         }
       }
 
