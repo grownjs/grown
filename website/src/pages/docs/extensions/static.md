@@ -16,4 +16,4 @@ $render: ~/src/lib/layouts/default.pug
 ### Private* props <var>static</var>
 ### Private* methods <var>static</var>
 
-➯ Next: [Extensions &rangle; Tarima](./docs/extensions/tarima)
+➯ Next: [Extensions &rangle; Test](./docs/extensions/test)

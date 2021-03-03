@@ -13,7 +13,6 @@ require('global-or-local')
     '@grown/router',
     '@grown/server',
     '@grown/static',
-    '@grown/tarima',
     '@grown/logger',
     '@grown/graphql',
     '@grown/session',
