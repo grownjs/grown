@@ -24,7 +24,7 @@ module.exports = (Grown, util) => ({
           const suffix = count === 1 ? '' : 's';
           const modelNames = models.join(', ');
 
-          ctx.logger.printf('{% info %s model%s found: %} %s\r\n', count, suffix, modelNames);
+          ctx.logger.printf('\r{% info. %s model%s found: %} %s\n', count, suffix, modelNames);
         });
     },
   },

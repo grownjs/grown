@@ -82,10 +82,13 @@ module.exports = (Grown, util) => {
         if (code < 500) color = 'yellow';
         if (code < 400) color = 'green';
 
+        let msg;
         if (prefix) {
-          _logger.debug(`{% bold %s %} {% blue. %s %}{% blueBright. %s %} {% gray. %s %} {% ${color} %s %} {% magenta (%s) %}\r\n`, method, prefix, url, guid, code, time);
+          msg = `\r{% bold %s %} {% blue. %s %}{% blueBright. %s %} {% gray. %s %} {% ${color} %s %} {% magenta (%s) %}\n`;
+          _logger.debug(msg, method, prefix, url, guid, code, time);
         } else {
-          _logger.debug(`{% bold %s %} {% blueBright. %s %} {% gray. %s %} {% ${color} %s %} {% magenta (%s) %}\r\n`, method, url, guid, code, time);
+          msg = `\r{% bold %s %} {% blueBright. %s %} {% gray. %s %} {% ${color} %s %} {% magenta (%s) %}\n`;
+          _logger.debug(msg, method, url, guid, code, time);
         }
       });
 

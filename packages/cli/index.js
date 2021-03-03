@@ -99,7 +99,6 @@ module.exports = (Grown, util) => {
 
     dirs.forEach(cwd => {
       /* istanbul ignore else */
-      /* istanbul ignore else */
       if (fs.existsSync(cwd)) {
         fs.readdirSync(cwd)
           .filter(x => x.indexOf('.js') > -1)
@@ -113,7 +112,7 @@ module.exports = (Grown, util) => {
   }
 
   function _showTasks(taskName) {
-    logger.printf('{% gray %s (node %s ─ %s) %}\n', process.name, process.version, process.env.NODE_ENV);
+    logger.printf('\r{% gray. %s (node %s ─ %s) %}\n', process.name, process.version, process.env.NODE_ENV);
 
     this._findAvailableTasks();
 
@@ -168,7 +167,7 @@ module.exports = (Grown, util) => {
     /* istanbul ignore else */
     if (e.errors) {
       e.errors.forEach(err => {
-        logger.printf('{% exception %s (%s) %}\r\n', err.message, err.type);
+        logger.printf('\r{% exception. %s (%s) %}\n', err.message, err.type);
       });
     }
 
@@ -180,18 +179,18 @@ module.exports = (Grown, util) => {
     if (e.original) {
       /* istanbul ignore else */
       if (e.original.detail) {
-        logger.printf('{% failure %s %}\r\n', e.original.detail);
+        logger.printf('\r{% failure. %s %}\n', e.original.detail);
       }
 
-      logger.printf('{% failure %s %}\r\n', e.original.message);
+      logger.printf('\r{% failure. %s %}\n', e.original.message);
     }
 
     const message = (e.stack || e.message).replace(/\b(\w+):/, '($1)');
 
     if (task) {
-      logger.printf('\r{% error [%s] %s %}\r\n', task, message);
+      logger.printf('\r{% error. [%s] %s %}\n', task, message);
     } else {
-      logger.printf('\r{% error %s %}\r\n', message);
+      logger.printf('\r{% error. %s %}\n', message);
     }
     process.exit(1);
   }
@@ -199,7 +198,7 @@ module.exports = (Grown, util) => {
   function _onExit(statusCode) {
     /* istanbul ignore else */
     if (!statusCode) {
-      logger.printf('\r\r{% end Done %}\n');
+      logger.printf('\r{% end Done %}\n');
     }
 
     process.exit(statusCode);
@@ -222,7 +221,7 @@ module.exports = (Grown, util) => {
         });
 
         // clear previous logs...
-        process.stdout.write('\x1b[K\r');
+        process.stdout.write('\r\x1b[K');
 
         /* istanbul ignore next */
         const _close = process.version.split('.')[1] === '6' ? 'exit' : 'close';
