@@ -29,6 +29,11 @@ module.exports = ($, cwd, argv, util) => {
     throw env.error;
   }
 
+  /* istanbul ignore else */
+  if (argv.flags.silent || process.env.CI === 'true') {
+    process.silent = true;
+  }
+
   // cleanup
   delete process.env.error;
   delete env.error;

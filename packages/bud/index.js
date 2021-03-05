@@ -31,9 +31,10 @@ const util = require('./util');
 // Grown-container barebones
 module.exports = (cwd, argv) => {
   const _argv = util.argvParser(argv || process.argv.slice(2), {
-    boolean: ['V', 'd', 'help'],
+    boolean: ['V', 'd', 's', 'help'],
     alias: {
       V: 'verbose',
+      s: 'silent',
       d: 'debug',
       p: 'port',
       h: 'host',
