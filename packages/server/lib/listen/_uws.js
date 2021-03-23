@@ -237,6 +237,10 @@ module.exports = function _uws(ctx, options, callback, protocolName) {
 
   this.close = () => uWS.us_listen_socket_close(app._self);
   app.listen(ctx.host, ctx.port, socket => {
+    if (socket === false) {
+      throw new Error(`listen EADDRINUSE: address already in use 0.0.0.0:${ctx.port}`);
+    }
+
     debug('#%s Server was started and listening at port', process.pid, ctx.port);
 
     app._self = socket;
