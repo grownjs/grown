@@ -116,7 +116,6 @@ describe('Grown.Conn', () => {
       return server.request('/', (err, conn) => {
         expect(conn.resp_headers).to.eql({
           'content-type': 'text/html; charset=utf8',
-          'content-length': 0,
         });
         expect(() => { conn.resp_headers = {}; }).not.to.throw();
         expect(() => { conn.resp_headers = -1; }).to.throw(/Invalid headers/);
@@ -145,7 +144,10 @@ describe('Grown.Conn', () => {
       });
 
       return server.request('/', (err, conn) => {
-        expect(conn.resp_headers).to.eql({ location: '/fix?a=b' });
+        expect(conn.resp_headers).to.eql({
+          'content-type': 'text/html; charset=utf8',
+          location: '/fix?a=b',
+        });
         expect(err).to.be.null;
       });
     });
@@ -154,7 +156,10 @@ describe('Grown.Conn', () => {
       server.mount(conn => conn.redirect('https://api.soypache.co:8080'));
 
       return server.request('/', (err, conn) => {
-        expect(conn.resp_headers).to.eql({ location: 'https://api.soypache.co:8080' });
+        expect(conn.resp_headers).to.eql({
+          'content-type': 'text/html; charset=utf8',
+          location: 'https://api.soypache.co:8080',
+        });
         expect(err).to.be.null;
       });
     });
