@@ -43,24 +43,16 @@ module.exports = (Grown, util) => {
       if (body !== null && Buffer.isBuffer(body)) {
         debug('#%s Response is a buffer. Sending as %s', ctx.pid, ctx.content_type);
 
-        /* istanbul ignore else */
-        if (!ctx.res._header) {
-          ctx.res.setHeader('Content-Type', ctx.content_type);
-          ctx.res.setHeader('Content-Length', body.length);
-        }
+        ctx.res.setHeader('Content-Length', body.length);
       } else if (body !== null && typeof body === 'object') {
         debug('#%s Response is an object. Sending as application/json', ctx.pid);
 
         body = JSON.stringify(body);
         ctx.content_type = 'application/json';
-      }
-
-      /* istanbul ignore else */
-      if (!ctx.res._header) {
-        ctx.res.setHeader('Content-Type', `${ctx.content_type}; charset=${ctx.resp_charset}`);
         ctx.res.setHeader('Content-Length', Buffer.byteLength(body || ''));
       }
 
+      ctx.res.setHeader('Content-Type', `${ctx.content_type}; charset=${ctx.resp_charset}`);
       ctx.res.write(body || '');
       ctx.res.end();
     });
