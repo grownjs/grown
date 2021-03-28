@@ -28,15 +28,11 @@ test-server:
 	@make -s $(RUNNER):server U_WEBSOCKETS_PATH=$(shell node -e 'console.log(require.resolve("uWebSockets.js"))')
 
 ci: deps
-	@make -s clean setup test-ci ci-deps test-server codecov
+	@make -s clean setup test-ci ci-deps test-server
+	@npm run codecov
 
 testc\:%:
 	@make -s test:$* coverage:$*
-
-codecov:
-	@curl -s https://codecov.io/bash > codecov.sh
-	@chmod +x codecov.sh
-	@./codecov.sh -p build/coverage -f '*.info' -F unit
 
 coverage\:%:
 	@mkdir -p build/coverage

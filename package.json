@@ -17,7 +17,8 @@
   "scripts": {
     "test": "node test & (sleep 1; curl 0.0.0.0:8080/die || exit 2)",
     "lint": "eslint $(git ls-files | grep -E '(js|pug)$')",
-    "pretest": "npm run lint"
+    "pretest": "npm run lint",
+    "codecov": "codecov --file=coverage/lcov.info -e TRAVIS_NODE_VERSION"
   },
   "publishConfig": {
     "access": "public"
@@ -30,6 +31,7 @@
     "url": "git+https://github.com/grownjs/grown.git"
   },
   "devDependencies": {
+    "codecov": "^3.8.1",
     "eslint": "^7.9.0",
     "eslint-config-airbnb-base": "^14.2.0",
     "eslint-plugin-import": "^2.14.0",
