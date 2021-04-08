@@ -73,6 +73,8 @@ module.exports = (Grown, util) => {
         const method = conn.req.method;
         const url = conn.req.url;
 
+        if (typeof this.filter === 'function' && this.filter(conn.req) === false) return;
+
         let prefix;
         if (conn.req.originalUrl) {
           prefix = conn.req.url !== '/' ? conn.req.originalUrl.substr(0, conn.req.originalUrl.length - conn.req.url.length) : conn.req.originalUrl;
