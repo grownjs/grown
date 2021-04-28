@@ -12,8 +12,9 @@ ifneq ($(wildcard .env),)
 endif
 
 GIT_REVISION=$(shell git rev-parse --short=7 HEAD)
+U_WEBSOCKETS_PATH=$(PWD)/node_modules/uWebSockets.js/uws.js
 
-export NODE_ENV GIT_REVISION
+export NODE_ENV GIT_REVISION U_WEBSOCKETS_PATH
 
 test-ci:
 	@make -s check test-all
