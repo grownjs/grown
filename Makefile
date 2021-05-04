@@ -12,9 +12,8 @@ ifneq ($(wildcard .env),)
 endif
 
 GIT_REVISION=$(shell git rev-parse --short=7 HEAD)
-U_WEBSOCKETS_PATH=$(PWD)/node_modules/uWebSockets.js/uws.js
 
-export NODE_ENV GIT_REVISION U_WEBSOCKETS_PATH
+export NODE_ENV GIT_REVISION
 
 test-ci:
 	@make -s check test-all
@@ -24,12 +23,8 @@ test-all:
 	@make -s $(RUNNER):repl $(RUNNER):test $(RUNNER):conn $(RUNNER):access $(RUNNER):session
 	@make -s $(RUNNER):logger $(RUNNER):render $(RUNNER):router $(RUNNER):static $(RUNNER):upload
 
-test-server:
-	@(cd packages/server && npm link uWebSockets.js)
-	@make -s $(RUNNER):server U_WEBSOCKETS_PATH=$(shell node -e 'console.log(require.resolve("uWebSockets.js"))')
-
 ci: deps
-	@make -s clean setup test-ci ci-deps test-server
+	@make -s clean setup test-ci ci-deps test:server
 	@npm run codecov
 
 testc\:%:

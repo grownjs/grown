@@ -5,7 +5,7 @@ const debug = require('debug')('grown:uws');
 const { STATUS_CODES, IncomingMessage } = require('http');
 const { Transform, Readable } = require('stream');
 
-const uWS = require(process.env.U_WEBSOCKETS_PATH || 'uWebsockets.js');
+const uWS = require('uWebSockets.js');
 const qs = require('querystring');
 
 const _util = require('util');
