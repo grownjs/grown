@@ -24,7 +24,9 @@ test-all:
 	@make -s $(RUNNER):logger $(RUNNER):render $(RUNNER):router $(RUNNER):static $(RUNNER):upload
 
 ci: deps
-	@make -s clean setup test-ci test:server
+	@make -s clean setup test-ci
+	@make -s test:server U_WEBSOCKETS_SKIP=true
+	@make -s test:server
 	@npm run codecov
 
 testc\:%:
