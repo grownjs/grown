@@ -24,7 +24,7 @@ test-all:
 	@make -s $(RUNNER):logger $(RUNNER):render $(RUNNER):router $(RUNNER):static $(RUNNER):upload
 
 ci: deps
-	@make -s clean setup test-ci ci-deps test:server
+	@make -s clean setup test-ci test:server
 	@npm run codecov
 
 testc\:%:
@@ -71,6 +71,3 @@ check: deps
 
 deps: package*.json
 	@(((ls node_modules | grep .) > /dev/null 2>&1) || npm i) || true
-
-ci-deps:
-	@npm i -g $(shell cat packages/server/package.json | jq '.dependencies["uWebSockets.js"]')
