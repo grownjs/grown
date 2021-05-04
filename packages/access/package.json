@@ -1,6 +1,6 @@
 {
   "name": "@grown/access",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "main": "index.js",
   "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
   "license": "MIT",
