@@ -85,7 +85,7 @@ module.exports = (Grown, util) => {
         if (code < 400) color = 'green';
 
         let msg;
-        if (prefix) {
+        if (prefix && prefix !== '/') {
           const base = conn.req.baseUrl && !prefix.includes(conn.req.baseUrl) ? conn.req.baseUrl : '';
 
           msg = `\r{% bold %s %} {% blue. %s %}{% blueBright. %s %} {% gray. %s %} {% ${color} %s %} {% magenta (%s) %}\n`;
