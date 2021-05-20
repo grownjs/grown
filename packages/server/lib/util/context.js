@@ -165,7 +165,9 @@ function endCallback(err, conn, options) {
       }
     })
     .catch(e => {
-      die.call(this, conn, e, options);
+      if (e.code !== 'ERR_STREAM_WRITE_AFTER_END') {
+        die.call(this, conn, e, options);
+      }
     });
 }
 
