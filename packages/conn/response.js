@@ -359,7 +359,13 @@ module.exports = (Grown, util) => {
           },
 
           get_json(_url, options, encoding) {
-            return this.get_body(_url, options, encoding).then(JSON.parse);
+            return this.get_body(_url, options, encoding).then(result => {
+              try {
+                return JSON.parse(result);
+              } catch (e) {
+                return { error: e, result };
+              }
+            });
           },
 
           get_body(_url, options, encoding) {
