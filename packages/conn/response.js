@@ -322,6 +322,16 @@ module.exports = (Grown, util) => {
             return this.send(value);
           },
 
+          fetch(_url) {
+            return self._fetchFile(_url)
+              .then(stream => new Promise((resolve, reject) => {
+                const chunks = [];
+                stream.on('data', chunk => chunks.push(chunk));
+                stream.on('error', reject);
+                stream.on('end', () => resolve(Buffer.concat(chunks)));
+              }));
+          },
+
           get_file(_url, filePath) {
             return self._fetchFile(_url, filePath);
           },
