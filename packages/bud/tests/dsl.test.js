@@ -164,7 +164,12 @@ describe('Grown (bud)', () => {
 
   describe('#load', () => {
     it('can load definitions from given directories', () => {
-      expect(Grown.load(path.join(__dirname, 'fixtures')).get('Example').truth).to.eql(42);
+      expect(Grown.load(path.join(__dirname, 'fixtures')).Example.truth).to.eql(42);
+    });
+
+    it('should allow to rename loaded definitions', () => {
+      expect(Grown.load(path.join(__dirname, 'fixtures'), null, '%Foo').ExampleFoo.truth).to.eql(42);
+      expect(Grown.load(path.join(__dirname, 'fixtures'), k => `${k}Bar`).ExampleBar.truth).to.eql(42);
     });
   });
 

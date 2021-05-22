@@ -1,6 +1,7 @@
 'use strict';
 
 const { Resolver, Chainable } = require('sastre');
+const $new = require('object-new');
 
 const path = require('path');
 const fs = require('fs');
@@ -32,8 +33,34 @@ function findFile(src, paths, throws) {
 }
 
 function scanDir(src, callback) {
-  return callback((ctx, hooks) => {
-    return new Resolver(ctx || null, src, hooks);
+  return callback((ctx, hooks, rename) => {
+    /* istanbul ignore else */
+    if (typeof hooks !== 'object') {
+      rename = hooks;
+      hooks = null;
+    }
+
+    /* istanbul ignore else */
+    if (typeof rename === 'string') {
+      const tpl = rename;
+      rename = k => tpl.replace('%', k);
+    }
+
+    const repo = new Resolver(ctx || null, src, hooks);
+
+    Object.keys(repo.values).forEach(key => {
+      const reference = repo.registry[key];
+      const value = repo.values[key];
+      const prop = (rename && rename(key)) || key;
+
+      delete repo.values[key];
+      delete repo.registry[key];
+      repo.values[prop] = value;
+      repo.registry[prop] = reference;
+      $new.readOnlyProperty(repo, prop, () => repo.get(prop));
+    });
+
+    return repo;
   });
 }
 
