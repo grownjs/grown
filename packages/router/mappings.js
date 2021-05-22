@@ -57,9 +57,7 @@ module.exports = (Grown, util) => {
 
     return Promise.resolve()
       .then(() => ctx.emit('before_routes', ctx, _routes))
-      .catch(e => {
-        ctx.emit('failure', e, options);
-      })
+      .catch(e => ctx.emit('failure', e, options))
       .then(() => {
         // resolve routing for controllers lookup
         _routes.forEach(route => {

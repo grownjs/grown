@@ -22,7 +22,7 @@ module.exports = (Grown, util) => {
         if (!this._controllers[controller]) {
           try {
             const _controller = this.controller_lookup
-              ? this.controller_lookup.replace('%s', controller)
+              ? this.controller_lookup.replace('%', controller)
               : `${controller}Controller`;
 
             const Ctrl = util.getProp(Grown, _controller,
@@ -33,7 +33,7 @@ module.exports = (Grown, util) => {
               definition: Ctrl,
             };
           } catch (e) {
-            throw new Error(`${controller} controller failed\n${e.stack}`);
+            throw new Error(`${controller} controller failed\n${e.message}`);
           }
         }
 
