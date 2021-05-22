@@ -139,6 +139,10 @@ function _grownFactory($, util, options) {
         this.once('start', () => this.plug(options.plug));
         this.once('begin', () => this.emit('start'));
         this.once('listen', () => this.emit('start'));
+        this.on('failure', e => {
+          console.error(`\r========= FAILURE =========\x1b[K\n${e.message}\n`);
+          process.exit(1);
+        });
       });
 
       _mount.call(scope, (req, res, next) => {
