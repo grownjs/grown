@@ -371,7 +371,7 @@ module.exports = (Grown, util) => {
               try {
                 return JSON.parse(result);
               } catch (e) {
-                return { error: e, result };
+                return { error: e.message, result };
               }
             });
           },
