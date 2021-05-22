@@ -45,8 +45,8 @@
     "y18n": ">=4.0.1"
   },
   "dependencies": {
-    "@grown/bud": "^0.0.31",
-    "@grown/cli": "^0.0.40",
+    "@grown/bud": "^0.0.32",
+    "@grown/cli": "^0.0.41",
     "@grown/server": "^0.0.36"
   }
 }
