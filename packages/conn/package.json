@@ -1,6 +1,6 @@
 {
   "name": "@grown/conn",
-  "version": "0.0.24",
+  "version": "0.0.25",
   "main": "index.js",
   "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
   "license": "MIT",
