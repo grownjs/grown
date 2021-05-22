@@ -111,6 +111,14 @@ module.exports = (Grown, util) => {
         ...options,
       };
 
+      const query = reqInfo.query;
+      delete reqInfo.query;
+
+      if (query) {
+        reqInfo.path += reqInfo.path.includes('?') ? '&' : '?';
+        reqInfo.path += new URLSearchParams(query).toString();
+      }
+
       const body = reqInfo.body;
       delete reqInfo.body;
 
