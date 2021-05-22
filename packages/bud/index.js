@@ -53,7 +53,17 @@ module.exports = (cwd, argv) => {
         throw new Error('Missing Grown.Server');
       }
 
-      return Grown.Server.create(options);
+      const server = Grown.Server.create(options);
+
+      /* istanbul ignore else */
+      if (Grown.env === 'development') {
+        server.on('failure', e => {
+          console.error(`\r========= FAILURE =========\x1b[K\n${e.message}\n`);
+          process.exit(1);
+        });
+      }
+
+      return server;
     },
   });
 
