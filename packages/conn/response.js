@@ -90,15 +90,35 @@ module.exports = (Grown, util) => {
     return ctx.send(ctx.resp_body);
   }
 
-  function _fetchFile(_url, filePath) {
+  function _fetchBody(_url, filePath) {
+    const options = typeof filePath === 'object' ? filePath : null;
+
+    /* istanbul ignore else */
+    if (options !== null && typeof options !== 'undefined') {
+      filePath = null;
+    }
+
     return new Promise((resolve, reject) => {
       let dest;
       let file;
+      let req = new url.URL(_url);
 
-      (_url.indexOf('https:') !== -1 ? https : http)
-        .get(_url, async response => {
+      const reqInfo = {
+        hostname: req.host,
+        port: req.port || (req.protocol === 'https:' ? 443 : 80),
+        path: req.pathname + (req.search ? `?${req.search}` : ''),
+        method: req.method || 'GET',
+        ...options,
+      };
+
+      const body = reqInfo.body;
+      delete reqInfo.body;
+
+      req = (_url.indexOf('https:') !== -1 ? https : http)
+        .request(reqInfo, async response => {
+          /* istanbul ignore else */
           if (response.statusCode >= 300 && response.statusCode < 400) {
-            response = await this._fetchFile(url.resolve(_url, response.headers.location));
+            response = await this._fetchBody(url.resolve(_url, response.headers.location));
           }
 
           if (filePath) {
@@ -111,6 +131,12 @@ module.exports = (Grown, util) => {
           if (dest) fs.unlinkSync(dest);
           reject(err);
         });
+
+      /* istanbul ignore else */
+      if (body) {
+        req.write(body);
+      }
+      req.end();
     });
   }
 
@@ -149,7 +175,7 @@ module.exports = (Grown, util) => {
   return Grown('Conn.Response', {
     _finishRequest,
     _endRequest,
-    _fetchFile,
+    _fetchBody,
     _cutBody,
     _fixURL,
 
@@ -322,8 +348,8 @@ module.exports = (Grown, util) => {
             return this.send(value);
           },
 
-          get_buffer(_url) {
-            return this.get_file(_url)
+          get_buffer(_url, options) {
+            return this.get_file(_url, options)
               .then(stream => new Promise((resolve, reject) => {
                 const chunks = [];
                 stream.on('data', chunk => chunks.push(chunk));
@@ -332,16 +358,20 @@ module.exports = (Grown, util) => {
               }));
           },
 
-          get_json(_url, encode = 'utf8') {
-            return this.get_body(_url, encode).then(JSON.parse);
+          get_json(_url, options, encoding) {
+            return this.get_body(_url, options, encoding).then(JSON.parse);
           },
 
-          get_body(_url, encode = 'utf8') {
-            return this.get_buffer(_url).then(obj => obj.toString(encode));
+          get_body(_url, options, encoding) {
+            if (typeof options === 'string') {
+              encoding = options;
+              options = null;
+            }
+            return this.get_buffer(_url, options).then(obj => obj.toString(encoding || 'utf8'));
           },
 
           get_file(_url, filePath) {
-            return self._fetchFile(_url, filePath);
+            return self._fetchBody(_url, filePath);
           },
 
           send_file(entry, mimeType) {
