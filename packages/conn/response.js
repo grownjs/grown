@@ -322,14 +322,22 @@ module.exports = (Grown, util) => {
             return this.send(value);
           },
 
-          fetch(_url) {
-            return self._fetchFile(_url)
+          get_buffer(_url) {
+            return this.get_file(_url)
               .then(stream => new Promise((resolve, reject) => {
                 const chunks = [];
                 stream.on('data', chunk => chunks.push(chunk));
                 stream.on('error', reject);
                 stream.on('end', () => resolve(Buffer.concat(chunks)));
               }));
+          },
+
+          get_json(_url, encode = 'utf8') {
+            return this.get_body(_url, encode).then(JSON.parse);
+          },
+
+          get_body(_url, encode = 'utf8') {
+            return this.get_buffer(_url).then(obj => obj.toString(encode));
           },
 
           get_file(_url, filePath) {
