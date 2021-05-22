@@ -27,7 +27,9 @@ ci: deps
 	@make -s clean setup test-ci
 	@make -s test:server U_WEBSOCKETS_SKIP=true
 	@make -s test:server
+ifdef CI
 	@npm run codecov
+endif
 
 testc\:%:
 	@make -s test:$* coverage:$*
