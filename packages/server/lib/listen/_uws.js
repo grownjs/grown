@@ -272,10 +272,15 @@ module.exports = function _uws(ctx, options, callback, protocolName) {
       const _req = new ServerRequest(req, res);
       const _resp = new ServerResponse(_req, res);
 
-      const next = (data, cb) => {
+      const next = (data, cb, f) => {
         if (data instanceof Buffer) data = data.toString('utf8');
         if (typeof data === 'string' && data.length) {
-          _req.body = cb(data);
+          try {
+            _req.body = cb(data);
+          } catch (e) {
+            e.message = `Error decoding input${f ? ` (${f})` : ''}\n${e.message}`;
+            this._events.emit('failure', e, this._options);
+          }
           _req._body = true;
         }
 
@@ -288,9 +293,9 @@ module.exports = function _uws(ctx, options, callback, protocolName) {
       if (this._uploads) {
         prepBody(_req, res, next);
       } else if (type.includes('/json')) {
-        readBody(_req, res, data => next(data, JSON.parse));
+        readBody(_req, res, data => next(data, JSON.parse, 'JSON.parse'));
       } else if (type.includes('/x-www-form-urlencoded')) {
-        readBody(_req, res, data => next(data, qs.parse));
+        readBody(_req, res, data => next(data, qs.parse, 'qs.parse'));
       } else if (type.includes('/form-data')) {
         readBody(_req, res, data => {
           _req.body = convertFrom(uWS.getParts(data, type));
