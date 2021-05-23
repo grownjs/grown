@@ -106,7 +106,7 @@ module.exports = (Grown, util) => {
       const reqInfo = {
         hostname: req.host,
         port: req.port || (req.protocol === 'https:' ? 443 : 80),
-        path: req.pathname + (req.search ? `?${req.search}` : ''),
+        path: req.pathname + req.search,
         method: req.method || 'GET',
         ...options,
       };
