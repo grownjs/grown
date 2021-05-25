@@ -8,7 +8,7 @@ module.exports = (Grown, util) => {
         const _handler = route.handler.slice();
 
         const action = _handler.length > 1 ? _handler.pop() : 'index';
-        const controller = _handler[_handler.length - 1];
+        const controller = _handler.filter(x => /^[A-Z]/.test(x)).join('.');
 
         /* istanbul ignore else */
         if (route.use && !Array.isArray(route.use)) {
