@@ -55,6 +55,9 @@ module.exports = (Grown, util) => {
       ctx.res.setHeader('Content-Type', `${ctx.content_type}; charset=${ctx.resp_charset}`);
       ctx.res.write(body || '');
       ctx.res.end();
+    }).catch(e => {
+      /* istanbul ignore else */
+      if (e.code !== 'ERR_STREAM_WRITE_AFTER_END') throw e;
     });
   }
 
