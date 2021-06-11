@@ -178,7 +178,7 @@ module.exports = (Grown, util) => {
       _uri.protocol ? `${_uri.protocol}//` : '',
       _uri.hostname ? _uri.hostname : '',
       _uri.port ? `:${_uri.port}` : '',
-      _uri.pathname && _uri.pathname !== '/' ? _uri.pathname : '',
+      _uri.pathname ? _uri.pathname : '/',
       _query ? `?${_query}` : '',
     ].join('');
   }
