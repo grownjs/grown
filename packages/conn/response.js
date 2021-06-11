@@ -331,6 +331,11 @@ module.exports = (Grown, util) => {
 
           redirect(location, timeout, body) {
             /* istanbul ignore else */
+            if (this.has_status) {
+              throw new Error(`Status is already set, given ${this.status_code}`);
+            }
+
+            /* istanbul ignore else */
             if (!(location && typeof location === 'string')) {
               throw new Error(`Invalid location: '${location}`);
             }
