@@ -33,6 +33,7 @@
     "mocha": "^7.2.0",
     "nyc": "^15.1.0",
     "std-mocks": "^1.0.1",
-    "testdouble": "^3.12.4"
+    "testdouble": "^3.12.4",
+    "glob-parent": ">=5.1.2"
   }
 }
