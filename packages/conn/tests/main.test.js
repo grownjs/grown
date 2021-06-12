@@ -158,7 +158,7 @@ describe('Grown.Conn', () => {
       return server.request('/', (err, conn) => {
         expect(conn.resp_headers).to.eql({
           'content-type': 'text/html; charset=utf8',
-          location: 'https://api.soypache.co:8080',
+          location: 'https://api.soypache.co:8080/',
         });
         expect(err).to.be.null;
       });
