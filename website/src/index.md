@@ -6,7 +6,7 @@ runkit:
   preamble: !include ~/src/lib/shared/chunks/main.js
 ---
 
-I suggest you installing NodeJS through NVM, using `8.16.2` or higher is fine.
+I suggest you installing NodeJS through NVM, using `10.24` or higher is fine.
 
 See: [NVM installation instructions](https://github.com/creationix/nvm#installation)
 

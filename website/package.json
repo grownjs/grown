@@ -15,44 +15,19 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "dev": "tarima watch -dp 3001",
-    "dist": "tarima -mqe $NODE_ENV"
+    "dev": "npm run build -- -w",
+    "dist": "npm run build --",
+    "build": "mortero -dMncpublic:. -Xlib -ecss.less -I.gitignore"
   },
-  "tarima": {
-    "from": "src",
-    "public": "build",
-    "copy": {
-      "public": "."
-    },
-    "filter": [
-      "!**/lib/**"
-    ],
-    "bundle": [
-      "**/index.js"
-    ],
+  "mortero": {
+    "bundle": "**/index.js",
     "rename": [
-      "**/pages/**/!(index).html:{basedir}/{name}/index.html",
-      "**/{pages,resources}/**:{fullpath/1}",
-      "**/index.(css|js):{basedir}.{ext}",
-      "**:{fullpath/1}"
+      "src/**:{filepath/1}",
+      "**/index.(css|js):{basedir}{ext}",
+      "**/{pages,resources}/**:{filepath/1}",
+      "**/!(index).html:{basedir}/{name}/index.html"
     ],
-    "watching": [
-      "package.json"
-    ],
-    "ignoreFiles": [
-      ".gitignore"
-    ],
-    "plugins": [
-      "talavera"
-    ],
-    "devPlugins": [
-      "tarima-lr"
-    ],
-    "bundleOptions": {
-      "extensions": {
-        "js": "es6",
-        "css": "less"
-      },
+    "options": {
       "kramed": {
         "highlight": true
       },
@@ -64,18 +39,11 @@
     }
   },
   "devDependencies": {
-    "buble": "^0.20.0",
-    "highlight.js": "^10.2.0",
-    "html-minifier": "^4.0.0",
-    "kind-of": ">=6.0.3",
+    "highlight.js": "^11.0.1",
     "kramed": "^0.5.6",
-    "less": "^3.9.0",
+    "less": "^4.1.1",
     "less-plugin-autoprefix": "^2.0.0",
-    "lodash": "^4.17.15",
-    "lodash.template": ">=4.5.0",
-    "minimist": ">=1.2.2",
-    "pug": "^3.0.0",
-    "talavera": "^0.8.0",
-    "tarima": "^4.8.1"
+    "mortero": "^0.0.26",
+    "pug": "^3.0.0"
   }
 }

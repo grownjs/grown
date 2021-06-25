@@ -1,69 +1,72 @@
 .body
-  h1 #[+linkTo('/', 'Grown')]
+  h1 #[alink(for='/') Grown]
   p= pkg.description
 
   .sp
-    a(href='//travis-ci.org/grownjs/grown' target='_blank')
-      img(src='//api.travis-ci.org/grownjs/grown.svg')
+    a(href='http://badge.fury.io/js/grown' target='_blank')
+      img(src='//badge.fury.io/js/grown.svg')
 
     a(href='//codecov.io/gh/grownjs/grown' target='_blank')
       img(src='//codecov.io/gh/grownjs/grown/branch/master/graph/badge.svg')
+
+    a(href='//github.com/grownjs/grown/actions' target='_blank')
+      img(src='//github.com/grownjs/grown/workflows/build/badge.svg')
 
   ul.mt.reset
     li
       h3.reset APIs
       ul.pl.reset
-        li: +linkTo('/', 'Installation')
-        li: +linkTo('/docs', 'The interface')
-        li: +linkTo('/docs/command-line', 'Command line')
+        li: alink(for='/') Installation
+        li: alink(for='/docs') The interface
+        li: alink(for='/docs/command-line') Command line
     li
       h3.reset Add-ons
       ul.pl.reset
         li
-          +linkTo('/docs/extensions', 'Extensions')
+          alink(for='/docs/extensions') Extensions
           if url.indexOf('/docs/extensions') === 0
             ul.pl.reset
-              li: +linkTo('/docs/extensions/access', 'Access')
-              li: +linkTo('/docs/extensions/bud', 'Bud')
-              li: +linkTo('/docs/extensions/cli', 'CLI')
-              li: +linkTo('/docs/extensions/conn', 'Conn')
-              li: +linkTo('/docs/extensions/graphql', 'GraphQL')
-              li: +linkTo('/docs/extensions/grpc', 'GRPC')
-              li: +linkTo('/docs/extensions/logger', 'Logger')
-              li: +linkTo('/docs/extensions/model', 'Model')
-              li: +linkTo('/docs/extensions/render', 'Render')
-              li: +linkTo('/docs/extensions/repl', 'REPL')
-              li: +linkTo('/docs/extensions/router', 'Router')
-              li: +linkTo('/docs/extensions/server', 'Server')
-              li: +linkTo('/docs/extensions/session', 'Session')
-              li: +linkTo('/docs/extensions/static', 'Static')
-              li: +linkTo('/docs/extensions/test', 'Test')
-              li: +linkTo('/docs/extensions/upload', 'Upload')
-        li: +linkTo('/docs/connection', 'Connection')
-        li: +linkTo('/docs/middlewares', 'Middlewares')
+              li: alink(for='/docs/extensions/access') Access
+              li: alink(for='/docs/extensions/bud') Bud
+              li: alink(for='/docs/extensions/cli') CLI
+              li: alink(for='/docs/extensions/conn') Conn
+              li: alink(for='/docs/extensions/graphql') GraphQL
+              li: alink(for='/docs/extensions/grpc') GRPC
+              li: alink(for='/docs/extensions/logger') Logger
+              li: alink(for='/docs/extensions/model') Model
+              li: alink(for='/docs/extensions/render') Render
+              li: alink(for='/docs/extensions/repl') REPL
+              li: alink(for='/docs/extensions/router') Router
+              li: alink(for='/docs/extensions/server') Server
+              li: alink(for='/docs/extensions/session') Session
+              li: alink(for='/docs/extensions/static') Static
+              li: alink(for='/docs/extensions/test') Test
+              li: alink(for='/docs/extensions/upload') Upload
+        li: alink(for='/docs/connection') Connection
+        li: alink(for='/docs/middlewares') Middlewares
     li
       h3.reset Data-layer
       ul.pl.reset
-        li: +linkTo('/docs/database', 'Models')
+        li: alink(for='/docs/database') Models
         if url.indexOf('/docs/database') === 0
           ul.pl.reset
-            li: +linkTo('/docs/database/backups', 'Backups')
-            li: +linkTo('/docs/database/migrations', 'Migrations')
-        li: +linkTo('/docs/validation', 'Schemas')
+            li: alink(for='/docs/database/backups') Backups
+            li: alink(for='/docs/database/migrations') Migrations
+        li: alink(for='/docs/validation') Schemas
         if url.indexOf('/docs/validation') === 0
           ul.pl.reset
-            li: +linkTo('/docs/validation/graphql', 'GraphQL')
-            li: +linkTo('/docs/validation/json-schema', 'JSON-Schema')
-            li: +linkTo('/docs/validation/protobuf', 'Protocol Buffers')
+            li: alink(for='/docs/validation/graphql') GraphQL
+            li: alink(for='/docs/validation/json-schema') JSON-Schema
+            li: alink(for='/docs/validation/protobuf') Protocol Buffers
     li
       h3.reset Controllers
       ul.pl.reset
-        li: +linkTo('/docs/controllers', 'Web')
-        li: +linkTo('/docs/controllers/grpc', 'GRPC')
-        li: +linkTo('/docs/controllers/graphql', 'GraphQL')
+        li: alink(for='/docs/controllers') Web
+        li: alink(for='/docs/controllers/grpc') GRPC
+        li: alink(for='/docs/controllers/graphql') GraphQL
     li
       h3.reset Unit-testing
       ul.pl.reset
-        li: +linkTo('/docs/testing', 'Server')
-        li: +linkTo('/docs/testing/schema', 'Schema')
-        li: +linkTo('/docs/testing/handlers', 'Handlers')
+        li: alink(for='/docs/testing') Server
+        li: alink(for='/docs/testing/schema') Schema
+        li: alink(for='/docs/testing/handlers') Handlers
