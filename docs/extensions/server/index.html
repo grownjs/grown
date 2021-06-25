@@ -9,29 +9,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no"><!--[if lt IE 9]>
     <script src="https://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <script src="https://css3-mediaqueries-js.googlecode.com/svn/trunk/css3-mediaqueries.js"></script><![endif]-->
-    <title>Grown // Server (#2bc318f)</title>
+    <title>Grown // Server (#7db424f)</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://unpkg.com/highlight.js/styles/default.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Sorts+Mill+Goudy">
   </head>
   <body class="reset">
-    <script>
-      /* eslint-disable */
-      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-      
-      ga('create', 'UA-99927618-1', 'auto');
-      ga('send', 'pageview');
-      /* eslint-enable */
-      
-    </script>
     <main id="wrapper">
       <div class="body" id="content">
-        <main><a id="menu" href="./docs/extensions/server/#sidebar">&#9776;</a>
-          <h1>Server <small><a href="//github.com/grownjs/grown/blob/master/website/src/pages/docs/extensions/server.md" target="_blank">✎</a></small></h1><p>When you invoke the <code>new Grown()</code> constructor an instance of <code>Server</code> is born.</p>
-<pre class="hljs"><code class="lang-js"><span class="hljs-keyword">const</span> server = <span class="hljs-keyword">new</span> Grown({
+        <main><a id="menu" href="./#sidebar">&#9776;</a>
+          <h1>Server <small><a href="//github.com/grownjs/jamming/blob/master/src/pages/docs/extensions/server.md" target="_blank">✎</a></small></h1><p>When you invoke the <code>new Grown()</code> constructor an instance of <code>Server</code> is born.</p>
+<pre class="hljs"><code class="lang-js"><span class="hljs-keyword">const</span> server = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Grown</span>({
   <span class="hljs-attr">foo</span>: <span class="hljs-string">&#x27;bar&#x27;</span>,
   <span class="hljs-attr">baz</span>: {
     <span class="hljs-attr">buzz</span>: <span class="hljs-string">&#x27;bazzinga&#x27;</span>,
@@ -39,17 +27,17 @@
 });
 </code></pre>
 <p>Received options are accessible only within the connection:</p>
-<pre class="hljs"><code class="lang-js">server.mount(<span class="hljs-function">(<span class="hljs-params">ctx, options</span>) =&gt;</span> {
-  <span class="hljs-built_in">console</span>.log(options(<span class="hljs-string">&#x27;foo&#x27;</span>)); <span class="hljs-comment">// bar</span>
-  <span class="hljs-built_in">console</span>.log(options(<span class="hljs-string">&#x27;baz.buzz&#x27;</span>)); <span class="hljs-comment">// bazzinga</span>
+<pre class="hljs"><code class="lang-js">server.<span class="hljs-title function_">mount</span>(<span class="hljs-function">(<span class="hljs-params">ctx, options</span>) =&gt;</span> {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title function_">options</span>(<span class="hljs-string">&#x27;foo&#x27;</span>)); <span class="hljs-comment">// bar</span>
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title function_">options</span>(<span class="hljs-string">&#x27;baz.buzz&#x27;</span>)); <span class="hljs-comment">// bazzinga</span>
 });
 </code></pre>
 <p>Options can resolve to default values, otherwise they&#39;ll throw an error:</p>
 <pre class="hljs"><code class="lang-js"><span class="hljs-comment">// it&#x27;s fine to have default values</span>
-<span class="hljs-keyword">const</span> x = options(<span class="hljs-string">&#x27;some.value&#x27;</span>, <span class="hljs-number">42</span>);
+<span class="hljs-keyword">const</span> x = <span class="hljs-title function_">options</span>(<span class="hljs-string">&#x27;some.value&#x27;</span>, <span class="hljs-number">42</span>);
 
 <span class="hljs-comment">// but some options should be present!</span>
-<span class="hljs-keyword">const</span> y = options(<span class="hljs-string">&#x27;a.required.setting.here&#x27;</span>);
+<span class="hljs-keyword">const</span> y = <span class="hljs-title function_">options</span>(<span class="hljs-string">&#x27;a.required.setting.here&#x27;</span>);
 </code></pre>
 <h2 id="module">Module</h2>
 <h3 id="props-var-mixin-var">Props <var>mixin</var></h3>
@@ -76,97 +64,76 @@
       </div>
       <aside class="inverted" id="sidebar">
         <div class="body">
-          <h1><a href="./">Grown</a>
+          <h1>
+            <a href=".">Grown</a>
           </h1>
           <p>Experimental DSL for web-apps</p>
-          <div class="sp"><a href="//travis-ci.org/grownjs/grown" target="_blank"><img src="//api.travis-ci.org/grownjs/grown.svg"></a><a href="//codecov.io/gh/grownjs/grown" target="_blank"><img src="//codecov.io/gh/grownjs/grown/branch/master/graph/badge.svg"></a></div>
+          <div class="sp"><a href="http://badge.fury.io/js/grown" target="_blank"><img src="//badge.fury.io/js/grown.svg"></a><a href="//codecov.io/gh/grownjs/grown" target="_blank"><img src="//codecov.io/gh/grownjs/grown/branch/master/graph/badge.svg"></a><a href="//github.com/grownjs/grown/actions" target="_blank"><img src="//github.com/grownjs/grown/workflows/build/badge.svg"></a></div>
           <ul class="mt reset">
             <li>
               <h3 class="reset">APIs</h3>
               <ul class="pl reset">
-                <li><a href="./">Installation</a>
+                <li>
+                  <a href=".">Installation</a>
                 </li>
-                <li><a href="./docs">The interface</a>
+                <li>
+                  <a aria-current="page" href="./docs">The interface</a>
                 </li>
-                <li><a href="./docs/command-line">Command line</a>
+                <li>
+                  <a href="./docs/command-line">Command line</a>
                 </li>
               </ul>
             </li>
             <li>
               <h3 class="reset">Add-ons</h3>
               <ul class="pl reset">
-                <li><a href="./docs/extensions">Extensions</a>
-                  <ul class="pl reset">
-                    <li><a href="./docs/extensions/access">Access</a>
-                    </li>
-                    <li><a href="./docs/extensions/bud">Bud</a>
-                    </li>
-                    <li><a href="./docs/extensions/cli">CLI</a>
-                    </li>
-                    <li><a href="./docs/extensions/conn">Conn</a>
-                    </li>
-                    <li><a href="./docs/extensions/graphql">GraphQL</a>
-                    </li>
-                    <li><a href="./docs/extensions/grpc">GRPC</a>
-                    </li>
-                    <li><a href="./docs/extensions/logger">Logger</a>
-                    </li>
-                    <li><a href="./docs/extensions/model">Model</a>
-                    </li>
-                    <li><a href="./docs/extensions/render">Render</a>
-                    </li>
-                    <li><a href="./docs/extensions/repl">REPL</a>
-                    </li>
-                    <li><a href="./docs/extensions/router">Router</a>
-                    </li>
-                    <li><strong><a class="here" href="./docs/extensions/server">Server</a></strong>
-                    </li>
-                    <li><a href="./docs/extensions/session">Session</a>
-                    </li>
-                    <li><a href="./docs/extensions/static">Static</a>
-                    </li>
-                    <li><a href="./docs/extensions/tarima">Tarima</a>
-                    </li>
-                    <li><a href="./docs/extensions/test">Test</a>
-                    </li>
-                    <li><a href="./docs/extensions/upload">Upload</a>
-                    </li>
-                  </ul>
+                <li>
+                  <a aria-current="page" href="./docs/extensions">Extensions</a>
                 </li>
-                <li><a href="./docs/connection">Connection</a>
+                <li>
+                  <a href="./docs/connection">Connection</a>
                 </li>
-                <li><a href="./docs/middlewares">Middlewares</a>
+                <li>
+                  <a href="./docs/middlewares">Middlewares</a>
                 </li>
               </ul>
             </li>
             <li>
               <h3 class="reset">Data-layer</h3>
               <ul class="pl reset">
-                <li><a href="./docs/database">Models</a>
+                <li>
+                  <a href="./docs/database">Models</a>
                 </li>
-                <li><a href="./docs/validation">Schemas</a>
+                <li>
+                  <a href="./docs/validation">Schemas</a>
                 </li>
               </ul>
             </li>
             <li>
               <h3 class="reset">Controllers</h3>
               <ul class="pl reset">
-                <li><a href="./docs/controllers">Web</a>
+                <li>
+                  <a href="./docs/controllers">Web</a>
                 </li>
-                <li><a href="./docs/controllers/grpc">GRPC</a>
+                <li>
+                  <a href="./docs/controllers/grpc">GRPC</a>
                 </li>
-                <li><a href="./docs/controllers/graphql">GraphQL</a>
+                <li>
+                  <a href="./docs/controllers/graphql">GraphQL</a>
                 </li>
               </ul>
             </li>
             <li>
               <h3 class="reset">Unit-testing</h3>
               <ul class="pl reset">
-                <li><a href="./docs/testing">Server</a>
+                <li>
+                  <a href="./docs/testing">Server</a>
                 </li>
-                <li><a href="./docs/testing/schema">Schema</a>
+                <li>
+                  <a href="./docs/testing/schema">Schema</a>
                 </li>
-                <li><a href="./docs/testing/handlers">Handlers</a>
+                <li>
+                  <a href="./docs/testing/handlers">Handlers</a>
                 </li>
               </ul>
             </li>
