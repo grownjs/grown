@@ -5,22 +5,19 @@ doctype html
 html
   head
     base(href='/')
-    meta(lang='en')
     meta(charset='utf-8')
+    import(from='styles.css')
 
     meta(http-equiv='X-UA-Compatible' content='IE=edge,chrome=1')
     meta(name='HandheldFriendly' content='true')
     meta(name='viewport' content='width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no')
 
-    <!--[if lt IE 9]>
-    script(src='https://html5shim.googlecode.com/svn/trunk/html5.js')
-    script(src='https://css3-mediaqueries-js.googlecode.com/svn/trunk/css3-mediaqueries.js')
-    <![endif]-->
+    title Grown // #{title || Untitled}
+    meta(name='release' content=GIT_REVISION)
 
-    title Grown // #{title || Untitled} (##{GIT_REVISION})
-    link(rel='stylesheet' href='styles.css')
-    link(rel='stylesheet' href='https://unpkg.com/highlight.js/styles/default.css')
-    link(rel='stylesheet' href='https://fonts.googleapis.com/css?family=Sorts+Mill+Goudy')
+    link(rel='stylesheet' href='//fonts.googleapis.com/css?family=Sorts+Mill+Goudy')
+    link(rel='stylesheet' href='//unpkg.com/highlight.js@10.7.3/styles/tomorrow.css' inline)
+    link(rel='stylesheet' href='//unpkg.com/highlight.js@10.7.3/styles/tomorrow-night.css' inline scope="html[theme=dark]")
   body.reset
     if NODE_ENV === 'production'
       script.
@@ -41,18 +38,40 @@ html
             = error.stack
             summary= error.message
 
-        main
-          if location.pathname !== '/'
-            a#menu(href=`${location.pathname}/#sidebar`) &#9776;
+        #menu.flex
+          .stork-wrapper
+            import(from='search.svg')
+            input.stork-input(data-stork='docs' placeholder='Search...')
+            .stork-output(data-stork='docs-output')
+          a(href=`${location.pathname === '/' ? '.' : location.pathname}/#nav`) &#9776;
 
-          if title
-            h1 #{title} #[small: a(href=gitUrl target='_blank') &#9998;]
+        if title
+          h1 #{title} #[small: a(href=gitUrl target='_blank') &#9998;]
 
-          != yield
+        main!= yield
 
-      aside#sidebar.inverted
-        include ../shared/docs
+        nav.flex
+          if next
+            span ➯ Next: #[a#next(href=next.link) #{next.label}]
+
+          a#back(href=`${location.pathname === '/' ? '.' : location.pathname}/#` onclick='content.scrollTop=0') &uarr; Back to the top
+
+      aside#sidebar
+        .body
+          h1#logo
+            a(href='.'): import(from='grown.svg')
+            small v#{pkg.version}
+          hr
+          p.flex
+            button#toggle: import(from='bulb.svg')
+            small The herbsman's NodeJS framework
+          hr
+          .flex.fit.gap
+            a(href='//badge.fury.io/js/grown' target='_blank'): img(src='//badge.fury.io/js/grown.svg')
+            a(href='//codecov.io/gh/grownjs/grown' target='_blank'): img(src='//codecov.io/gh/grownjs/grown/branch/master/graph/badge.svg')
+            a(href='//github.com/grownjs/grown/actions' target='_blank'): img(src='//github.com/grownjs/grown/workflows/build/badge.svg')
+          include ../shared/docs
 
     include ../mixins/runkit
 
-    script(src='scripts.js')
+    import(from='scripts.js')

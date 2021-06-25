@@ -72,3 +72,33 @@ if (activeLink && activeLocation !== '/') {
     block: 'end',
   });
 }
+
+const isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+let theme = window.localStorage.theme || '';
+function loadTheme() {
+  document.documentElement.setAttribute('theme', theme);
+  if (theme === (isDark ? 'dark' : 'light')) {
+    delete window.localStorage.theme;
+  }
+}
+window.toggle.addEventListener('click', () => {
+  theme = theme === 'light' ? 'dark' : 'light';
+  window.localStorage.theme = theme;
+  loadTheme();
+});
+if (!theme) {
+  if (isDark) {
+    theme = 'dark';
+  }
+
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+    theme = e.matches ? 'dark' : 'light';
+    loadTheme();
+  });
+}
+loadTheme();
+
+window.stork.register('docs', 'index.st', {
+  minimumQueryLength: 2,
+});

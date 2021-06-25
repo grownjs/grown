@@ -1,36 +1,9 @@
 #wrapper {
-  position: relative;
   height: 100%;
-}
-
-#content {
-  color: @lo-gray;
-  background-color: @bg-color;
-
-  h2, h3, h4 {
-    position: relative;
-
-    var {
-      background-color: @hi-gray;
-      position: absolute;
-      color: @bg-color;
-      font-size: .6em;
-      padding: 0 .3em;
-      line-height: 16px;
-      margin-left: .4em;
-    }
-  }
+  position: relative;
 }
 
 #sidebar {
-  background-color: @hi-silver;
-  border-top: 1px dashed @hi-gray;
-
-  h1 a {
-    color: @lo-gray;
-    text-decoration: none;
-  }
-
   > .body > ul {
     display: flex;
     flex-wrap: wrap;
@@ -48,67 +21,94 @@
   }
 }
 
-#menu {
+#content > main ~ nav {
+  display: flex;
+  padding-top: 20px;
+  justify-content: space-between;
+  > span > a {
+    margin-left: 5px;
+  }
+}
+
+#next {
   float: right;
+}
+#menu {
+  right: 30px;
+  padding: 5px;
+  position: fixed;
+  border-radius: 5px;
+  > a {
+    display: block;
+    margin-left: 10px;
+    margin-right: 5px;
+  }
+}
+
+#toggle {
+  border: none;
+  background-color: transparent;
+  svg path {
+    fill: #000;
+  }
+}
+
+html[theme=dark] {
+  #toggle {
+    svg path {
+      fill: #fff;
+    }
+  }
 }
 
 @media screen and (max-width: 639px) {
-  #sidebar > .body > ul > li {
-    ul {
-      padding-left: 0;
-
-      a + ul {
-        margin-top: 5px;
-      }
-
-      li {
-        margin-top: 0;
-        margin-bottom: 5px;
-      }
-
-      ul {
-        display: flex;
-        flex-wrap: wrap;
-        margin-bottom: .5em;
-
-        li {
-          margin-right: 1em;
-        }
+  #nav {
+    > ul {
+      display: flex;
+      flex-wrap: wrap;
+      > li {
+        width: 33.3%;
       }
     }
   }
 }
 
-@media screen and (min-width: 640px) {
-  body {
-    background-image: linear-gradient(to right,
-      @hi-silver 0%,
-      @hi-silver 220px,
-      @bg-color 51%,
-      @bg-color 100%);
-  }
+@media screen and (max-width: 479px) {
+  #nav > ul > li { width: 50%; }
+}
 
+@media screen and (max-width: 319px) {
+  #nav > ul > li { width: 100%; }
+}
+
+@media screen and (min-width: 640px) {
   #wrapper {
-    max-width: 940px;
+    max-width: @width;
     margin: 0 auto;
+    overflow: hidden;
   }
 
   #sidebar {
-    border: 0;
-    border-right: 1px dashed @hi-gray;
     overflow: auto;
     position: fixed;
-    width: 220px;
+    width: @sidebar;
     bottom: 0;
     top: 0;
   }
 
   #content {
-    margin-left: 220px;
+    margin-left: @sidebar;
     height: 100%;
+    overflow: auto;
+    > main {
+      margin-bottom: 50px;
+    }
   }
 
   #menu {
-    display: none;
+    position: absolute;
+    > a {
+      display: none;
+    }
   }
 }

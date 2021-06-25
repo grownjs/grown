@@ -1,0 +1,185 @@
+.stork-wrapper {
+  position: relative;
+  > svg {
+    pointer-events: none;
+    position: absolute;
+    z-index: 1;
+    left: 5px;
+    top: 5px;
+    path {
+      fill: @light-fg;
+    }
+  }
+}
+
+.stork-input {
+  width: 100%;
+  border: none;
+  position: relative;
+  background-color: @light-bg;
+  padding: 5px;
+  border-right: 1px dashed @light-thick;
+  transition: width .2s;
+  padding-left: 25px;
+  width: 30px;
+  &:focus {
+    outline: none;
+    width: 150px;
+  }
+}
+
+.stork-progress {
+  position: absolute;
+  display: block;
+  content: '';
+  bottom: 0;
+  left: 0;
+  background-color: @light-logo-fill;
+  height: 2px;
+  transition: width 0.15s ease, opacity 0.2s ease 0.3s;
+}
+
+.stork-output {
+  box-shadow: 0 1px 3px @light-shadow;
+  background-color: @light-bg;
+  border-radius: 5px 0 5px 5px;
+  transform: translateY(1px);
+  position: absolute;
+  width: 320px;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  z-index: 1;
+}
+
+.stork-message {
+  font-size: .7em;
+  padding: 5px 10px;
+  border-bottom: 1px solid @light-thick;
+}
+.stork-attribution {
+  border-top: 1px solid @light-thick;
+  color: @light-fg;
+  text-align: right;
+  font-size: 0.7em;
+  margin: 0;
+}
+
+.stork-results {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  max-height: 15em;
+  overflow-y: scroll;
+  list-style-type: none;
+}
+
+.stork-result {
+  font-size: 0.8em;
+  ~ .stork-result {
+    border-top: 1px solid @light-thick;
+  }
+  > a {
+    width: 100%;
+    padding: 10px;
+    &:hover {
+      color: inherit;
+      text-decoration: none;
+    }
+    > div ~ div {
+      margin-top: 5px;
+    }
+  }
+  &.selected {
+    background-color: @light-thick;
+  }
+}
+
+.stork-result a:link,
+.stork-result a:visited {
+  display: block;
+}
+
+.stork-result p {
+  margin: 0;
+}
+
+.stork-result .stork-title {
+  font-weight: bold;
+}
+
+.stork-highlight {
+  background-color: @light-thick;
+}
+
+.stork-error {
+  outline: 2px dashed @error;
+}
+
+.stork-close-button {
+  position: absolute;
+  z-index: 2;
+  bottom: 2px;
+  right: 5px;
+  height: 20px;
+  width: 20px;
+  padding: 0;
+  border: none;
+  line-height: 1;
+  background-color: @light-bg;
+}
+
+.stork-close-button:hover {
+  cursor: pointer;
+}
+
+@media screen and (min-width: 640px) {
+  .stork-input {
+    border: none;
+  }
+}
+
+html[theme=dark] {
+  .stork-wrapper {
+    > svg path {
+      fill: @dark-fg;
+    }
+  }
+  .stork-input {
+    color: @dark-fg;
+    background-color: @dark-bg;
+    border-color: @dark-thick;
+  }
+  .stork-progress {
+    background-color: @dark-logo-fill;
+  }
+  .stork-close-button {
+    color: @dark-fg;
+    background-color: @dark-bg;
+  }
+  .stork-output {
+    box-shadow: 0 1px 3px @dark-shadow;
+    background-color: @dark-bg;
+  }
+  .stork-message, .stork-attribution {
+    border-color: @dark-thick;
+  }
+  .stork-attribution {
+    color: @dark-fg;
+  }
+  .stork-result {
+    border-color: @dark-thick;
+    > a {
+      &:hover {
+        color: inherit;
+      }
+    }
+    &.selected {
+      background-color: @dark-thick;
+    }
+  }
+  .stork-highlight {
+    color: @dark-fg;
+    background-color: @dark-alt-bg;
+  }
+}

@@ -1,0 +1,235 @@
+html, body {
+  height: 100%;
+}
+body {
+  font-family: 'Sorts Mill Goudy', serif;
+  background-color: @light-alt-bg;
+  color: @light-fg;
+  font-size: 120%;
+}
+
+i, em { color: @light-italic; }
+b, strong { color: @light-bold; }
+
+a[href] {
+  text-decoration: none;
+  color: @light-link-text;
+  &:hover {
+    color: @light-link-hover;
+    text-decoration: underline;
+  }
+  &[aria-current=page] {
+    text-decoration: none;
+    font-weight: bold;
+    color: @light-bold;
+    &::before {
+      content: '▸ ';
+    }
+  }
+}
+
+p > code,
+li > code {
+  background-color: @light-alt-bg;
+  white-space: nowrap;
+}
+
+pre, blockquote {
+  background-color: @light-thick;
+  border-radius: 5px;
+}
+
+blockquote {
+  box-shadow: 0 1px 3px @light-shadow;
+  border-left: 5px solid @light-thick;
+  padding-left: 15px;
+  margin: 0;
+  code {
+    background-color: @light-thick;
+  }
+}
+
+p > code,
+li > code {
+  &::before { content: '`'; opacity: .5; }
+  &::after { content: '`'; opacity: .5; }
+}
+
+.segment + .segment,
+pre + *,
+* + pre,
+p + * {
+  margin-top: .5em;
+}
+
+ol + *,
+ul + *,
+blockquote + *,
+* + blockquote {
+  margin-top: 1.5em;
+}
+
+hr {
+  height: 1px;
+  border: none;
+  margin: 1em 0;
+  border-top: 1px solid @light-shadow;
+}
+
+pre,
+blockquote {
+  padding: 10px;
+}
+blockquote p:first-child { margin-top: 0; }
+blockquote p:last-child { margin-bottom: 0; }
+
+pre {
+  border: 1px dashed @light-shadow;
+}
+
+ul.reset {
+  li a {
+    border-bottom: 1px dashed @light-shadow;
+  }
+}
+
+.microlight {
+  font-family : monospace;
+  white-space : pre;
+}
+
+#logo {
+  position: relative;
+  margin-bottom: -15px;
+  color: @light-logo-fill;
+
+  a {
+    display: block;
+  }
+  svg {
+    path {
+      fill: @light-logo-fill;
+    }
+  }
+  small {
+    bottom: 0;
+    color: inherit;
+    font-size: .6em;
+    position: absolute;
+  }
+}
+
+#nav {
+  > ul{
+    > li {
+      margin-bottom: 1em;
+    }
+
+    ul {
+      margin-left: .5em;
+    }
+  }
+}
+
+#menu {
+  background-color: @light-bg;
+  border: 1px dashed @light-shadow;
+  box-shadow: 0 1px 3px @light-shadow;
+}
+
+#sidebar {
+  border-top: 1px dashed @light-shadow;
+  background-color: @light-alt-bg;
+}
+
+#content {
+  background-color: @light-bg;
+  > main ~ nav {
+    margin-top: 20px;
+    border-top: 1px dashed @light-shadow;
+  }
+}
+
+@media screen and (min-width: 640px) {
+  body {
+    background-image: linear-gradient(90deg, @light-alt-bg 50%, @light-bg 50%);
+  }
+
+  html[theme=dark] {
+    body {
+      background-image: linear-gradient(90deg, @dark-alt-bg 50%, @dark-bg 50%);
+    }
+  }
+
+  #sidebar {
+    border-right: 1px dashed @light-shadow;
+    border-top: 0;
+  }
+}
+
+html[theme=dark] {
+  body {
+    background-color: @dark-bg;
+    color: @dark-fg;
+  }
+
+  i, em { color: @dark-italic; }
+  b, strong { color: @dark-bold; }
+
+  a[href] {
+    color: @dark-link-text;
+    &:hover { color: @dark-link-hover; }
+    &[aria-current=page] {
+      color: @dark-bold;
+    }
+  }
+
+  p > code,
+  li > code {
+    background-color: @dark-alt-bg;
+  }
+  pre, blockquote {
+    background-color: @dark-shadow;
+  }
+  blockquote {
+    box-shadow: 0 1px 3px @dark-shadow;
+    border-color: @dark-alt-bg;
+  }
+  pre {
+    border: 1px dashed @dark-thick;
+  }
+  hr {
+    box-shadow: 0 3px @dark-thick;
+  }
+
+  ul.reset {
+    li a {
+      border-color: @dark-thick;
+    }
+  }
+
+  #logo {
+    color: @dark-logo-fill;
+    svg path {
+      fill: @dark-logo-fill;
+    }
+  }
+
+  #menu {
+    background-color: @dark-bg;
+    border: 1px dashed @dark-thick;
+    box-shadow: 0 1px 3px @dark-shadow;
+  }
+
+  #sidebar {
+    background-color: @dark-alt-bg;
+    border-color: @dark-thick;
+  }
+
+  #content {
+    background-color: @dark-bg;
+    > main ~ nav {
+      border-top: 1px dashed @dark-thick;
+    }
+  }
+}
