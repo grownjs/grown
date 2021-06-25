@@ -17,14 +17,14 @@
       h3.reset APIs
       ul.pl.reset
         li: alink(for='/') Installation
-        li: alink(for='/docs') The interface
+        li: alink(for='/docs' exact) The interface
         li: alink(for='/docs/command-line') Command line
     li
       h3.reset Add-ons
       ul.pl.reset
         li
           alink(for='/docs/extensions') Extensions
-          if url.indexOf('/docs/extensions') === 0
+          if location.pathname.indexOf('/docs/extensions') === 0
             ul.pl.reset
               li: alink(for='/docs/extensions/access') Access
               li: alink(for='/docs/extensions/bud') Bud
@@ -48,12 +48,12 @@
       h3.reset Data-layer
       ul.pl.reset
         li: alink(for='/docs/database') Models
-        if url.indexOf('/docs/database') === 0
+        if location.pathname.indexOf('/docs/database') === 0
           ul.pl.reset
             li: alink(for='/docs/database/backups') Backups
             li: alink(for='/docs/database/migrations') Migrations
         li: alink(for='/docs/validation') Schemas
-        if url.indexOf('/docs/validation') === 0
+        if location.pathname.indexOf('/docs/validation') === 0
           ul.pl.reset
             li: alink(for='/docs/validation/graphql') GraphQL
             li: alink(for='/docs/validation/json-schema') JSON-Schema

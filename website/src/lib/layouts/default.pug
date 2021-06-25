@@ -1,6 +1,5 @@
 - const gitBase = 'github.com/grownjs/jamming/blob/master';
 - const gitUrl = `//${gitBase}/${self.filename}`;
-- const url = '/';
 
 doctype html
 html
@@ -35,7 +34,7 @@ html
         ga('send', 'pageview');
         /* eslint-enable */
 
-    main#wrapper
+    #wrapper
       #content.body
         if error
           details
@@ -43,10 +42,11 @@ html
             summary= error.message
 
         main
-          a#menu(href=`${url !== '/' ? `.${url}` : '.'}/#sidebar`) &#9776;
+          if location.pathname !== '/'
+            a#menu(href=`${location.pathname}/#sidebar`) &#9776;
 
           if title
-            h1 #{title} #[small: a(href=gitUrl target='_blank') ✎]
+            h1 #{title} #[small: a(href=gitUrl target='_blank') &#9998;]
 
           != yield
 
