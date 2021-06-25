@@ -220,7 +220,7 @@ a {
   color: #0074E4;
   text-decoration: none;
 }
-a.here {
+a[aria-current=page] {
   color: #C70039;
 }
 a:hover {

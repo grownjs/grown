@@ -15,22 +15,10 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Sorts+Mill+Goudy">
   </head>
   <body class="reset">
-    <script>
-      /* eslint-disable */
-      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-      
-      ga('create', '', 'auto');
-      ga('send', 'pageview');
-      /* eslint-enable */
-      
-    </script>
-    <main id="wrapper">
+    <div id="wrapper">
       <div class="body" id="content">
-        <main><a id="menu" href="./#sidebar">&#9776;</a>
-          <h1>Model <small><a href="//github.com/grownjs/jamming/blob/master/src/pages/docs/extensions/model.md" target="_blank">✎</a></small></h1><p>Declare and validate your models using JSON-Schema definitions.</p>
+        <main><a id="menu" href="/docs/extensions/model/#sidebar">&#9776;</a>
+          <h1>Model <small><a href="//github.com/grownjs/jamming/blob/master/src/pages/docs/extensions/model.md" target="_blank">&#9998;</a></small></h1><p>Declare and validate your models using JSON-Schema definitions.</p>
 <pre class="hljs"><code class="lang-js"><span class="hljs-comment">/* @runkit */</span>
 <span class="hljs-comment">// register extension</span>
 <span class="hljs-keyword">const</span> <span class="hljs-title class_">Model</span> = <span class="hljs-title class_">Grown</span>.<span class="hljs-title function_">use</span>(<span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;@grown/model&#x27;</span>));
@@ -186,7 +174,7 @@
                   <a href=".">Installation</a>
                 </li>
                 <li>
-                  <a aria-current="page" href="./docs">The interface</a>
+                  <a exact="true" href="./docs">The interface</a>
                 </li>
                 <li>
                   <a href="./docs/command-line">Command line</a>
@@ -198,6 +186,56 @@
               <ul class="pl reset">
                 <li>
                   <a aria-current="page" href="./docs/extensions">Extensions</a>
+                  <ul class="pl reset">
+                    <li>
+                      <a href="./docs/extensions/access">Access</a>
+                    </li>
+                    <li>
+                      <a href="./docs/extensions/bud">Bud</a>
+                    </li>
+                    <li>
+                      <a href="./docs/extensions/cli">CLI</a>
+                    </li>
+                    <li>
+                      <a href="./docs/extensions/conn">Conn</a>
+                    </li>
+                    <li>
+                      <a href="./docs/extensions/graphql">GraphQL</a>
+                    </li>
+                    <li>
+                      <a href="./docs/extensions/grpc">GRPC</a>
+                    </li>
+                    <li>
+                      <a href="./docs/extensions/logger">Logger</a>
+                    </li>
+                    <li>
+                      <a aria-current="page" href="./docs/extensions/model">Model</a>
+                    </li>
+                    <li>
+                      <a href="./docs/extensions/render">Render</a>
+                    </li>
+                    <li>
+                      <a href="./docs/extensions/repl">REPL</a>
+                    </li>
+                    <li>
+                      <a href="./docs/extensions/router">Router</a>
+                    </li>
+                    <li>
+                      <a href="./docs/extensions/server">Server</a>
+                    </li>
+                    <li>
+                      <a href="./docs/extensions/session">Session</a>
+                    </li>
+                    <li>
+                      <a href="./docs/extensions/static">Static</a>
+                    </li>
+                    <li>
+                      <a href="./docs/extensions/test">Test</a>
+                    </li>
+                    <li>
+                      <a href="./docs/extensions/upload">Upload</a>
+                    </li>
+                  </ul>
                 </li>
                 <li>
                   <a href="./docs/connection">Connection</a>
@@ -249,7 +287,7 @@
           </ul>
         </div>
       </aside>
-    </main>
+    </div>
     <script>window.__runkit__ = {"preamble":{"contents":"require('sqlite3');\n\nconst fs = require('fs');\n\nfs.mkdirSync('./models');\nfs.mkdirSync('./models/Test');\nfs.writeFileSync('./models/Test/schema.json', `{\n  \"id\": \"ExampleModel\",\n  \"type\": \"object\",\n  \"properties\": {\n    \"value\": {\n      \"type\": \"string\"\n    }\n  }\n}`);\n\nfs.writeFileSync('./models/Test/index.js', `\n  module.exports = {\n    $schema: require('./schema')\n  };\n`);\n\nconst Grown = require('@grown/bud')();\n\nGrown.use(require('@grown/server'));\n\nconst server = new Grown(); // eslint-disable-line\n"}};</script>
     <script src="//embed.runkit.com"></script>
     <script src="scripts.js"></script>
