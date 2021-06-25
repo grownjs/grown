@@ -72,6 +72,12 @@ clean: ## Remove cache and generated artifacts
 	@$(call iif,unlink .tarima,Cache file was deleted,Cache file already deleted)
 
 #
+# Index for Stork Search
+#
+index: deps
+	@npm run index
+
+#
 # Clean dependencies
 #
 prune: clean ## Remove all stuff from node_modules/*

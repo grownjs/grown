@@ -18,7 +18,7 @@
     "dev": "npm run build -- -w",
     "dist": "npm run build --",
     "build": "mortero -dMncpublic:. -Xlib -ecss.less -I.gitignore",
-    "index": "mortero -kmain -Dpublic > build/index.toml && stork build --input build/index.toml --output public/index.st"
+    "index": "mortero -kmain -Dbuild > build/index.toml && stork build --input build/index.toml --output build/index.st"
   },
   "mortero": {
     "bundle": "**/index.js",
@@ -44,7 +44,7 @@
     "kramed": "^0.5.6",
     "less": "^4.1.1",
     "less-plugin-autoprefix": "^2.0.0",
-    "mortero": "^0.0.26",
+    "mortero": "^0.0.27",
     "pug": "^3.0.0"
   }
 }
