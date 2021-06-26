@@ -62,7 +62,7 @@ module.exports = {
 
     function fail(e) {
       Grown.Logger.getLogger()
-        .printf('\r{% error. %s %}\n', e.stack);
+        .printf('\r{% error. %s %}\n', (Grown.argv.flags.verbose && e.stack) || e.message);
     }
 
     return Promise.resolve()
