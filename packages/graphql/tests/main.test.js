@@ -13,6 +13,7 @@ function mockServer(schemas, registry, container = {}, onBefore = () => {}) {
   const middleware = Grown.GraphQL.setup(schemas, {
     registry,
     get: () => container,
+    forEach: cb => cb(container),
   });
 
   const server = new Grown();
