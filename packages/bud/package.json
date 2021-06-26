@@ -1,6 +1,6 @@
 {
   "name": "@grown/bud",
-  "version": "0.0.33",
+  "version": "0.0.34",
   "main": "index.js",
   "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
   "license": "MIT",
@@ -28,12 +28,12 @@
   },
   "devDependencies": {
     "chai": "^4.2.0",
+    "glob-parent": ">=5.1.2",
     "lodash": ">=4.17.21",
     "minimist": ">=1.2.2",
     "mocha": "^7.2.0",
     "nyc": "^15.1.0",
     "std-mocks": "^1.0.1",
-    "testdouble": "^3.12.4",
-    "glob-parent": ">=5.1.2"
+    "testdouble": "^3.12.4"
   }
 }
