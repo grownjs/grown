@@ -97,4 +97,10 @@ describe('Grown.Render', () => {
   }, (err, conn) => {
     conn.res.ok(err, '<function/>\n');
   }));
+
+  it('should support consolidate', $(async conn => {
+    conn.res.write(await conn.template('sample.pug', { value: 42 }));
+  }, (err, conn) => {
+    conn.res.ok(err, '<h1>It works.</h1>');
+  }));
 });

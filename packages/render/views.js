@@ -2,6 +2,7 @@
 
 const debug = require('debug')('grown:render');
 
+const path = require('path');
 const fs = require('fs');
 
 const RE_PREFIX = /^\.|#/;
@@ -176,6 +177,8 @@ function _render(fn, data) {
 }
 
 module.exports = (Grown, util) => {
+  const cons = require('consolidate');
+
   function _partial(view, cached, options) {
     const _ids = !Array.isArray(view.src) && view.src
       ? [view.src]
@@ -309,10 +312,24 @@ module.exports = (Grown, util) => {
           });
       };
 
+      this.template = function $template(src, data) {
+        const tpl = cons[path.extname(src).substr(1)];
+        const view = _buildPartial(src, data);
+
+        if (!tpl || typeof tpl.render !== 'function') {
+          throw new TypeError(`Invalid ${src} view, given '${_util.inspect(tpl)}'`);
+        }
+
+        debug('#%s Rendering template <%s>', process.pid, src);
+
+        return tpl(util.findFile(src, defaults.directories, !(view.fallthrough || defaults.fallthrough)), data);
+      };
+
       return {
         methods: {
           render: this.render,
           partial: this.partial,
+          template: this.template,
         },
       };
     },
@@ -341,6 +358,9 @@ module.exports = (Grown, util) => {
           },
           partial(src, data) {
             return self.partial(src, data);
+          },
+          template(src, data) {
+            return self.template(src, data);
           },
         },
       };

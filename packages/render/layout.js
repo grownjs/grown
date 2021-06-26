@@ -51,7 +51,7 @@ module.exports = (Grown, util) => {
   }
 
   function _onRender(ctx, template) {
-    const _layout = template.locals.layout || this.template;
+    const _layout = template.locals.layout || this.default_layout;
 
     /* istanbul ignore else */
     if (template.locals.layout !== false && (_layout && _layout !== template.view)) {
@@ -95,7 +95,7 @@ module.exports = (Grown, util) => {
     _renderSlot,
 
     // default options
-    template: '',
+    default_layout: '',
 
     // render hooks
     $before_render: _onRender,
