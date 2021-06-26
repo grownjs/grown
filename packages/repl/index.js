@@ -59,6 +59,7 @@ module.exports = (Grown, util) => {
       if (fd) {
         fs.closeSync(fd);
       }
+      process.exit();
     });
 
     repl.pause();
