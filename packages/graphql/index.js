@@ -64,9 +64,7 @@ module.exports = (Grown, util) => {
 
     const resolvers = {};
 
-    Object.keys(container.registry).forEach(name => {
-      const target = container.get(name);
-
+    container.forEach(target => {
       ['Mutation', 'Query'].forEach(method => {
         Object.keys(target[method] || {}).forEach(prop => {
           /* istanbul ignore else */
