@@ -322,7 +322,7 @@ module.exports = (Grown, util) => {
 
         debug('#%s Rendering template <%s>', process.pid, src);
 
-        return tpl(util.findFile(src, defaults.directories, !(view.fallthrough || defaults.fallthrough)), data);
+        return tpl(util.findFile(src, defaults.directories, !(view.fallthrough || defaults.fallthrough)), view.data);
       };
 
       return {
