@@ -17,8 +17,7 @@
   "scripts": {
     "test": "node test & (sleep 1; curl 0.0.0.0:8080/die || exit 2)",
     "lint": "eslint $(git ls-files | grep -E '(js|pug)$')",
-    "pretest": "npm run lint",
-    "codecov": "codecov --file=coverage/lcov.info -e TRAVIS_NODE_VERSION"
+    "pretest": "npm run lint"
   },
   "publishConfig": {
     "access": "public"
@@ -31,22 +30,21 @@
     "url": "git+https://github.com/grownjs/grown.git"
   },
   "devDependencies": {
-    "codecov": "^3.8.1",
     "eslint": "^7.9.0",
     "eslint-config-airbnb-base": "^14.2.0",
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-pug": "^1.2.3",
+    "glob-parent": ">=5.1.2",
     "lerna": "^3.22.1",
     "lodash": ">=4.17.11",
     "lodash.template": ">=4.5.0",
     "mem": ">=4.0.0",
     "minimist": ">=1.2.2",
-    "ssri": ">=8.0.1",
-    "y18n": ">=4.0.1",
-    "glob-parent": ">=5.1.2",
     "normalize-url": ">=4.5.1",
+    "ssri": "^8.0.1",
     "trim-newlines": ">=3.0.1",
-    "ws": ">=7.4.6"
+    "ws": ">=7.4.6",
+    "y18n": "^5.0.8"
   },
   "dependencies": {
     "@grown/bud": "^0.0.34",

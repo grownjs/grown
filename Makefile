@@ -28,7 +28,7 @@ ci: deps
 	@make -s test:server U_WEBSOCKETS_SKIP=true
 	@make -s test:server
 ifdef CI
-	@npm run codecov
+	@make -s codecov
 endif
 
 testc\:%:
@@ -39,6 +39,11 @@ coverage\:%:
 	@((sed 's|$(PWD)/packages/$(subst coverage:,,$*)/||g' packages/$(subst coverage:,,$*)/coverage/lcov.info \
 			| sed 's|^SF:|SF:packages/$(subst coverage:,,$*)/|g' \
 			> build/coverage/$(subst coverage:,,$*).info) > /dev/null 2>&1) || true
+
+codecov:
+	@curl -s https://codecov.io/bash > codecov.sh
+	@chmod +x codecov.sh
+	@./codecov.sh -p build/coverage -f '*.info' -F unit
 
 publish:
 	@make -C website dist deploy
