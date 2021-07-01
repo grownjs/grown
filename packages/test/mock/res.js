@@ -65,7 +65,9 @@ module.exports = Grown => {
     function assert(actual, expected, description) {
       let pass;
 
-      if (expected instanceof RegExp) {
+      if (typeof actual === 'string' && typeof expected === 'string') {
+        pass = actual.includes(expected);
+      } else if (expected instanceof RegExp) {
         pass = expected.test(actual);
       } else if (actual === expected) {
         pass = true;
