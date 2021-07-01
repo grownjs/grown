@@ -9,6 +9,7 @@ module.exports = Grown => {
     const res = new MockRes();
 
     res._header = null;
+    res.locals = {};
     res.cookies = {};
     res.clearCookie = k => { delete res.cookies[k]; };
     res.cookie = (k, v, o) => { res.cookies[k] = { value: v, opts: o || {} }; };
