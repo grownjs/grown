@@ -101,6 +101,10 @@ module.exports = (Grown, util) => {
     _refs: null,
 
     define(name, params, _refs) {
+      if (_refs && _refs[name]) {
+        Object.assign(params, _refs[name]);
+      }
+
       const Model = Grown.Model.Entity({
         name: `${name}Model`,
         include: [{
