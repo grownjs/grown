@@ -79,7 +79,7 @@ module.exports = (Grown, util) => {
           }
 
           // no connection? return it as Entity definition
-          return Grown.Model.Entity.define(_name, definition);
+          return Grown.Model.Entity.define(_name, DB[name].$refs[_name], DB[name].$refs);
         },
       });
 

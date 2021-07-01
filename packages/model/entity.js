@@ -8,7 +8,7 @@ const JSF_DEFAULTS = {
 
 module.exports = (Grown, util) => {
   const Ajv = require('ajv');
-  const jsf = require('json-schema-faker');
+  const jsf = require('json-schema-faker').default;
 
   function _validateFrom(id, ref, refs, data) {
     return new Promise((resolve, reject) => {
@@ -98,8 +98,10 @@ module.exports = (Grown, util) => {
     _schema,
     _wrap,
 
-    define(name, params) {
-      return Grown.Model.Entity({
+    _refs: null,
+
+    define(name, params, _refs) {
+      const Model = Grown.Model.Entity({
         name: `${name}Model`,
         include: [{
           connection: params.connection || {},
@@ -111,6 +113,15 @@ module.exports = (Grown, util) => {
           instanceMethods: params.instanceMethods || {},
         }],
       });
+
+      if (_refs) {
+        Model._refs = Object.keys(_refs).reduce((memo, key) => {
+          memo.push(_refs[key].$schema);
+          return memo;
+        }, []);
+      }
+
+      return Model;
     },
 
     connect(options, refs, cwd) {
@@ -155,9 +166,9 @@ module.exports = (Grown, util) => {
         .then(() => this._wrap(this.$schema.id, target.models[this.$schema.id], target.schemas));
     },
 
-    getSchema(id, refs) {
-      return refs
-        ? this._through(id ? `${this.$schema.id}.${id}` : this.$schema.id, refs)
+    getSchema(id) {
+      return this._refs
+        ? this._through(id ? `${this.$schema.id}.${id}` : this.$schema.id, this._refs)
         : this._schema(this.$schema, []);
     },
   });
