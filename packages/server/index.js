@@ -62,15 +62,16 @@ function _grownFactory($, util, options) {
     methods: {
       halt(cb) {
         /* istanbul ignore else */
-        if (this.res && this.res._halted) {
-          return Promise.resolve(cb(this, scope._options));
-        }
-
-        /* istanbul ignore else */
         if (this.res) {
+          /* istanbul ignore else */
+          if (this.halted) {
+            return Promise.resolve()
+              .then(() => cb(this, scope._options))
+              .catch(e => scope._events.emit('failure', e, scope._options));
+          }
+
           this.res._halted = true;
         }
-
         return Promise.resolve()
           .then(() => scope._events.emit('before_send', null, this, scope._options))
           .then(() => typeof cb === 'function' && cb(this, scope._options))
@@ -98,7 +99,11 @@ function _grownFactory($, util, options) {
 
       // read-only
       get halted() {
-        return (this.res && this.res._halted) || this.has_body || this.has_status;
+        /* istanbul ignore else */
+        if (this.res) {
+          return this.res._halted || (this.res._writableState && this.res._writableState.ended);
+        }
+        return this.has_body || this.has_status;
       },
 
       get state() {
