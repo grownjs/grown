@@ -26,15 +26,6 @@ describe('Grown (bud)', () => {
       expect(process.env.BAZ).to.eql('BUZZ');
     });
 
-    it('should setup NODE_ENV=ci when testing on CI', () => {
-      const copy = process.env;
-
-      require('../index')(null, ['CI=1', 'NODE_ENV=test']);
-      expect(process.env.NODE_ENV).to.eql('ci');
-
-      process.env = copy;
-    });
-
     it('should enable debug with verbosity', () => {
       stdMocks.use();
       require('../index')(null, ['--debug', '--verbose']);

@@ -12,11 +12,6 @@ module.exports = argv => {
     }
   });
 
-  /* istanbul ignore else */
-  if (process.env.CI && process.env.NODE_ENV.indexOf('test') === 0) {
-    process.env.NODE_ENV = 'ci';
-  }
-
   delete argv.flags.env;
 
   /* istanbul ignore else */
