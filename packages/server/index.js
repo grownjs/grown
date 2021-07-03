@@ -63,7 +63,7 @@ function _grownFactory($, util, options) {
       halt(cb) {
         /* istanbul ignore else */
         if (this.res && this.res._halted) {
-          return cb(this, scope._options);
+          return Promise.resolve(cb(this, scope._options));
         }
 
         /* istanbul ignore else */
