@@ -147,8 +147,10 @@ function _grownFactory($, util, options) {
 
         if (options.env === 'development') {
           this.on('failure', e => {
-            console.error(`\r========= FAILURE =========\x1b[K\n${e.message}\n`);
-            process.exit(1);
+            if (e.code !== 'ERR_STREAM_WRITE_AFTER_END') {
+              console.error(`\r========= FAILURE =========\x1b[K\n${e.message}\n`);
+              process.exit(1);
+            }
           });
         }
       });
