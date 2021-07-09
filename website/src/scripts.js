@@ -26,57 +26,14 @@ function links(baseURL) {
   });
 }
 
-[].slice.call(document.querySelectorAll('pre code.lang-js')).forEach(source => {
-  const matches = source.innerText.match(/\/\*+\s*@runkit\s*(.+?)\s*\*+\//);
-
-  if (!matches) return;
-
-  const snippet = __runkit__[matches[1]] || __runkit__;
-  const isEndpoint = snippet.endpoint;
-  const sourceCode = source.innerText;
-  const a = document.createElement('a');
-
-  a.innerText = '► RUN';
-  a.href = location.href;
-  a.onclick = e => {
-    if (a._locked) return;
-
-    a._locked = true;
-    delete a.onclick;
-    e.preventDefault();
-
-    const el = document.createElement('div');
-
-    source.parentNode.parentNode.insertBefore(el, source.parentNode);
-    source.parentNode.parentNode.removeChild(source.parentNode);
-
-    const notebook = RunKit.createNotebook({
-      element: el,
-      source: sourceCode,
-      mode: isEndpoint && 'endpoint',
-      title: snippet.title || 'Untitled',
-      preamble: snippet.preamble.contents
-        + (isEndpoint ? '\nexports.endpoint=(req,res)=>{res.end()}' : ''),
-      environment: [{ name: 'U_WEBSOCKETS_SKIP', value: 'true' }],
-      gutterStyle: 'none',
-      evaluateOnLoad: true,
-      onURLChanged: () => notebook.getEndpointURL().then(links),
-    });
-  };
-
-  source.parentNode.appendChild(a);
-});
-
-if (activeLink && activeLocation !== '/') {
-  activeLink.scrollIntoView({
-    block: 'end',
-  });
-}
-
 const isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+const notebooks = [];
 
 let theme = window.localStorage.theme || '';
 function loadTheme() {
+  notebooks.forEach(notebook => {
+    notebook.setTheme(theme === 'dark' ? 'atom-dark' : 'atom-light');
+  });
   document.documentElement.setAttribute('theme', theme);
   if (theme === (isDark ? 'dark' : 'light')) {
     delete window.localStorage.theme;
@@ -98,6 +55,60 @@ if (!theme) {
   });
 }
 loadTheme();
+
+[].slice.call(document.querySelectorAll('pre code.lang-js')).forEach(source => {
+  const matches = source.innerText.match(/\/\*+\s*@runkit\s*(.+?)\s*\*+\//);
+
+  if (!matches) return;
+
+  const snippet = __runkit__[matches[1]] || __runkit__;
+  const isEndpoint = snippet.endpoint;
+  const sourceCode = source.innerText;
+  const a = document.createElement('a');
+
+  a.innerText = '► RUN';
+  a.href = location.href;
+  a.onclick = e => {
+    if (a._locked) return;
+
+    a._locked = true;
+    delete a.onclick;
+    e.preventDefault();
+
+    const el = document.createElement('div');
+
+    el.style.position = 'fixed';
+    source.parentNode.parentNode.insertBefore(el, source.parentNode);
+
+    const notebook = RunKit.createNotebook({
+      element: el,
+      source: sourceCode,
+      theme: theme === 'dark' ? 'atom-dark' : 'atom-light',
+      mode: isEndpoint && 'endpoint',
+      title: snippet.title || 'Untitled',
+      preamble: snippet.preamble.contents
+        + (isEndpoint ? '\nexports.endpoint=(req,res)=>{res.end()}' : ''),
+      environment: [{ name: 'U_WEBSOCKETS_SKIP', value: 'true' }],
+      gutterStyle: 'none',
+      evaluateOnLoad: true,
+      onLoad: () => {
+        source.parentNode.parentNode.removeChild(source.parentNode);
+        el.style.position = 'static';
+      },
+      onURLChanged: () => notebook.getEndpointURL().then(links),
+    });
+
+    notebooks.push(notebook);
+  };
+
+  source.parentNode.appendChild(a);
+});
+
+if (activeLink && activeLocation !== '/') {
+  activeLink.scrollIntoView({
+    block: 'end',
+  });
+}
 
 window.stork.register('docs', 'index.st', {
   minimumQueryLength: 2,
