@@ -20,6 +20,7 @@ module.exports = (Grown, util) => {
         throw new Error('Already finished');
       }
 
+      /* istanbul ignore else */
       if (ctx.res._done) {
         debug('#%s Already done, skipping.', ctx.pid);
         return;

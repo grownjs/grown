@@ -288,5 +288,19 @@ describe('Grown.Conn', () => {
 
       return server.request('/', (err, conn) => conn.res.ok(err, 200));
     });
+
+    it('should handle halting', () => {
+      let count = 0;
+      server.mount(conn => conn.halt(() => {
+        count += 1;
+        throw new Error('WUT');
+      }));
+
+      return server.request('/', (err, conn) => {
+        expect(count).to.eql(2);
+        expect(conn.res._done).to.be.true;
+        conn.res.ok(err, 500, 'WUT');
+      });
+    });
   });
 });
