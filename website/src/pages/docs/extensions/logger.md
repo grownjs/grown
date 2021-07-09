@@ -8,7 +8,6 @@ Enable shared and custom logging in your applications.
 
 
 ```js
-/* @runkit */
 // register extension
 const Logger = Grown.use(require('@grown/logger'));
 

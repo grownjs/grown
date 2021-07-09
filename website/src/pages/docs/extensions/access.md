@@ -7,7 +7,6 @@ runkit: !include ~/src/lib/shared/runkit/server.yml
 Allow or deny access on certain resources from your application, e.g.
 
 ```js
-/* @runkit */
 // register extension
 Grown.use(require('@grown/access'));
 

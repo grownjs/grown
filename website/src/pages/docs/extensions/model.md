@@ -9,7 +9,6 @@ Declare and validate your models using JSON-Schema definitions.
 
 
 ```js
-/* @runkit */
 // register extension
 const Model = Grown.use(require('@grown/model'));
 
@@ -40,7 +39,6 @@ await ExampleModel.count();
 Repositories are built by scanning source files in any given directory, e.g.
 
 ```js
-/* @runkit */
 // register extension
 const Model = Grown.use(require('@grown/model'));
 

@@ -8,7 +8,6 @@ runkit:
 Manage your database setup, start or interact with your application, etc.
 
 ```js
-/* @runkit */
 // require and create a Grown-container
 const Grown = require('@grown/bud')();
 

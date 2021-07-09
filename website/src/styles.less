@@ -13,6 +13,7 @@
 }
 
 pre {
+  position: relative;
   font-size: 15px;
   font-family: 'Source Code Pro', monospace;
   font-weight: 400;
@@ -20,6 +21,20 @@ pre {
   > code {
     font-family: inherit;
   }
+  > a {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+  }
+}
+
+kbd {
+  border-radius: 3px;
+  padding: 0 5px;
+}
+
+iframe {
+  width: 100%;
 }
 
 ul.reset {
@@ -62,5 +77,18 @@ ul.reset {
     @media screen and (min-width: 640px) {
       flex-direction: column;
     }
+  }
+}
+
+#target {
+  position: relative;
+  display: none;
+
+  &::before {
+    content: attr(data-label);
+    position: absolute;
+    font-size: 14px;
+    left: 0;
+    top: -1.5em;
   }
 }

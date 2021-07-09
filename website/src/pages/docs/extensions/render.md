@@ -9,7 +9,6 @@ runkit:
 Print out your views and templates as response.
 
 ```js
-/* @runkit */
 // register extension
 Grown.use(require('@grown/render'));
 

@@ -28,6 +28,11 @@ a[href] {
   }
 }
 
+kbd {
+  background-color: @light-thick;
+  box-shadow: 0 0 3px @light-shadow;
+}
+
 p > code,
 li > code {
   background-color: @light-alt-bg;
@@ -45,7 +50,8 @@ blockquote {
   padding-left: 15px;
   margin: 0;
   code {
-    background-color: @light-thick;
+    padding: 0 .2em;
+    background-color: @light-bg;
   }
 }
 
@@ -82,6 +88,11 @@ blockquote {
 blockquote p:first-child { margin-top: 0; }
 blockquote p:last-child { margin-bottom: 0; }
 
+iframe {
+  border-radius: 5px;
+  background-color: @light-alt-bg;
+}
+iframe,
 pre {
   border: 1px dashed @light-shadow;
 }
@@ -150,6 +161,12 @@ ul.reset {
   }
 }
 
+#target {
+  &::before {
+    background-color: @light-bg;
+  }
+}
+
 @media screen and (min-width: 640px) {
   body {
     background-image: linear-gradient(90deg, @light-alt-bg 50%, @light-bg 50%);
@@ -184,6 +201,11 @@ html[theme=dark] {
     }
   }
 
+  kbd {
+    background-color: @dark-alt-bg;
+    box-shadow: 0 0 3px @dark-shadow;
+  }
+
   p > code,
   li > code {
     background-color: @dark-alt-bg;
@@ -194,6 +216,13 @@ html[theme=dark] {
   blockquote {
     box-shadow: 0 1px 3px @dark-shadow;
     border-color: @dark-alt-bg;
+    code {
+      background-color: @dark-bg;
+    }
+  }
+  iframe {
+    background-color: @dark-fg;
+    border: 1px dashed @dark-shadow;
   }
   pre {
     border: 1px dashed @dark-thick;
@@ -230,6 +259,12 @@ html[theme=dark] {
     background-color: @dark-bg;
     > main ~ nav {
       border-top: 1px dashed @dark-thick;
+    }
+  }
+
+  #target {
+    &::before {
+      background-color: @dark-bg;
     }
   }
 }

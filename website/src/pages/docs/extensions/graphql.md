@@ -9,7 +9,6 @@ runkit:
 Build high-level endpoints for your API consumers.
 
 ```js
-/* @runkit */
 // register extension
 Grown.use(require('@grown/graphql'));
 

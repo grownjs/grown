@@ -21,7 +21,6 @@ $ npm install grown --save
 On the beginning, starting a new web server is a simple task:
 
 ```js
-/* @runkit */
 // require and create a Grown-container
 const Grown = require('grown')();
 

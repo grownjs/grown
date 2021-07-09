@@ -12,7 +12,7 @@ function links(baseURL) {
   target.innerHTML = '<iframe name="external"></iframe>';
 
   target.firstChild.addEventListener('load', () => {
-    target.dataset.label = 'response:';
+    target.dataset.label = 'Response:';
   });
 
   [].slice.call(document.querySelectorAll('a>code')).forEach(node => {
@@ -21,7 +21,7 @@ function links(baseURL) {
     node.parentNode.setAttribute('target', 'external');
     node.parentNode.setAttribute('href', baseURL + node.dataset.href);
     node.parentNode.addEventListener('click', () => {
-      target.dataset.label = 'waiting...';
+      target.dataset.label = 'Requesting...';
     });
   });
 }
@@ -57,12 +57,9 @@ if (!theme) {
 loadTheme();
 
 [].slice.call(document.querySelectorAll('pre code.lang-js')).forEach(source => {
-  const matches = source.innerText.match(/\/\*+\s*@runkit\s*(.+?)\s*\*+\//);
+  if (!source.innerText.includes('require(')) return;
 
-  if (!matches) return;
-
-  const snippet = __runkit__[matches[1]] || __runkit__;
-  const isEndpoint = snippet.endpoint;
+  const isEndpoint = __runkit__.endpoint;
   const sourceCode = source.innerText;
   const a = document.createElement('a');
 
@@ -85,8 +82,8 @@ loadTheme();
       source: sourceCode,
       theme: theme === 'dark' ? 'atom-dark' : 'atom-light',
       mode: isEndpoint && 'endpoint',
-      title: snippet.title || 'Untitled',
-      preamble: snippet.preamble.contents
+      title: __runkit__.title || 'Untitled',
+      preamble: __runkit__.preamble.contents
         + (isEndpoint ? '\nexports.endpoint=(req,res)=>{res.end()}' : ''),
       environment: [{ name: 'U_WEBSOCKETS_SKIP', value: 'true' }],
       gutterStyle: 'none',

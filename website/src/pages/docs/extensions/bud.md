@@ -9,7 +9,6 @@ The foundation of the whole framework is this, it provides the DSL
 used by all extensions, expose common utils, etc.
 
 ```js
-/* @runkit */
 const Grown = require('@grown/bud')();
 const Util = require('@grown/bud/util');
 

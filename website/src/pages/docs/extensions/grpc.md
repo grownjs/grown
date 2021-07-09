@@ -8,7 +8,6 @@ runkit:
 Setup micro-services talking through gRPC calls.
 
 ```js
-/* @runkit */
 // register extension
 const GRPC = Grown.use(require('@grown/grpc'));
 

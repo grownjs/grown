@@ -7,7 +7,6 @@ runkit: !include ~/src/lib/shared/runkit/server.yml
 High level details for the current connection. ⚓
 
 ```js
-/* @runkit */
 // register extension
 Grown.use(require('@grown/conn'));
 
