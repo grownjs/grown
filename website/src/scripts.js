@@ -75,16 +75,19 @@ loadTheme();
     const el = document.createElement('div');
 
     el.style.position = 'fixed';
+    el.style.overflow = 'hidden';
     source.parentNode.parentNode.insertBefore(el, source.parentNode);
 
+    const prefix = 'try {';
+    const suffix = '} catch (e) { console.error(e); }';
     const notebook = RunKit.createNotebook({
       element: el,
       source: sourceCode,
       theme: theme === 'dark' ? 'atom-dark' : 'atom-light',
       mode: isEndpoint && 'endpoint',
       title: __runkit__.title || 'Untitled',
-      preamble: __runkit__.preamble.contents
-        + (isEndpoint ? '\nexports.endpoint=(req,res)=>{res.end()}' : ''),
+      preamble: prefix + (__runkit__.preamble ? __runkit__.preamble.contents || '' : '')
+        + (isEndpoint ? '\nexports.endpoint=(req,res)=>{res.end()}' : '') + suffix,
       environment: [{ name: 'U_WEBSOCKETS_SKIP', value: 'true' }],
       gutterStyle: 'none',
       evaluateOnLoad: true,

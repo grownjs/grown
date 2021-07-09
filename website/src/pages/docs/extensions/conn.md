@@ -1,5 +1,8 @@
 ---
 title: Conn
+next:
+  label: Extensions &rangle; GraphQL
+  link: docs/extensions/graphql
 $render: ~/src/lib/layouts/default.pug
 runkit: !include ~/src/lib/shared/runkit/server.yml
 ---
@@ -108,7 +111,3 @@ server.mount(ctx => {
 - `_endRequest(ctx, code[, message])` &mdash; Normalize the input given to `ctx.end()` calls.
 - `_cutBody(value)` &mdash; Trim the value passed through `set_body` calls.
 - `_fixURL(location)` &mdash; Normalize any given value into a valid URL string.
-
----
-
-➯ Next: [Extensions &rangle; GraphQL](./docs/extensions/graphql)

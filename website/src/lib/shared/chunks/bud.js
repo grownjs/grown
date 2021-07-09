@@ -1,5 +1,8 @@
+/* eslint-disable */
+
+assert = require('assert');
+
 const fs = require('fs');
-const assert = require('assert'); // eslint-disable-line
 
 fs.mkdirSync('./exts');
 fs.mkdirSync('./exts/Test');

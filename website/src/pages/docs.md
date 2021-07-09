@@ -1,5 +1,8 @@
 ---
 title: The interface
+next:
+  label: APIs &rangle; Command line
+  link: docs/command-line
 $render: ~/src/lib/layouts/default.pug
 ---
 
@@ -36,7 +39,3 @@ Invoking `new Grown()` will return a [Server](./docs/extensions/server) instance
 
 > Behind scenes, the [main module](https://github.com/grownjs/grown/blob/master/index.js)
 > `grown` is a wrapper of `@grown/bud` and `@grown/server`
-
----
-
-➯ Next: [APIs &rangle; Command line](./docs/command-line)

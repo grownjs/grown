@@ -1,5 +1,8 @@
 ---
 title: Installation
+next:
+  label: APIs &rangle; The interface
+  link: docs
 $render: ~/src/lib/layouts/default.pug
 runkit:
   endpoint: true
@@ -40,7 +43,3 @@ server.listen(8080);
 > Once you click <kbd>► RUN</kbd> try opening [`this link`](/) in your browser.
 
 <div id="target"></div>
-
----
-
-➯ Next: [APIs &rangle; The interface](./docs)

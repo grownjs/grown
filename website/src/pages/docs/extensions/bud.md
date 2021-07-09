@@ -1,5 +1,8 @@
 ---
 title: Bud
+next:
+  label: Extensions &rangle; CLI
+  link: docs/extensions/cli
 $render: ~/src/lib/layouts/default.pug
 runkit:
   preamble: !include ~/src/lib/shared/chunks/bud.js
@@ -68,7 +71,3 @@ assert(Exts.get('Test').handler() === 42);
 - `load(cwd[, hooks])` &mdash; Build module definitions from this directory.
   If `hooks` are given, found modules will be passed to them, so they can be
   extended or completely replaced.
-
----
-
-➯ Next: [Extensions &rangle; CLI](./docs/extensions/cli)

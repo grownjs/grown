@@ -1,5 +1,8 @@
 ---
 title: Command line
+next:
+  label: Add-ons &rangle; Extensions
+  link: docs/extensions
 $render: ~/src/lib/layouts/default.pug
 ---
 
@@ -51,7 +54,3 @@ Try `npx grown --help` to get more usage info.
 > ```
 >
 > Test it out!
-
----
-
-➯ Next: [Add-ons &rangle; Extensions](./docs/extensions)

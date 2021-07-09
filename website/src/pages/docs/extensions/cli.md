@@ -1,5 +1,8 @@
 ---
 title: CLI
+next:
+  label: Extensions &rangle; Conn
+  link: docs/extensions/conn
 $render: ~/src/lib/layouts/default.pug
 runkit:
   preamble: !include ~/src/lib/shared/chunks/cli.js
@@ -120,7 +123,3 @@ See: [built-in tasks](https://github.com/grownjs/grown/tree/master/packages/cli/
 - `_onError(errObj)` &mdash; Default error handler.
 - `_onExit(statusCode)` &mdash; Default exit handler.
 - `_exec(argv, callback)` &mdash; Invoke a shell command from the given `argv`, then `callback` when finished.
-
----
-
-➯ Next: [Extensions &rangle; Conn](./docs/extensions/conn)

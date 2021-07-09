@@ -1,6 +1,9 @@
+/* eslint-disable */
+
+assert = require('assert');
+
 const fs = require('fs');
 const path = require('path');
-const assert = require('assert'); // eslint-disable-line
 
 fs.mkdirSync('./app');
 fs.mkdirSync('./app/handlers');
@@ -17,12 +20,10 @@ fs.writeFileSync('./app/index.gql', `
   type Query { truth: Int }
 `);
 
-const Grown = require('@grown/bud')();
-
+Grown = require('@grown/bud')();
 Grown.use(require('@grown/server'));
 
-const server = new Grown();
-
+server = new Grown();
 server.plug(require('body-parser').json({ limit: '5mb' }));
 server.plug(require('body-parser').urlencoded({ extended: false }));
 

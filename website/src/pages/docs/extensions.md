@@ -1,5 +1,8 @@
 ---
 title: Extensions
+next:
+  label: Extensions &rangle; Access
+  link: docs/extensions/access
 $render: ~/src/lib/layouts/default.pug
 ---
 
@@ -42,7 +45,3 @@ Grown.use(require('@grown/router'));
 Grown.use(require('@grown/test'));
 // etc.
 ```
-
----
-
-➯ Next: [Extensions &rangle; Access](./docs/extensions/access)

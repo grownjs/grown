@@ -1,5 +1,8 @@
 ---
 title: Access
+next:
+  label: Extensions &rangle; Bud
+  link: docs/extensions/bud
 $render: ~/src/lib/layouts/default.pug
 runkit: !include ~/src/lib/shared/runkit/server.yml
 ---
@@ -92,7 +95,3 @@ server.mount(ctx => {
 - `_makeMatcher(ruleset)` &mdash; Iterates the given `ruleset` and compile each one. It returns a middleware callback.
 - `_makeTree(role, groups, property)` &mdash; Returns a flat representation of the given `role` in the `groups` graph, `property` can be `children` or `parent`.
 - `_runACL(ctx, role, handlers)` &mdash; Validate `role` access through `ctx`. Given `handlers` should be an array of single resources and actions. It returns a promise.
-
----
-
-➯ Next: [Extensions &rangle; Bud](./docs/extensions/bud)

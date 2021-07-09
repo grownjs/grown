@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 require('sqlite3');
 
 const fs = require('fs');
@@ -20,8 +22,7 @@ fs.writeFileSync('./models/Test/index.js', `
   };
 `);
 
-const Grown = require('@grown/bud')();
-
+Grown = require('@grown/bud')();
 Grown.use(require('@grown/server'));
 
-const server = new Grown(); // eslint-disable-line
+server = new Grown();

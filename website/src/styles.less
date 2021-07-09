@@ -47,6 +47,10 @@ ul.reset {
   }
 }
 
+.push {
+  margin-bottom: 20px;
+}
+
 .body {
   padding: 20px 30px;
 }
@@ -60,14 +64,21 @@ ul.reset {
   display: flex;
   align-items: center;
 
+  > .auto {
+    flex: 1;
+  }
+
   &.gap {
     gap: 10px;
+  }
+
+  &.end {
+    justify-content: flex-end;
   }
 
   &.fit {
     align-items: flex-start;
     flex-direction: row;
-    margin-bottom: 20px;
     flex-wrap: wrap;
 
     > * {

@@ -1,5 +1,8 @@
 ---
-title: GRPC
+title: gRPC
+next:
+  label: Extensions &rangle; Logger
+  link: docs/extensions/logger
 $render: ~/src/lib/layouts/default.pug
 runkit:
   preamble: !include ~/src/lib/shared/chunks/grpc.js
@@ -73,7 +76,3 @@ console.log('GOT:', result);
 - `_callService(options, client, method, data)` &mdash; Wrap used methods when calling services.
 - `_getService(name, controller)` &mdash; Decorate all methods on given handlers.
 - `_onError(e)` &mdash; Decorate errors thrown by calling services.
-
----
-
-➯ Next: [Extensions &rangle; Logger](./docs/extensions/logger)

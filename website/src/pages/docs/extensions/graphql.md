@@ -1,5 +1,8 @@
 ---
 title: GraphQL
+next:
+  label: Extensions &rangle; gRPC
+  link: docs/extensions/grpc
 $render: ~/src/lib/layouts/default.pug
 runkit:
   endpoint: true
@@ -39,7 +42,3 @@ server.mount('/', Grown.GraphQL
 
 - `_startGraphQLServer(typeDefs, resolvers)` &mdash; Used by `setup()` to build the GraphQL middleware.
 - `_bindGraphQLServer(schemas, container)` &mdash; Used by `setup()` to decorate the given handlers.
-
----
-
-➯ Next: [Extensions &rangle; GRPC](./docs/extensions/grpc)

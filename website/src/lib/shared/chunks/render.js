@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 const fs = require('fs');
 const path = require('path');
 
@@ -23,11 +25,10 @@ fs.writeFileSync('./app/views/Errors/not_found.js', `
   module.exports = () => '<h1>404</h1>';
 `);
 
-const Grown = require('@grown/bud')();
-
+Grown = require('@grown/bud')();
 Grown.use(require('@grown/server'));
 
-const server = new Grown();
+server = new Grown();
 
 process.nextTick(() => server.listen(8080));
 
