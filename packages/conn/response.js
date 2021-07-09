@@ -20,6 +20,14 @@ module.exports = (Grown, util) => {
         throw new Error('Already finished');
       }
 
+      if (ctx.res._done) {
+        debug('#%s Already done, skipping.', ctx.pid);
+        return;
+      }
+
+      debug('#%s Halting... %s', ctx.pid);
+
+      ctx.res._done = true;
       ctx.res.statusCode = ctx.status_code;
       ctx.res.statusMessage = statusCodes[ctx.res.statusCode];
 
