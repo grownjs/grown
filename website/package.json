@@ -1,7 +1,7 @@
 {
   "name": "grown",
-  "version": "1.1.40",
-  "description": "Experimental DSL for web-apps",
+  "version": "1.1.46",
+  "description": "Website for Grown docs",
   "repository": {
     "type": "git",
     "url": "https://github.com/tacoss/plate.git",
@@ -44,7 +44,7 @@
     "kramed": "^0.5.6",
     "less": "^4.1.1",
     "less-plugin-autoprefix": "^2.0.0",
-    "mortero": "^0.0.37",
+    "mortero": "^0.0.38",
     "pug": "^3.0.0"
   }
 }

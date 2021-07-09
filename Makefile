@@ -49,12 +49,7 @@ publish:
 	@make -C website dist deploy
 
 release: install
-	@mv lerna.json lerna.json_backup
-	@cat lerna.json_backup | grep -v '"."' > lerna.json
-	@git update-index --assume-unchanged lerna.json
 	@lerna publish || true
-	@mv lerna.json_backup lerna.json
-	@git update-index --no-assume-unchanged lerna.json
 
 install: deps
 	@(((which lerna) > /dev/null 2>&1) || npm i -g lerna) || true
