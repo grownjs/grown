@@ -2,23 +2,42 @@
 <html>
   <head>
     <base href="/">
-    <meta lang="en">
     <meta charset="utf-8">
+    <link rel="stylesheet" href="styles.css?t=1625790914868">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="HandheldFriendly" content="true">
-    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no"><!--[if lt IE 9]>
-    <script src="https://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-    <script src="https://css3-mediaqueries-js.googlecode.com/svn/trunk/css3-mediaqueries.js"></script><![endif]-->
-    <title>Grown // Installation (#ccb9f59)</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="https://unpkg.com/highlight.js/styles/default.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Sorts+Mill+Goudy">
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <title>Grown // Installation</title>
+    <meta name="release" content="fa1a5a6">
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Sorts+Mill+Goudy">
+    <style>/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */ /* Tomorrow Comment */ .hljs-comment, .hljs-quote { color: #8e908c; } /* Tomorrow Red */ .hljs-variable, .hljs-template-variable, .hljs-tag, .hljs-name, .hljs-selector-id, .hljs-selector-class, .hljs-regexp, .hljs-deletion { color: #c82829; } /* Tomorrow Orange */ .hljs-number, .hljs-built_in, .hljs-builtin-name, .hljs-literal, .hljs-type, .hljs-params, .hljs-meta, .hljs-link { color: #f5871f; } /* Tomorrow Yellow */ .hljs-attribute { color: #eab700; } /* Tomorrow Green */ .hljs-string, .hljs-symbol, .hljs-bullet, .hljs-addition { color: #718c00; } /* Tomorrow Blue */ .hljs-title, .hljs-section { color: #4271ae; } /* Tomorrow Purple */ .hljs-keyword, .hljs-selector-tag { color: #8959a8; } .hljs { display: block; overflow-x: auto; background: white; color: #4d4d4c; padding: 0.5em; } .hljs-emphasis { font-style: italic; } .hljs-strong { font-weight: bold; }
+html[theme=dark] .hljs-comment, html[theme=dark] .hljs-quote { color: #969896; } html[theme=dark] .hljs-variable, html[theme=dark] .hljs-template-variable, html[theme=dark] .hljs-tag, html[theme=dark] .hljs-name, html[theme=dark] .hljs-selector-id, html[theme=dark] .hljs-selector-class, html[theme=dark] .hljs-regexp, html[theme=dark] .hljs-deletion { color: #cc6666; } html[theme=dark] .hljs-number, html[theme=dark] .hljs-built_in, html[theme=dark] .hljs-builtin-name, html[theme=dark] .hljs-literal, html[theme=dark] .hljs-type, html[theme=dark] .hljs-params, html[theme=dark] .hljs-meta, html[theme=dark] .hljs-link { color: #de935f; } html[theme=dark] .hljs-attribute { color: #f0c674; } html[theme=dark] .hljs-string, html[theme=dark] .hljs-symbol, html[theme=dark] .hljs-bullet, html[theme=dark] .hljs-addition { color: #b5bd68; } html[theme=dark] .hljs-title, html[theme=dark] .hljs-section { color: #81a2be; } html[theme=dark] .hljs-keyword, html[theme=dark] .hljs-selector-tag { color: #b294bb; } html[theme=dark] .hljs { display: block; overflow-x: auto; background: #1d1f21; color: #c5c8c6; padding: 0.5em; } html[theme=dark] .hljs-emphasis { font-style: italic; } html[theme=dark] .hljs-strong { font-weight: bold; }</style>
   </head>
   <body class="reset">
+    <script>
+      /* eslint-disable */
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+      
+      ga('create', '', 'auto');
+      ga('send', 'pageview');
+      /* eslint-enable */
+      
+    </script>
     <div id="wrapper">
       <div class="body" id="content">
-        <main>
-          <h1>Installation <small><a href="//github.com/grownjs/jamming/blob/master/src/index.md" target="_blank">&#9998;</a></small></h1><p>I suggest you installing NodeJS through NVM, using <code>10.24</code> or higher is fine.</p>
+        <div class="flex" id="menu">
+          <div class="stork-wrapper">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path fill-rule="evenodd" d="M11.5 7a4.499 4.499 0 11-8.998 0A4.499 4.499 0 0111.5 7zm-.82 4.74a6 6 0 111.06-1.06l3.04 3.04a.75.75 0 11-1.06 1.06l-3.04-3.04z"></path></svg>
+
+            <input class="stork-input" data-stork="docs" placeholder="Search...">
+            <div class="stork-output" data-stork="docs-output"></div>
+          </div><a href="./#nav">&#9776;</a>
+        </div>
+        <h1>Installation <small><a href="//github.com/grownjs/jamming/blob/master/src/index.md" target="_blank">&#9998;</a></small></h1>
+        <main><p>I suggest you installing NodeJS through NVM, using <code>10.24</code> or higher is fine.</p>
 <p>See: <a href="https://github.com/creationix/nvm#installation">NVM installation instructions</a></p>
 <p>Once done, install the main <code>grown</code> dependency:</p>
 <pre class="hljs"><code class="lang-bash">$ npm install grown --save
@@ -48,90 +67,102 @@ server.<span class="hljs-title function_">listen</span>(<span class="hljs-number
 
 <hr>
 <p>➯ Next: <a href="./docs">APIs &rangle; The interface</a></p>
-
-        </main>
+</main>
+        <nav class="flex"><a id="back" href="./#" onclick="content.scrollTop=0">&uarr; Back to the top</a>
+        </nav>
       </div>
-      <aside class="inverted" id="sidebar">
+      <aside id="sidebar">
         <div class="body">
-          <h1>
-            <a aria-current="page" href=".">Grown</a>
-          </h1>
-          <p>Experimental DSL for web-apps</p>
-          <div class="sp"><a href="http://badge.fury.io/js/grown" target="_blank"><img src="//badge.fury.io/js/grown.svg"></a><a href="//codecov.io/gh/grownjs/grown" target="_blank"><img src="//codecov.io/gh/grownjs/grown/branch/master/graph/badge.svg"></a><a href="//github.com/grownjs/grown/actions" target="_blank"><img src="//github.com/grownjs/grown/workflows/build/badge.svg"></a></div>
-          <ul class="mt reset">
-            <li>
-              <h3 class="reset">APIs</h3>
-              <ul class="pl reset">
-                <li>
-                  <a aria-current="page" href=".">Installation</a>
-                </li>
-                <li>
-                  <a exact="true" href="./docs">The interface</a>
-                </li>
-                <li>
-                  <a href="./docs/command-line">Command line</a>
-                </li>
-              </ul>
-            </li>
-            <li>
-              <h3 class="reset">Add-ons</h3>
-              <ul class="pl reset">
-                <li>
-                  <a href="./docs/extensions">Extensions</a>
-                </li>
-                <li>
-                  <a href="./docs/connection">Connection</a>
-                </li>
-                <li>
-                  <a href="./docs/middlewares">Middlewares</a>
-                </li>
-              </ul>
-            </li>
-            <li>
-              <h3 class="reset">Data-layer</h3>
-              <ul class="pl reset">
-                <li>
-                  <a href="./docs/database">Models</a>
-                </li>
-                <li>
-                  <a href="./docs/validation">Schemas</a>
-                </li>
-              </ul>
-            </li>
-            <li>
-              <h3 class="reset">Controllers</h3>
-              <ul class="pl reset">
-                <li>
-                  <a href="./docs/controllers">Web</a>
-                </li>
-                <li>
-                  <a href="./docs/controllers/grpc">GRPC</a>
-                </li>
-                <li>
-                  <a href="./docs/controllers/graphql">GraphQL</a>
-                </li>
-              </ul>
-            </li>
-            <li>
-              <h3 class="reset">Unit-testing</h3>
-              <ul class="pl reset">
-                <li>
-                  <a href="./docs/testing">Server</a>
-                </li>
-                <li>
-                  <a href="./docs/testing/schema">Schema</a>
-                </li>
-                <li>
-                  <a href="./docs/testing/handlers">Handlers</a>
-                </li>
-              </ul>
-            </li>
-          </ul>
+          <h1 id="logo"><a href=".">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="4 3 100 25">
+  <path d="M 18.913 14.183 C 18.786 16.09 18.413 17.746 17.793 19.153 C 17.18 20.566 16.44 21.746 15.573 22.693 C 14.7 23.646 13.766 24.356 12.773 24.823 C 11.773 25.29 10.823 25.523 9.923 25.523 C 9.236 25.523 8.58 25.373 7.953 25.073 C 7.326 24.78 6.786 24.33 6.333 23.723 C 5.873 23.116 5.513 22.353 5.253 21.433 C 4.993 20.52 4.863 19.446 4.863 18.213 C 4.863 15.806 5.206 13.706 5.893 11.913 C 6.586 10.126 7.46 8.633 8.513 7.433 C 9.566 6.24 10.696 5.353 11.903 4.773 C 13.103 4.2 14.226 3.913 15.273 3.913 C 16.02 3.913 16.67 4.043 17.223 4.303 C 17.77 4.563 18.223 4.913 18.583 5.353 C 18.936 5.793 19.193 6.306 19.353 6.893 C 19.506 7.48 19.583 8.1 19.583 8.753 L 15.753 9.483 C 15.586 8.736 15.363 8.203 15.083 7.883 C 14.803 7.57 14.483 7.413 14.123 7.413 C 13.656 7.413 13.143 7.743 12.583 8.403 C 12.023 9.063 11.503 9.916 11.023 10.963 C 10.536 12.01 10.123 13.16 9.783 14.413 C 9.45 15.66 9.263 16.89 9.223 18.103 C 9.223 19.263 9.396 20.09 9.743 20.583 C 10.09 21.076 10.533 21.323 11.073 21.323 C 11.446 21.323 11.833 21.23 12.233 21.043 C 12.64 20.856 13 20.59 13.313 20.243 C 13.633 19.903 13.9 19.503 14.113 19.043 C 14.326 18.583 14.443 18.083 14.463 17.543 L 11.463 17.993 L 12.003 15.223 C 12.876 15.11 13.733 14.996 14.573 14.883 C 15.286 14.79 16.04 14.68 16.833 14.553 C 17.626 14.42 18.32 14.296 18.913 14.183 ZM 22.304 23.703 L 17.764 24.883 C 18.271 22.396 18.757 19.97 19.224 17.603 C 19.391 16.596 19.577 15.546 19.784 14.453 C 19.991 13.36 20.181 12.276 20.354 11.203 C 20.534 10.13 20.704 9.093 20.864 8.093 C 21.017 7.093 21.141 6.183 21.234 5.363 C 22.301 5.03 23.451 4.783 24.684 4.623 C 25.917 4.463 27.141 4.383 28.354 4.383 C 29.081 4.383 29.681 4.466 30.154 4.633 C 30.634 4.806 31.007 5.046 31.274 5.353 C 31.547 5.66 31.741 6.02 31.854 6.433 C 31.961 6.84 32.014 7.296 32.014 7.803 C 32.014 8.55 31.884 9.283 31.624 10.003 C 31.364 10.716 31.014 11.396 30.574 12.043 C 30.134 12.69 29.631 13.276 29.064 13.803 C 28.497 14.336 27.887 14.773 27.234 15.113 C 27.567 15.86 27.924 16.676 28.304 17.563 C 28.691 18.45 29.051 19.293 29.384 20.093 C 29.757 21.026 30.141 21.96 30.534 22.893 L 26.194 24.403 C 25.821 23.21 25.484 22.09 25.184 21.043 C 25.057 20.616 24.927 20.173 24.794 19.713 C 24.661 19.26 24.541 18.826 24.434 18.413 C 24.321 18 24.227 17.63 24.154 17.303 C 24.074 16.976 24.027 16.713 24.014 16.513 L 23.644 16.623 C 23.531 17.216 23.397 17.916 23.244 18.723 C 23.084 19.523 22.937 20.296 22.804 21.043 C 22.637 21.923 22.471 22.81 22.304 23.703 Z M 25.244 8.273 L 24.344 12.733 C 24.697 12.693 25.131 12.543 25.644 12.283 C 26.157 12.023 26.647 11.71 27.114 11.343 C 27.581 10.976 27.984 10.6 28.324 10.213 C 28.657 9.82 28.824 9.473 28.824 9.173 C 28.824 8.966 28.761 8.803 28.634 8.683 C 28.501 8.563 28.317 8.47 28.084 8.403 C 27.851 8.336 27.594 8.293 27.314 8.273 C 27.034 8.26 26.744 8.253 26.444 8.253 C 26.237 8.253 26.027 8.256 25.814 8.263 C 25.601 8.27 25.411 8.273 25.244 8.273 ZM 45.765 9.703 C 45.765 11.236 45.602 12.68 45.275 14.033 C 44.948 15.386 44.515 16.626 43.975 17.753 C 43.435 18.886 42.805 19.896 42.085 20.783 C 41.365 21.67 40.612 22.423 39.825 23.043 C 39.045 23.67 38.252 24.146 37.445 24.473 C 36.645 24.8 35.882 24.963 35.155 24.963 C 34.535 24.963 33.975 24.846 33.475 24.613 C 32.968 24.38 32.528 24.036 32.155 23.583 C 31.782 23.123 31.488 22.533 31.275 21.813 C 31.062 21.093 30.955 20.23 30.955 19.223 C 30.955 18.176 31.085 17.076 31.345 15.923 C 31.605 14.763 31.958 13.613 32.405 12.473 C 32.858 11.34 33.412 10.26 34.065 9.233 C 34.718 8.206 35.435 7.296 36.215 6.503 C 37.002 5.71 37.842 5.08 38.735 4.613 C 39.635 4.146 40.568 3.913 41.535 3.913 C 42.375 3.913 43.072 4.083 43.625 4.423 C 44.172 4.77 44.602 5.22 44.915 5.773 C 45.222 6.32 45.438 6.94 45.565 7.633 C 45.698 8.326 45.765 9.016 45.765 9.703 Z M 35.125 18.493 C 35.125 18.7 35.162 18.916 35.235 19.143 C 35.308 19.363 35.412 19.56 35.545 19.733 C 35.678 19.9 35.842 20.043 36.035 20.163 C 36.228 20.283 36.438 20.343 36.665 20.343 C 37.505 20.343 38.252 20.053 38.905 19.473 C 39.558 18.9 40.098 18.193 40.525 17.353 C 40.958 16.513 41.292 15.616 41.525 14.663 C 41.758 13.71 41.875 12.84 41.875 12.053 C 41.875 11.833 41.862 11.593 41.835 11.333 C 41.802 11.066 41.745 10.823 41.665 10.603 C 41.578 10.376 41.448 10.183 41.275 10.023 C 41.095 9.87 40.855 9.793 40.555 9.793 C 39.962 9.793 39.412 9.94 38.905 10.233 C 38.398 10.533 37.945 10.93 37.545 11.423 C 37.145 11.923 36.795 12.483 36.495 13.103 C 36.195 13.73 35.938 14.366 35.725 15.013 C 35.512 15.653 35.358 16.283 35.265 16.903 C 35.172 17.516 35.125 18.046 35.125 18.493 ZM 50.858 23.933 L 45.038 24.963 L 47.168 5.083 C 48.041 5.05 48.865 4.963 49.638 4.823 C 50.418 4.683 51.188 4.583 51.948 4.523 C 51.948 4.543 51.921 4.736 51.868 5.103 C 51.815 5.463 51.741 5.936 51.648 6.523 C 51.555 7.116 51.451 7.78 51.338 8.513 C 51.225 9.253 51.061 10.266 50.848 11.553 C 50.635 12.84 50.348 14.623 49.988 16.903 L 50.408 16.903 C 50.895 15.183 51.298 13.776 51.618 12.683 C 51.931 11.596 52.188 10.71 52.388 10.023 C 52.581 9.343 52.768 8.686 52.948 8.053 C 53.121 7.42 53.288 6.833 53.448 6.293 C 53.608 5.746 53.735 5.286 53.828 4.913 L 54.078 4.913 C 54.418 4.913 54.758 4.896 55.098 4.863 C 55.445 4.823 55.771 4.78 56.078 4.733 C 56.391 4.686 56.715 4.626 57.048 4.553 C 57.008 4.72 56.965 5.066 56.918 5.593 C 56.871 6.113 56.811 6.743 56.738 7.483 C 56.665 8.216 56.591 9.026 56.518 9.913 C 56.445 10.8 56.368 11.67 56.288 12.523 C 56.215 13.37 56.145 14.176 56.078 14.943 C 56.018 15.71 55.958 16.363 55.898 16.903 L 56.408 16.903 L 59.068 4.863 C 59.701 4.77 60.325 4.686 60.938 4.613 C 61.478 4.533 62.038 4.456 62.618 4.383 C 63.198 4.31 63.711 4.226 64.158 4.133 C 63.878 4.92 63.598 5.793 63.318 6.753 C 63.038 7.713 62.748 8.726 62.448 9.793 C 62.155 10.853 61.871 11.926 61.598 13.013 C 61.325 14.093 61.058 15.136 60.798 16.143 C 60.205 18.536 59.628 20.993 59.068 23.513 L 52.738 24.573 L 53.968 13.763 L 53.628 13.763 L 50.858 23.933 ZM 64.945 24.043 L 60.855 24.993 C 61.415 22.306 61.948 19.703 62.455 17.183 C 62.641 16.096 62.841 14.976 63.055 13.823 C 63.268 12.663 63.468 11.52 63.655 10.393 C 63.841 9.26 64.008 8.176 64.155 7.143 C 64.308 6.11 64.421 5.173 64.495 4.333 C 64.735 4.346 64.941 4.353 65.115 4.353 C 65.281 4.353 65.475 4.353 65.695 4.353 C 65.961 4.353 66.281 4.35 66.655 4.343 C 67.028 4.336 67.401 4.323 67.775 4.303 C 68.148 4.283 68.548 4.263 68.975 4.243 C 69.235 5.55 69.468 6.81 69.675 8.023 C 69.881 9.09 70.091 10.183 70.305 11.303 C 70.518 12.423 70.708 13.373 70.875 14.153 C 70.955 13.78 71.041 13.346 71.135 12.853 C 71.228 12.36 71.328 11.843 71.435 11.303 C 71.548 10.763 71.658 10.216 71.765 9.663 C 71.865 9.11 71.971 8.563 72.085 8.023 C 72.345 6.81 72.615 5.56 72.895 4.273 L 76.315 3.853 C 75.675 6.706 75.115 9.413 74.635 11.973 C 74.408 13.073 74.188 14.19 73.975 15.323 C 73.761 16.45 73.561 17.53 73.375 18.563 C 73.188 19.603 73.028 20.566 72.895 21.453 C 72.761 22.34 72.658 23.08 72.585 23.673 C 72.531 23.673 72.311 23.716 71.925 23.803 C 71.545 23.89 71.108 23.986 70.615 24.093 C 70.121 24.206 69.625 24.32 69.125 24.433 C 68.631 24.546 68.265 24.65 68.025 24.743 C 67.911 23.25 67.788 21.83 67.655 20.483 C 67.601 19.903 67.541 19.31 67.475 18.703 C 67.408 18.096 67.338 17.513 67.265 16.953 C 67.191 16.393 67.118 15.873 67.045 15.393 C 66.971 14.906 66.895 14.486 66.815 14.133 C 66.761 14.486 66.688 14.896 66.595 15.363 C 66.501 15.83 66.408 16.323 66.315 16.843 C 66.221 17.37 66.128 17.916 66.035 18.483 C 65.941 19.05 65.838 19.596 65.725 20.123 C 65.485 21.37 65.225 22.676 64.945 24.043 Z" transform="matrix(1, 0, 0, 1, 0, 0)"></path>
+</svg></a><small>v1.1.40</small></h1>
+          <hr>
+          <p class="flex">
+            <button id="toggle">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path fill-rule="evenodd" d="M8 1.5c-2.363 0-4 1.69-4 3.75 0 .984.424 1.625.984 2.304l.214.253c.223.264.47.556.673.848.284.411.537.896.621 1.49a.75.75 0 01-1.484.211c-.04-.282-.163-.547-.37-.847a8.695 8.695 0 00-.542-.68c-.084-.1-.173-.205-.268-.32C3.201 7.75 2.5 6.766 2.5 5.25 2.5 2.31 4.863 0 8 0s5.5 2.31 5.5 5.25c0 1.516-.701 2.5-1.328 3.259-.095.115-.184.22-.268.319-.207.245-.383.453-.541.681-.208.3-.33.565-.37.847a.75.75 0 01-1.485-.212c.084-.593.337-1.078.621-1.489.203-.292.45-.584.673-.848.075-.088.147-.173.213-.253.561-.679.985-1.32.985-2.304 0-2.06-1.637-3.75-4-3.75zM6 15.25a.75.75 0 01.75-.75h2.5a.75.75 0 010 1.5h-2.5a.75.75 0 01-.75-.75zM5.75 12a.75.75 0 000 1.5h4.5a.75.75 0 000-1.5h-4.5z"></path></svg>
+
+            </button><small>The herbsman's NodeJS framework</small>
+          </p>
+          <hr>
+          <div class="flex fit gap"><a href="//badge.fury.io/js/grown" target="_blank"><img src="//badge.fury.io/js/grown.svg"></a><a href="//codecov.io/gh/grownjs/grown" target="_blank"><img src="//codecov.io/gh/grownjs/grown/branch/master/graph/badge.svg"></a><a href="//github.com/grownjs/grown/actions" target="_blank"><img src="//github.com/grownjs/grown/workflows/build/badge.svg"></a></div>
+          <nav id="nav">
+            <ul class="reset">
+              <li>
+                <h3 class="reset">APIs</h3>
+                <ul class="reset">
+                  <li>
+                    <a aria-current="page" href=".">Installation</a>
+                  </li>
+                  <li>
+                    <a exact="true" href="./docs">The interface</a>
+                  </li>
+                  <li>
+                    <a href="./docs/command-line">Command line</a>
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <h3 class="reset">Add-ons</h3>
+                <ul class="reset">
+                  <li>
+                    <a exact="true" href="./docs/extensions">Extensions</a>
+                  </li>
+                  <li>
+                    <a href="./docs/connection">Connection</a>
+                  </li>
+                  <li>
+                    <a href="./docs/middlewares">Middlewares</a>
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <h3 class="reset">Data-layer</h3>
+                <ul class="pl reset">
+                  <li>
+                    <a exact="true" href="./docs/database">Models</a>
+                  </li>
+                  <li>
+                    <a exact="true" href="./docs/validation">Schemas</a>
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <h3 class="reset">Controllers</h3>
+                <ul class="pl reset">
+                  <li>
+                    <a href="./docs/controllers">Web</a>
+                  </li>
+                  <li>
+                    <a href="./docs/controllers/grpc">GRPC</a>
+                  </li>
+                  <li>
+                    <a href="./docs/controllers/graphql">GraphQL</a>
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <h3 class="reset">Unit-testing</h3>
+                <ul class="pl reset">
+                  <li>
+                    <a href="./docs/testing">Server</a>
+                  </li>
+                  <li>
+                    <a href="./docs/testing/schema">Schema</a>
+                  </li>
+                  <li>
+                    <a href="./docs/testing/handlers">Handlers</a>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </nav>
         </div>
       </aside>
     </div>
     <script>window.__runkit__ = {"endpoint":true,"preamble":{"contents":"require('@grown/bud');\nrequire('@grown/server');\n"}};</script>
     <script src="//embed.runkit.com"></script>
-    <script src="scripts.js"></script>
+    <script src="//files.stork-search.net/stork.js"></script>
+    <script type="module" src="scripts.js?t=1625790914869"></script>
   </body>
 </html>
