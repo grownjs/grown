@@ -5,9 +5,9 @@ const fs = require('fs');
 module.exports = (Grown, util) => {
   function _startGraphQLServer(typeDefs, resolvers) {
     const gql = require('graphql');
-    const gqltools = require('graphql-tools');
+    const { makeExecutableSchema } = require('@graphql-tools/schema');
 
-    const _schema = gqltools.makeExecutableSchema({ typeDefs, resolvers });
+    const _schema = makeExecutableSchema({ typeDefs, resolvers });
 
     return ctx => {
       const body = ctx.req.body || {};
