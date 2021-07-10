@@ -10,10 +10,10 @@ Declare and validate your models using JSON-Schema definitions.
 
 ```js
 // register extension
-const Model = Grown.use(require('@grown/model'));
+Grown.use(require('@grown/model'));
 
 // declares a single entity model
-const Example = Model.Entity.define('Test', {
+const Example = Grown.Model.Entity.define('Test', {
   $schema: {
     id: 'TestExample',
     type: 'object',
@@ -40,7 +40,7 @@ Repositories are built by scanning source files in any given directory, e.g.
 
 ```js
 // register extension
-const Model = Grown.use(require('@grown/model'));
+Grown.use(require('@grown/model'));
 
 // ./models/Test/index.js
 // module.exports = {
