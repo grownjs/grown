@@ -93,10 +93,10 @@ describe('Grown.Model', () => {
       expect(typeof Example.getSchema).to.eql('function');
 
       return container.connect().then(() => {
-        expect(container.get('Example').name).to.eql('Example');
-        expect(container.get('Example').callMe()).to.eql(42);
-        expect(Example === container.get('Example')).to.be.false;
-        expect(typeof container.get('Example').getSchema).to.eql('function');
+        expect(container.get('Fixed').name).to.eql('Fixed');
+        expect(container.get('Fixed').callMe()).to.eql(42);
+        expect(typeof container.get('Fixed').getSchema).to.eql('function');
+        expect(container.get('Fixed').options.sequelize).not.to.be.undefined;
       });
     });
   });

@@ -68,8 +68,11 @@ module.exports = (Grown, util) => {
       }
 
       // scan and load/define models
+      const _ = Object.create(null);
       const $ = Grown.load(options.models, {
         before: (_name, definition) => {
+          _[_name] = definition.$schema.id;
+
           // always add it as model!
           return DB[name].add(definition, true);
         },
@@ -93,6 +96,18 @@ module.exports = (Grown, util) => {
 
       // reassign values
       DB[name].ready(() => {
+        Object.keys(_).forEach(key => {
+          const reference = $.registry[key];
+          const value = $.values[key];
+          const prop = _[key];
+
+          delete $.values[key];
+          delete $.registry[key];
+          $.values[prop] = value;
+          $.registry[prop] = reference;
+          util.readOnlyProperty($, prop, () => $.get(prop));
+        });
+
         Object.keys(DB[name].$refs).forEach(k => {
           if (DB[name].$refs[k].$references) get.call(this, k, true);
         });
