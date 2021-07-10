@@ -13,9 +13,9 @@ fs.writeFileSync('./tasks/example.js',
     },
   };`);
 
-const stripAnsi = require('strip-ansi');
+const { strip } = require ('ansicolor');
 
 const toString = value => String(Buffer.from(value));
-const normalizeText = msg => stripAnsi(msg.replace(/[\r\n\b]/g, ''));
+const normalizeText = msg => strip(msg.replace(/[\r\n\b]/g, ''));
 
 process.stdout.write = msg => console.log(normalizeText(toString(msg)));

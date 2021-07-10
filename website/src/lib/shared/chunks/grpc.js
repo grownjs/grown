@@ -2,8 +2,7 @@
 
 assert = require('assert');
 
-require('@grpc/proto-loader');
-require('grpc');
+require('protobufjs');
 
 const fs = require('fs');
 
