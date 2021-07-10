@@ -4,7 +4,7 @@ const RE_SERVICE = /Service$/;
 const RE_DASHERIZE = /\b([A-Z])/g;
 
 module.exports = (Grown, util) => {
-  const grpc = require('grpc');
+  const grpc = require('@grpc/grpc-js');
 
   // FIXME: implements streaming & metadata!
   function _callDeadline(timeout) {
@@ -156,15 +156,17 @@ module.exports = (Grown, util) => {
             }
           });
 
-          server.bind(`0.0.0.0:${_port || port}`, _server);
-          server.start();
+          server.bindAsync(`0.0.0.0:${_port || port}`, _server, err => {
+            if (err) throw err;
+            server.start();
+          });
         }
 
         return map;
       };
 
-      map.stop = () => {
-        server._server.forceShutdown();
+      map.stop = (cb = () => {}) => {
+        server.tryShutdown(cb);
       };
 
       return map;

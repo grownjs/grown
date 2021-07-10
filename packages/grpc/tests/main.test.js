@@ -105,7 +105,7 @@ describe('Grown.GRPC', () => {
       return gateway.API.Test.ok().catch(e => { err = e; })
         .then(() => {
           expect(err).not.to.be.undefined;
-          expect(err).to.match(/Deadline Exceeded/);
+          expect(err.message).to.contains('DEADLINE_EXCEEDED');
         });
     });
   });

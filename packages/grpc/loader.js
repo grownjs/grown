@@ -5,7 +5,7 @@ const fs = require('fs');
 
 module.exports = (Grown, util) => {
   const protoLoader = require('@grpc/proto-loader');
-  const grpc = require('grpc');
+  const grpc = require('@grpc/grpc-js');
 
   return Grown('GRPC.Loader', {
     scan(file, options) {
