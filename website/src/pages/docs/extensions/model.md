@@ -49,7 +49,7 @@ const Model = Grown.use(require('@grown/model'));
 
 // ./models/Test/schema.json
 // {
-//   "id": "TestModel",
+//   "id": "ExampleModel",
 //   "type": "object",
 //   "properties": {
 //     "value": {
