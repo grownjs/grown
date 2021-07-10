@@ -1,8 +1,9 @@
 ---
 title: Router
+next:
+  label: Extensions &rangle; Server
+  link: docs/extensions/server
 $render: ~/src/lib/layouts/default.pug
----
-
 ---
 
 ## Module
@@ -15,5 +16,3 @@ $render: ~/src/lib/layouts/default.pug
 
 ### Private* props <var>static</var>
 ### Private* methods <var>static</var>
-
-➯ Next: [Extensions &rangle; Server](./docs/extensions/server)

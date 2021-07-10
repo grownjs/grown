@@ -1,5 +1,8 @@
 ---
 title: Render
+next:
+  label: Extensions &rangle; REPL
+  link: docs/extensions/repl
 $render: ~/src/lib/layouts/default.pug
 runkit:
   endpoint: true
@@ -14,7 +17,7 @@ Grown.use(require('@grown/render'));
 
 // ./views/default.js
 // module.exports = data =>
-//   `<html><body>${data.contents}</body></html>`;
+//   h('html', null, h('body', null, data.contents));
 
 // ./views/Home/index.js
 // module.exports = (_, h) => h('h1', null, 'It works!');
@@ -27,24 +30,24 @@ Grown.use(require('@grown/render'));
 
 // setup middleware...
 server.plug(Grown.Render({
-  template: 'default',
+  default_layout: 'default',
   view_folders: [
     `${__dirname}/views`
   ],
 }));
 
 server.mount(ctx => {
-  // you can append/prepende to the head and body tags
+  // you can append/prepend to the head and body tags
   ctx.append('head', () => `<title>URL: ${ctx.req.url}</title>`);
   ctx.append('head', () => '<style>*{margin:0}</style>');
 
   if (ctx.req.url === '/') {
-    ctx.render('Home/index');
-  } else if (ctx.req.url === '/about') {
-    ctx.render('About/about');
-  } else {
-    ctx.render('Errors/not_found');
+    return ctx.render('Home/index');
   }
+  if (ctx.req.url === '/about') {
+    return ctx.render('About/about');
+  }
+  return ctx.render('Errors/not_found');
 });
 ```
 

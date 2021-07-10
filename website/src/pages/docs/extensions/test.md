@@ -1,8 +1,9 @@
 ---
 title: Test
+next:
+  label: Extensions &rangle; Upload
+  link: docs/extensions/upload
 $render: ~/src/lib/layouts/default.pug
----
-
 ---
 
 ## Module
@@ -15,5 +16,3 @@ $render: ~/src/lib/layouts/default.pug
 
 ### Private* props <var>static</var>
 ### Private* methods <var>static</var>
-
-➯ Next: [Extensions &rangle; Upload](./docs/extensions/upload)

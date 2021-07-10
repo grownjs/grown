@@ -1,8 +1,9 @@
 ---
 title: Static
+next:
+  label: Extensions &rangle; Test
+  link: docs/extensions/test
 $render: ~/src/lib/layouts/default.pug
----
-
 ---
 
 ## Module
@@ -15,5 +16,3 @@ $render: ~/src/lib/layouts/default.pug
 
 ### Private* props <var>static</var>
 ### Private* methods <var>static</var>
-
-➯ Next: [Extensions &rangle; Test](./docs/extensions/test)

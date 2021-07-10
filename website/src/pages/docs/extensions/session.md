@@ -1,8 +1,9 @@
 ---
 title: Session
+next:
+  label: Extensions &rangle; Static
+  link: docs/extensions/static
 $render: ~/src/lib/layouts/default.pug
----
-
 ---
 
 ## Module
@@ -15,5 +16,3 @@ $render: ~/src/lib/layouts/default.pug
 
 ### Private* props <var>static</var>
 ### Private* methods <var>static</var>
-
-➯ Next: [Extensions &rangle; Static](./docs/extensions/static)

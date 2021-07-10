@@ -48,9 +48,9 @@ html
         if title
           h1 #{title} #[small: a(href=gitUrl target='_blank') &#9998;]
 
-        main!= yield
+        main.push!= yield
 
-        nav.flex.gap.end.push
+        nav.flex.gap.end
           if next
             span.auto ➯ Next: #[a#next(href=next.link) !{next.label}]
 

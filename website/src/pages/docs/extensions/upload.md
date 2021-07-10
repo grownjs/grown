@@ -1,8 +1,9 @@
 ---
 title: Upload
+next:
+  label: Add-ons &rangle; Connection
+  link: docs/connection
 $render: ~/src/lib/layouts/default.pug
----
-
 ---
 
 ## Module
@@ -15,5 +16,3 @@ $render: ~/src/lib/layouts/default.pug
 
 ### Private* props <var>static</var>
 ### Private* methods <var>static</var>
-
-➯ Next: [Add-ons &rangle; Connection](./docs/connection)

@@ -10,7 +10,7 @@ fs.mkdirSync('./app/views/About');
 fs.mkdirSync('./app/views/Errors');
 
 fs.writeFileSync('./app/views/default.js', `
-  module.exports = data => '<html><body>' + data.contents + '</body></html>';
+  module.exports = (data, h) => h('html', null, h('body', null, data.contents));
 `);
 
 fs.writeFileSync('./app/views/Home/index.js', `

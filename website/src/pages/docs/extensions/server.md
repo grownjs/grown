@@ -1,5 +1,8 @@
 ---
 title: Server
+next:
+  label: Extensions &rangle; Session
+  link: docs/extensions/session
 $render: ~/src/lib/layouts/default.pug
 ---
 
@@ -46,15 +49,12 @@ const y = options('a.required.setting.here');
 
 ### Instance methods
 
-- `on(e, cb)` &mdash; subscribe to events
-- `off(e, cb)` &mdash; unsubscribe from events
-- `once(e, cb)` &mdash; subscribe (once) to events
-- `emit(e[, ...])` &mdash; broadcast events to listeners
-- `run(scope)` &mdash; dispatch a request through the middleware
-- `plug(extensions)` &mdash; extends the server with additional functionality
-- `mount(middleware)` &mdash; append middleware to the server instance
-- `listen([connection])` &mdash; starts a new web server connection
-
----
-
-➯ Next: [Extensions &rangle; Session](./docs/extensions/session)
+- `on(e, cb)` &mdash; Subscribe to events
+- `off(e, cb)` &mdash; Unsubscribe from events
+- `once(e, cb)` &mdash; Subscribe (once) to events
+- `emit(e[, ...])` &mdash; Broadcast events to listeners
+- `run(scope)` &mdash; Dispatch a request through the middleware
+- `plug(extensions)` &mdash; Extends the server with additional functionality
+- `mount(middleware)` &mdash; Append middleware to the server instance
+- `listen([connection])` &mdash; Starts a new web server connection
+- `clients()` &mdash; Returns a list of active users connected through WebSockets

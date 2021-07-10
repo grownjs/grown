@@ -1,8 +1,9 @@
 ---
 title: REPL
+next:
+  label: Extensions &rangle; Router
+  link: docs/extensions/router
 $render: ~/src/lib/layouts/default.pug
----
-
 ---
 
 ## Module
@@ -15,5 +16,3 @@ $render: ~/src/lib/layouts/default.pug
 
 ### Private* props <var>static</var>
 ### Private* methods <var>static</var>
-
-➯ Next: [Extensions &rangle; Router](./docs/extensions/router)

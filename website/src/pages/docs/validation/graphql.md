@@ -1,8 +1,7 @@
 ---
 title: GraphQL
+next:
+  label: Schemas &rangle; JSON-Schema
+  link: docs/validation/json-schema
 $render: ~/src/lib/layouts/default.pug
 ---
-
----
-
-➯ Next: [Data-layer &rangle; Schemas &rangle; JSON-Schema](./docs/validation/json-schema)
