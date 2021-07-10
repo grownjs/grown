@@ -51,7 +51,7 @@ module.exports = (Grown, util) => {
   }
 
   function _onRender(ctx, template) {
-    const _layout = template.locals.layout || this.default_layout;
+    const _layout = template.locals.layout || ctx.res.layout || this.default_layout;
 
     /* istanbul ignore else */
     if (template.locals.layout !== false && (_layout && _layout !== template.view)) {

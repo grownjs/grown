@@ -56,6 +56,18 @@ describe('Grown.Render', () => {
     conn.res.ok(err, '{"layout":"test","contents":"<h1>It works!</h1>"}');
   }));
 
+  it('should render from the default layout if set', $(conn => {
+    conn.append('head', () => `<title>URL: ${conn.req.url}</title>`);
+    conn.append('head', () => '<style>*{margin:0}</style>');
+    conn.res.layout = 'default';
+
+    return conn.render('sub/h_view');
+  }, (err, conn) => {
+    conn.res.ok(err, '<h1>It works!</h1>');
+    expect(conn.res.body).to.contains('<title>URL: /</title>');
+    expect(conn.res.body).to.contains('<style>*{margin:0}</style>');
+  }));
+
   it('should render failures found during layout-rendering', $(conn => {
     return conn.render('sub/h_view', { layout: 'not_found' });
   }, (err, conn) => {
