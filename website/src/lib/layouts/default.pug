@@ -50,7 +50,7 @@ html
 
         main!= yield
 
-        nav.flex.gap.end
+        nav.flex.gap.end.push
           if next
             span.auto ➯ Next: #[a#next(href=next.link) !{next.label}]
 

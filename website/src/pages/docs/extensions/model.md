@@ -1,5 +1,8 @@
 ---
 title: Model
+next:
+  label: Extensions &rangle; Render
+  link: docs/extensions/render
 $render: ~/src/lib/layouts/default.pug
 runkit:
   preamble: !include ~/src/lib/shared/chunks/model.js
@@ -82,6 +85,9 @@ await repo.sync();
 
 // access model as a RESTful resource
 const TestRepo = API.from(repo.models.ExampleModel);
+
+await TestRepo.create({ value: 'OSOM' });
+
 const testCount = await TestRepo.count();
 
 console.log(testCount);
@@ -92,7 +98,8 @@ await repo.disconnect();
 
 In the example above we're using `API` as our RESTful adapter, we can also `plug()` it in our server application, e.g. `server.plug(API)` &mdash; that would mount the `/db` endpoint.
 
-> Repos are built using [`sastre`](https://github.com/tacoss/sastre) &mdash; check it out for further info.
+> Repos are built using [`sastre`](https://github.com/tacoss/sastre), where as top-level directories are the model name
+> &mdash; however, upon connection, models are renamed according to its defined `$schema.id` value.
 
 ## CLI
 
@@ -146,7 +153,3 @@ In the example above we're using `API` as our RESTful adapter, we can also `plug
 > RESTful resources have six methods only: `findAll`, `findOne`, `destroy`, `update`, `count` and `create`.
 >
 > See [formator](https://github.com/pateketrueke/formator) for usage info.
-
----
-
-➯ Next: [Extensions &rangle; Render](./docs/extensions/render)

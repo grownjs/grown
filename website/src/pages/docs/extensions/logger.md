@@ -1,5 +1,8 @@
 ---
 title: Logger
+next:
+  label: Extensions &rangle; Model
+  link: docs/extensions/model
 $render: ~/src/lib/layouts/default.pug
 runkit: !include ~/src/lib/shared/runkit/server.yml
 ---
@@ -62,7 +65,3 @@ server.mount(conn => {
 - `_elapsedTime()` &mdash; Used by `$before_render`.
 - `_errorLog(value)` &mdash; Override output for errors.
 - `_msgLog(value)` &mdash; Override output for regular logs.
-
----
-
-➯ Next: [Extensions &rangle; Model](./docs/extensions/model)
