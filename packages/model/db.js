@@ -5,7 +5,7 @@ module.exports = (Grown, util) => {
 
   const _registry = Object.create(null);
 
-  function _decorate(source, target) {
+  function _decorate(source, target, _schema) {
     /* istanbul ignore else */
     if (!target._resolved) {
       target._resolved = true;
@@ -20,6 +20,8 @@ module.exports = (Grown, util) => {
       Object.assign(target, source.classMethods);
       Object.assign(target.prototype, source.instanceMethods);
     }
+    /* istanbul ignore else */
+    target.$schema = { $ref: _schema };
     return target;
   }
 
@@ -78,7 +80,7 @@ module.exports = (Grown, util) => {
         },
         after: (_name, definition) => {
           if (DB[name].sequelize._resolved && DB[name].$refs[_name]) {
-            return this._decorate(definition, DB[name].models[_name]);
+            return this._decorate(definition, DB[name].models[_name], _name);
           }
 
           // no connection? return it as Entity definition
@@ -91,7 +93,7 @@ module.exports = (Grown, util) => {
           ? DB[name].models[model]
           : $.get(model);
 
-        return Grown.Model.Entity._wrap(model, this._decorate($.get(model, refresh), target), DB[name].schemas);
+        return Grown.Model.Entity._wrap(model, this._decorate($.get(model, refresh), target, _[model] || model), DB[name].schemas);
       }
 
       // reassign values
@@ -101,11 +103,15 @@ module.exports = (Grown, util) => {
           const value = $.values[key];
           const prop = _[key];
 
-          delete $.values[key];
-          delete $.registry[key];
-          $.values[prop] = value;
-          $.registry[prop] = reference;
-          util.readOnlyProperty($, prop, () => $.get(prop));
+          if (key !== prop) {
+            delete $.values[key];
+            delete $.registry[key];
+
+            $.values[prop] = value;
+            $.registry[prop] = reference;
+
+            util.readOnlyProperty($, prop, () => $.get(prop));
+          }
         });
 
         Object.keys(DB[name].$refs).forEach(k => {

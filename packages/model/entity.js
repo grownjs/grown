@@ -6,49 +6,44 @@ const JSF_DEFAULTS = {
   alwaysFakeOptionals: false,
 };
 
+const CACHED = {};
+
 module.exports = (Grown, util) => {
-  const Ajv = require('ajv');
-  const jsf = require('json-schema-faker').default;
+  const is = require('is-my-json-valid');
+  const jsf = require('json-schema-faker');
+
+  function _buildValidator(id, ref, refs) {
+    return is(ref ? { $ref: ref } : id, { schemas: refs, greedy: true });
+  }
 
   function _validateFrom(id, ref, refs, data) {
-    return new Promise((resolve, reject) => {
-      try {
-        this._assertFrom(id, ref, refs, data);
-        resolve(data);
-      } catch (e) {
-        reject(e);
-      }
-    });
+    try {
+      this._assertFrom(id, ref, refs, data);
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   function _assertFrom(id, ref, refs, data) {
-    const ajv = new Ajv({
-      validateSchema: true,
-      addUsedSchema: false,
-      jsonPointers: true,
-      schemaId: 'auto',
-    });
-
-    refs.forEach(sub => {
-      /* istanbul ignore else */
-      if (!ajv.getSchema(sub.id)) {
-        ajv.addSchema(sub, sub.id);
-      }
-    });
-
-    const valid = ajv.validate(ref ? { $ref: ref } : id, data);
+    const key = JSON.stringify({ id, ref });
+    const check = CACHED[key] || (CACHED[key] = this._buildValidator(id, ref, refs));
+    const isValid = check(data);
 
     /* istanbul ignore else */
-    if (!valid) {
+    if (!isValid) {
       const err = new Error(`Invalid input for ${ref ? id : id.id}`);
 
       err.sample = data;
-      err.errors = ajv.errors;
+      err.errors = check.errors.map(e => ({
+        field: e.field.replace('data.', ''),
+        message: e.message,
+      }));
 
       throw err;
     }
 
-    return valid;
+    return isValid;
   }
 
   function _fakeFrom(id, refs, opts) {
@@ -91,6 +86,7 @@ module.exports = (Grown, util) => {
   }
 
   return Grown('Model.Entity', {
+    _buildValidator,
     _validateFrom,
     _assertFrom,
     _fakeFrom,
@@ -171,8 +167,10 @@ module.exports = (Grown, util) => {
     },
 
     getSchema(id) {
+      const ref = this.$schema.id || this.$schema.$ref;
+
       return this._refs
-        ? this._through(id ? `${this.$schema.id}.${id}` : this.$schema.id, this._refs)
+        ? this._through(id ? `${ref}.${id}` : ref, this._refs)
         : this._schema(this.$schema, []);
     },
   });

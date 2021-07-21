@@ -1,0 +1,8 @@
+{
+  "id": "Permission",
+  "properties": {
+    "id": {
+      "$ref": "dataTypes#/definitions/primaryKey"
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "id": "Role",
+  "properties": {
+    "id": {
+      "$ref": "dataTypes#/definitions/primaryKey"
+    },
+    "name": {
+      "type": "string"
+    },
+    "permissions": {
+      "type": "array",
+      "items": {
+        "$ref": "Permission",
+        "belongsToMany": {
+          "through": {
+            "model": "RolePermissions",
+            "timestamps": false
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "name"
+  ]
+}
