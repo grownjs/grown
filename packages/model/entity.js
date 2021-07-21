@@ -4,6 +4,7 @@ const JSF_DEFAULTS = {
   random: Math.random,
   useDefaultValue: false,
   alwaysFakeOptionals: false,
+  pruneProperties: ['belongsToMany', 'belongsTo', 'hasMany'],
 };
 
 const CACHED = {};
