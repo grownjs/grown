@@ -3,29 +3,17 @@
   <head>
     <base href="/">
     <meta charset="utf-8">
-    <link rel="stylesheet" href="styles.css?t=1625791334361">
+    <link rel="stylesheet" href="styles.css?livereload">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="HandheldFriendly" content="true">
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <title>Grown // REPL</title>
-    <meta name="release" content="a2ff964">
-    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Sorts+Mill+Goudy">
+    <meta name="release" content="eb4af4e">
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Sorts+Mill+Goudy|Source+Code+Pro">
     <style>/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */ /* Tomorrow Comment */ .hljs-comment, .hljs-quote { color: #8e908c; } /* Tomorrow Red */ .hljs-variable, .hljs-template-variable, .hljs-tag, .hljs-name, .hljs-selector-id, .hljs-selector-class, .hljs-regexp, .hljs-deletion { color: #c82829; } /* Tomorrow Orange */ .hljs-number, .hljs-built_in, .hljs-builtin-name, .hljs-literal, .hljs-type, .hljs-params, .hljs-meta, .hljs-link { color: #f5871f; } /* Tomorrow Yellow */ .hljs-attribute { color: #eab700; } /* Tomorrow Green */ .hljs-string, .hljs-symbol, .hljs-bullet, .hljs-addition { color: #718c00; } /* Tomorrow Blue */ .hljs-title, .hljs-section { color: #4271ae; } /* Tomorrow Purple */ .hljs-keyword, .hljs-selector-tag { color: #8959a8; } .hljs { display: block; overflow-x: auto; background: white; color: #4d4d4c; padding: 0.5em; } .hljs-emphasis { font-style: italic; } .hljs-strong { font-weight: bold; }
 html[theme=dark] .hljs-comment, html[theme=dark] .hljs-quote { color: #969896; } html[theme=dark] .hljs-variable, html[theme=dark] .hljs-template-variable, html[theme=dark] .hljs-tag, html[theme=dark] .hljs-name, html[theme=dark] .hljs-selector-id, html[theme=dark] .hljs-selector-class, html[theme=dark] .hljs-regexp, html[theme=dark] .hljs-deletion { color: #cc6666; } html[theme=dark] .hljs-number, html[theme=dark] .hljs-built_in, html[theme=dark] .hljs-builtin-name, html[theme=dark] .hljs-literal, html[theme=dark] .hljs-type, html[theme=dark] .hljs-params, html[theme=dark] .hljs-meta, html[theme=dark] .hljs-link { color: #de935f; } html[theme=dark] .hljs-attribute { color: #f0c674; } html[theme=dark] .hljs-string, html[theme=dark] .hljs-symbol, html[theme=dark] .hljs-bullet, html[theme=dark] .hljs-addition { color: #b5bd68; } html[theme=dark] .hljs-title, html[theme=dark] .hljs-section { color: #81a2be; } html[theme=dark] .hljs-keyword, html[theme=dark] .hljs-selector-tag { color: #b294bb; } html[theme=dark] .hljs { display: block; overflow-x: auto; background: #1d1f21; color: #c5c8c6; padding: 0.5em; } html[theme=dark] .hljs-emphasis { font-style: italic; } html[theme=dark] .hljs-strong { font-weight: bold; }</style>
   </head>
   <body class="reset">
-    <script>
-      /* eslint-disable */
-      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-      
-      ga('create', '', 'auto');
-      ga('send', 'pageview');
-      /* eslint-enable */
-      
-    </script>
     <div id="wrapper">
       <div class="body" id="content">
         <div class="flex" id="menu">
@@ -37,17 +25,15 @@ html[theme=dark] .hljs-comment, html[theme=dark] .hljs-quote { color: #969896; }
           </div><a href="/docs/extensions/repl/#nav">&#9776;</a>
         </div>
         <h1>REPL <small><a href="//github.com/grownjs/jamming/blob/master/src/pages/docs/extensions/repl.md" target="_blank">&#9998;</a></small></h1>
-        <main><hr>
-<h2 id="module">Module</h2>
+        <main class="push"><h2 id="module">Module</h2>
 <h3 id="props-var-mixin-var">Props <var>mixin</var></h3>
 <h3 id="methods-var-mixin-var">Methods <var>mixin</var></h3>
 <h3 id="public-props-var-static-var">Public props <var>static</var></h3>
 <h3 id="public-methods-var-static-var">Public methods <var>static</var></h3>
 <h3 id="private-props-var-static-var">Private* props <var>static</var></h3>
 <h3 id="private-methods-var-static-var">Private* methods <var>static</var></h3>
-<p>➯ Next: <a href="./docs/extensions/router">Extensions &rangle; Router</a></p>
 </main>
-        <nav class="flex"><a id="back" href="/docs/extensions/repl/#" onclick="content.scrollTop=0">&uarr; Back to the top</a>
+        <nav class="flex gap end"><span class="auto">➯ Next: <a id="next" href="docs/extensions/router">Extensions &rangle; Router</a></span><a id="back" href="/docs/extensions/repl/#" onclick="content.scrollTop=0">&uarr; Back to the top</a>
         </nav>
       </div>
       <aside id="sidebar">
@@ -64,7 +50,7 @@ html[theme=dark] .hljs-comment, html[theme=dark] .hljs-quote { color: #969896; }
             </button><small>The herbsman's NodeJS framework</small>
           </p>
           <hr>
-          <div class="flex fit gap"><a href="//badge.fury.io/js/grown" target="_blank"><img src="//badge.fury.io/js/grown.svg"></a><a href="//codecov.io/gh/grownjs/grown" target="_blank"><img src="//codecov.io/gh/grownjs/grown/branch/master/graph/badge.svg"></a><a href="//github.com/grownjs/grown/actions" target="_blank"><img src="//github.com/grownjs/grown/workflows/build/badge.svg"></a></div>
+          <div class="flex fit gap push"><a href="//badge.fury.io/js/grown" target="_blank"><img src="//badge.fury.io/js/grown.svg"></a><a href="//codecov.io/gh/grownjs/grown" target="_blank"><img src="//codecov.io/gh/grownjs/grown/branch/master/graph/badge.svg"></a><a href="//github.com/grownjs/grown/actions" target="_blank"><img src="//github.com/grownjs/grown/workflows/build/badge.svg"></a></div>
           <nav id="nav">
             <ul class="reset">
               <li>
@@ -160,10 +146,10 @@ html[theme=dark] .hljs-comment, html[theme=dark] .hljs-quote { color: #969896; }
                 <h3 class="reset">Controllers</h3>
                 <ul class="pl reset">
                   <li>
-                    <a href="./docs/controllers">Web</a>
+                    <a exact="true" href="./docs/controllers">Web</a>
                   </li>
                   <li>
-                    <a href="./docs/controllers/grpc">GRPC</a>
+                    <a href="./docs/controllers/grpc">gRPC</a>
                   </li>
                   <li>
                     <a href="./docs/controllers/graphql">GraphQL</a>
@@ -174,7 +160,7 @@ html[theme=dark] .hljs-comment, html[theme=dark] .hljs-quote { color: #969896; }
                 <h3 class="reset">Unit-testing</h3>
                 <ul class="pl reset">
                   <li>
-                    <a href="./docs/testing">Server</a>
+                    <a exact="true" href="./docs/testing">Server</a>
                   </li>
                   <li>
                     <a href="./docs/testing/schema">Schema</a>
@@ -192,6 +178,6 @@ html[theme=dark] .hljs-comment, html[theme=dark] .hljs-quote { color: #969896; }
     <script>window.__runkit__ = {};</script>
     <script src="//embed.runkit.com"></script>
     <script src="//files.stork-search.net/stork.js"></script>
-    <script type="module" src="scripts.js?t=1625791334362"></script>
+    <script type="module" src="scripts.js?livereload"></script>
   </body>
 </html>

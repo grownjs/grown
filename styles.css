@@ -13,17 +13,6 @@
 #sidebar > .body > ul strong .here::after {
   content: ' ▾';
 }
-#content > main ~ nav {
-  display: flex;
-  padding-top: 20px;
-  justify-content: space-between;
-}
-#content > main ~ nav > span > a {
-  margin-left: 5px;
-}
-#next {
-  float: right;
-}
 #menu {
   z-index: 2;
   right: 30px;
@@ -127,6 +116,10 @@ a[href][aria-current=page] {
 a[href][aria-current=page]::before {
   content: '▸ ';
 }
+kbd {
+  background-color: rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
+}
 p > code,
 li > code {
   background-color: #ececec;
@@ -143,8 +136,10 @@ blockquote {
   padding-left: 15px;
   margin: 0;
 }
-blockquote code {
-  background-color: rgba(0, 0, 0, 0.1);
+blockquote > code,
+a > code {
+  padding: 0 0.2em;
+  background-color: #fafafa;
 }
 p > code::before,
 li > code::before {
@@ -173,6 +168,12 @@ hr {
   margin: 1em 0;
   border-top: 1px solid rgba(0, 0, 0, 0.2);
 }
+h3 > var {
+  background-color: rgba(0, 0, 0, 0.1);
+  font-size: 0.7em;
+  padding: 0 5px;
+  border-radius: 5px;
+}
 pre,
 blockquote {
   padding: 10px;
@@ -183,6 +184,11 @@ blockquote p:first-child {
 blockquote p:last-child {
   margin-bottom: 0;
 }
+iframe {
+  border-radius: 5px;
+  background-color: #ececec;
+}
+iframe,
 pre {
   border: 1px dashed rgba(0, 0, 0, 0.2);
 }
@@ -232,8 +238,11 @@ ul.reset li a {
   background-color: #fafafa;
 }
 #content > main ~ nav {
-  margin-top: 20px;
+  padding-top: 20px;
   border-top: 1px dashed rgba(0, 0, 0, 0.2);
+}
+#target::before {
+  background-color: #fafafa;
 }
 @media screen and (min-width: 640px) {
   body {
@@ -260,13 +269,17 @@ html[theme=dark] strong {
   color: #ececec;
 }
 html[theme=dark] a[href] {
-  color: #B8B0BB;
+  color: #A8A0AA;
 }
 html[theme=dark] a[href]:hover {
   color: #C857E0;
 }
 html[theme=dark] a[href][aria-current=page] {
   color: #ececec;
+}
+html[theme=dark] kbd {
+  background-color: #59405c;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
 }
 html[theme=dark] p > code,
 html[theme=dark] li > code {
@@ -280,11 +293,21 @@ html[theme=dark] blockquote {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
   border-color: #59405c;
 }
+html[theme=dark] blockquote > code {
+  background-color: #322f3d;
+}
+html[theme=dark] iframe {
+  background-color: #B8B0BB;
+  border: 1px dashed rgba(0, 0, 0, 0.5);
+}
 html[theme=dark] pre {
   border: 1px dashed rgba(255, 255, 255, 0.3);
 }
 html[theme=dark] hr {
   box-shadow: 0 3px rgba(255, 255, 255, 0.3);
+}
+html[theme=dark] h3 > var {
+  background-color: rgba(0, 0, 0, 0.5);
 }
 html[theme=dark] ul.reset li a {
   border-color: rgba(255, 255, 255, 0.3);
@@ -309,6 +332,9 @@ html[theme=dark] #content {
 }
 html[theme=dark] #content > main ~ nav {
   border-top: 1px dashed rgba(255, 255, 255, 0.3);
+}
+html[theme=dark] #target::before {
+  background-color: #322f3d;
 }
 .stork-wrapper {
   position: relative;
@@ -484,7 +510,27 @@ html[theme=dark] .stork-highlight {
   box-sizing: inherit;
 }
 pre {
-  font-size: 0.9em;
+  white-space: pre-wrap;
+  position: relative;
+  font-size: 15px;
+  font-family: 'Source Code Pro', monospace;
+  font-weight: 400;
+  line-height: 1.4375;
+}
+pre > code {
+  font-family: inherit;
+}
+pre > a {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+}
+kbd {
+  border-radius: 3px;
+  padding: 0 5px;
+}
+iframe {
+  width: 100%;
 }
 ul.reset {
   list-style-type: none;
@@ -494,6 +540,9 @@ ul.reset ul li + li {
 }
 ul.reset li a::before {
   content: '▹ ';
+}
+.push {
+  margin-bottom: 20px;
 }
 .body {
   padding: 20px 30px;
@@ -506,13 +555,18 @@ ul.reset li a::before {
   display: flex;
   align-items: center;
 }
+.flex > .auto {
+  flex: 1;
+}
 .flex.gap {
   gap: 10px;
+}
+.flex.end {
+  justify-content: flex-end;
 }
 .flex.fit {
   align-items: flex-start;
   flex-direction: row;
-  margin-bottom: 20px;
   flex-wrap: wrap;
 }
 .flex.fit > * {
@@ -522,4 +576,15 @@ ul.reset li a::before {
   .flex.fit {
     flex-direction: column;
   }
+}
+#target {
+  position: relative;
+  display: none;
+}
+#target::before {
+  content: attr(data-label);
+  position: absolute;
+  font-size: 14px;
+  left: 0;
+  top: -1.5em;
 }

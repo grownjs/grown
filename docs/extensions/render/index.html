@@ -3,29 +3,17 @@
   <head>
     <base href="/">
     <meta charset="utf-8">
-    <link rel="stylesheet" href="styles.css?t=1625791334116">
+    <link rel="stylesheet" href="styles.css?livereload">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="HandheldFriendly" content="true">
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
     <title>Grown // Render</title>
-    <meta name="release" content="a2ff964">
-    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Sorts+Mill+Goudy">
+    <meta name="release" content="eb4af4e">
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Sorts+Mill+Goudy|Source+Code+Pro">
     <style>/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */ /* Tomorrow Comment */ .hljs-comment, .hljs-quote { color: #8e908c; } /* Tomorrow Red */ .hljs-variable, .hljs-template-variable, .hljs-tag, .hljs-name, .hljs-selector-id, .hljs-selector-class, .hljs-regexp, .hljs-deletion { color: #c82829; } /* Tomorrow Orange */ .hljs-number, .hljs-built_in, .hljs-builtin-name, .hljs-literal, .hljs-type, .hljs-params, .hljs-meta, .hljs-link { color: #f5871f; } /* Tomorrow Yellow */ .hljs-attribute { color: #eab700; } /* Tomorrow Green */ .hljs-string, .hljs-symbol, .hljs-bullet, .hljs-addition { color: #718c00; } /* Tomorrow Blue */ .hljs-title, .hljs-section { color: #4271ae; } /* Tomorrow Purple */ .hljs-keyword, .hljs-selector-tag { color: #8959a8; } .hljs { display: block; overflow-x: auto; background: white; color: #4d4d4c; padding: 0.5em; } .hljs-emphasis { font-style: italic; } .hljs-strong { font-weight: bold; }
 html[theme=dark] .hljs-comment, html[theme=dark] .hljs-quote { color: #969896; } html[theme=dark] .hljs-variable, html[theme=dark] .hljs-template-variable, html[theme=dark] .hljs-tag, html[theme=dark] .hljs-name, html[theme=dark] .hljs-selector-id, html[theme=dark] .hljs-selector-class, html[theme=dark] .hljs-regexp, html[theme=dark] .hljs-deletion { color: #cc6666; } html[theme=dark] .hljs-number, html[theme=dark] .hljs-built_in, html[theme=dark] .hljs-builtin-name, html[theme=dark] .hljs-literal, html[theme=dark] .hljs-type, html[theme=dark] .hljs-params, html[theme=dark] .hljs-meta, html[theme=dark] .hljs-link { color: #de935f; } html[theme=dark] .hljs-attribute { color: #f0c674; } html[theme=dark] .hljs-string, html[theme=dark] .hljs-symbol, html[theme=dark] .hljs-bullet, html[theme=dark] .hljs-addition { color: #b5bd68; } html[theme=dark] .hljs-title, html[theme=dark] .hljs-section { color: #81a2be; } html[theme=dark] .hljs-keyword, html[theme=dark] .hljs-selector-tag { color: #b294bb; } html[theme=dark] .hljs { display: block; overflow-x: auto; background: #1d1f21; color: #c5c8c6; padding: 0.5em; } html[theme=dark] .hljs-emphasis { font-style: italic; } html[theme=dark] .hljs-strong { font-weight: bold; }</style>
   </head>
   <body class="reset">
-    <script>
-      /* eslint-disable */
-      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-      
-      ga('create', '', 'auto');
-      ga('send', 'pageview');
-      /* eslint-enable */
-      
-    </script>
     <div id="wrapper">
       <div class="body" id="content">
         <div class="flex" id="menu">
@@ -37,14 +25,13 @@ html[theme=dark] .hljs-comment, html[theme=dark] .hljs-quote { color: #969896; }
           </div><a href="/docs/extensions/render/#nav">&#9776;</a>
         </div>
         <h1>Render <small><a href="//github.com/grownjs/jamming/blob/master/src/pages/docs/extensions/render.md" target="_blank">&#9998;</a></small></h1>
-        <main><p>Print out your views and templates as response.</p>
-<pre class="hljs"><code class="lang-js"><span class="hljs-comment">/* @runkit */</span>
-<span class="hljs-comment">// register extension</span>
+        <main class="push"><p>Print out your views and templates as response.</p>
+<pre class="hljs"><code class="lang-js"><span class="hljs-comment">// register extension</span>
 <span class="hljs-title class_">Grown</span>.<span class="hljs-title function_">use</span>(<span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;@grown/render&#x27;</span>));
 
 <span class="hljs-comment">// ./views/default.js</span>
 <span class="hljs-comment">// module.exports = data =&gt;</span>
-<span class="hljs-comment">//   `&lt;html&gt;&lt;body&gt;${data.contents}&lt;/body&gt;&lt;/html&gt;`;</span>
+<span class="hljs-comment">//   h(&#x27;html&#x27;, null, h(&#x27;body&#x27;, null, data.contents));</span>
 
 <span class="hljs-comment">// ./views/Home/index.js</span>
 <span class="hljs-comment">// module.exports = (_, h) =&gt; h(&#x27;h1&#x27;, null, &#x27;It works!&#x27;);</span>
@@ -57,24 +44,24 @@ html[theme=dark] .hljs-comment, html[theme=dark] .hljs-quote { color: #969896; }
 
 <span class="hljs-comment">// setup middleware...</span>
 server.<span class="hljs-title function_">plug</span>(<span class="hljs-title class_">Grown</span>.<span class="hljs-title class_">Render</span>({
-  <span class="hljs-attr">template</span>: <span class="hljs-string">&#x27;default&#x27;</span>,
+  <span class="hljs-attr">default_layout</span>: <span class="hljs-string">&#x27;default&#x27;</span>,
   <span class="hljs-attr">view_folders</span>: [
     <span class="hljs-string">`<span class="hljs-subst">${__dirname}</span>/views`</span>
   ],
 }));
 
 server.<span class="hljs-title function_">mount</span>(<span class="hljs-function"><span class="hljs-params">ctx</span> =&gt;</span> {
-  <span class="hljs-comment">// you can append/prepende to the head and body tags</span>
+  <span class="hljs-comment">// you can append/prepend to the head and body tags</span>
   ctx.<span class="hljs-title function_">append</span>(<span class="hljs-string">&#x27;head&#x27;</span>, <span class="hljs-function">() =&gt;</span> <span class="hljs-string">`&lt;title&gt;URL: <span class="hljs-subst">${ctx.req.url}</span>&lt;/title&gt;`</span>);
   ctx.<span class="hljs-title function_">append</span>(<span class="hljs-string">&#x27;head&#x27;</span>, <span class="hljs-function">() =&gt;</span> <span class="hljs-string">&#x27;&lt;style&gt;*{margin:0}&lt;/style&gt;&#x27;</span>);
 
   <span class="hljs-keyword">if</span> (ctx.<span class="hljs-property">req</span>.<span class="hljs-property">url</span> === <span class="hljs-string">&#x27;/&#x27;</span>) {
-    ctx.<span class="hljs-title function_">render</span>(<span class="hljs-string">&#x27;Home/index&#x27;</span>);
-  } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (ctx.<span class="hljs-property">req</span>.<span class="hljs-property">url</span> === <span class="hljs-string">&#x27;/about&#x27;</span>) {
-    ctx.<span class="hljs-title function_">render</span>(<span class="hljs-string">&#x27;About/about&#x27;</span>);
-  } <span class="hljs-keyword">else</span> {
-    ctx.<span class="hljs-title function_">render</span>(<span class="hljs-string">&#x27;Errors/not_found&#x27;</span>);
+    <span class="hljs-keyword">return</span> ctx.<span class="hljs-title function_">render</span>(<span class="hljs-string">&#x27;Home/index&#x27;</span>);
   }
+  <span class="hljs-keyword">if</span> (ctx.<span class="hljs-property">req</span>.<span class="hljs-property">url</span> === <span class="hljs-string">&#x27;/about&#x27;</span>) {
+    <span class="hljs-keyword">return</span> ctx.<span class="hljs-title function_">render</span>(<span class="hljs-string">&#x27;About/about&#x27;</span>);
+  }
+  <span class="hljs-keyword">return</span> ctx.<span class="hljs-title function_">render</span>(<span class="hljs-string">&#x27;Errors/not_found&#x27;</span>);
 });
 </code></pre>
 <blockquote>
@@ -104,7 +91,7 @@ server.<span class="hljs-title function_">mount</span>(<span class="hljs-functio
 <h3 id="private-props-var-static-var">Private* props <var>static</var></h3>
 <h3 id="private-methods-var-static-var">Private* methods <var>static</var></h3>
 </main>
-        <nav class="flex"><a id="back" href="/docs/extensions/render/#" onclick="content.scrollTop=0">&uarr; Back to the top</a>
+        <nav class="flex gap end"><span class="auto">➯ Next: <a id="next" href="docs/extensions/repl">Extensions &rangle; REPL</a></span><a id="back" href="/docs/extensions/render/#" onclick="content.scrollTop=0">&uarr; Back to the top</a>
         </nav>
       </div>
       <aside id="sidebar">
@@ -121,7 +108,7 @@ server.<span class="hljs-title function_">mount</span>(<span class="hljs-functio
             </button><small>The herbsman's NodeJS framework</small>
           </p>
           <hr>
-          <div class="flex fit gap"><a href="//badge.fury.io/js/grown" target="_blank"><img src="//badge.fury.io/js/grown.svg"></a><a href="//codecov.io/gh/grownjs/grown" target="_blank"><img src="//codecov.io/gh/grownjs/grown/branch/master/graph/badge.svg"></a><a href="//github.com/grownjs/grown/actions" target="_blank"><img src="//github.com/grownjs/grown/workflows/build/badge.svg"></a></div>
+          <div class="flex fit gap push"><a href="//badge.fury.io/js/grown" target="_blank"><img src="//badge.fury.io/js/grown.svg"></a><a href="//codecov.io/gh/grownjs/grown" target="_blank"><img src="//codecov.io/gh/grownjs/grown/branch/master/graph/badge.svg"></a><a href="//github.com/grownjs/grown/actions" target="_blank"><img src="//github.com/grownjs/grown/workflows/build/badge.svg"></a></div>
           <nav id="nav">
             <ul class="reset">
               <li>
@@ -217,10 +204,10 @@ server.<span class="hljs-title function_">mount</span>(<span class="hljs-functio
                 <h3 class="reset">Controllers</h3>
                 <ul class="pl reset">
                   <li>
-                    <a href="./docs/controllers">Web</a>
+                    <a exact="true" href="./docs/controllers">Web</a>
                   </li>
                   <li>
-                    <a href="./docs/controllers/grpc">GRPC</a>
+                    <a href="./docs/controllers/grpc">gRPC</a>
                   </li>
                   <li>
                     <a href="./docs/controllers/graphql">GraphQL</a>
@@ -231,7 +218,7 @@ server.<span class="hljs-title function_">mount</span>(<span class="hljs-functio
                 <h3 class="reset">Unit-testing</h3>
                 <ul class="pl reset">
                   <li>
-                    <a href="./docs/testing">Server</a>
+                    <a exact="true" href="./docs/testing">Server</a>
                   </li>
                   <li>
                     <a href="./docs/testing/schema">Schema</a>
@@ -246,9 +233,9 @@ server.<span class="hljs-title function_">mount</span>(<span class="hljs-functio
         </div>
       </aside>
     </div>
-    <script>window.__runkit__ = {"endpoint":true,"preamble":{"contents":"const fs = require('fs');\nconst path = require('path');\n\nfs.mkdirSync('./app');\nfs.mkdirSync('./app/views');\nfs.mkdirSync('./app/views/Home');\nfs.mkdirSync('./app/views/About');\nfs.mkdirSync('./app/views/Errors');\n\nfs.writeFileSync('./app/views/default.js', `\n  module.exports = data => '<html><body>' + data.contents + '</body></html>';\n`);\n\nfs.writeFileSync('./app/views/Home/index.js', `\n  module.exports = (_, h) => h('h1', null, 'It works!');\n`);\n\nfs.writeFileSync('./app/views/About/about.js', `\n  module.exports = () => '<h1>About...</h1>';\n`);\n\nfs.writeFileSync('./app/views/Errors/not_found.js', `\n  module.exports = () => '<h1>404</h1>';\n`);\n\nconst Grown = require('@grown/bud')();\n\nGrown.use(require('@grown/server'));\n\nconst server = new Grown();\n\nprocess.nextTick(() => server.listen(8080));\n\neval(`__dirname='${path.join(process.cwd(), 'app')}';`); // eslint-disable-line\n"}};</script>
+    <script>window.__runkit__ = {"endpoint":true,"preamble":{"contents":"/* eslint-disable */\n\nconst fs = require('fs');\nconst path = require('path');\n\nfs.mkdirSync('./app');\nfs.mkdirSync('./app/views');\nfs.mkdirSync('./app/views/Home');\nfs.mkdirSync('./app/views/About');\nfs.mkdirSync('./app/views/Errors');\n\nfs.writeFileSync('./app/views/default.js', `\n  module.exports = (data, h) => h('html', null, h('body', null, data.contents));\n`);\n\nfs.writeFileSync('./app/views/Home/index.js', `\n  module.exports = (_, h) => h('h1', null, 'It works!');\n`);\n\nfs.writeFileSync('./app/views/About/about.js', `\n  module.exports = () => '<h1>About...</h1>';\n`);\n\nfs.writeFileSync('./app/views/Errors/not_found.js', `\n  module.exports = () => '<h1>404</h1>';\n`);\n\nGrown = require('@grown/bud')();\nGrown.use(require('@grown/server'));\n\nserver = new Grown();\n\nprocess.nextTick(() => server.listen(8080));\n\neval(`__dirname='${path.join(process.cwd(), 'app')}';`); // eslint-disable-line\n"}};</script>
     <script src="//embed.runkit.com"></script>
     <script src="//files.stork-search.net/stork.js"></script>
-    <script type="module" src="scripts.js?t=1625791334118"></script>
+    <script type="module" src="scripts.js?livereload"></script>
   </body>
 </html>
