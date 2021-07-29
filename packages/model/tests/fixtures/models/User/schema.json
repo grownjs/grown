@@ -1,5 +1,6 @@
 {
   "id": "User",
+  "additionalProperties": false,
   "properties": {
     "id": {
       "$ref": "dataTypes#/definitions/primaryKey"

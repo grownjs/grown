@@ -11,6 +11,14 @@ on:
 jobs:
   build-test:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: schema_dev
+        ports:
+          - 5432:5432
     steps:
       - uses: actions/checkout@v1
       - uses: actions/setup-node@v1

@@ -128,8 +128,8 @@ module.exports = (Grown, util) => {
 
     $mixins() {
       return {
-        methods: {
-          routes: this._mappings,
+        props: {
+          routes: () => this._mappings,
         },
       };
     },

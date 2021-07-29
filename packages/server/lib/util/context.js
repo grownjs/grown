@@ -34,8 +34,16 @@ function buildSettings(data) {
 
     try {
       value = this._.getProp(data, key, defvalue);
+
+      if (typeof value === 'function') {
+        value = value(data);
+      }
     } catch (e) {
       throw new Error(`Cannot resolve config: ${key}`);
+    }
+
+    if (typeof defvalue === 'undefined' && typeof value === 'undefined') {
+      throw new Error(`Missing value for '${key}' option`);
     }
 
     return typeof value !== 'undefined'

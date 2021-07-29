@@ -1,5 +1,7 @@
 'use strict';
 
+const path = require('path');
+
 module.exports = (Grown, util) => {
   const JSONSchemaSequelizer = require('json-schema-sequelizer');
 
@@ -23,6 +25,58 @@ module.exports = (Grown, util) => {
     /* istanbul ignore else */
     target.$schema = { $ref: _schema };
     return target;
+  }
+
+  function _typedefs(self, _options) {
+    if (_options.types) {
+      const typedefs = _options.main || '@grown/model';
+
+      const module = [];
+      const refs = [];
+      const set = self.typesOf({
+        extend: 'ModelInterface',
+        properties: ['classMethods', 'instanceMethods'],
+        declaration: 'resource:model',
+        references: id => {
+          const doc = _options.comments ? `/**\nThe \`${id}\` module.\n*/\n` : '';
+
+          return `${doc}interface ${id}Module extends ModelDefinition {}`;
+        },
+      }).reduce((memo, cur) => {
+        if (cur.type) {
+          const doc = _options.comments ? `/**\nDeclaration of \`${cur.type}\` instance.\n*/\n` : '';
+
+          refs.push(cur.type);
+          module.push({
+            chunk: `${doc}export interface ${cur.type}Instance extends ${cur.type}, Model, ${cur.type}Model.InstanceMethods {}`,
+          });
+        }
+        memo.push(cur);
+        return memo;
+      }, []);
+
+      const buffer = [
+        '// This file was automatically generated, do not modify.',
+        `import type { Model, ModelCtor, ModelInterface, ModelDefinition } from '${typedefs}';`,
+        `import type { ${refs.join(', ')} } from '${path.relative(_options.models, _options.types)}';`,
+        `export * from '${path.relative(_options.models, _options.types)}';`,
+      ].concat(set.map(x => x.chunk))
+        .concat(module.map(x => x.chunk))
+        .concat(refs.map(x => [
+          _options.comments && `/**\nDeclaration of \`${x}\` model.\n*/`,
+          `export type ${x}Model = ModelCtor<${x}Instance> & ${x}Model.ClassMethods;`,
+        ].filter(Boolean).join('\n')))
+        .concat([
+          `/**\nFound modules from \`${path.relative('.', _options.models)}\`\n*/`,
+          `export default interface Models {\n${refs.map(x => [
+            _options.comments && `/**\nThe \`${x}\` model.\n*/\n`,
+            `  ${x}: ${x}Model;\n`,
+          ].filter(Boolean).join('')).join('')}}`,
+        ])
+        .join('\n');
+
+      return buffer;
+    }
   }
 
   return Grown('Model.DB', {
@@ -53,14 +107,17 @@ module.exports = (Grown, util) => {
     },
 
     bundle(options) {
-      options = options || {};
+      /* istanbul ignore else */
+      if (!options || !options.database) {
+        throw new TypeError(`Missing database, given '${JSON.stringify(options)}'`);
+      }
 
       /* istanbul ignore else */
       if (!Grown.Model.Entity) {
         Grown.use(require('./entity'));
       }
 
-      const name = (options.database && options.database.identifier) || 'default';
+      const name = options.database.identifier || 'default';
       const DB = Grown.Model.DB.register(name, options.database);
 
       if (options.database.hooks && !DB[name].sequelize._resolved) {
@@ -70,10 +127,11 @@ module.exports = (Grown, util) => {
       }
 
       // scan and load/define models
-      const _ = Object.create(null);
       const $ = Grown.load(options.models, {
         before: (_name, definition) => {
-          _[_name] = definition.$schema.id;
+          if (definition.$schema.id !== _name) {
+            throw new TypeError(`Given $schema.id should be '${_name}', given '${JSON.stringify(definition.$schema, null, 2)}'`);
+          }
 
           // always add it as model!
           return DB[name].add(definition, true);
@@ -84,7 +142,7 @@ module.exports = (Grown, util) => {
           }
 
           // no connection? return it as Entity definition
-          return Grown.Model.Entity.define(_name, definition, DB[name].$refs);
+          return Grown.Model.Entity.define(_name, definition);
         },
       });
 
@@ -93,27 +151,15 @@ module.exports = (Grown, util) => {
           ? DB[name].models[model]
           : $.get(model);
 
-        return Grown.Model.Entity._wrap(model, this._decorate($.get(model, refresh), target, _[model] || model), DB[name].schemas);
+        if (!$.has(model)) {
+          return Grown.Model.Entity._wrap(model, this._decorate({}, target, model), DB[name].schemas);
+        }
+
+        return Grown.Model.Entity._wrap(model, this._decorate($.get(model, refresh), target, model), DB[name].schemas);
       }
 
       // reassign values
       DB[name].ready(() => {
-        Object.keys(_).forEach(key => {
-          const reference = $.registry[key];
-          const value = $.values[key];
-          const prop = _[key];
-
-          if (key !== prop) {
-            delete $.values[key];
-            delete $.registry[key];
-
-            $.values[prop] = value;
-            $.registry[prop] = reference;
-
-            util.readOnlyProperty($, prop, () => $.get(prop));
-          }
-        });
-
         Object.keys(DB[name].$refs).forEach(k => {
           if (DB[name].$refs[k].$references) get.call(this, k, true);
         });
@@ -122,6 +168,7 @@ module.exports = (Grown, util) => {
       return Grown(`Model.DB.${name}.repository`, {
         get connection() { return DB[name].sequelize.options; },
         get sequelize() { return DB[name].sequelize; },
+        get typedefs() { return _typedefs($, options); },
         get schemas() { return DB[name].schemas; },
         get models() { return DB[name].models; },
         get $refs() { return DB[name].$refs; },

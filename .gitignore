@@ -6,4 +6,5 @@ codecov.sh
 .nyc_output
 build
 coverage
+generated
 node_modules

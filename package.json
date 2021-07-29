@@ -15,9 +15,10 @@
     "index.js"
   ],
   "scripts": {
-    "test": "node test & (sleep 1; curl 0.0.0.0:8080/die || exit 2)",
+    "test": "ts-node check.ts & (sleep 3; curl 0.0.0.0:8080/die || exit 2)",
     "lint": "eslint $(git ls-files | grep -E '(js|pug)$')",
-    "pretest": "npm run lint"
+    "ts:check": "NODE_ENV=test ts-node check.ts",
+    "pretest": "npm run lint && npm run ts:check"
   },
   "publishConfig": {
     "access": "public"
@@ -43,12 +44,15 @@
     "normalize-url": ">=4.5.1",
     "ssri": "^8.0.1",
     "trim-newlines": ">=3.0.1",
+    "ts-node": "^10.1.0",
+    "typescript": "^4.3.5",
     "ws": ">=7.4.6",
     "y18n": "^5.0.8"
   },
   "dependencies": {
     "@grown/bud": "^0.0.35",
     "@grown/cli": "^0.0.44",
-    "@grown/server": "^0.0.45"
+    "@grown/server": "^0.0.45",
+    "type-fest": "^1.3.0"
   }
 }
