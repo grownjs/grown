@@ -1,6 +1,6 @@
 {
   "name": "grown",
-  "version": "1.1.46",
+  "version": "1.1.47",
   "homepage": "https://grown.jamming.dev",
   "description": "Experimental DSL for web-apps",
   "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
@@ -30,8 +30,8 @@
     "url": "git+https://github.com/grownjs/grown.git"
   },
   "devDependencies": {
-    "@grown/model": "*",
-    "@grown/test": "*",
+    "@grown/model": "^0.0.38",
+    "@grown/test": "^0.0.14",
     "eslint": "^7.9.0",
     "eslint-config-airbnb-base": "^14.2.0",
     "eslint-plugin-import": "^2.14.0",
@@ -49,9 +49,9 @@
     "y18n": "^5.0.8"
   },
   "dependencies": {
-    "@grown/bud": "^0.0.35",
-    "@grown/cli": "^0.0.44",
-    "@grown/server": "^0.0.45",
+    "@grown/bud": "^0.0.36",
+    "@grown/cli": "^0.0.45",
+    "@grown/server": "^0.0.46",
     "type-fest": "^1.3.0"
   }
 }
