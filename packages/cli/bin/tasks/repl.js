@@ -12,7 +12,7 @@ const USAGE_INFO = `
     import=PATH   # Load symbols into the session
     models=PATH   # Load models into the session
 
-  All hooks can be invoked inside the REPL,
+  All hooks can be invoked inside the REPL too,
   just prefix them with '.', e.g. \`.import lib\`
 
   Examples:
