@@ -82,6 +82,9 @@ describe('Grown.Model', () => {
       const postgresConn = {
         logging: false,
         dialect: 'postgres',
+        username: 'postgres',
+        password: 'postgres',
+        database: 'schema_dev',
       };
 
       let container;

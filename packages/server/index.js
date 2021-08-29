@@ -184,10 +184,6 @@ function _grownFactory($, util, options) {
           .then(() => {
             const conn = scope._connection(request || {});
 
-            if (!(conn.req && conn.req.url && conn.req.method)) {
-              throw new TypeError(`Missing Request, given '${JSON.stringify(request)}'`);
-            }
-
             if (typeof conn.req.query === 'undefined') {
               conn.req.query = qs.parse(conn.req.url.split('?')[1] || '');
             }

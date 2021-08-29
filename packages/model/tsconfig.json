@@ -6,6 +6,7 @@
     "module": "commonjs",
     "esModuleInterop": true,
     "paths": {
+      "@grown/model": ["."],
       "~/models": ["tests/fixtures/models"],
       "~/models/*": ["tests/fixtures/models/*"]
     }

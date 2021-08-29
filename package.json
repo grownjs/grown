@@ -15,10 +15,9 @@
     "index.js"
   ],
   "scripts": {
-    "test": "ts-node check.ts & (sleep 3; curl 0.0.0.0:8080/die || exit 2)",
+    "test": "node check.js & (sleep 3; curl 0.0.0.0:8080/die || exit 2)",
     "lint": "eslint $(git ls-files | grep -E '(js|pug)$')",
-    "ts:check": "NODE_ENV=test ts-node check.ts",
-    "pretest": "npm run lint && npm run ts:check"
+    "pretest": "npm run lint && tsc --build tsconfig.json"
   },
   "publishConfig": {
     "access": "public"
@@ -31,6 +30,8 @@
     "url": "git+https://github.com/grownjs/grown.git"
   },
   "devDependencies": {
+    "@grown/model": "*",
+    "@grown/test": "*",
     "eslint": "^7.9.0",
     "eslint-config-airbnb-base": "^14.2.0",
     "eslint-plugin-import": "^2.14.0",
@@ -44,8 +45,6 @@
     "normalize-url": ">=4.5.1",
     "ssri": "^8.0.1",
     "trim-newlines": ">=3.0.1",
-    "ts-node": "^10.1.0",
-    "typescript": "^4.3.5",
     "ws": ">=7.4.6",
     "y18n": "^5.0.8"
   },

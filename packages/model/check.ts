@@ -9,7 +9,7 @@ import { Token, accessType } from '~/models';
 const t: Partial<Token> = {
   type: accessType.INVITATION,
 };
-console.log(t.type === 'INVITATION');
+console.log(1, t.type === 'INVITATION');
 
 const Grown = createContainer();
 
@@ -18,12 +18,16 @@ async function main() {
   const Example: ExampleResource = repo.get('Example');
   const ex = Example.getSchema<Example>().fakeOne();
 
-  console.log(typeof ex.value === 'string');
-  console.log(Example.classMethods.callMe() === 42);
+  console.log(2, typeof ex.value === 'string');
+  console.log(3, Example.classMethods.callMe() === 42);
 
   const data = { value: 42 };
-  if (Example.getSchema<Example>().validate(data)) {
-    console.log(typeof data.value === 'string');
+  try {
+    if (Example.getSchema<Example>().validate(data)) {
+      console.log(-1, typeof data.value === 'string');
+    }
+  } catch (e) {
+    console.log(e);
   }
 
   const db = await repo.connect();
@@ -31,7 +35,7 @@ async function main() {
 
   const fixed = db.resource<ExampleInstance>('Example');
   const [f] = await fixed.actions.create({});
-  console.log(f.get());
+  console.log(4, f.get());
 
   const User = repo.get<UserInstance>('User');
   const Ex = repo.get<ExampleInstance>('Example');
@@ -42,18 +46,18 @@ async function main() {
   const ExampleMock = { build: () => ({ someStuff }) };
   const deps = { User: { name: 'OSOM' }, Example: ExampleMock };
   const fn = mayBe(deps as Provider);
-  console.log(fn() === 'OSOM');
-  console.log(td.explain(someStuff).callCount === 1);
+  console.log(5, fn() === 'OSOM');
+  console.log(6, td.explain(someStuff).callCount === 1);
 
   Example.instanceMethods.someStuff();
   const e = Ex.build();
   e.someStuff();
 
-  console.log(typeof u.email === 'string');
-  console.log(count && Ex.name === 'Example');
+  console.log(7, typeof u.email === 'string');
+  console.log(8, count && Ex.name === 'Example');
   repo.disconnect();
 
   const name = Example.classMethods.mayBe(42);
-  console.log(name === User.name);
+  console.log(9, name === User.name);
 }
 main().catch(console.error);

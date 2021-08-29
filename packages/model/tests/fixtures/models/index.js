@@ -1,5 +1,5 @@
 require('../generated')(module.exports = Grown => {
-  Grown.use(require('@grown/model/db'));
+  Grown.use(require('../../..'));
 
   return Grown('Models', {
     include: [
