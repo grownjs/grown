@@ -4,6 +4,9 @@
   "main": "index.js",
   "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
   "license": "MIT",
+  "files": [
+    "*.js"
+  ],
   "scripts": {
     "test": "echo FIXME",
     "test:ci": "echo FIXME"
