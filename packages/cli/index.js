@@ -156,6 +156,10 @@ module.exports = (Grown, util) => {
 
       logger.printf('\n  {% gray  %s %}\n', ARGV_FLAGS.trim());
     } else {
+      if (!this._tasks[taskName]) {
+        throw new Error(`Undefined '${taskName}' task`);
+      }
+
       logger.printf('\n  {% green %s %} {% gray ─ %s %}\n', taskName,
         require(this._tasks[taskName]).description.trim());
     }

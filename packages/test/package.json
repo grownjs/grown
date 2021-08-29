@@ -4,6 +4,12 @@
   "main": "index.js",
   "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
   "license": "MIT",
+  "types": "index.d.ts",
+  "files": [
+    "mock/**",
+    "*.d.ts",
+    "*.js"
+  ],
   "scripts": {
     "dev": "npm run test:unit -- -w",
     "test": "npm run coverage -- npm run test:unit --",
@@ -17,6 +23,8 @@
     "access": "public"
   },
   "dependencies": {
+    "@types/chai": "^4.2.21",
+    "@types/mocha": "^9.0.0",
     "debug": "^3.1.0",
     "mock-req": "^0.2.0",
     "mock-res": "^0.5.0",

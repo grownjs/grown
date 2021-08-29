@@ -1,8 +1,9 @@
 {
-  "id": "Fixed",
+  "id": "Example",
   "properties": {
     "value": {
       "type": "string"
     }
-  }
+  },
+  "additionalProperties": false
 }

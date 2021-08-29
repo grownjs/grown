@@ -1,5 +1,11 @@
 *.log
 .DS_Store
 .nyc_output
+check.js
 /coverage
 /node_modules
+/tests/**/types.d.ts
+/tests/**/index.d.ts
+/tests/**/someStuff/index.js
+/tests/**/callMe/index.js
+/tests/**/mayBe/index.js

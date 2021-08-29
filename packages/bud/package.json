@@ -4,6 +4,12 @@
   "main": "index.js",
   "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
   "license": "MIT",
+  "types": "index.d.ts",
+  "files": [
+    "util/**",
+    "*.d.ts",
+    "*.js"
+  ],
   "scripts": {
     "dev": "npm run test:unit -- -w",
     "test": "npm run coverage -- npm run test:unit --",
@@ -17,12 +23,14 @@
     "access": "public"
   },
   "dependencies": {
+    "@types/node": "^16.7.6",
     "clean-stack": "^2.0.0",
     "debug": "^4.1.0",
     "dotenv": "^6.2.0",
-    "global-or-local": "^0.1.4",
+    "global-or-local": "^0.1.6",
+    "is-docker": "^2.2.1",
     "object-new": "^0.4.0",
-    "sastre": "^0.2.11",
+    "sastre": "^0.2.19",
     "source-map-support": "^0.5.3",
     "wargs": "^0.8.2"
   },

@@ -26,19 +26,19 @@ const USAGE_INFO = `
   --to         Optional. Apply migrations up to this offset
 
   Examples:
-    grown migrate models:path/to/models --make
-    grown migrate models:db/models --apply "migration description"
+    grown migrate path/to/models --make
+    grown migrate db/models --apply "migration description"
 
 `;
 
 module.exports = {
   description: USAGE_INFO,
   callback(Grown) {
-    const use = Grown.argv.params.models;
+    const [, use] = Grown.argv._;
 
     /* istanbul ignore else */
     if (!use || typeof use !== 'string') {
-      throw new Error(`Missing models:PATH to load, given '${use || ''}'`);
+      throw new Error(`Missing PATH to load, given '${use || ''}'`);
     }
 
     const path = require('path');

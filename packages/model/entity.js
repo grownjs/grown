@@ -2,6 +2,7 @@
 
 const JSF_DEFAULTS = {
   random: Math.random,
+  fillProperties: false,
   useDefaultValue: false,
   alwaysFakeOptionals: false,
   pruneProperties: ['belongsToMany', 'belongsTo', 'hasMany'],
@@ -14,32 +15,47 @@ module.exports = (Grown, util) => {
   const jsf = require('json-schema-faker');
 
   function _buildValidator(id, ref, refs) {
-    return is(ref ? { $ref: ref } : id, { schemas: refs, greedy: true });
+    return is({ $ref: ref || id }, {
+      schemas: refs.reduce((memo, cur) => {
+        if (cur) memo[cur.id] = cur;
+        return memo;
+      }, {}),
+      greedy: true,
+    });
   }
 
   function _validateFrom(id, ref, refs, data) {
     try {
-      this._assertFrom(id, ref, refs, data);
-      return true;
+      return this._assertFrom(id, ref, refs, data);
     } catch (e) {
       return false;
     }
   }
 
-  function _assertFrom(id, ref, refs, data) {
+  function _assertFrom(id, ref, refs, data, debug) {
     const key = JSON.stringify({ id, ref });
     const check = CACHED[key] || (CACHED[key] = this._buildValidator(id, ref, refs));
     const isValid = check(data);
 
     /* istanbul ignore else */
     if (!isValid) {
-      const err = new Error(`Invalid input for ${ref ? id : id.id}`);
+      const err = new Error(`Invalid input for ${ref || id}`);
 
       err.sample = data;
       err.errors = check.errors.map(e => ({
         field: e.field.replace('data.', ''),
         message: e.message,
       }));
+      err.stack = [
+        ref || id,
+        JSON.stringify(err.sample),
+        ...err.errors.map(x => `- ${x.field} ${x.message}`),
+      ].join('\n');
+
+      if (debug) {
+        console.log('===== FAILURE =====');
+        console.log(err.stack);
+      }
 
       throw err;
     }
@@ -60,16 +76,16 @@ module.exports = (Grown, util) => {
     return {
       fakeOne: opts => this._fakeFrom({ $ref: ref }, refs, opts),
       fakeMany: (nth, opts) => this._fakeFrom({ type: 'array', items: { $ref: ref }, minItems: nth || 0 }, refs, opts),
-      assert: data => this._assertFrom(id, ref, refs, data),
-      validate: data => this._validateFrom(id, ref, refs, data),
+      assert: (data, debug) => this._assertFrom(entity, ref, refs, data, debug),
+      validate: data => this._validateFrom(entity, ref, refs, data),
     };
   }
 
   function _schema(id, refs) {
     return {
-      fakeOne: opts => this._fakeFrom(id, refs, opts),
+      fakeOne: opts => this._fakeFrom({ $ref: id }, refs, opts),
       fakeMany: (nth, opts) => this._fakeFrom({ type: 'array', items: id, minItems: nth || 0 }, refs, opts),
-      assert: data => this._assertFrom(id, null, refs, data),
+      assert: (data, debug) => this._assertFrom(id, null, refs, data, debug),
       validate: data => this._validateFrom(id, null, refs, data),
     };
   }
@@ -95,8 +111,6 @@ module.exports = (Grown, util) => {
     _schema,
     _wrap,
 
-    _refs: null,
-
     define(name, params, _refs) {
       if (_refs && _refs[name]) {
         Object.assign(params, _refs[name]);
@@ -114,13 +128,6 @@ module.exports = (Grown, util) => {
           instanceMethods: params.instanceMethods || {},
         }],
       });
-
-      if (_refs) {
-        Model._refs = Object.keys(_refs).reduce((memo, key) => {
-          memo.push(_refs[key].$schema);
-          return memo;
-        }, []);
-      }
 
       return Model;
     },
@@ -169,10 +176,21 @@ module.exports = (Grown, util) => {
 
     getSchema(id) {
       const ref = this.$schema.id || this.$schema.$ref;
+      const name = this.database || this.connection.identifier || 'default';
 
-      return this._refs
-        ? this._through(id ? `${ref}.${id}` : ref, this._refs)
-        : this._schema(this.$schema, []);
+      let refs;
+      if (Grown.Model.DB[name]) {
+        const _refs = Grown.Model.DB[name].$refs;
+
+        refs = Object.keys(_refs).reduce((memo, key) => {
+          memo.push(_refs[key].$schema);
+          return memo;
+        }, []);
+      }
+
+      return refs
+        ? this._through(id ? `${ref}.${id}` : ref, refs)
+        : this._schema(ref, [this.$schema].concat(refs));
     },
   });
 };

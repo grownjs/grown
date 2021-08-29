@@ -12,7 +12,7 @@
     "access": "public"
   },
   "dependencies": {
-    "log-pose": "^0.4.6",
+    "log-pose": "^0.4.7",
     "wargs": "^0.8.1"
   },
   "devDependencies": {

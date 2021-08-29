@@ -4,6 +4,12 @@
   "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
   "license": "MIT",
   "main": "index.js",
+  "types": "index.d.ts",
+  "files": [
+    "lib/**",
+    "*.d.ts",
+    "*.js"
+  ],
   "scripts": {
     "dev": "npm run test:unit -- -w",
     "test": "npm run coverage -- npm run test:unit --",

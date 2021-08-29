@@ -102,6 +102,10 @@ module.exports = (Grown, util) => {
     _onError,
 
     setup(controllers, options) {
+      if (!controllers) {
+        throw new TypeError(`Missing gRPC controllers, given '${controllers}'`);
+      }
+
       const _server = grpc.ServerCredentials.createInsecure();
       const _channel = grpc.credentials.createInsecure();
       const _settings = options || {};
@@ -143,7 +147,7 @@ module.exports = (Grown, util) => {
         services.push([Proto, name]);
       });
 
-      map.start = _port => {
+      map.start = _port => new Promise(resolve => {
         /* istanbul ignore else */
         if (!server.started) {
           services.forEach(([Proto, name]) => {
@@ -159,11 +163,12 @@ module.exports = (Grown, util) => {
           server.bindAsync(`0.0.0.0:${_port || port}`, _server, err => {
             if (err) throw err;
             server.start();
+            resolve(map);
           });
+        } else {
+          resolve(map);
         }
-
-        return map;
-      };
+      });
 
       map.stop = (cb = () => {}) => {
         server.tryShutdown(cb);

@@ -103,6 +103,13 @@ module.exports = (Grown, util) => {
           },
 
           delete_session(name) {
+            if (Array.isArray(name)) {
+              name.forEach(key => {
+                if (key) this.delete_session(key);
+              });
+              return this;
+            }
+
             /* istanbul ignore else */
             if (!(name && typeof name === 'string')) {
               throw new Error(`Invalid resp_cookie: '${name}'`);

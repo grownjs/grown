@@ -4,6 +4,8 @@
 .DS_Store
 codecov.sh
 .nyc_output
+check.js
 build
 coverage
+generated
 node_modules

@@ -4,6 +4,11 @@
   "main": "index.js",
   "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
   "license": "MIT",
+  "types": "index.d.ts",
+  "files": [
+    "*.d.ts",
+    "*.js"
+  ],
   "scripts": {
     "dev": "npm run test:unit -- -w",
     "test": "npm run coverage -- npm run test:unit --",
@@ -11,23 +16,39 @@
     "test:dev": "npm test && nyc report -r html",
     "test:run": "NODE_ENV=test _mocha --exit --recursive -bR spec --colors",
     "test:unit": "npm run test:run tests/*.test.js --",
-    "coverage": "nyc -s -x '**/tests/**' -x '**/*.test.js'"
+    "coverage": "nyc -s -x '**/tests/**' -x '**/*.test.js'",
+    "models": "sastre tests/fixtures/models",
+    "types": "npm run models -- -ti../main models",
+    "watch": "npm run models -- -w",
+    "build": "npm run types && npm run models --",
+    "pretest": "npm run schema && npm run build",
+    "posttest": "node -r module-alias/register check.js",
+    "schema": "npm run schema-to:ts",
+    "schema-to": "json-schema-to -tw tests/fixtures",
+    "schema-to:ts": "npm run schema-to -- -ic index -pb --json --typescript"
   },
   "publishConfig": {
     "access": "public"
   },
   "dependencies": {
+    "@types/json-schema": "^7.0.9",
     "debug": "^3.1.0",
     "formator": "0.0.12",
     "is-my-json-valid": "^2.20.5",
-    "json-schema-faker": "^0.5.0-rcv.38",
-    "json-schema-sequelizer": "^0.22.6"
+    "json-schema-faker": "^0.5.0-rcv.39",
+    "json-schema-sequelizer": "^0.22.8"
   },
   "devDependencies": {
     "chai": "^4.2.0",
+    "json-schema-to": "^0.0.29",
     "mocha": "^7.2.0",
+    "module-alias": "^2.2.2",
     "nyc": "^15.1.0",
+    "sastre": "^0.2.19",
     "sqlite3": "^4.1.1",
     "testdouble": "^3.13.0"
+  },
+  "_moduleAliases": {
+    "~/models": "tests/fixtures/models"
   }
 }

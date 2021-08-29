@@ -1,0 +1,13 @@
+{
+  "id": "userTypes",
+  "definitions": {
+    "accessType": {
+      "type": "string",
+      "enum": [
+        "INVITATION",
+        "RECOVER_PASSWORD",
+        "VALIDATE_EMAIL"
+      ]
+    }
+  }
+}

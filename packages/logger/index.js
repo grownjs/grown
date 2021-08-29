@@ -89,7 +89,7 @@ module.exports = (Grown, util) => {
           const base = conn.req.baseUrl && !prefix.includes(conn.req.baseUrl) ? conn.req.baseUrl : '';
 
           msg = `\r{% bold %s %} {% blue. %s %}{% blueBright. %s %} {% gray. %s %} {% ${color} %s %} {% magenta (%s) %}\n`;
-          _logger.debug(msg, method, base + prefix, url, guid, code, time);
+          _logger.debug(msg, method, base + prefix.replace(/\/$/, ''), url, guid, code, time);
         } else {
           msg = `\r{% bold %s %} {% blueBright. %s %} {% gray. %s %} {% ${color} %s %} {% magenta (%s) %}\n`;
           _logger.debug(msg, method, url, guid, code, time);

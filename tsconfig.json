@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "baseUrl": "./"
+  },
+  "include": ["check.ts"],
+  "exclude": ["node_modules"]
+}

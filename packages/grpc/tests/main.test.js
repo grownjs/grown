@@ -43,8 +43,8 @@ describe('Grown.GRPC', () => {
       expect(() => Grown.GRPC.Loader.scan(path.join(__dirname, 'fixtures/invalid.proto'))).to.throw(/API package not found/);
     });
 
-    it('should scan/load properly', () => {
-      gateway = mockGateway(validProtobuf, validHandlers);
+    it('should scan/load properly', async () => {
+      gateway = await mockGateway(validProtobuf, validHandlers);
 
       return gateway.API.Test.is({ truth: 42 })
         .then(result => {
@@ -56,25 +56,25 @@ describe('Grown.GRPC', () => {
       expect(() => mockGateway(validProtobuf, validHandlers, { namespace: 'undef' })).to.throw(/Service.*not found/);
     });
 
-    it('should allow custom hostnames', () => {
-      mockGateway(validProtobuf, validHandlers, { hostname: () => null }).stop();
+    it('should allow custom hostnames', async () => {
+      gateway = await mockGateway(validProtobuf, validHandlers, { hostname: () => null });
     });
   });
 
   describe('Gateway', () => {
-    beforeEach(() => {
-      gateway = mockGateway(validProtobuf, validHandlers);
+    beforeEach(async () => {
+      gateway = await mockGateway(validProtobuf, validHandlers);
     });
 
     it('should validate its input', () => {
       return Promise.resolve()
         .then(() => gateway.sendTest().catch(e => expect(e).to.match(/Invalid method for/)))
         .then(() => gateway.sendTest('is').catch(e => expect(e).to.match(/Missing data for/)))
-        .then(() => Grown.GRPC.Gateway.setup()).catch(e => expect(e).to.match(/Service.*not found/)); // eslint-disable-line
+        .then(() => Grown.GRPC.Gateway.setup({})).catch(e => expect(e).to.match(/Service.*not found/)); // eslint-disable-line
     });
 
     it('should handle container failures', () => {
-      expect(() => mockGateway(validProtobuf, {
+      return mockGateway(validProtobuf, {
         get: () => {
           const err = new Error('EXCEPTION');
 
@@ -82,7 +82,9 @@ describe('Grown.GRPC', () => {
 
           throw err;
         },
-      })).to.throw(/Failed at loading.*EXCEPTION/);
+      }).catch(e => {
+        expect(e.message).to.match(/Failed at loading.*EXCEPTION/);
+      });
     });
 
     it('should handle controller failures (promise)', () => {
