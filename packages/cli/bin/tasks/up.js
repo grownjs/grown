@@ -13,9 +13,9 @@ const USAGE_INFO = `
       --https  Optional. Force HTTPS
 
   Examples:
-    grown up 8081            # Use port 8081
-    grown up --https         # Use https:// protocol
-    grown up 127.0.0.1:8081  # Custom host name and port
+    {bin} up 8081            # Use port 8081
+    {bin} up --https         # Use https:// protocol
+    {bin} up 127.0.0.1:8081  # Custom host name and port
 
 `;
 

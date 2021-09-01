@@ -44,6 +44,12 @@ module.exports = (Grown, util) => {
 
       util.extendValues(this._tasks, taskFiles);
 
+      Object.keys(taskFiles).forEach(task => {
+        const fn = require(taskFiles[task]).configure;
+
+        if (typeof fn === 'function') fn(Grown);
+      });
+
       this._start = new Date();
     }
   }
@@ -158,14 +164,45 @@ module.exports = (Grown, util) => {
 
       logger.printf('\n  {% gray  %s %}\n', ARGV_FLAGS.trim());
     } else {
+      /* istanbul ignore else */
       if (!this._tasks[taskName]) {
         throw new Error(`Undefined '${taskName}' task`);
       }
 
-      logger.printf('\n  {% green %s %} {% gray ─ %s %}\n', taskName,
-        require(this._tasks[taskName]).description.replace(/{bin}/g, this.command_name || 'grown').trim());
-    }
+      let usageInfo = require(this._tasks[taskName]).description;
+      usageInfo = usageInfo.replace(/{bin}/g, this.command_name || 'grown');
 
+      /* istanbul ignore else */
+      if (this.subtasks(taskName)) {
+        const tasks = this.subtasks(taskName);
+        const keys = Object.keys(tasks);
+        const max = keys.reduce((memo, cur) => {
+          /* istanbul ignore else */
+          if (cur.length > memo) return cur.length;
+          return memo;
+        }, 0);
+
+        if (Grown.argv._[1] && !keys.includes(Grown.argv._[1])) {
+          throw new Error(`Undefined '${Grown.argv._[1]}' generator`);
+        }
+
+        if (keys.includes(Grown.argv._[1]) && tasks[Grown.argv._[1]].usage) {
+          usageInfo = tasks[Grown.argv._[1]].usage;
+          logger.printf('\n  {% green %s %} %s {% gray ─ %s %}\n', taskName, Grown.argv._[1], usageInfo.trim());
+        } else {
+          const genInfo = keys.reduce((memo, key) => {
+            memo.push(`${`${key}          `.substr(0, max + 2)} # ${tasks[key].usage.trim().split('\n')[0].trim()}`);
+            return memo;
+          }, []);
+
+          usageInfo = usageInfo.replace('__HOOKS__\n', `${genInfo.join('\n    ')}\n`);
+
+          logger.printf('\n  {% green %s %} {% gray ─ %s %}\n', taskName, usageInfo.trim());
+        }
+      } else {
+        logger.printf('\n  {% green %s %} {% gray ─ %s %}\n', taskName, usageInfo.trim());
+      }
+    }
     logger.write('\n');
   }
 
@@ -255,6 +292,18 @@ module.exports = (Grown, util) => {
     // shared
     _start: null,
     _tasks: {},
+    _groups: {},
+
+    subtasks(group) {
+      return this._groups[group];
+    },
+
+    define(type, usage, callback) {
+      const [group, kind] = type.split(':');
+
+      this._groups[group] = this._groups[group] || {};
+      this._groups[group][kind] = { usage, callback };
+    },
 
     start(taskName) {
       /* istanbul ignore next */
@@ -287,13 +336,16 @@ module.exports = (Grown, util) => {
             throw new Error(`Task ${taskName} is not registered`);
           }
 
-          try {
-            const task = require(this._tasks[taskName]);
+          const task = require(this._tasks[taskName]);
 
-            return task.callback(Grown, util);
-          } catch (e) {
-            _onError(e, taskName);
+          if (this.command_line) {
+            Object.assign(Grown.argv, this.command_line);
           }
+
+          return task.callback(Grown, util);
+        })
+        .catch(e => {
+          _onError(e, taskName);
         });
     },
   });

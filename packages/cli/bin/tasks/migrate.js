@@ -26,8 +26,8 @@ const USAGE_INFO = `
   --to         Optional. Apply migrations up to this offset
 
   Examples:
-    grown migrate path/to/models --make
-    grown migrate db/models --apply "migration description"
+    {bin} migrate path/to/models --make
+    {bin} migrate db/models --apply "migration description"
 
 `;
 

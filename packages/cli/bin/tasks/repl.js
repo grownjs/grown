@@ -16,8 +16,8 @@ const USAGE_INFO = `
   just prefix them with '.', e.g. \`.import lib\`
 
   Examples:
-    grown repl models:db/models
-    grown repl --load path/to/commands import:lib
+    {bin} repl models:db/models
+    {bin} repl --load path/to/commands import:lib
 
 `;
 

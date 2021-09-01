@@ -15,8 +15,8 @@ const USAGE_INFO = `
   --export     Optional. Save backup to destination, directory
 
   Examples:
-    grown backup path/to/models --load ../from/backup/or/path/to/seeds
-    grown backup db/models --save path/to/seeds --only Product,Cart
+    {bin} backup path/to/models --load ../from/backup/or/path/to/seeds
+    {bin} backup db/models --save path/to/seeds --only Product,Cart
 
 `;
 
