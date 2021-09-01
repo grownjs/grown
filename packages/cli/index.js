@@ -47,7 +47,13 @@ module.exports = (Grown, util) => {
       Object.keys(taskFiles).forEach(task => {
         const fn = require(taskFiles[task]).configure;
 
+        /* istanbul ignore else */
         if (typeof fn === 'function') fn(Grown);
+
+        for (let i = 1; i <= task.length; i += 1) {
+          /* istanbul ignore else */
+          if (!this._alias[task.substr(0, i)]) this._alias[task.substr(0, i)] = task;
+        }
       });
 
       this._start = new Date();
@@ -119,8 +125,6 @@ module.exports = (Grown, util) => {
 
   function _showTasks(taskName) {
     logger.printf('\r{% gray. %s (node %s ─ %s) %}\n', process.name, process.version, process.env.NODE_ENV);
-
-    this._findAvailableTasks();
 
     /* istanbul ignore else */
     if (taskName && !Grown.argv.flags.help) {
@@ -291,6 +295,7 @@ module.exports = (Grown, util) => {
 
     // shared
     _start: null,
+    _alias: {},
     _tasks: {},
     _groups: {},
 
@@ -315,6 +320,10 @@ module.exports = (Grown, util) => {
 
       return Promise.resolve()
         .then(() => {
+          this._findAvailableTasks();
+
+          taskName = this._alias[taskName] || taskName;
+
           const promise = Grown.CLI._showTasks(taskName);
 
           /* istanbul ignore else */
@@ -330,6 +339,8 @@ module.exports = (Grown, util) => {
       return Promise.resolve()
         .then(() => {
           this._findAvailableTasks();
+
+          taskName = this._alias[taskName] || taskName;
 
           /* istanbul ignore else */
           if (!this._tasks[taskName]) {
