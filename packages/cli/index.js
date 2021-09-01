@@ -163,7 +163,7 @@ module.exports = (Grown, util) => {
       }
 
       logger.printf('\n  {% green %s %} {% gray ─ %s %}\n', taskName,
-        require(this._tasks[taskName]).description.trim());
+        require(this._tasks[taskName]).description.replace(/{bin}/g, this.command_name || 'grown').trim());
     }
 
     logger.write('\n');
