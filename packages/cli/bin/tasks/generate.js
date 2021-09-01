@@ -2,6 +2,7 @@
 
 /* istanbul ignore file */
 
+const jsyaml = require('js-yaml');
 const fs = require('fs-extra');
 const path = require('path');
 
@@ -18,6 +19,7 @@ const USAGE_INFO = `
 
   Examples:
     {bin} generate model db/models/User email:string permissions:Permission[] --ts
+    {bin} generate type app/schema/types/dataTypes primaryKey type:integer minimum:0
     {bin} generate def src/App methods.main --use Auth,Session,util
     {bin} generate --undo
 
@@ -25,7 +27,7 @@ const USAGE_INFO = `
 
 const MODEL_GENERATOR = `
 
-  Writes a model definition from key:type fields
+  Writes a model definition from name:type fields
 
   Only scalar types are supported: string, number, integer and boolean.
 
@@ -34,6 +36,24 @@ const MODEL_GENERATOR = `
   - Associations are set if given type is capitalized, e.g. \`tags:Tag[]\`
 
   ⚠ Generated models will have a \`id\` attribute defined as primaryKey.
+
+`;
+
+const TYPE_GENERATOR = `
+
+  Writes a new type definition from key:value fields
+
+  --yaml   Optional. Save the generated file as YAML if needed
+
+  Similar to models, you can declare associations and scalar types but
+  you can also use more keywords, like format, minimum/maximum:
+
+    \`type:integer minimum:0 primaryKey autoIncrement\`
+
+  Single parameters with no :value are taken as booleans (true).
+
+  The resuling model is appended to the target file as a definition,
+  both YAML and JSON file-types are supported.
 
 `;
 
@@ -48,7 +68,7 @@ const DEF_GENERATOR = `
 
   Injected dependencies can declare their types through a Provider type, e.g.
 
-    \`--use User,Session --from ~/app/types:ModelsProvider \`
+    \`--use User,Session --from "~/app/types:ModelsProvider"\`
 
   It will generate something like this:
 
@@ -87,6 +107,62 @@ module.exports = {
         }, {}),
       }, null, 2)]);
     });
+    Grown.CLI.define('generate:type', TYPE_GENERATOR, ({ use, args, files }) => {
+      const [name, id] = args[0].split('.');
+      const baseDir = path.join(use, name);
+      const yamlFile = `${baseDir}.yml`;
+      const jsonFile = `${baseDir}.json`;
+      const schema = {};
+      const text = fs.readFileSync(yamlFile).toString();
+
+      let target;
+      let isNew;
+      let yaml;
+      if (fs.existsSync(yamlFile)) {
+        yaml = true;
+        target = jsyaml.load(text);
+      } else {
+        isNew = !fs.existsSync(jsonFile);
+        target = JSON.parse(text);
+      }
+
+      Object.keys(Grown.argv.params).forEach(key => {
+        const value = Grown.argv.params[key];
+
+        if (/^-?\d+(?:\.\d+)?$/.test(value)) {
+          schema[key] = parseFloat(value);
+        } else if (/^(?:true|false|null|\[.*?\]|{.*?})$/.test(value)) {
+          schema[key] = JSON.parse(value);
+        } else if (/^[A-Z]/.test(value)) {
+          schema[key] = value.substr(-2) === '[]'
+            ? { type: 'array', items: { $ref: value.substr(0, value.length - 2) } }
+            : { $ref: value };
+        } else {
+          schema[key] = value;
+        }
+      });
+
+      Grown.argv._.slice(4).forEach(key => {
+        schema[key] = true;
+      });
+
+      if (isNew) {
+        target = { id: name, definitions: { [id]: schema } };
+      } else {
+        if (target.definitions && target.definitions[id] && !Grown.argv.flags.force) {
+          throw new TypeError(`Definition for '${id}' already exists`);
+        }
+
+        target.definitions = target.definitions || {};
+        target.definitions[id] = schema;
+      }
+
+      if (yaml) {
+        files.push([yamlFile, jsyaml.dump(target).trim(), true]);
+      } else {
+        files.push([jsonFile, JSON.stringify(target, null, 2), true]);
+      }
+    });
     Grown.CLI.define('generate:def', DEF_GENERATOR, ({ use, args, files }) => {
       args.forEach(fn => {
         const body = '\n  // TODO\n';
@@ -97,11 +173,15 @@ module.exports = {
         deps = deps.length > 0 ? `{ ${deps.join(', ')} }` : '';
 
         if (Grown.argv.flags.ts) {
+          const provider = Grown.argv.flags.from ? Grown.argv.flags.from.split(':') : false;
+          const types = provider ? ': Provider' : '';
+
           files.push([path.join(use, `${methodPath}/index.ts`), [
+            provider ? `import type { ${provider[1] || 'default'} as Provider } from '${provider[0]}';\n` : null,
             `declare function ${methodName}(): void;`,
             `export type { ${methodName} };\n`,
-            `export default (${deps}): typeof ${methodName} => function ${methodName}() {${body}};`,
-          ].join('\n')]);
+            `export default (${deps}${types}): typeof ${methodName} => function ${methodName}() {${body}};`,
+          ].filter(Boolean).join('\n')]);
         } else {
           files.push([path.join(use, `${methodPath}/index.js`), `module.exports = (${deps}) => function ${methodName}() {${body}};`]);
         }
@@ -156,8 +236,8 @@ module.exports = {
 
     await tasks[kind].callback({ use, args, files });
 
-    files.forEach(([destFile, contents]) => {
-      if (fs.existsSync(destFile) && !Grown.argv.flags.force) {
+    files.forEach(([destFile, contents, overrideFile]) => {
+      if (fs.existsSync(destFile) && !Grown.argv.flags.force && !overrideFile) {
         throw new Error(`File ${destFile} already exists`);
       }
 
