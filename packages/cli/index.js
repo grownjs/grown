@@ -128,7 +128,9 @@ module.exports = (Grown, util) => {
       }).catch(e => this._onError(e, taskName));
     }
 
-    logger.write(GROWN_TXT);
+    if (this.banner_text !== false) {
+      logger.write(this.banner_text || GROWN_TXT);
+    }
   }
 
   function _showHelp(taskName) {
