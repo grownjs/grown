@@ -27,12 +27,13 @@ const MODEL_GENERATOR = `
 
   Writes a model definition from key:type fields
 
-  - Only scalar types are supported: string, number, integer, boolean
+  Only scalar types are supported: string, number, integer and boolean.
+
   - Enum values can be specified with commas, e.g. \`role:USER,ADMIN,GUEST\`
   - Arrays are set if the type ends with \`[]\`, e.g. \`keywords:string[]\`
   - Associations are set if given type is capitalized, e.g. \`tags:Tag[]\`
 
-  > Generated models will have a \`id\` attribute defined as primaryKey.
+  ⚠ Generated models will have a \`id\` attribute defined as primaryKey.
 
 `;
 
@@ -40,9 +41,19 @@ const DEF_GENERATOR = `
 
   Writes a module definition from the given methods
 
-  --use  Optional. Declare a list of dependencies to inject
+  --use   Optional. Declare a list of dependencies to inject
+  --from  Optional. Declare a provider module to import its types
 
-  > You can declare multiple methods at once, however, given dependencies are shared.
+  When used with --ts you can declare the return types as: \`methods.main:void\`
+
+  Injected dependencies can declare their types through a Provider type, e.g.
+
+    \`--use User,Session --from ~/app/types:ModelsProvider \`
+
+  It will generate something like this:
+
+    import type { ModelsProvider as Provider } from '~/app/types';
+    export default ({ User, Session }: Provider) => function main() { ... };
 
 `;
 
