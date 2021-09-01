@@ -18,7 +18,7 @@ const USAGE_INFO = `
 
   Examples:
     {bin} generate model db/models/User email:string permissions:Permission[] --ts
-    {bin} generate def tests/fixtures/models/Foo classMethods.{callMe,mayBe}
+    {bin} generate def src/App methods.main --use Auth,Session,util
     {bin} generate --undo
 
 `;
@@ -27,11 +27,22 @@ const MODEL_GENERATOR = `
 
   Writes a model definition from key:type fields
 
+  - Only scalar types are supported: string, number, integer, boolean
+  - Enum values can be specified with commas, e.g. \`role:USER,ADMIN,GUEST\`
+  - Arrays are set if the type ends with \`[]\`, e.g. \`keywords:string[]\`
+  - Associations are set if given type is capitalized, e.g. \`tags:Tag[]\`
+
+  > Generated models will have a \`id\` attribute defined as primaryKey.
+
 `;
 
 const DEF_GENERATOR = `
 
   Writes a module definition from the given methods
+
+  --use  Optional. Declare a list of dependencies to inject
+
+  > You can declare multiple methods at once, however, given dependencies are shared.
 
 `;
 
@@ -71,21 +82,27 @@ module.exports = {
         const methodPath = fn.replace(/[.]/g, '/');
         const methodName = path.basename(methodPath);
 
+        let deps = Grown.argv.flags.use ? Grown.argv.flags.use.split(',') : [];
+        deps = deps.length > 0 ? `{ ${deps.join(', ')} }` : '';
+
         if (Grown.argv.flags.ts) {
           files.push([path.join(use, `${methodPath}/index.ts`), [
             `declare function ${methodName}(): void;`,
             `export type { ${methodName} };\n`,
-            `export default (): typeof ${methodName} => function ${methodName}() {${body}};`,
+            `export default (${deps}): typeof ${methodName} => function ${methodName}() {${body}};`,
           ].join('\n')]);
         } else {
-          files.push([path.join(use, `${methodPath}/index.js`), `module.exports = () => function ${methodName}() {${body}};`]);
+          files.push([path.join(use, `${methodPath}/index.js`), `module.exports = (${deps}) => function ${methodName}() {${body}};`]);
         }
       });
     });
   },
   async callback(Grown) {
     const histLog = path.join(Grown.cwd, 'logs/generated.log');
-    const backup = fs.existsSync(histLog) ? fs.readFileSync(histLog).toString().trim().split('\n') : [];
+    const backup = fs.existsSync(histLog)
+      ? fs.readFileSync(histLog).toString().trim().split('\n')
+        .filter(Boolean)
+      : [];
 
     if (Grown.argv.flags.undo) {
       const rmFiles = backup.pop();
@@ -94,7 +111,7 @@ module.exports = {
         Grown.Logger.getLogger()
           .printf('\r{% error. No more files to remove %}\n');
       } else {
-        rmFiles.split(' ').forEach(file => {
+        rmFiles.split('\t').forEach(file => {
           fs.removeSync(file);
 
           let curDir = path.dirname(file);
@@ -138,15 +155,15 @@ module.exports = {
         .printf('\r{% info. %s %} %s\n', kind, destFile);
     });
 
-    if (files[0] && !files[0].includes('index.d.ts')) {
-      const tmpFiles = files.map(x => x[0]).join(' ');
-      const offset = backup.indexOf(tmpFiles);
+    let tmpFiles = files.slice();
+    backup.forEach(line => {
+      const tmpLines = line.split('\t');
 
-      if (offset >= 0) {
-        backup.splice(offset, 1);
-      }
+      tmpFiles = tmpFiles.filter(f => !tmpLines.includes(f[0]));
+    });
 
-      fs.outputFileSync(histLog, `${backup.join('\n')}\n${tmpFiles}`.trim());
+    if (tmpFiles.length) {
+      fs.outputFileSync(histLog, `${backup.join('\n')}\n${tmpFiles.map(x => x[0]).join('\t')}`.trim());
     }
   },
 };
