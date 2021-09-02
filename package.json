@@ -9,10 +9,12 @@
   "bin": {
     "grown": "cli"
   },
+  "types": "index.d.ts",
   "files": [
     "cli",
     "cli.js",
-    "index.js"
+    "index.js",
+    "index.d.ts"
   ],
   "scripts": {
     "test": "node check.js & (sleep 3; curl 0.0.0.0:8080/die || exit 2)",
