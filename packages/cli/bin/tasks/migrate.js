@@ -34,7 +34,7 @@ const USAGE_INFO = `
 module.exports = {
   description: USAGE_INFO,
   callback(Grown) {
-    const [, use] = Grown.argv._;
+    const [main, use] = Grown.argv._;
 
     /* istanbul ignore else */
     if (!use || typeof use !== 'string') {
@@ -50,7 +50,7 @@ module.exports = {
     }
 
     const DB = Object.assign(Models, { close: Models.disconnect });
-    const cmd = Grown.argv._[0] || 'migrate';
+    const cmd = main || 'migrate';
 
     let _error;
 
@@ -69,7 +69,9 @@ module.exports = {
       .then(() => run(x => x.connect()))
       .then(() => {
         if (cmd === 'migrate' || cmd === 'backup') {
-          Grown.argv._ = [cmd].concat(Grown.argv._.slice(2));
+          // discard cmd and use args!
+          Grown.argv._ = Grown.argv._.slice(2);
+
           return run(x => Grown.Model.CLI.execute(x, cmd, Grown.argv));
         }
 
