@@ -24,6 +24,7 @@ const ARGV_FLAGS = `
 `;
 
 const spawn = require('child_process').spawn;
+const flev = require('fastest-levenshtein');
 const path = require('path');
 const fs = require('fs');
 
@@ -124,7 +125,9 @@ module.exports = (Grown, util) => {
   }
 
   function _showTasks(taskName) {
-    logger.printf('\r{% gray. %s (node %s ─ %s) %}\n', process.name, process.version, process.env.NODE_ENV);
+    if (!process.silent) {
+      logger.printf('\r{% gray. %s (node %s ─ %s) %}\n', process.name, process.version, process.env.NODE_ENV);
+    }
 
     /* istanbul ignore else */
     if (taskName && !Grown.argv.flags.help) {
@@ -133,9 +136,7 @@ module.exports = (Grown, util) => {
         Grown.argv.flags.app = this._findApplication();
       }
 
-      return logger(taskName, () => {
-        return this._exec(Grown.argv.raw, () => this.run(taskName));
-      }).catch(e => this._onError(e, taskName));
+      return this.run(taskName);
     }
 
     if (this.banner_text !== false) {
@@ -170,7 +171,9 @@ module.exports = (Grown, util) => {
     } else {
       /* istanbul ignore else */
       if (!this._tasks[taskName]) {
-        throw new Error(`Undefined '${taskName}' task`);
+        const alias = flev.closest(taskName, Object.keys(this._alias));
+
+        throw new Error(`Unknown '${taskName}' task${alias ? `, did you mean '${alias}'?` : ''}`);
       }
 
       let usageInfo = require(this._tasks[taskName]).description;
@@ -186,8 +189,11 @@ module.exports = (Grown, util) => {
           return memo;
         }, 0);
 
+        /* istanbul ignore else */
         if (Grown.argv._[1] && !keys.includes(Grown.argv._[1])) {
-          throw new Error(`Undefined '${Grown.argv._[1]}' generator`);
+          const alias = flev.closest(Grown.argv._[1], keys);
+
+          throw new Error(`Unknown '${Grown.argv._[1]}' subtask${alias ? `, did you mean '${alias}'?` : ''}`);
         }
 
         if (keys.includes(Grown.argv._[1]) && tasks[Grown.argv._[1]].usage) {
@@ -223,6 +229,7 @@ module.exports = (Grown, util) => {
       e = util.cleanError(e, Grown.cwd);
     }
 
+    /* istanbul ignore else */
     if (e.original) {
       /* istanbul ignore else */
       if (e.original.detail) {
@@ -331,6 +338,13 @@ module.exports = (Grown, util) => {
             Grown.CLI._showHelp(taskName);
           }
 
+          /* istanbul ignore else */
+          if (Grown.argv.raw.length > 0 && promise) {
+            promise.then(() => {
+              this._exec(Grown.argv.raw).catch(e => this._onError(e, taskName));
+            });
+          }
+
           return promise;
         });
     },
@@ -349,6 +363,7 @@ module.exports = (Grown, util) => {
 
           const task = require(this._tasks[taskName]);
 
+          /* istanbul ignore else */
           if (this.command_line) {
             Object.assign(Grown.argv, this.command_line);
           }
