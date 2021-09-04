@@ -14,7 +14,7 @@ module.exports = ($, cwd, argv, util) => {
   $('Grown.env', () => process.env.NODE_ENV || 'development', false);
 
   // methods
-  $('Grown.load', (_cwd, hooks, rename) => util.scanDir(_cwd, def => def($.Grown, hooks || {}, rename)), false);
+  $('Grown.load', (_cwd, hooks) => util.scanDir(_cwd, def => def($.Grown, hooks || {})), false);
   $('Grown.defn', (name, fn) => $(`Grown.${name}`, fn, false), false);
   $('Grown.use', cb => cb($.Grown, util), false);
   $('Grown.do', util.wrap, false);

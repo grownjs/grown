@@ -94,8 +94,8 @@ declare module '@grown/bud' {
     /**
     LOADS
     */
-    load(cwd: string, hooks?: any, rename?: any): any;
-    load<T>(cwd: string, hooks?: any, rename?: any): T;
+    load(cwd: string, hooks?: any): any;
+    load<T>(cwd: string, hooks?: any): T;
 
     /**
     DEFNS

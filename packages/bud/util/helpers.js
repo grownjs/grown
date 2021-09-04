@@ -33,31 +33,11 @@ function findFile(src, paths, throws) {
 }
 
 function scanDir(src, callback) {
-  return callback((ctx, hooks, rename) => {
-    /* istanbul ignore else */
-    if (typeof hooks !== 'object') {
-      rename = hooks;
-      hooks = null;
-    }
-
-    /* istanbul ignore else */
-    if (typeof rename === 'string') {
-      const tpl = rename;
-      rename = k => tpl.replace('%', k);
-    }
-
+  return callback((ctx, hooks) => {
     const repo = new Resolver(ctx || null, src, hooks);
 
     Object.keys(repo.values).forEach(key => {
-      const reference = repo.registry[key];
-      const value = repo.values[key];
-      const prop = (rename && rename(key)) || key;
-
-      delete repo.values[key];
-      delete repo.registry[key];
-      repo.values[prop] = value;
-      repo.registry[prop] = reference;
-      $new.readOnlyProperty(repo, prop, () => repo.get(prop));
+      $new.readOnlyProperty(repo, key, () => repo.get(key));
     });
 
     return repo;
