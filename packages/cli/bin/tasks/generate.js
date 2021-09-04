@@ -108,22 +108,24 @@ module.exports = {
       }, null, 2)]);
     });
     Grown.CLI.define('generate:type', TYPE_GENERATOR, ({ use, args, files }) => {
-      const [name, id] = args[0].split('.');
-      const baseDir = path.join(use, name);
-      const yamlFile = `${baseDir}.yml`;
-      const jsonFile = `${baseDir}.json`;
+      let baseFile = use;
+      if (!fs.existsSync(baseFile)) {
+        if (fs.existsSync(`${baseFile}.yml`)) baseFile = `${baseFile}.yml`;
+        if (fs.existsSync(`${baseFile}.json`)) baseFile = `${baseFile}.json`;
+      }
+
       const schema = {};
-      const text = fs.readFileSync(yamlFile).toString();
+      const id = args.shift();
+      const isNew = !fs.existsSync(baseFile);
+      const text = !isNew ? fs.readFileSync(baseFile).toString() : '';
 
       let target;
-      let isNew;
       let yaml;
-      if (fs.existsSync(yamlFile)) {
+      if (baseFile.includes('.yml')) {
         yaml = true;
-        target = jsyaml.load(text);
+        target = text.trim() ? jsyaml.load(text) : {};
       } else {
-        isNew = !fs.existsSync(jsonFile);
-        target = JSON.parse(text);
+        target = text.trim() ? JSON.parse(text) : {};
       }
 
       Object.keys(Grown.argv.params).forEach(key => {
@@ -142,12 +144,12 @@ module.exports = {
         }
       });
 
-      args.slice(1).forEach(key => {
+      args.forEach(key => {
         schema[key] = true;
       });
 
       if (isNew) {
-        target = { id: name, definitions: { [id]: schema } };
+        target = { id: path.basename(baseFile).replace(/\.\w+$/, ''), definitions: { [id]: schema } };
       } else {
         if (target.definitions && target.definitions[id] && !Grown.argv.flags.force) {
           throw new TypeError(`Definition for '${id}' already exists`);
@@ -158,9 +160,9 @@ module.exports = {
       }
 
       if (yaml) {
-        files.push([yamlFile, jsyaml.dump(target).trim(), true]);
+        files.push([`${baseFile}#/definitions/${id}`, jsyaml.dump(target).trim(), true]);
       } else {
-        files.push([jsonFile, JSON.stringify(target, null, 2), true]);
+        files.push([`${baseFile}#/definitions/${id}`, JSON.stringify(target, null, 2), true]);
       }
     });
     Grown.CLI.define('generate:def', DEF_GENERATOR, ({ use, args, files }) => {
@@ -200,20 +202,48 @@ module.exports = {
 
       if (!rmFiles) {
         Grown.Logger.getLogger()
-          .printf('\r{% error. No more files to remove %}\n');
+          .printf('\r{% error. No changes found %}\n');
       } else {
-        rmFiles.split('\t').forEach(file => {
-          fs.removeSync(file);
+        rmFiles.split('\t').forEach(srcFile => {
+          const [target, key] = srcFile.split('#/definitions/');
 
-          let curDir = path.dirname(file);
-          while (!fs.readdirSync(curDir).length) {
-            fs.rmdirSync(curDir);
-            curDir = path.dirname(curDir);
-            if (curDir.charAt() === '.') break;
+          if (!key) {
+            fs.removeSync(target);
+
+            let curDir = path.dirname(target);
+            while (!fs.readdirSync(curDir).length) {
+              fs.rmdirSync(curDir);
+              curDir = path.dirname(curDir);
+              if (curDir.charAt() === '.') break;
+            }
+
+            Grown.Logger.getLogger()
+              .printf('\r{% info. remove %} %s\n', target);
+          } else {
+            let data;
+            let yaml;
+            if (target.includes('.yml')) {
+              yaml = true;
+              data = jsyaml.load(fs.readFileSync(target).toString());
+            } else {
+              data = JSON.parse(fs.readFileSync(target).toString());
+            }
+
+            if (!(data && data.definitions[key])) {
+              throw new Error(`Definition for '${key}' not found`);
+            }
+
+            delete data.definitions[key];
+
+            if (yaml) {
+              fs.outputFileSync(target, jsyaml.dump(data));
+            } else {
+              fs.outputJsonSync(target, data);
+            }
+
+            Grown.Logger.getLogger()
+              .printf('\r{% info. write %} %s\n', target);
           }
-
-          Grown.Logger.getLogger()
-            .printf('\r{% info. remove %} %s\n', file);
         });
 
         fs.outputFileSync(histLog, backup.join('\n'));
@@ -236,14 +266,16 @@ module.exports = {
 
     await tasks[kind].callback({ use, args, files });
 
-    files.forEach(([destFile, contents, overrideFile]) => {
-      if (fs.existsSync(destFile) && !Grown.argv.flags.force && !overrideFile) {
-        throw new Error(`File ${destFile} already exists`);
+    files.forEach(([destFile, contents, definition]) => {
+      const [target] = destFile.split('#/definitions/');
+
+      if (fs.existsSync(target) && !Grown.argv.flags.force && !definition) {
+        throw new Error(`File ${target} already exists`);
       }
 
-      fs.outputFileSync(destFile, `${contents}\n`);
+      fs.outputFileSync(target, `${contents}\n`);
       Grown.Logger.getLogger()
-        .printf('\r{% info. %s %} %s\n', kind, destFile);
+        .printf('\r{% info. %s %} %s\n', kind, target);
     });
 
     let tmpFiles = files.slice();
