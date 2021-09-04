@@ -142,7 +142,7 @@ module.exports = {
         }
       });
 
-      Grown.argv._.slice(4).forEach(key => {
+      args.slice(1).forEach(key => {
         schema[key] = true;
       });
 

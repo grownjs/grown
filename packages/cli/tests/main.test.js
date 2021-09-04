@@ -149,8 +149,8 @@ describe('Grown.CLI', () => {
 
     it('should report trap errors', () => {
       return cmd('sample', bin(`example -- node ${TEST_JS} error`)).then(({ stdout, stderr, failure }) => {
-        expect(stderr).to.contain('FAILED');
-        expect(stdout.split('\n').length).to.eql(2);
+        expect(stdout.split('\n').length > 2).to.be.true;
+        expect(stderr).to.eql('FAILED\n');
         expect(failure).not.to.be.null;
       });
     });

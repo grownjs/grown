@@ -136,7 +136,8 @@ module.exports = (Grown, util) => {
         Grown.argv.flags.app = this._findApplication();
       }
 
-      return this.run(taskName);
+      return logger(taskName, () => this.run(taskName))
+        .catch(e => this._onError(e, taskName));
     }
 
     if (this.banner_text !== false) {
