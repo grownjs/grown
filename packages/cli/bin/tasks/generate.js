@@ -106,20 +106,18 @@ module.exports = {
       }, null, 2)]);
     });
     Grown.CLI.define('generate:type', TYPE_GENERATOR, ({ use, args, files }) => {
-      let baseFile = use;
-      if (!fs.existsSync(baseFile)) {
-        if (fs.existsSync(`${baseFile}.yml`)) baseFile = `${baseFile}.yml`;
-        if (fs.existsSync(`${baseFile}.json`)) baseFile = `${baseFile}.json`;
+      if (!(use.includes('.yml') || use.includes('.json'))) {
+        throw new Error(`Expecting .yml or .json file, given '${use}'`);
       }
 
       const schema = {};
       const id = args.shift();
-      const isNew = !fs.existsSync(baseFile);
-      const text = !isNew ? fs.readFileSync(baseFile).toString() : '';
+      const isNew = !fs.existsSync(use);
+      const text = !isNew ? fs.readFileSync(use).toString() : '';
 
       let target;
       let yaml;
-      if (baseFile.includes('.yml')) {
+      if (use.includes('.yml')) {
         yaml = true;
         target = text.trim() ? jsyaml.load(text) : {};
       } else {
@@ -147,7 +145,7 @@ module.exports = {
       });
 
       if (isNew) {
-        target = { id: path.basename(baseFile).replace(/\.\w+$/, ''), definitions: { [id]: schema } };
+        target = { id: path.basename(use).replace(/\.\w+$/, ''), definitions: { [id]: schema } };
       } else {
         if (target.definitions && target.definitions[id] && !Grown.argv.flags.force) {
           throw new TypeError(`Definition for '${id}' already exists`);
@@ -158,9 +156,9 @@ module.exports = {
       }
 
       if (yaml) {
-        files.push([`${baseFile}#/definitions/${id}`, jsyaml.dump(target).trim(), true]);
+        files.push([`${use}#/definitions/${id}`, jsyaml.dump(target).trim(), true]);
       } else {
-        files.push([`${baseFile}#/definitions/${id}`, JSON.stringify(target, null, 2), true]);
+        files.push([`${use}#/definitions/${id}`, JSON.stringify(target, null, 2), true]);
       }
     });
     Grown.CLI.define('generate:def', DEF_GENERATOR, ({ use, args, files }) => {
