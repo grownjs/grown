@@ -8,7 +8,7 @@ const path = require('path');
 
 const USAGE_INFO = `
 
-  Generate arbitrary sources files
+  Generate arbitrary source files
 
   --force  Optional. Recreate output even if already exists
   --undo   Optional. Remove files that were previously generated
@@ -19,7 +19,7 @@ const USAGE_INFO = `
 
   Examples:
     {bin} generate model db/models/User email:string permissions:Permission[] --ts
-    {bin} generate type app/schema/types/dataTypes primaryKey type:integer minimum:0
+    {bin} generate type app/schema/types/dataTypes.yml primaryKey type:integer
     {bin} generate def src/App methods.main --use Auth,Session,util
     {bin} generate --undo
 
