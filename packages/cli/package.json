@@ -1,6 +1,6 @@
 {
   "name": "@grown/cli",
-  "version": "0.0.49",
+  "version": "0.0.50",
   "main": "index.js",
   "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
   "license": "MIT",
@@ -21,9 +21,9 @@
     "access": "public"
   },
   "dependencies": {
-    "@grown/bud": "^0.0.36",
+    "@grown/bud": "^0.0.37",
     "@grown/logger": "^0.0.19",
-    "@grown/repl": "^0.0.16",
+    "@grown/repl": "^0.0.17",
     "fastest-levenshtein": "^1.0.12",
     "fs-extra": "^10.0.0",
     "js-yaml": "^4.1.0"
