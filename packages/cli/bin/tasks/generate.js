@@ -43,8 +43,6 @@ const TYPE_GENERATOR = `
 
   Writes a new type definition from key:value fields
 
-  --yaml   Optional. Save the generated file as YAML if needed
-
   Similar to models, you can declare associations and scalar types but
   you can also use more keywords, like format, minimum/maximum:
 
@@ -53,7 +51,7 @@ const TYPE_GENERATOR = `
   Single parameters with no :value are taken as booleans (true).
 
   The resuling model is appended to the target file as a definition,
-  both YAML and JSON file-types are supported.
+  both YAML and JSON formats are supported, just use the appropriate extension.
 
 `;
 
