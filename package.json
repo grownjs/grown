@@ -32,6 +32,7 @@
     "url": "git+https://github.com/grownjs/grown.git"
   },
   "devDependencies": {
+    "ansi-regex": ">=5.0.1",
     "@grown/model": "^0.0.38",
     "@grown/test": "^0.0.14",
     "eslint": "^7.9.0",
@@ -45,6 +46,7 @@
     "mem": ">=4.0.0",
     "minimist": ">=1.2.2",
     "normalize-url": ">=4.5.1",
+    "set-value": ">=4.0.1",
     "ssri": "^8.0.1",
     "tar": ">=4.4.18",
     "trim-newlines": ">=3.0.1",

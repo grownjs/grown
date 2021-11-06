@@ -23,6 +23,7 @@
     "debug": "^3.1.0"
   },
   "devDependencies": {
+    "ansi-regex": ">=5.0.1",
     "chai": "^4.2.0",
     "glob-parent": ">=5.1.2",
     "minimist": ">=1.2.2",

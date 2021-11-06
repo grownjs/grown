@@ -35,6 +35,7 @@
     "wargs": "^0.9.5"
   },
   "devDependencies": {
+    "ansi-regex": ">=5.0.1",
     "chai": "^4.2.0",
     "glob-parent": ">=5.1.2",
     "lodash": ">=4.17.21",
