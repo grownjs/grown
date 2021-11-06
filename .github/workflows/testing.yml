@@ -13,10 +13,9 @@ jobs:
     runs-on: ubuntu-latest
     services:
       postgres:
-        image: postgres
+        image: postgres:10
         env:
           POSTGRES_PASSWORD: postgres
-          POSTGRES_USER: postgres
           POSTGRES_DB: schema_dev
         ports:
           - 5432:5432
