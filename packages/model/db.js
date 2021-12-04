@@ -129,8 +129,12 @@ module.exports = (Grown, util) => {
       // scan and load/define models
       const $ = Grown.load(options.models, {
         before: (_name, definition) => {
+          if (!definition.$schema) {
+            throw new TypeError(`Definition for ${_name}.$schema is missing, given '${JSON.stringify(definition, null, 2)}'`);
+          }
+
           if (definition.$schema.id !== _name) {
-            throw new TypeError(`Given $schema.id should be '${_name}', given '${JSON.stringify(definition.$schema, null, 2)}'`);
+            throw new TypeError(`Given ${_name}.$schema.id should be '${_name}', given '${JSON.stringify(definition.$schema, null, 2)}'`);
           }
 
           // always add it as model!
