@@ -10,7 +10,14 @@ module.exports = (Grown, util, ctx) => {
     throw new Error(`Missing --import to load, given '${use || ''}'`);
   }
 
-  const container = require(path.resolve(Grown.cwd, use));
+  let container = require(path.resolve(Grown.cwd, use));
+  if (typeof container === 'function') {
+    container = container(Grown, util);
+
+    if (container && container.extensions && container.name) {
+      container = { [container.name]: container };
+    }
+  }
 
   if (!container || typeof container !== 'object' || Array.isArray(container)) {
     throw new Error(`Expecting an object, given '${typeof container}'`);
