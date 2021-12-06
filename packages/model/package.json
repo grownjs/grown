@@ -1,6 +1,6 @@
 {
   "name": "@grown/model",
-  "version": "0.0.38",
+  "version": "0.0.39",
   "main": "index.js",
   "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
   "license": "MIT",
@@ -40,8 +40,8 @@
   },
   "devDependencies": {
     "chai": "^4.2.0",
-    "jsonpointer": ">=5.0.0",
     "json-schema-to": "^0.0.29",
+    "jsonpointer": ">=5.0.0",
     "mocha": "^7.2.0",
     "module-alias": "^2.2.2",
     "nyc": "^15.1.0",
