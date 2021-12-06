@@ -39,6 +39,7 @@ declare module '@grown/bud' {
     Enable CORS for all requests, disabled if `NODE_ENV=production`
     */
     cors?: boolean;
+    cache?: boolean;
     [key:string]: any;
   }
 
