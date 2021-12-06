@@ -25,6 +25,26 @@ function bind(mixins) {
   return mixins;
 }
 
+function nocache() {
+  this.res.setHeader('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+  this.res.setHeader('Expires', '-1');
+  this.res.setHeader('Pragma', 'no-cache');
+}
+
+function cors() {
+  this.res.setHeader('Access-Control-Allow-Origin', '*');
+  this.res.setHeader('Access-Control-Allow-Headers',
+    'Authorization, X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Allow-Request-Method');
+  this.res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
+  this.res.setHeader('Allow', 'GET, POST, OPTIONS, PUT, DELETE');
+
+  /* istanbul ignore else */
+  if (this.req.method === 'OPTIONS') {
+    this.res.status(200).end();
+    return true;
+  }
+}
+
 function _grownFactory($, util, options) {
   options = options || {};
 
@@ -60,24 +80,9 @@ function _grownFactory($, util, options) {
 
   $.Grown('Conn.Builder', {
     methods: {
-      nocache() {
-        this.res.setHeader('Cache-Control', 'private, no-cache, no-store, must-revalidate');
-        this.res.setHeader('Expires', '-1');
-        this.res.setHeader('Pragma', 'no-cache');
-      },
-      cors() {
-        this.res.setHeader('Access-Control-Allow-Origin', '*');
-        this.res.setHeader('Access-Control-Allow-Headers',
-          'Authorization, X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Allow-Request-Method');
-        this.res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
-        this.res.setHeader('Allow', 'GET, POST, OPTIONS, PUT, DELETE');
+      nocache,
+      cors,
 
-        /* istanbul ignore else */
-        if (this.req.method === 'OPTIONS') {
-          this.res.status(200).end();
-          return true;
-        }
-      },
       halt(cb) {
         /* istanbul ignore else */
         if (this.res) {
@@ -174,8 +179,8 @@ function _grownFactory($, util, options) {
       });
 
       _mount.call(scope, (req, res, next) => {
-        if (options.cors && this.cors()) return;
-        if (options.cache === false) this.nocache();
+        if (options.cors && cors.call({ req, res })) return;
+        if (options.cache === false) nocache.call({ req, res });
         if (req.method === 'POST' && req.query._method) {
           req.method = req.query._method;
           delete req.query._method;
