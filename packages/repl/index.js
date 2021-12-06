@@ -65,28 +65,28 @@ module.exports = (Grown, util) => {
     repl.pause();
 
     try {
-      repl.rli.history = fs.readFileSync(logFile, 'utf-8').split('\n').reverse();
-      repl.rli.history.shift();
-      repl.rli.historyIndex = -1;
+      repl.history = fs.readFileSync(logFile, 'utf-8').split('\n').reverse();
+      repl.history.shift();
+      repl.historyIndex = -1;
     } catch (e) {
       // do nothing
     }
 
-    repl.rli.addListener('line', code => {
+    repl.addListener('line', code => {
       if (code && code !== '.history') {
-        if (ws && repl.rli.history[1] !== code) {
+        if (ws && repl.history[1] !== code) {
           ws.write(`${code}\n`);
         }
       } else {
-        repl.rli.historyIndex += 1;
-        repl.rli.history.pop();
+        repl.historyIndex += 1;
+        repl.history.pop();
       }
     });
 
     repl.defineCommand('history', {
       help: 'Show the history',
       action() {
-        Logger.getLogger().write(repl.rli.history.slice().reverse().join('\n'));
+        Logger.getLogger().write(repl.history.slice().reverse().join('\n'));
         repl.displayPrompt();
       },
     });
@@ -98,7 +98,7 @@ module.exports = (Grown, util) => {
           fs.writeFileSync(logFile, '');
         });
 
-        repl.rli.history = [];
+        repl.history = [];
         repl.displayPrompt();
       },
     });
