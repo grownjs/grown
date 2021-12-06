@@ -39,7 +39,7 @@ module.exports = (Grown, util) => {
 
         /* istanbul ignore else */
         if (!this._controllers[controller].instance[action] || typeof this._controllers[controller].instance[action] !== 'function') {
-          throw new Error(`No callback found for ${route.verb} ${route.path} (${controller}#${action})`);
+          throw new Error(`Invalid callback for ${route.verb} ${route.path} (${controller}#${action})`);
         }
 
         route.pipeline = route.pipeline || [];
