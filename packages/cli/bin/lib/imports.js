@@ -23,11 +23,14 @@ module.exports = (Grown, util, ctx) => {
     throw new Error(`Expecting an object, given '${typeof container}'`);
   }
 
+  const names = [];
   Object.keys(container).forEach(x => {
-    ctx.repl.context[x] = container[x];
+    const key = x.replace(/\W/g, '');
+
+    names.push(key);
+    ctx.repl.context[key] = container[x];
   });
 
-  const names = Object.keys(container);
   const count = names.length;
   const suffix = count === 1 ? '' : 's';
 
