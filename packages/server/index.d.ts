@@ -122,6 +122,9 @@ declare module '@grown/server' {
     FIXME: raise
     */
     raise(): void;
+
+    cors(): boolean | void;
+    nocache(): void;
   }
 
   /**
