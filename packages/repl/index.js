@@ -242,8 +242,10 @@ module.exports = (Grown, util) => {
       return Promise.resolve()
         .then(() => cbs.reduce((prev, cb) => prev.then(() => cb && cb.call(null, ctx, util)), Promise.resolve()))
         .then(() => {
-          if (typeof Grown.argv.flags.load === 'string') {
-            repl.commands.load.action.call(repl, Grown.argv.flags.load);
+          const load = util.flattenArgs(Grown.argv.flags.load).filter(Boolean);
+
+          if (load.length > 0) {
+            load.forEach(x => repl.commands.load.action.call(repl, x));
           }
 
           repl.setPrompt(_utils.style('{% gray.pointer %}'));
