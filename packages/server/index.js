@@ -25,6 +25,12 @@ function bind(mixins) {
   return mixins;
 }
 
+function trustproxy() {
+  this.req.protocol = this.req.headers['x-forwarded-proto'] || this.req.protocol;
+  this.req.port = this.req.headers['x-forwarded-port'] || this.req.port;
+  this.req.ip = this.req.headers['x-forwarded-for'] || this.req.ip;
+}
+
 function nocache() {
   this.res.setHeader('Cache-Control', 'private, no-cache, no-store, must-revalidate');
   this.res.setHeader('Expires', '-1');
@@ -80,6 +86,7 @@ function _grownFactory($, util, options) {
 
   $.Grown('Conn.Builder', {
     methods: {
+      trustproxy,
       nocache,
       cors,
 
@@ -181,6 +188,7 @@ function _grownFactory($, util, options) {
       _mount.call(scope, (req, res, next) => {
         if (options.cors && cors.call({ req, res })) return;
         if (options.cache === false) nocache.call({ req, res });
+        if (options.trust === 'proxy') trustproxy.call({ req, res });
         if (req.method === 'POST' && req.query._method) {
           req.method = req.query._method;
           delete req.query._method;
