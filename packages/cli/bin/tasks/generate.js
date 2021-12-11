@@ -165,10 +165,15 @@ module.exports = {
       args.forEach(fn => {
         const body = '\n  // TODO\n';
         const methodPath = fn.replace(/[.]/g, '/');
-        const methodName = path.basename(methodPath);
+
+        let methodName = path.basename(methodPath);
+        methodName = methodName.replace(/^(?:new)$/, '_$&');
 
         let deps = Grown.argv.flags.use ? Grown.argv.flags.use.split(',') : [];
         deps = deps.length > 0 ? `{ ${deps.join(', ')} }` : '';
+
+        let argv = Grown.argv.flags.args ? Grown.argv.flags.args.split(',') : [];
+        argv = argv.length > 0 ? argv.join(', ') : '';
 
         if (Grown.argv.flags.ts) {
           const provider = Grown.argv.flags.from ? Grown.argv.flags.from.split(':') : false;
@@ -178,7 +183,7 @@ module.exports = {
             provider ? `import type { ${provider[1] || 'default'} as Provider } from '${provider[0]}';\n` : null,
             `declare function ${methodName}(): void;`,
             `export type { ${methodName} };\n`,
-            `export default (${deps}${types}): typeof ${methodName} => function ${methodName}() {${body}};`,
+            `export default (${deps}${types}): typeof ${methodName} => function ${methodName}(${argv}) {${body}};`,
           ].filter(Boolean).join('\n')]);
         } else {
           files.push([path.join(use, `${methodPath}/index.js`), `module.exports = (${deps}) => function ${methodName}() {${body}};`]);
