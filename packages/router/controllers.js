@@ -1,6 +1,15 @@
 'use strict';
 
 module.exports = (Grown, util) => {
+  function _defaultPipelines(conn, options) {
+    if (conn.req.handler.use && this.default_pipelines) {
+      return conn.req.handler.use.filter(Boolean).reduce((prev, fn) => {
+        if (typeof this.default_pipelines[fn] !== 'function') throw new Error(`Invalid ${fn} pipeline, given '${this.default_pipelines[fn]}'`);
+        return prev.then(() => this.default_pipelines[fn](conn, options));
+      }, Promise.resolve());
+    }
+  }
+
   function _drawRoutes(ctx, routes) {
     routes.forEach(route => {
       /* istanbul ignore else */
@@ -42,13 +51,22 @@ module.exports = (Grown, util) => {
           throw new Error(`Invalid callback for ${route.verb} ${route.path} (${controller}#${action})`);
         }
 
-        route.pipeline = route.pipeline || [];
+        route.pipeline = [];
 
         /* istanbul ignore else */
         if (typeof this._controllers[controller].definition.pipe === 'function') {
-          route.pipeline.unshift({
+          route.pipeline.push({
             call: [this._controllers[controller].definition, 'pipe'],
             name: `${controller}#pipe`,
+            type: 'method',
+          });
+        }
+
+        /* istanbul ignore else */
+        if (typeof this.before_pipeline === 'function') {
+          route.pipeline.unshift({
+            call: [this, 'before_pipeline'],
+            name: 'Pipeline',
             type: 'method',
           });
         }
@@ -69,7 +87,10 @@ module.exports = (Grown, util) => {
   return Grown('Router.Controllers', {
     _drawRoutes,
     _controllers: {},
+    _defaultPipelines,
 
     $before_routes: _drawRoutes,
+
+    before_pipeline: _defaultPipelines,
   });
 };
