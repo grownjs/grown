@@ -59,8 +59,10 @@ const DEF_GENERATOR = `
 
   Writes a module definition from the given methods
 
-  --use   Optional. Declare a list of dependencies to inject
-  --from  Optional. Declare a provider module to import its types
+  --use    Optional. Declare a list of dependencies to inject
+  --from   Optional. Declare a provider module to import its types
+  --args   Optional. Declare the function arguments
+  --async  Optional. Declare the function to be async
 
   When used with --ts you can declare the return types as: \`methods.main:void\`
 
@@ -164,7 +166,8 @@ module.exports = {
     Grown.CLI.define('generate:def', DEF_GENERATOR, ({ use, args, files }) => {
       args.forEach(fn => {
         const body = '\n  // TODO\n';
-        const methodPath = fn.replace(/[.]/g, '/');
+        const prefix = Grown.argv.flags.async ? 'async ' : '';
+        const [methodPath, returnType] = fn.replace(/[.]/g, '/').split(':');
 
         let methodName = path.basename(methodPath);
         methodName = methodName.replace(/^(?:new)$/, '_$&');
@@ -178,15 +181,16 @@ module.exports = {
         if (Grown.argv.flags.ts) {
           const provider = Grown.argv.flags.from ? Grown.argv.flags.from.split(':') : false;
           const types = provider ? ': Provider' : '';
+          const type = returnType || 'void';
 
           files.push([path.join(use, `${methodPath}/index.ts`), [
             provider ? `import type { ${provider[1] || 'default'} as Provider } from '${provider[0]}';\n` : null,
-            `declare function ${methodName}(): void;`,
+            `declare function ${methodName}(${argv}): ${Grown.argv.flags.async ? `Promise<${type}>` : type};`,
             `export type { ${methodName} };\n`,
-            `export default (${deps}${types}): typeof ${methodName} => function ${methodName}(${argv}) {${body}};`,
+            `export default (${deps}${types}): typeof ${methodName} => ${prefix}function ${methodName}(${argv}) {${body}};`,
           ].filter(Boolean).join('\n')]);
         } else {
-          files.push([path.join(use, `${methodPath}/index.js`), `module.exports = (${deps}) => function ${methodName}() {${body}};`]);
+          files.push([path.join(use, `${methodPath}/index.js`), `module.exports = (${deps}) => ${prefix}function ${methodName}(${argv}) {${body}};`]);
         }
       });
     });
