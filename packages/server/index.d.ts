@@ -35,6 +35,7 @@ declare module '@grown/server' {
     query: any;
     method: Method;
     headers: Headers;
+    rawBody: string;
     rawHeaders: string[];
     connection: ConnectionInfo;
     login(): void;

@@ -116,6 +116,7 @@ function ServerRequest(req, res) {
   this._readableState.objectMode = false;
 
   this.body = {};
+  this.rawBody = '';
   this.url = req.getUrl() || '/';
   this.query = qs.parse(req.getQuery());
   this.method = req.getMethod().toUpperCase();
@@ -276,6 +277,7 @@ module.exports = function _uws(ctx, options, callback, protocolName) {
         if (data instanceof Buffer) data = data.toString('utf8');
         if (typeof data === 'string' && data.length) {
           try {
+            _req.rawBody = data;
             _req.body = cb(data);
           } catch (e) {
             e.message = `Error decoding input${f ? ` (${f})` : ''}\n${e.message}`;
