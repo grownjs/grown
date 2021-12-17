@@ -286,7 +286,6 @@ describe('Grown.Server', () => {
       });
 
       it('should fallback to nodejs modules if U_WEBSOCKETS_SKIP is set', done => {
-        g.plug(require('body-parser').json());
         g.mount(ctx => {
           ctx.res.write(JSON.stringify(ctx.req.body));
           ctx.res.status(200).end();
@@ -366,6 +365,46 @@ describe('Grown.Server', () => {
         g.on('listen', ev);
         g.listen(3000, app => {
           expect(td.explain(ev).callCount).to.eql(3);
+          app.close();
+          done();
+        });
+      });
+
+      it('should handle rawBody', done => {
+        g.mount(ctx => {
+          ctx.res.write(ctx.req.rawBody);
+          ctx.res.status(200).end();
+        });
+
+        g.listen(3000, async app => {
+          const { data } = await post('http://0.0.0.0:3000', {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: '{"x":"y"}',
+          });
+
+          expect(data).to.eql('{"x":"y"}');
+          app.close();
+          done();
+        });
+      });
+
+      it('should handle errors', done => {
+        let error;
+        g.on('failure', err => {
+          error = err;
+        });
+
+        g.listen(3000, async app => {
+          await post('http://0.0.0.0:3000', {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: 'OSOM',
+          });
+
+          expect(error.message).to.contain('Error decoding input (JSON.parse)');
           app.close();
           done();
         });

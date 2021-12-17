@@ -196,6 +196,25 @@ function _grownFactory($, util, options) {
 
         next();
       });
+
+      if (process.env.U_WEBSOCKETS_SKIP) {
+        _mount.call(scope, require('body-parser').raw({ inflate: true, type: () => true }));
+        _mount.call(scope, (req, res, next) => {
+          if (req.body instanceof Buffer) {
+            req.rawBody = req.body.toString();
+
+            if (req.headers['content-type'] === 'application/json') {
+              try {
+                req.body = JSON.parse(req.rawBody);
+              } catch (e) {
+                e.message = `Error decoding input (JSON.parse)\n${e.message}`;
+                scope._events.emit('failure', e, scope._options);
+              }
+            }
+          }
+          next();
+        });
+      }
     },
     methods: {
       run(request, callback) {
