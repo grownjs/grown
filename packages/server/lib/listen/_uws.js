@@ -127,8 +127,13 @@ function ServerRequest(req, res) {
   };
 
   Object.keys(req.headers).forEach(key => {
-    this.rawHeaders.push(key);
-    this.rawHeaders.push(req.headers[key]);
+    const prop = key.toLowerCase();
+    const value = req.headers[key];
+
+    this.rawHeaders.push(prop);
+    this.rawHeaders.push(value);
+
+    req.headers[prop] = value;
   });
 }
 
