@@ -1,6 +1,6 @@
 {
   "name": "@grown/router",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "main": "index.js",
   "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
   "license": "MIT",
