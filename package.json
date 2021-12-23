@@ -1,6 +1,6 @@
 {
   "name": "grown",
-  "version": "1.1.58",
+  "version": "1.1.59",
   "homepage": "https://grown.jamming.dev",
   "description": "Experimental DSL for web-apps",
   "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
@@ -32,7 +32,7 @@
     "url": "git+https://github.com/grownjs/grown.git"
   },
   "devDependencies": {
-    "@grown/model": "^0.0.40",
+    "@grown/model": "^0.0.41",
     "@grown/test": "^0.0.14",
     "ansi-regex": ">=5.0.1",
     "eslint": "^7.9.0",
