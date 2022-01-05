@@ -35,11 +35,18 @@ declare module '@grown/bud' {
   }
 
   interface GrownParams {
+    env?: NodeEnv,
+    plug?: Plug | Plug[],
+    /**
+    Enable body-parser for all requests (use if U_WEBSOCKETS_SKIP is enabled)
+    */
+    body?: boolean;
     /**
     Enable CORS for all requests, disabled if `NODE_ENV=production`
     */
     cors?: boolean;
     cache?: boolean;
+    trust?: boolean | string;
     [key:string]: any;
   }
 

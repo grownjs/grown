@@ -278,7 +278,7 @@ describe('Grown.Server', () => {
     describe('HTTP(s)', () => {
       beforeEach(() => {
         process.env.U_WEBSOCKETS_SKIP = 'true';
-        g = Grown.new();
+        g = Grown.new({ body: true });
       });
 
       afterEach(() => {
