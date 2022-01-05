@@ -30,7 +30,7 @@ module.exports = ($, cwd, argv, util) => {
   }
 
   /* istanbul ignore else */
-  if (argv.flags.silent || process.env.CI === 'true') {
+  if (argv.flags.silent) {
     process.silent = true;
   }
 
