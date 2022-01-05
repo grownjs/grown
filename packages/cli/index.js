@@ -136,7 +136,8 @@ module.exports = (Grown, util) => {
         Grown.argv.flags.app = this._findApplication();
       }
 
-      return logger(taskName, () => this.run(taskName))
+      return Promise.resolve()
+        .then(() => (process.silent ? this.run(taskName) : logger(taskName, () => this.run(taskName))))
         .catch(e => this._onError(e, taskName));
     }
 
