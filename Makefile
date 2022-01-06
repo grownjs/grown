@@ -48,7 +48,7 @@ codecov:
 publish:
 	@make -C website dist deploy
 
-release: install
+release: install test-ci
 	@lerna publish || true
 
 install: deps
