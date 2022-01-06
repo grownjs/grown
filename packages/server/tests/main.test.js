@@ -264,7 +264,7 @@ describe('Grown.Server', () => {
           const ev = td.func('callback');
 
           g.on('done', ev);
-          g.on('start', ev);
+          g.on('ready', ev);
           g.on('listen', ev);
           g.listen(3000, app => {
             expect(td.explain(ev).callCount).to.eql(3);
@@ -361,7 +361,7 @@ describe('Grown.Server', () => {
         const ev = td.func('callback');
 
         g.on('done', ev);
-        g.on('start', ev);
+        g.on('ready', ev);
         g.on('listen', ev);
         g.listen(3000, app => {
           expect(td.explain(ev).callCount).to.eql(3);
