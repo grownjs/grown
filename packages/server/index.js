@@ -173,7 +173,7 @@ function _grownFactory($, util, options) {
       process.nextTick(() => {
         this.once('start', () => this.plug(options.plug));
         this.once('begin', () => this.emit('start'));
-        this.once('listen', () => this.emit('start'));
+        this.once('listen', () => this.emit('ready'));
 
         if (options.env === 'development') {
           this.on('failure', e => {
