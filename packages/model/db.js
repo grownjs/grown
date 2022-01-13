@@ -36,7 +36,7 @@ module.exports = (Grown, util) => {
       const set = self.typesOf({
         extend: 'ModelInterface',
         properties: ['classMethods', 'instanceMethods'],
-        declaration: 'resource:model',
+        declaration: 'resource:class',
         references: id => {
           const doc = _options.comments ? `/**\nThe \`${id}\` module.\n*/\n` : '';
 
@@ -48,7 +48,7 @@ module.exports = (Grown, util) => {
 
           refs.push(cur.type);
           module.push({
-            chunk: `${doc}export interface ${cur.type}Instance extends ${cur.type}, Model, ${cur.type}Model.InstanceMethods {}`,
+            chunk: `${doc}export interface ${cur.type}Model extends ${cur.type}, Model, ${cur.type}Class.InstanceMethods {}`,
           });
         }
         memo.push(cur);
@@ -64,13 +64,13 @@ module.exports = (Grown, util) => {
         .concat(module.map(x => x.chunk))
         .concat(refs.map(x => [
           _options.comments && `/**\nDeclaration of \`${x}\` model.\n*/`,
-          `export type ${x}Model = ModelStatic<${x}Instance> & ${x}Model.ClassMethods;`,
+          `export type ${x}Class = ModelStatic<${x}Model> & ${x}Class.ClassMethods;`,
         ].filter(Boolean).join('\n')))
         .concat([
           `/**\nFound modules from \`${path.relative('.', _options.models)}\`\n*/`,
           `export default interface Models {\n${refs.map(x => [
             _options.comments && `/**\nThe \`${x}\` model.\n*/\n`,
-            `  ${x}: ${x}Model;\n`,
+            `  ${x}: ${x}Class;\n`,
           ].filter(Boolean).join('')).join('')}}`,
         ])
         .join('\n');

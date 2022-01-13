@@ -22,7 +22,7 @@
     "watch": "npm run models -- -w",
     "build": "npm run types && npm run models --",
     "pretest": "npm run schema && npm run build",
-    "posttest": "node -r module-alias/register check.js",
+    "posttest": "ts-node -r module-alias/register --type-check check",
     "schema": "npm run schema-to:ts",
     "schema-to": "json-schema-to -tw tests/fixtures",
     "schema-to:ts": "npm run schema-to -- -ic index -pb --json --typescript"

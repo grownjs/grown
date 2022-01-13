@@ -3,7 +3,7 @@ import createContainer from '@grown/bud';
 import type { Repository } from '@grown/model';
 import type Provider from '~/models/provider';
 import mayBe from '~/models/Example/classMethods/mayBe';
-import type { default as Models, Example, UserInstance, ExampleInstance, ExampleResource } from '~/models';
+import type { default as Models, Example, UserModel, ExampleModel, ExampleResource } from '~/models';
 
 import { Token, accessType } from '~/models';
 const t: Partial<Token> = {
@@ -33,12 +33,12 @@ async function main() {
   const db = await repo.connect();
   await repo.sync({ force: true });
 
-  const fixed = db.resource<ExampleInstance>('Example');
+  const fixed = db.resource<ExampleModel>('Example');
   const [f] = await fixed.actions.create({});
   console.log(4, f.get());
 
-  const User = repo.get<UserInstance>('User');
-  const Ex = repo.get<ExampleInstance>('Example');
+  const User = repo.get<UserModel>('User');
+  const Ex = repo.get<ExampleModel>('Example');
   const u = await User.create({ email: 'a@b.c' });
   const count = await User.count();
 
