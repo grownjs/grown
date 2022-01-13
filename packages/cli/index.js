@@ -139,7 +139,7 @@ module.exports = (Grown, util) => {
     if (taskName && !Grown.argv.flags.help) {
       /* istanbul ignore else */
       if (!Grown.argv.flags.app && taskName === 'up') {
-        Grown.argv.flags.app = this._findApplication();
+        process.main = this._findApplication();
       }
 
       return Promise.resolve()
