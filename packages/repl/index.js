@@ -251,7 +251,7 @@ module.exports = (Grown, util) => {
           repl.setPrompt(_utils.style('{% gray.pointer %}'));
         })
         .then(() => {
-          logger.info('{% log Type %} {% bold .help %} {% gray to list all available commands %}\n');
+          logger.info('\r{% log Type %} {% bold .help %} {% gray to list all available commands %}\n');
 
           repl.resume();
 
