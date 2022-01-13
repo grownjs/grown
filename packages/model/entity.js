@@ -158,10 +158,11 @@ module.exports = (Grown, util) => {
       }
 
       const target = Grown.Model.DB[name];
+      const schema = (target.$refs[this.$schema.$ref] || this).$schema;
 
       // register model on the connection
       target.add({
-        $schema: this.$schema,
+        $schema: schema,
         hooks: this.hooks,
         classMethods: this.classMethods,
         getterMethods: this.getterMethods,
@@ -171,7 +172,7 @@ module.exports = (Grown, util) => {
 
       return Promise.resolve()
         .then(() => target.sequelize._resolved || target.connect())
-        .then(() => this._wrap(this.$schema.id, target.models[this.$schema.id], target.schemas));
+        .then(() => this._wrap(schema.id, target.models[schema.id], target.schemas));
     },
 
     getSchema(id) {
