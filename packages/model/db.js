@@ -57,14 +57,14 @@ module.exports = (Grown, util) => {
 
       const buffer = [
         '// This file was automatically generated, do not modify.',
-        `import type { Model, ModelCtor, ModelInterface, ModelDefinition } from '${typedefs}';`,
+        `import type { Model, ModelStatic, ModelInterface, ModelDefinition } from '${typedefs}';`,
         `import type { ${refs.join(', ')} } from '${path.relative(_options.models, _options.types)}';`,
         `export * from '${path.relative(_options.models, _options.types)}';`,
       ].concat(set.map(x => x.chunk))
         .concat(module.map(x => x.chunk))
         .concat(refs.map(x => [
           _options.comments && `/**\nDeclaration of \`${x}\` model.\n*/`,
-          `export type ${x}Model = ModelCtor<${x}Instance> & ${x}Model.ClassMethods;`,
+          `export type ${x}Model = ModelStatic<${x}Instance> & ${x}Model.ClassMethods;`,
         ].filter(Boolean).join('\n')))
         .concat([
           `/**\nFound modules from \`${path.relative('.', _options.models)}\`\n*/`,

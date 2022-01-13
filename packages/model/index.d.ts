@@ -1,5 +1,5 @@
 import type {
-  Model, ModelCtor, ModelDefinition, Options, SyncOptions, Sequelize, ConnectionOptions,
+  Model, ModelStatic, ModelDefinition, Options, SyncOptions, Sequelize, ConnectionOptions,
   ResourceRepositoryOf, ResourceRepository,
   JSONSchema4,
 } from 'json-schema-sequelizer';
@@ -18,11 +18,11 @@ declare module '@grown/model' {
     connection: ConnectionOptions;
     $schema: JSONSchema4;
     getSchema<T>(name?: string): ModelSchema<T>;
-    connect<M extends Model>(options?: DatabaseConfig, refs?: JSONSchema4[], cwd?: string): Promise<ModelCtor<M>>;
+    connect<M extends Model>(options?: DatabaseConfig, refs?: JSONSchema4[], cwd?: string): Promise<ModelStatic<M>>;
     define(name: string, params: ModelInterface, _refs?: { [id: string]: JSONSchema4 }): ModelInterface;
     _resolved: boolean;
     _refs: JSONSchema4[];
-    _wrap<M extends Model>(id: string, def: M, refs: JSONSchema4[]): ModelCtor<M>;
+    _wrap<M extends Model>(id: string, def: M, refs: JSONSchema4[]): ModelStatic<M>;
     _schema<T>(id: string, refs: JSONSchema4[]): ModelSchema<T>;
     _through<T>(id: string, refs: JSONSchema4[]): ModelSchema<T>;
     _fakeFrom(id: string, refs: JSONSchema4[], opts?: JSONSchemaFakerOptions): JsonValue;
@@ -78,7 +78,7 @@ declare module '@grown/model' {
     connect(): Promise<ResourceRepositoryOf<DB>>;
     sync(opts: SyncOptions): Promise<ResourceRepositoryOf<DB>>;
     get(name: keyof DB): ModelInterface;
-    get<M extends Model>(name: keyof DB): ModelCtor<M>;
+    get<M extends Model>(name: keyof DB): ModelStatic<M>;
   }
 
   interface FormatorPlug extends Plug {
