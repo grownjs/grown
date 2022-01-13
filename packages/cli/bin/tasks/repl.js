@@ -28,6 +28,10 @@ module.exports = {
       Grown.use(require('@grown/repl'));
     }
 
+    if (!Grown.argv.params.models) {
+      Grown.argv.params.models = Grown.argv._[1];
+    }
+
     Grown.REPL.add(require('../lib/hooks')(Grown, util));
     Grown.REPL.start();
   },

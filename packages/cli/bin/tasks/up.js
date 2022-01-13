@@ -22,7 +22,14 @@ const USAGE_INFO = `
 module.exports = {
   description: USAGE_INFO,
   callback(Grown) {
-    const serverFactory = require(path.resolve(Grown.cwd, Grown.argv.flags.app));
+    const app = process.main || Grown.argv.flags.app || 'app.js';
+
+    let serverFactory;
+    try {
+      serverFactory = require(path.resolve(Grown.cwd, app));
+    } catch (e) {
+      throw new Error(`Failed to load application, given '${app}'`);
+    }
 
     if (typeof serverFactory !== 'function') {
       throw new Error(`Invalid application, given '${typeof serverFactory}'`);

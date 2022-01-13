@@ -6,7 +6,7 @@ const USAGE_INFO = `
 
   Tasks for database management
 
-  models:PATH  Entry file exporting models
+  PATH  Entry file exporting models
 
   --only       Optional. Filter out specific models
   --db         Optional. Database to be used, identifier

@@ -107,6 +107,7 @@ module.exports = (Grown, util) => {
   }
 
   function _collectTasks() {
+    const skip = Grown.CLI.disable_tasks || [];
     const dirs = util.flattenArgs(arguments);
     const files = {};
 
@@ -116,7 +117,12 @@ module.exports = (Grown, util) => {
         fs.readdirSync(cwd)
           .filter(x => x.indexOf('.js') > -1)
           .forEach(x => {
-            files[x.replace('.js', '')] = path.join(cwd, x);
+            const key = x.replace('.js', '');
+
+            /* istanbul ignore else */
+            if (!skip.includes(key)) {
+              files[key] = path.join(cwd, x);
+            }
           });
       }
     });
