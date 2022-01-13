@@ -8,6 +8,7 @@ const USAGE_INFO = `
 
   Runs the app-server
 
+  -a, --app    Optional. Entry file (default: app.js)
   -p, --port   Optional. Server's port (default: 8080)
   -h, --host   Optional. Server's host name (default: 0.0.0.0)
       --https  Optional. Force HTTPS
@@ -31,11 +32,7 @@ module.exports = {
       throw new Error(`Failed to load application, given '${app}'`);
     }
 
-    if (typeof serverFactory !== 'function') {
-      throw new Error(`Invalid application, given '${typeof serverFactory}'`);
-    }
-
-    const server = serverFactory();
+    const server = typeof serverFactory === 'function' ? serverFactory() : serverFactory;
 
     if (!server || typeof server.listen !== 'function') {
       throw new Error(`Missing listen() method, given '${typeof (server ? server.listen : server)}'`);

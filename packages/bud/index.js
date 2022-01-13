@@ -32,12 +32,14 @@ const util = require('./util');
 module.exports = (cwd, argv) => {
   const _argv = util.argvParser(argv || process.argv.slice(2), {
     boolean: ['V', 'd', 's', 'help'],
+    string: ['p', 'h', 'a', 'e'],
     alias: {
       V: 'verbose',
       s: 'silent',
       d: 'debug',
       p: 'port',
       h: 'host',
+      a: 'app',
       e: 'env',
     },
   });
