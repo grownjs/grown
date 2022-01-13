@@ -92,14 +92,15 @@ module.exports = {
         type: 'object',
         properties: Object.keys(Grown.argv.params).reduce((memo, cur) => {
           const target = Grown.argv.params[cur].replace('[]', '');
-          const array = Grown.argv.params[cur].substr(-2) === '[]';
 
           if (/^[A-Z]/.test(target)) {
-            if (array) {
+            if (Grown.argv.params[cur].substr(-2) === '[]') {
               memo[cur] = { type: 'array', items: { $ref: target } };
             } else {
               memo[cur] = { $ref: target };
             }
+          } else if (target.includes('/')) {
+            memo[cur] = { $ref: target.replace('/', '#/definitions/') };
           } else {
             memo[cur] = { type: target };
           }
@@ -137,6 +138,8 @@ module.exports = {
           schema[key] = value.substr(-2) === '[]'
             ? { type: 'array', items: { $ref: value.substr(0, value.length - 2) } }
             : { $ref: value };
+        } else if (value.includes('/')) {
+          schema[key] = { $ref: value.replace('/', '#/') };
         } else {
           schema[key] = value;
         }
