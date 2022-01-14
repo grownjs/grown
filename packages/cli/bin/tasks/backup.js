@@ -11,8 +11,8 @@ const USAGE_INFO = `
   --only       Optional. Filter out specific models
   --db         Optional. Database to be used, identifier
 
-  --import     Optional. Load into the database, directory or file
-  --export     Optional. Save backup to destination, directory
+  --load       Optional. Load into the database, directory or file
+  --save       Optional. Save backup to destination, directory
 
   Examples:
     {bin} backup path/to/models --load ../from/backup/or/path/to/seeds

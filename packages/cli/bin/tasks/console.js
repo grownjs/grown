@@ -4,7 +4,7 @@
 
 const USAGE_INFO = `
 
-  Interactive console
+  Interactive console application
 
   --load  Optional. Run scripts into the REPL
 
@@ -16,8 +16,8 @@ const USAGE_INFO = `
   just prefix them with '.', e.g. \`.import lib\`
 
   Examples:
-    {bin} repl models:db/models
-    {bin} repl --load path/to/commands import:lib
+    {bin} console models:db/models
+    {bin} console --load path/to/commands import:lib
 
 `;
 
@@ -28,7 +28,7 @@ module.exports = {
       Grown.use(require('@grown/repl'));
     }
 
-    if (!Grown.argv.params.models) {
+    if (!Grown.argv.params.models && Grown.argv._[1]) {
       Grown.argv.params.models = Grown.argv._[1];
     }
 

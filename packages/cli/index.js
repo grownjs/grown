@@ -139,7 +139,7 @@ module.exports = (Grown, util) => {
     /* istanbul ignore else */
     if (taskName && !Grown.argv.flags.help) {
       /* istanbul ignore else */
-      if (!Grown.argv.flags.app && taskName === 'up') {
+      if (!Grown.argv.flags.app && taskName === 'server') {
         process.main = this._findApplication();
       }
 

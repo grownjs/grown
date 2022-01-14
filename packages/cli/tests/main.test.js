@@ -60,16 +60,16 @@ describe('Grown.CLI', () => {
 
   describe('Errors', () => {
     it('should report multiple errors', () => {
-      return cmd('errored', bin('up --app multiple')).then(({ stdout, stderr, failure }) => {
+      return cmd('errored', bin('server --app multiple')).then(({ stdout, stderr, failure }) => {
         expect(stderr).to.eql('');
         expect(stdout).to.contain('─ SINGLE_ERROR (undefined)');
-        expect(stdout).to.contain('─ [up] Error');
+        expect(stdout).to.contain('─ [server] Error');
         expect(failure).not.to.be.null;
       });
     });
 
     it('should report original errors', () => {
-      return cmd('errored', bin('up --app original')).then(({ stdout, stderr, failure }) => {
+      return cmd('errored', bin('server --app original')).then(({ stdout, stderr, failure }) => {
         expect(stderr).to.eql('');
         expect(stdout).to.contain('⚠ SOME DETAIL INFO');
         expect(stdout).to.contain('⚠ ORIGINAL_ERROR');
@@ -78,9 +78,9 @@ describe('Grown.CLI', () => {
     });
 
     it('should report stack-less errors', () => {
-      return cmd('errored', bin('up --app no-stack --debug')).then(({ stdout, stderr, failure }) => {
+      return cmd('errored', bin('server --app no-stack --debug')).then(({ stdout, stderr, failure }) => {
         expect(stderr).to.eql('');
-        expect(stdout).to.contain('─ [up] NO_STACK');
+        expect(stdout).to.contain('─ [server] NO_STACK');
         expect(failure).not.to.be.null;
       });
     });
@@ -158,7 +158,7 @@ describe('Grown.CLI', () => {
 
   describe('Application', () => {
     it('should fail if --app is not found', () => {
-      return cmd('sample', bin('up')).then(({ stdout, stderr, failure }) => {
+      return cmd('sample', bin('server start')).then(({ stdout, stderr, failure }) => {
         expect(stderr).to.eql('');
         expect(stdout).to.contain('Missing application script');
         expect(failure).not.to.be.null;
@@ -166,23 +166,23 @@ describe('Grown.CLI', () => {
     });
 
     it('should fail if --app is empty', () => {
-      return cmd('app', bin('up')).then(({ stdout, stderr, failure }) => {
+      return cmd('app', bin('server start')).then(({ stdout, stderr, failure }) => {
         expect(stderr).to.eql('');
-        expect(stdout).to.contain('[up] (Error) Missing listen()');
+        expect(stdout).to.contain('[server] (Error) Missing listen()');
         expect(failure).not.to.be.null;
       });
     });
 
     it('should fail if --app is broken', () => {
-      return cmd('app', bin('up --app broken')).then(({ stdout, stderr, failure }) => {
+      return cmd('app', bin('server start --app broken')).then(({ stdout, stderr, failure }) => {
         expect(stderr).to.eql('');
-        expect(stdout).to.contain('[up] (Error) Missing listen()');
+        expect(stdout).to.contain('[server] (Error) Missing listen()');
         expect(failure).not.to.be.null;
       });
     });
 
     it('should allow custom --app', () => {
-      return cmd('app', bin('up --app working')).then(({ stdout, stderr, failure }) => {
+      return cmd('app', bin('server start --app working')).then(({ stdout, stderr, failure }) => {
         expect(stderr).to.eql('');
         expect(stdout).to.contain('WORKING...');
         expect(stdout).to.contain('LISTENING...');
