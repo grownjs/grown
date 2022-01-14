@@ -149,16 +149,24 @@ module.exports = {
         schema[key] = true;
       });
 
-      if (isNew) {
-        target = { id: path.basename(use).replace(/\.\w+$/, ''), definitions: { [id]: schema } };
-      } else {
-        if (target.definitions && target.definitions[id] && !Grown.argv.flags.force) {
-          throw new TypeError(`Definition for '${id}' already exists`);
+      if (isNew || !target.id) {
+        const parts = use.replace(/\.\w+$/, '').split('/');
+
+        let chunk;
+        while (parts.length > 0) {
+          chunk = parts.pop();
+          if (/[A-Z]/.test(chunk)) break;
         }
 
-        target.definitions = target.definitions || {};
-        target.definitions[id] = schema;
+        target = { id: chunk, ...target };
       }
+
+      if (target.definitions && target.definitions[id] && !Grown.argv.flags.force) {
+        throw new TypeError(`Definition for '${id}' already exists`);
+      }
+
+      target.definitions = target.definitions || {};
+      target.definitions[id] = schema;
 
       if (yaml) {
         files.push([`${use}#/definitions/${id}`, jsyaml.dump(target).trim(), true]);
