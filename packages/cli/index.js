@@ -25,8 +25,9 @@ const ARGV_FLAGS = `
 
 const spawn = require('child_process').spawn;
 const flev = require('fastest-levenshtein');
+const jsyaml = require('js-yaml');
+const fs = require('fs-extra');
 const path = require('path');
-const fs = require('fs');
 
 module.exports = (Grown, util) => {
   Grown.use(require('@grown/logger'));
@@ -323,6 +324,61 @@ module.exports = (Grown, util) => {
 
       this._groups[group] = this._groups[group] || {};
       this._groups[group][kind] = { usage, callback };
+    },
+
+    parse(filepath) {
+      if (!(filepath.includes('.yml') || filepath.includes('.json'))) {
+        throw new Error(`Expecting .yml or .json file, given '${filepath}'`);
+      }
+
+      const parts = filepath.replace(/\.\w+$/, '').split('/');
+
+      let key;
+      while (parts.length > 0) {
+        key = parts.pop();
+        if (/[A-Z]/.test(key)) break;
+      }
+
+      const ok = fs.existsSync(filepath);
+      const text = ok ? fs.readFileSync(filepath).toString() : '';
+
+      let target;
+      let yaml;
+      if (filepath.includes('.yml')) {
+        yaml = true;
+        target = text.trim() ? jsyaml.load(text) : {};
+      } else {
+        target = text.trim() ? JSON.parse(text) : {};
+      }
+
+      function remove(prop) {
+        const keys = prop.split('/');
+
+        try {
+          let obj = target;
+          while (keys.length > 1) {
+            obj = obj[keys.shift()];
+          }
+
+          if (Array.isArray(obj)) {
+            obj.splice(keys.shift(), 1);
+          } else {
+            delete obj[keys.shift()];
+          }
+        } catch (e) {
+          throw new Error(`Definition for '${prop}' not found`);
+        }
+      }
+
+      function serialize() {
+        return yaml
+          ? jsyaml.dump(target).trim()
+          : JSON.stringify(target, null, 2);
+      }
+
+      return {
+        ok, key, yaml, target, remove, serialize,
+      };
     },
 
     start(taskName) {
