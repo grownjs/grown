@@ -9,7 +9,7 @@ module.exports = ($, cwd, argv, util) => {
 
   // mods
   $('Grown.def', (name, subDir, options = {}) => {
-    const target = subDir ? util.define($, name, subDir) : Object.create(null);
+    const target = subDir ? util.define($.Grown, name, subDir) : Object.create(null);
 
     Object.keys(options).forEach(k => {
       util.readOnlyProperty(target, k, () => options[k]);
