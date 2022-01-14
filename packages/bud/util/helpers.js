@@ -44,12 +44,36 @@ function scanDir(src, callback) {
   });
 }
 
+function define(ctx, name, subDir) {
+  const repo = ctx.load(subDir);
+
+  ctx.defn(name, () => repo);
+
+  Object.defineProperty(repo, 'typedefs', {
+    get() {
+      const key = name.replace(/s$/, '');
+      const types = repo.typesOf({ declaration: `${key}:${key}` });
+      const models = types.filter(x => x.type);
+
+      return types.map(x => x.chunk)
+        .concat(`/**\nFound modules from \`${path.relative('.', subDir)}\`\n*/`)
+        .concat(`export default interface ${name} {${
+          models.map(x => `\n  ${x.type}: ${x.type}${key};`).join('')
+        }\n}`)
+        .join('\n');
+    },
+  });
+
+  return repo;
+}
+
 function chain(ctx, middleware) {
   return new Chainable(ctx, middleware);
 }
 
 module.exports = {
   chain,
+  define,
   scanDir,
   findFile,
 };

@@ -7,6 +7,17 @@ module.exports = ($, cwd, argv, util) => {
   // setup loader
   require('global-or-local').bind('~/', cwd);
 
+  // mods
+  $('Grown.def', (name, subDir, options = {}) => {
+    const target = subDir ? util.define($, name, subDir) : Object.create(null);
+
+    Object.keys(options).forEach(k => {
+      util.readOnlyProperty(target, k, () => options[k]);
+    });
+
+    return target;
+  }, false);
+
   // props
   $('Grown.argv', () => argv, false);
   $('Grown.cwd', () => cwd, false);

@@ -106,9 +106,16 @@ declare module '@grown/bud' {
     load<T>(cwd: string, hooks?: any): T;
 
     /**
+    MODS
+    */
+    def(name: string, cwd: string, opts?: any): any;
+    def<T>(name: string, cwd: string, opts?: any): T;
+
+    /**
     DEFNS
     */
     defn(name: string, fn: any): any;
+    defn<T>(name: string, fn: any): T;
 
     /**
     EXTENDS
