@@ -9,7 +9,14 @@ const USAGE_INFO = `
 
   Application server tasks
 
-  Without arguments it'll display server information.
+  If no hook is given it'll display server information.
+
+  --grep    Optional. Filter out routes matching the given term
+  --get     Optional. Filter out GET routes only
+  --post    Optional. Filter out POST routes only
+  --put     Optional. Filter out PUT routes only
+  --patch   Optional. Filter out PATCH routes only
+  --delete  Optional. Filter out DELETE routes only
 
   Hooks:
     __HOOKS__
