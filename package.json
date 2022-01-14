@@ -1,6 +1,6 @@
 {
   "name": "grown",
-  "version": "1.1.65",
+  "version": "1.2.0",
   "homepage": "https://grown.jamming.dev",
   "description": "Experimental DSL for web-apps",
   "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
@@ -54,8 +54,8 @@
     "y18n": "^5.0.8"
   },
   "dependencies": {
-    "@grown/bud": "^0.0.40",
-    "@grown/cli": "^0.0.58",
+    "@grown/bud": "^0.0.41",
+    "@grown/cli": "^0.0.59",
     "@grown/server": "^0.0.54",
     "type-fest": "^1.3.0"
   }
