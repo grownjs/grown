@@ -346,7 +346,7 @@ module.exports = (Grown, util) => {
       let yaml;
       if (filepath.includes('.yml')) {
         yaml = true;
-        target = text.trim() ? jsyaml.load(text) : {};
+        target = text.trim() ? jsyaml.load(text.replace(/ !include /g, ' include ')) : {};
       } else {
         target = text.trim() ? JSON.parse(text) : {};
       }
@@ -372,7 +372,7 @@ module.exports = (Grown, util) => {
 
       function serialize() {
         return yaml
-          ? jsyaml.dump(target).trim()
+          ? jsyaml.dump(target).trim().replace(/: include /g, ': !include ')
           : JSON.stringify(target, null, 2);
       }
 
