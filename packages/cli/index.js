@@ -206,7 +206,7 @@ module.exports = (Grown, util) => {
         }
 
         if (keys.includes(Grown.argv._[1]) && tasks[Grown.argv._[1]].usage) {
-          usageInfo = tasks[Grown.argv._[1]].usage;
+          usageInfo = tasks[Grown.argv._[1]].usage.replace(/{bin}/g, this.command_name || 'grown');
           logger.printf('\n  {% green %s %} %s {% gray ─ %s %}\n', taskName, Grown.argv._[1], usageInfo.trim());
         } else {
           const genInfo = keys.reduce((memo, key) => {
