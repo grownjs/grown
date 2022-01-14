@@ -109,6 +109,40 @@ module.exports = {
       return tasks[Grown.argv._[1]].callback({ util, server });
     }
 
-    console.log('Server info', server.router && server.router.routes);
+    Grown.Logger.getLogger().printf('Server info');
+
+    if (server.router && server.router.routes.length > 0) {
+      let found;
+      server.router.routes.forEach(route => {
+        /* istanbul ignore else */
+        if (
+          typeof Grown.argv.flags.grep === 'string'
+          && !route.handler.concat([route.as, route.path, route.verb]).join(' ').toLowerCase().includes(Grown.argv.flags.grep.toLowerCase())
+        ) return;
+
+        /* istanbul ignore else */
+        if (Grown.argv.flags.get && route.verb !== 'GET') return;
+        /* istanbul ignore else */
+        if (Grown.argv.flags.post && route.verb !== 'POST') return;
+        /* istanbul ignore else */
+        if (Grown.argv.flags.put && route.verb !== 'PUT') return;
+        /* istanbul ignore else */
+        if (Grown.argv.flags.patch && route.verb !== 'PATCH') return;
+        /* istanbul ignore else */
+        if (Grown.argv.flags.delete && route.verb !== 'DELETE') return;
+
+        found = true;
+        Grown.Logger.getLogger().printf('\n%s %s  {%gray. (%s: %s) %}', `   ${route.verb}`.substr(-6), route.path, route.as, route.handler.join('#'));
+      });
+
+      /* istanbul ignore else */
+      if (!found) {
+        Grown.Logger.getLogger().printf('\n  {%gray. # no matching routes %}');
+      }
+    } else {
+      Grown.Logger.getLogger().printf('\n  {%gray. # without routes %}');
+    }
+
+    Grown.Logger.getLogger().printf('\n');
   },
 };
