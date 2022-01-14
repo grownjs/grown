@@ -2,7 +2,6 @@
 
 /* istanbul ignore file */
 
-const jsyaml = require('js-yaml');
 const fs = require('fs-extra');
 const path = require('path');
 
@@ -109,23 +108,9 @@ module.exports = {
       }, null, 2)]);
     });
     Grown.CLI.define('generate:type', TYPE_GENERATOR, ({ use, args, files }) => {
-      if (!(use.includes('.yml') || use.includes('.json'))) {
-        throw new Error(`Expecting .yml or .json file, given '${use}'`);
-      }
-
-      const schema = {};
+      const def = Grown.CLI.parse(use);
       const id = args.shift();
-      const isNew = !fs.existsSync(use);
-      const text = !isNew ? fs.readFileSync(use).toString() : '';
-
-      let target;
-      let yaml;
-      if (use.includes('.yml')) {
-        yaml = true;
-        target = text.trim() ? jsyaml.load(text) : {};
-      } else {
-        target = text.trim() ? JSON.parse(text) : {};
-      }
+      const schema = {};
 
       Object.keys(Grown.argv.params).forEach(key => {
         const value = Grown.argv.params[key];
@@ -149,30 +134,18 @@ module.exports = {
         schema[key] = true;
       });
 
-      if (isNew || !target.id) {
-        const parts = use.replace(/\.\w+$/, '').split('/');
-
-        let chunk;
-        while (parts.length > 0) {
-          chunk = parts.pop();
-          if (/[A-Z]/.test(chunk)) break;
-        }
-
-        target = { id: chunk, ...target };
+      if (!def.ok || !def.target.id) {
+        def.target = { id: def.key, ...def.target };
       }
 
-      if (target.definitions && target.definitions[id] && !Grown.argv.flags.force) {
+      if (def.target.definitions && def.target.definitions[id] && !Grown.argv.flags.force) {
         throw new TypeError(`Definition for '${id}' already exists`);
       }
 
-      target.definitions = target.definitions || {};
-      target.definitions[id] = schema;
+      def.target.definitions = def.target.definitions || {};
+      def.target.definitions[id] = schema;
 
-      if (yaml) {
-        files.push([`${use}#/definitions/${id}`, jsyaml.dump(target).trim(), true]);
-      } else {
-        files.push([`${use}#/definitions/${id}`, JSON.stringify(target, null, 2), true]);
-      }
+      files.push([`${use}#/definitions/${id}`, def.serialize(), true]);
     });
     Grown.CLI.define('generate:def', DEF_GENERATOR, ({ use, args, files }) => {
       args.forEach(fn => {
@@ -221,7 +194,7 @@ module.exports = {
           .printf('\r{% error. No changes found %}\n');
       } else {
         rmFiles.split('\t').forEach(srcFile => {
-          const [target, key] = srcFile.split('#/definitions/');
+          const [target, key] = srcFile.split('#/');
 
           if (!key) {
             fs.removeSync(target);
@@ -236,26 +209,10 @@ module.exports = {
             Grown.Logger.getLogger()
               .printf('\r{% info. remove %} %s\n', target);
           } else {
-            let data;
-            let yaml;
-            if (target.includes('.yml')) {
-              yaml = true;
-              data = jsyaml.load(fs.readFileSync(target).toString());
-            } else {
-              data = JSON.parse(fs.readFileSync(target).toString());
-            }
+            const def = Grown.CLI.parse(target);
 
-            if (!(data && data.definitions[key])) {
-              throw new Error(`Definition for '${key}' not found`);
-            }
-
-            delete data.definitions[key];
-
-            if (yaml) {
-              fs.outputFileSync(target, jsyaml.dump(data));
-            } else {
-              fs.outputJsonSync(target, data);
-            }
+            def.remove(key);
+            fs.outputFileSync(target, def.serialize());
 
             Grown.Logger.getLogger()
               .printf('\r{% info. write %} %s\n', target);
@@ -283,7 +240,7 @@ module.exports = {
     await tasks[kind].callback({ use, args, files });
 
     files.forEach(([destFile, contents, definition]) => {
-      const [target] = destFile.split('#/definitions/');
+      const [target] = destFile.split('#/');
 
       if (fs.existsSync(target) && !Grown.argv.flags.force && !definition) {
         throw new Error(`File ${target} already exists`);
