@@ -144,6 +144,17 @@ describe('Grown (bud)', () => {
     });
   });
 
+  describe('#def', () => {
+    it('should allow to load custom modules', () => {
+      const test = require('../index')();
+
+      test.def('foo', `${__dirname}/fixtures`, { truth: 42 });
+      expect(test.foo.truth).to.eql(42);
+      expect(test.foo.Example.truth).to.eql(42);
+      expect(test.foo.typedefs).to.contain('interface ExampleModule');
+    });
+  });
+
   describe('#defn', () => {
     it('should allow to register custom methods', () => {
       const test = require('../index')();
