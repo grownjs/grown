@@ -86,25 +86,32 @@ module.exports = {
         files.push([`${use}/index.js`, "module.exports = {\n  $schema: require('./schema.json'),\n};"]);
       }
 
+      let data = {};
+      if (fs.existsSync(`${use}/schema.json`)) {
+        data = fs.readJsonSync(`${use}/schema.json`);
+      }
+
+      const props = Object.keys(Grown.argv.params).reduce((memo, cur) => {
+        const target = Grown.argv.params[cur].replace('[]', '');
+
+        if (/^[A-Z]/.test(target)) {
+          if (Grown.argv.params[cur].substr(-2) === '[]') {
+            memo[cur] = { type: 'array', items: { $ref: target } };
+          } else {
+            memo[cur] = { $ref: target };
+          }
+        } else if (target.includes('/')) {
+          memo[cur] = { $ref: target.replace('/', '#/definitions/') };
+        } else {
+          memo[cur] = target ? { type: target } : undefined;
+        }
+        return memo;
+      }, {});
+
       files.push([`${use}/schema.json`, JSON.stringify({
         id: path.basename(use),
         type: 'object',
-        properties: Object.keys(Grown.argv.params).reduce((memo, cur) => {
-          const target = Grown.argv.params[cur].replace('[]', '');
-
-          if (/^[A-Z]/.test(target)) {
-            if (Grown.argv.params[cur].substr(-2) === '[]') {
-              memo[cur] = { type: 'array', items: { $ref: target } };
-            } else {
-              memo[cur] = { $ref: target };
-            }
-          } else if (target.includes('/')) {
-            memo[cur] = { $ref: target.replace('/', '#/definitions/') };
-          } else {
-            memo[cur] = { type: target };
-          }
-          return memo;
-        }, {}),
+        properties: { ...data.properties, ...props },
       }, null, 2)]);
     });
     Grown.CLI.define('generate:type', TYPE_GENERATOR, ({ use, args, files }) => {
@@ -126,7 +133,7 @@ module.exports = {
         } else if (value.includes('/')) {
           schema[key] = { $ref: value.replace('/', '#/') };
         } else {
-          schema[key] = value;
+          schema[key] = !value && value !== 0 ? undefined : value;
         }
       });
 
@@ -135,7 +142,7 @@ module.exports = {
       });
 
       if (!def.ok || !def.target.id) {
-        def.target = { id: def.key, ...def.target };
+        def.target.id = def.key;
       }
 
       if (def.target.definitions && def.target.definitions[id] && !Grown.argv.flags.force) {
@@ -143,7 +150,7 @@ module.exports = {
       }
 
       def.target.definitions = def.target.definitions || {};
-      def.target.definitions[id] = schema;
+      def.target.definitions[id] = { ...def.target.definitions[id], ...schema };
 
       files.push([`${use}#/definitions/${id}`, def.serialize(), true]);
     });
