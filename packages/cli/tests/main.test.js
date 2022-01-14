@@ -168,7 +168,7 @@ describe('Grown.CLI', () => {
     it('should fail if --app is empty', () => {
       return cmd('app', bin('up')).then(({ stdout, stderr, failure }) => {
         expect(stderr).to.eql('');
-        expect(stdout).to.contain('[up] (Error) Invalid application');
+        expect(stdout).to.contain('[up] (Error) Missing listen()');
         expect(failure).not.to.be.null;
       });
     });

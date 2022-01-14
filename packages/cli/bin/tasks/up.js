@@ -27,7 +27,7 @@ module.exports = {
     const server = typeof serverFactory === 'function' ? serverFactory() : serverFactory;
 
     if (!server || typeof server.listen !== 'function') {
-      throw new Error(`Missing listen() method, given '${typeof (server ? server.listen : server)}'`);
+      throw new Error(`Missing listen() method, given '${typeof server}'`);
     }
 
     let _protocol = 'http';
