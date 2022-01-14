@@ -7,17 +7,6 @@ module.exports = ($, cwd, argv, util) => {
   // setup loader
   require('global-or-local').bind('~/', cwd);
 
-  // mods
-  $('Grown.def', (name, subDir, options = {}) => {
-    const target = subDir ? util.define($.Grown, name, subDir) : Object.create(null);
-
-    Object.keys(options).forEach(k => {
-      util.readOnlyProperty(target, k, () => options[k]);
-    });
-
-    return target;
-  }, false);
-
   // props
   $('Grown.argv', () => argv, false);
   $('Grown.cwd', () => cwd, false);
@@ -26,6 +15,7 @@ module.exports = ($, cwd, argv, util) => {
 
   // methods
   $('Grown.load', (_cwd, hooks) => util.scanDir(_cwd, def => def($.Grown, hooks || {})), false);
+  $('Grown.def', (name, _cwd, opts) => util.define($.Grown, name, _cwd, opts), false);
   $('Grown.defn', (name, fn) => $(`Grown.${name}`, fn, false), false);
   $('Grown.use', cb => cb($.Grown, util), false);
   $('Grown.do', util.wrap, false);

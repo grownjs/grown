@@ -44,7 +44,7 @@ function scanDir(src, callback) {
   });
 }
 
-function define(ctx, name, subDir) {
+function define(ctx, name, subDir, options) {
   const repo = ctx.load(subDir);
 
   ctx.defn(name, () => repo);
@@ -62,6 +62,10 @@ function define(ctx, name, subDir) {
         }\n}`)
         .join('\n');
     },
+  });
+
+  Object.keys(options || {}).forEach(k => {
+    $new.readOnlyProperty(repo, k, () => options[k]);
   });
 
   return repo;
