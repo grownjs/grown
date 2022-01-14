@@ -161,11 +161,18 @@ module.exports = (Grown, util) => {
       }
     },
 
-    start() {
+    start(props) {
       const repl = this._startREPL();
       const cbs = [];
 
       util.readOnlyProperty(this, 'repl', repl);
+
+      /* istanbul ignore else */
+      if (props) {
+        Object.keys(props).forEach(key => {
+          util.readOnlyProperty(repl.context, key, props[key]);
+        });
+      }
 
       const hooks = Object.keys(Grown.argv.params);
 
