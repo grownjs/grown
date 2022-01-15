@@ -20,6 +20,7 @@ const USAGE_INFO = `
     {bin} generate model db/models/User email:string permissions:Permission[] --ts
     {bin} generate type app/schema/types/dataTypes.yml primaryKey type:integer
     {bin} generate def src/App methods.main --use Auth,Session,util
+    {bin} generate db/models/provider.js User
     {bin} generate --undo
 
 `;
@@ -74,6 +75,19 @@ const DEF_GENERATOR = `
     import type { ModelsProvider as Provider } from '~/app/types';
     export default ({ User, Session }: Provider) => function main() { ... };
 
+  Other modules can be created if the first argument is a filepath, e.g.
+
+    \`db/handlers/provider.js User value:path.to.result Other:Models.get! getAPI:Services.API\`
+
+  The arguments above generates the following code:
+
+    module.exports = {
+      getUser() {},
+      value() { return this.path.to.result; },
+      getOther() { return this.Models.get('Other'); },
+      getAPI() { return this.Services.API; },
+    };
+
 `;
 
 module.exports = {
@@ -87,6 +101,7 @@ module.exports = {
       }
 
       let data = {};
+      /* istanbul ignore else */
       if (fs.existsSync(`${use}/schema.json`)) {
         data = fs.readJsonSync(`${use}/schema.json`);
       }
@@ -141,10 +156,12 @@ module.exports = {
         schema[key] = true;
       });
 
+      /* istanbul ignore else */
       if (!def.ok || !def.target.id) {
         def.target.id = def.key;
       }
 
+      /* istanbul ignore else */
       if (def.target.definitions && def.target.definitions[id] && !Grown.argv.flags.force) {
         throw new TypeError(`Definition for '${id}' already exists`);
       }
@@ -193,6 +210,7 @@ module.exports = {
         .filter(Boolean)
       : [];
 
+    /* istanbul ignore else */
     if (Grown.argv.flags.undo) {
       const rmFiles = backup.pop();
 
@@ -203,18 +221,43 @@ module.exports = {
         rmFiles.split('\t').forEach(srcFile => {
           const [target, key] = srcFile.split('#/');
 
-          if (!key) {
-            fs.removeSync(target);
+          /* istanbul ignore else */
+          if (srcFile.includes('#/') && (target.includes('.js') || target.includes('.ts'))) {
+            /* istanbul ignore else */
+            if (key) {
+              const keys = key.split('/');
+              const script = keys.reduce((code, prop) => {
+                code = code.replace(new RegExp(` *${prop}\\b[^]*?;\\s*\\},\\n`), '');
+                return code;
+              }, fs.readFileSync(target).toString());
 
-            let curDir = path.dirname(target);
-            while (!fs.readdirSync(curDir).length) {
-              fs.rmdirSync(curDir);
-              curDir = path.dirname(curDir);
-              if (curDir.charAt() === '.') break;
+              fs.outputFileSync(target, script);
+
+              Grown.Logger.getLogger()
+                .printf('\r{% cyan write %} %s\n', target)
+                .printf('\r{% yellow drop %} {% gray. %s %}\n', keys.join(', '));
             }
+            return;
+          }
 
-            Grown.Logger.getLogger()
-              .printf('\r{% info. remove %} %s\n', target);
+          if (!key) {
+            if (fs.existsSync(target)) {
+              fs.removeSync(target);
+
+              let curDir = path.dirname(target);
+              while (!fs.readdirSync(curDir).length) {
+                fs.rmdirSync(curDir);
+                curDir = path.dirname(curDir);
+                /* istanbul ignore else */
+                if (curDir.charAt() === '.') break;
+              }
+
+              Grown.Logger.getLogger()
+                .printf('\r{% redBright remove %} %s\n', target);
+            } else {
+              Grown.Logger.getLogger()
+                .printf('\r{% yellow skip %} %s\n', target);
+            }
           } else {
             const def = Grown.CLI.parse(target);
 
@@ -222,7 +265,8 @@ module.exports = {
             fs.outputFileSync(target, def.serialize());
 
             Grown.Logger.getLogger()
-              .printf('\r{% info. write %} %s\n', target);
+              .printf('\r{% cyan write %} %s\n', target)
+              .printf('\r{% yellow drop %} {% gray. #/%s %}\n', key);
           }
         });
 
@@ -235,27 +279,70 @@ module.exports = {
     const tasks = Grown.CLI.subtasks('generate');
     const files = [];
 
-    if (!tasks || !(kind in tasks)) {
-      throw new TypeError(`${kind ? `Unknown '${kind}' generator` : 'Missing generator'}, add --help for usage info`);
-    }
-
     /* istanbul ignore else */
-    if (!use || typeof use !== 'string') {
-      throw new Error(`Missing PATH to write, given '${use || ''}'`);
-    }
+    if (kind === 'def' && (use.includes('/') && use.includes('.'))) {
+      const ts = use.includes('.ts');
+      const obj = { ...Grown.argv.params };
 
-    await tasks[kind].callback({ use, args, files });
+      let script = fs.existsSync(use)
+        ? fs.readFileSync(use).toString()
+        : `${ts ? 'export default' : 'module.exports ='} {\n};\n`;
+
+      args.forEach(prop => {
+        obj[prop] = null;
+      });
+
+      const props = Object.keys(obj).reduce((memo, key) => {
+        let value = obj[key];
+        /* istanbul ignore else */
+        if (value && value.substr(-1) === '!') value = `${value.replace('!', '')}('${key}')`;
+        /* istanbul ignore else */
+        if (key.charCodeAt() >= 65 && key.charCodeAt() <= 90) key = `get${key}`;
+        /* istanbul ignore else */
+        if (value === '') {
+          script = script.replace(new RegExp(` *${key}\\b[^]*?;\\s*\\},\\n`), '');
+          return memo;
+        }
+        memo.push([key, `  ${key}()`, value && ` return this.${value}; `]);
+        return memo;
+      }, []);
+
+      const chunk = props
+        .filter(prop => {
+          /* istanbul ignore else */
+          if (script.includes(prop[1])) return false;
+          return true;
+        })
+        .map(prop => `${prop[1]} {${prop[2] || ''}},`).join('\n');
+
+      script = script.replace(/(?:module.exports\s*=|export\s+default)\s*\{\s*\n/, _ => [_.trim(), '\n', chunk ? `${chunk}\n` : ''].join(''));
+
+      files.push([`${use}#/${props.map(([key]) => key).join('/')}`, script.trim(), true]);
+    } else {
+      /* istanbul ignore else */
+      if (!tasks || !(kind in tasks)) {
+        throw new TypeError(`${kind ? `Unknown '${kind}' generator` : 'Missing generator'}, add --help for usage info`);
+      }
+
+      /* istanbul ignore else */
+      if (!use || typeof use !== 'string') {
+        throw new Error(`Missing PATH to write, given '${use || ''}'`);
+      }
+
+      await tasks[kind].callback({ use, args, files });
+    }
 
     files.forEach(([destFile, contents, definition]) => {
       const [target] = destFile.split('#/');
 
+      /* istanbul ignore else */
       if (fs.existsSync(target) && !Grown.argv.flags.force && !definition) {
         throw new Error(`File ${target} already exists`);
       }
 
       fs.outputFileSync(target, `${contents}\n`);
       Grown.Logger.getLogger()
-        .printf('\r{% info. %s %} %s\n', kind, target);
+        .printf('\r{% cyan %s %} %s\n', kind, target);
     });
 
     let tmpFiles = files.slice();
@@ -265,6 +352,7 @@ module.exports = {
       tmpFiles = tmpFiles.filter(f => !tmpLines.includes(f[0]));
     });
 
+    /* istanbul ignore else */
     if (tmpFiles.length) {
       fs.outputFileSync(histLog, `${backup.join('\n')}\n${tmpFiles.map(x => x[0]).join('\t')}`.trim());
     }
