@@ -218,8 +218,17 @@ module.exports = {
         Grown.Logger.getLogger()
           .printf('\r{% error. No changes found %}\n');
       } else {
-        rmFiles.split('\t').forEach(srcFile => {
+        const [date, ...files] = rmFiles.split('\t');
+
+        files.forEach(srcFile => {
           const [target, key] = srcFile.split('#/');
+
+          /* istanbul ignore else */
+          if ((Date.now() - date) > 900000 && !Grown.argv.flags.force) {
+            Grown.Logger.getLogger()
+              .printf('\r{% yellow skip %} %s\n', target);
+            return;
+          }
 
           /* istanbul ignore else */
           if (srcFile.includes('#/') && (target.includes('.js') || target.includes('.ts'))) {
@@ -347,14 +356,14 @@ module.exports = {
 
     let tmpFiles = files.slice();
     backup.forEach(line => {
-      const tmpLines = line.split('\t');
+      const tmpLines = line.split('\t').slice(1);
 
       tmpFiles = tmpFiles.filter(f => !tmpLines.includes(f[0]));
     });
 
     /* istanbul ignore else */
     if (tmpFiles.length) {
-      fs.outputFileSync(histLog, `${backup.join('\n')}\n${tmpFiles.map(x => x[0]).join('\t')}`.trim());
+      fs.outputFileSync(histLog, `${backup.join('\n')}\n${Date.now()}\t${tmpFiles.map(x => x[0]).join('\t')}`.trim());
     }
   },
 };
