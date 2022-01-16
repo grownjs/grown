@@ -78,6 +78,7 @@ module.exports = {
             .printf('\r{% error. %s %}\n', (Grown.argv.flags.verbose && e.stack) || e.message);
         });
     });
+
     Grown.CLI.define('server:start', START_TASK, ({ server }) => {
       /* istanbul ignore else */
       if (!server || typeof server.listen !== 'function') {

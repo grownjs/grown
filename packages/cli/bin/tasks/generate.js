@@ -129,6 +129,7 @@ module.exports = {
         properties: { ...data.properties, ...props },
       }, null, 2)]);
     });
+
     Grown.CLI.define('generate:type', TYPE_GENERATOR, ({ use, args, files }) => {
       const def = Grown.CLI.parse(use);
       const id = args.shift();
@@ -171,6 +172,7 @@ module.exports = {
 
       files.push([`${use}#/definitions/${id}`, def.serialize(), true]);
     });
+
     Grown.CLI.define('generate:def', DEF_GENERATOR, ({ use, args, files }) => {
       args.forEach(fn => {
         const body = '\n  // TODO\n';
