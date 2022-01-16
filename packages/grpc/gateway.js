@@ -154,6 +154,9 @@ module.exports = (Grown, util) => {
             try {
               const handler = controllers.get(name);
 
+              /* istanbul ignore else */
+              if (!handler) throw new TypeError('Missing handler');
+
               server.addService(Proto.service, this._getService(name, handler));
             } catch (e) {
               throw new Error(`Failed at loading '${name}' service. ${e.stack || e.message}`);
