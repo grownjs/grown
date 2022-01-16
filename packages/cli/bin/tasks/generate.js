@@ -344,16 +344,21 @@ module.exports = {
     }
 
     files.forEach(([destFile, contents, definition]) => {
-      const [target] = destFile.split('#/');
+      const [target, key] = destFile.split('#/');
 
       /* istanbul ignore else */
       if (fs.existsSync(target) && !Grown.argv.flags.force && !definition) {
         throw new Error(`File ${target} already exists`);
       }
 
-      fs.outputFileSync(target, `${contents}\n`);
-      Grown.Logger.getLogger()
-        .printf('\r{% cyan %s %} %s\n', kind, target);
+      if (!key && destFile.includes('#/')) {
+        Grown.Logger.getLogger()
+          .printf('\r{% yellow skip %} %s\n', target);
+      } else {
+        fs.outputFileSync(target, `${contents}\n`);
+        Grown.Logger.getLogger()
+          .printf('\r{% cyan %s %} %s\n', kind, target);
+      }
     });
 
     let tmpFiles = files.slice();
