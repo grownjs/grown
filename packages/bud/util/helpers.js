@@ -37,7 +37,10 @@ function scanDir(src, callback) {
     const repo = new Resolver(ctx || null, src, hooks);
 
     Object.keys(repo.values).forEach(key => {
-      $new.readOnlyProperty(repo, key, () => repo.get(key));
+      /* istanbul ignore else */
+      if (typeof repo.values[key] !== 'symbol') {
+        $new.readOnlyProperty(repo, key, () => repo.get(key));
+      }
     });
 
     return repo;
