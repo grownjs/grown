@@ -17,9 +17,9 @@
     "index.d.ts"
   ],
   "scripts": {
-    "test": "node check.js & (sleep 3; curl 0.0.0.0:8080/die || exit 2)",
+    "test": "ts-node --type-check check & (sleep 3; curl 0.0.0.0:8080/die || exit 2)",
     "lint": "eslint $(git ls-files | grep -E '(js|pug)$')",
-    "pretest": "npm run lint && tsc --build tsconfig.json"
+    "pretest": "npm run lint"
   },
   "publishConfig": {
     "access": "public"
