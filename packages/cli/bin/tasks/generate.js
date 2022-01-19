@@ -217,8 +217,7 @@ module.exports = {
       const rmFiles = backup.pop();
 
       if (!rmFiles) {
-        Grown.Logger.getLogger()
-          .printf('\r{% error. No changes found %}\n');
+        Grown.CLI.status('error', 'No changes found');
       } else {
         const [date, ...files] = rmFiles.split('\t');
 
@@ -227,8 +226,7 @@ module.exports = {
 
           /* istanbul ignore else */
           if ((Date.now() - date) > 900000 && !Grown.argv.flags.force) {
-            Grown.Logger.getLogger()
-              .printf('\r{% yellow skip %} %s\n', target);
+            Grown.CLI.status('yellow', 'skip', target);
             return;
           }
 
@@ -242,10 +240,7 @@ module.exports = {
                 return code;
               }, fs.readFileSync(target).toString());
 
-              fs.outputFileSync(target, script);
-
-              Grown.Logger.getLogger()
-                .printf('\r{% cyan write %} %s\n', target)
+              Grown.CLI.write(target, script)
                 .printf('\r{% yellow drop %} {% gray. %s %}\n', keys.join(', '));
             }
             return;
@@ -253,30 +248,15 @@ module.exports = {
 
           if (!key) {
             if (fs.existsSync(target)) {
-              fs.removeSync(target);
-
-              let curDir = path.dirname(target);
-              while (!fs.readdirSync(curDir).length) {
-                fs.rmdirSync(curDir);
-                curDir = path.dirname(curDir);
-                /* istanbul ignore else */
-                if (curDir.charAt() === '.') break;
-              }
-
-              Grown.Logger.getLogger()
-                .printf('\r{% redBright remove %} %s\n', target);
+              Grown.CLI.remove(target);
             } else {
-              Grown.Logger.getLogger()
-                .printf('\r{% yellow skip %} %s\n', target);
+              Grown.CLI.status('yellow', 'skip', target);
             }
           } else {
             const def = Grown.CLI.parse(target);
 
             def.remove(key);
-            fs.outputFileSync(target, def.serialize());
-
-            Grown.Logger.getLogger()
-              .printf('\r{% cyan write %} %s\n', target)
+            Grown.CLI.write(target, def.serialize())
               .printf('\r{% yellow drop %} {% gray. #/%s %}\n', key);
           }
         });
@@ -352,12 +332,9 @@ module.exports = {
       }
 
       if (!key && destFile.includes('#/')) {
-        Grown.Logger.getLogger()
-          .printf('\r{% yellow skip %} %s\n', target);
+        Grown.CLI.status('yellow', 'skip', target);
       } else {
-        fs.outputFileSync(target, `${contents}\n`);
-        Grown.Logger.getLogger()
-          .printf('\r{% cyan %s %} %s\n', kind, target);
+        Grown.CLI.write(target, `${contents}\n`);
       }
     });
 

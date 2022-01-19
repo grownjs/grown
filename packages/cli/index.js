@@ -326,6 +326,29 @@ module.exports = (Grown, util) => {
       this._groups[group][kind] = { usage, callback };
     },
 
+    status(color, kind, value) {
+      logger.printf('\r{% %s. %s %} %s\n', color, kind, value || '');
+      return logger;
+    },
+
+    remove(filepath) {
+      fs.removeSync(filepath);
+
+      let curDir = path.dirname(filepath);
+      while (!fs.readdirSync(curDir).length) {
+        fs.rmdirSync(curDir);
+        curDir = path.dirname(curDir);
+        if (curDir.charAt() === '.') break;
+      }
+
+      logger.printf('\r{% redBright remove %} %s\n', path.relative('.', filepath));
+    },
+
+    write(filepath, content) {
+      fs.writeFileSync(filepath, content);
+      logger.printf('\r{% cyan write %} %s\n', path.relative('.', filepath));
+    },
+
     parse(filepath) {
       if (!(filepath.includes('.yml') || filepath.includes('.json'))) {
         throw new Error(`Expecting .yml or .json file, given '${filepath}'`);
