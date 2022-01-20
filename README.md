@@ -1,4 +1,4 @@
-# Grown
+<img src="https://github.com/grownjs/grown/raw/master/website/src/images/grown.svg" alt="Grown" width="200" height="50">
 
 [![NPM version](https://badge.fury.io/js/grown.svg)](http://badge.fury.io/js/grown)
 [![codecov](https://codecov.io/gh/grownjs/grown/branch/master/graph/badge.svg)](https://codecov.io/gh/grownjs/grown)
