@@ -63,12 +63,12 @@ html[theme=dark] #toggle svg path {
   #sidebar {
     overflow: auto;
     position: fixed;
-    width: 235px;
+    width: 260px;
     bottom: 0;
     top: 0;
   }
   #content {
-    margin-left: 235px;
+    margin-left: 260px;
     height: 100%;
     overflow: auto;
   }
