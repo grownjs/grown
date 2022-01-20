@@ -131,7 +131,7 @@ module.exports = {
     });
 
     Grown.CLI.define('generate:type', TYPE_GENERATOR, ({ use, args, files }) => {
-      const def = Grown.CLI.parse(use);
+      const def = Grown.CLI._.parse(use);
       const id = args.shift();
       const schema = {};
 
@@ -217,7 +217,7 @@ module.exports = {
       const rmFiles = backup.pop();
 
       if (!rmFiles) {
-        Grown.CLI.status('error', 'No changes found');
+        Grown.CLI._.status('error', 'No changes found');
       } else {
         const [date, ...files] = rmFiles.split('\t');
 
@@ -226,7 +226,7 @@ module.exports = {
 
           /* istanbul ignore else */
           if ((Date.now() - date) > 900000 && !Grown.argv.flags.force) {
-            Grown.CLI.status('yellow', 'skip', target);
+            Grown.CLI._.status('yellow', 'skip', target);
             return;
           }
 
@@ -240,7 +240,7 @@ module.exports = {
                 return code;
               }, fs.readFileSync(target).toString());
 
-              Grown.CLI.write(target, script)
+              Grown.CLI._.write(target, script)
                 .printf('\r{% yellow drop %} {% gray. %s %}\n', keys.join(', '));
             }
             return;
@@ -248,15 +248,15 @@ module.exports = {
 
           if (!key) {
             if (fs.existsSync(target)) {
-              Grown.CLI.remove(target);
+              Grown.CLI._.remove(target);
             } else {
-              Grown.CLI.status('yellow', 'skip', target);
+              Grown.CLI._.status('yellow', 'skip', target);
             }
           } else {
-            const def = Grown.CLI.parse(target);
+            const def = Grown.CLI._.parse(target);
 
             def.remove(key);
-            Grown.CLI.write(target, def.serialize())
+            Grown.CLI._.write(target, def.serialize())
               .printf('\r{% yellow drop %} {% gray. #/%s %}\n', key);
           }
         });
@@ -332,9 +332,9 @@ module.exports = {
       }
 
       if (!key && destFile.includes('#/')) {
-        Grown.CLI.status('yellow', 'skip', target);
+        Grown.CLI._.status('yellow', 'skip', target);
       } else {
-        Grown.CLI.write(target, `${contents}\n`);
+        Grown.CLI._.write(target, `${contents}\n`);
       }
     });
 

@@ -299,33 +299,7 @@ module.exports = (Grown, util) => {
     });
   }
 
-  return Grown('CLI', {
-    _findAvailableTasks,
-    _findApplication,
-    _collectTasks,
-    _showTasks,
-    _showHelp,
-    _onError,
-    _onExit,
-    _exec,
-
-    // shared
-    _start: null,
-    _alias: {},
-    _tasks: {},
-    _groups: {},
-
-    subtasks(group) {
-      return this._groups[group];
-    },
-
-    define(type, usage, callback) {
-      const [group, kind] = type.split(':');
-
-      this._groups[group] = this._groups[group] || {};
-      this._groups[group][kind] = { usage, callback };
-    },
-
+  const _ = {
     status(color, kind, value) {
       logger.printf('\r{% %s. %s %} %s\n', color, kind, value || '');
       return logger;
@@ -345,7 +319,7 @@ module.exports = (Grown, util) => {
     },
 
     write(filepath, content) {
-      fs.writeFileSync(filepath, content);
+      fs.outputFileSync(filepath, content);
       logger.printf('\r{% cyan write %} %s\n', path.relative('.', filepath));
     },
 
@@ -402,6 +376,35 @@ module.exports = (Grown, util) => {
       return {
         ok, key, yaml, target, remove, serialize,
       };
+    },
+  };
+
+  return Grown('CLI', {
+    _findAvailableTasks,
+    _findApplication,
+    _collectTasks,
+    _showTasks,
+    _showHelp,
+    _onError,
+    _onExit,
+    _exec,
+    _,
+
+    // shared
+    _start: null,
+    _alias: {},
+    _tasks: {},
+    _groups: {},
+
+    subtasks(group) {
+      return this._groups[group];
+    },
+
+    define(type, usage, callback) {
+      const [group, kind] = type.split(':');
+
+      this._groups[group] = this._groups[group] || {};
+      this._groups[group][kind] = { usage, callback };
     },
 
     start(taskName) {
