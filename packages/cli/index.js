@@ -140,7 +140,7 @@ module.exports = (Grown, util) => {
     if (taskName && !Grown.argv.flags.help) {
       /* istanbul ignore else */
       if (!Grown.argv.flags.app && taskName === 'server') {
-        process.main = this._findApplication();
+        process.main = process.main || this._findApplication();
       }
 
       return Promise.resolve()

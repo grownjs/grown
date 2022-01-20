@@ -108,7 +108,15 @@ module.exports = {
     });
   },
   callback(Grown, util) {
-    const serverFactory = require(path.resolve(Grown.cwd, process.main || Grown.argv.flags.app || 'app.js'));
+    const serverFile = path.resolve(Grown.cwd, process.main || Grown.argv.flags.app || 'app.js');
+
+    let serverFactory;
+    try {
+      serverFactory = require(serverFile);
+    } catch (e) {
+      throw new Error(`${e.message} in '${path.relative('.', serverFile)}'`);
+    }
+
     const server = typeof serverFactory === 'function' ? serverFactory() : serverFactory;
     const tasks = Grown.CLI.subtasks('server');
 
