@@ -57,7 +57,7 @@ test: deps ## Test for syntax issues
 #
 dist: deps ## Compile sources for production
 	@NODE_ENV=production npm run dist
-	@BASE_URL=https://grown.jamming.dev npm run index
+	@BASE_URL=https://grown.jamrock.dev npm run index
 
 #
 # Check dependencies

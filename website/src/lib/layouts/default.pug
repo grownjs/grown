@@ -1,8 +1,8 @@
-- const gitBase = 'github.com/grownjs/jamming/blob/master';
+- const gitBase = 'github.com/grownjs/jamrock/blob/master';
 - const gitUrl = `//${gitBase}/${self.filename}`;
 
 doctype html
-html
+html(theme='dark')
   head
     base(href='/')
     meta(charset='utf-8')
@@ -14,6 +14,8 @@ html
 
     title Grown // #{title}
     meta(name='release' content=GIT_REVISION)
+
+    import(from='scripts.js')
 
     link(rel='stylesheet' href='//fonts.googleapis.com/css?family=Sorts+Mill+Goudy|Source+Code+Pro')
     link(rel='stylesheet' href='//unpkg.com/highlight.js@10.7.3/styles/tomorrow.css' inline)
@@ -32,7 +34,7 @@ html
         /* eslint-enable */
 
     #wrapper
-      #content.body
+      #content.body.noscroll
         if error
           details
             = error.stack
@@ -56,7 +58,7 @@ html
 
           a#back(href=`${location.pathname === '/' ? '.' : location.pathname}/#` onclick='content.scrollTop=0') &uarr; Back to the top
 
-      aside#sidebar
+      aside#sidebar.noscroll
         .body
           h1#logo
             a(href='.'): import(from='grown.svg')
@@ -75,4 +77,8 @@ html
     include ../mixins/runkit
 
     script(src='//files.stork-search.net/stork.js')
-    import(from='scripts.js')
+    script.
+      window.stork.register('docs', 'index.st', {
+        minimumQueryLength: 2,
+      }); // eslint-disable-line
+

@@ -1,7 +1,7 @@
 {
   "name": "grown",
   "version": "1.2.2",
-  "homepage": "https://grown.jamming.dev",
+  "homepage": "https://grown.jamrock.dev",
   "description": "Experimental DSL for web-apps",
   "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
   "license": "MIT",

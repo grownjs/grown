@@ -25,4 +25,4 @@ Available packages:
 | [@grown/test](packages/test) | [![NPM version](https://badge.fury.io/js/@grown%2Ftest.svg)](https://badge.fury.io/js/@grown%2Ftest) | [![Known Vulnerabilities](https://snyk.io/test/npm/@grown/test/badge.svg)](https://snyk.io/test/npm/@grown/test) |
 | [@grown/upload](packages/upload) | [![NPM version](https://badge.fury.io/js/@grown%2Fupload.svg)](https://badge.fury.io/js/@grown%2Fupload) | [![Known Vulnerabilities](https://snyk.io/test/npm/@grown/upload/badge.svg)](https://snyk.io/test/npm/@grown/upload) |
 
-> Read the user-guide at: https://grown.jamming.dev/
+> Read the user-guide at: https://grown.jamrock.dev/

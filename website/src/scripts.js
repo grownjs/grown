@@ -107,7 +107,3 @@ if (activeLink && activeLocation !== '/') {
     block: 'end',
   });
 }
-
-window.stork.register('docs', 'index.st', {
-  minimumQueryLength: 2,
-});
