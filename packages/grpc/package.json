@@ -4,7 +4,9 @@
   "main": "index.js",
   "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
   "license": "MIT",
+  "types": "index.d.ts",
   "files": [
+    "*.d.ts",
     "*.js"
   ],
   "scripts": {
