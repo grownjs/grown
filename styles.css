@@ -577,6 +577,14 @@ ul.reset li a::before {
     flex-direction: column;
   }
 }
+.noscroll {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  overflow-y: scroll;
+}
+.noscroll::-webkit-scrollbar {
+  display: none;
+}
 #target {
   position: relative;
   display: none;
