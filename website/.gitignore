@@ -1,6 +1,7 @@
 *.log
 *.todo
 .env
+index.toml
 cache.json
 .DS_Store
 build

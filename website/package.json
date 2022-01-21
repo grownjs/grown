@@ -18,7 +18,7 @@
     "dev": "npm run build -- -w",
     "dist": "npm run build --",
     "build": "mortero -dMncpublic:. -Xlib -ecss.less -I.gitignore",
-    "index": "mortero -kmain -Dbuild > build/index.toml && stork build --input build/index.toml --output build/index.st"
+    "index": "mortero -kmain -Dbuild > index.toml && stork build --input index.toml --output build/index.st"
   },
   "mortero": {
     "bundle": "**/index.js",
