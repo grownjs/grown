@@ -52,13 +52,9 @@ function cors() {
 }
 
 function _grownFactory($, util, options) {
+  debug('#%s Grown v%s - %s', process.pid, _pkg.version, $.Grown.env);
+
   options = options || {};
-
-  // shared defaults
-  options.cwd = $.Grown.cwd;
-  options.env = $.Grown.env;
-
-  debug('#%s Grown v%s - %s', process.pid, _pkg.version, options.env);
 
   const scope = {};
 
@@ -119,10 +115,11 @@ function _grownFactory($, util, options) {
 
         throw util.buildError(code || 500, message);
       },
+      config(key, or) {
+        return scope._options(key, or);
+      },
     },
     props: {
-      env: () => _environment,
-
       get is_finished() {
         return this.res.finished === true;
       },
@@ -153,6 +150,8 @@ function _grownFactory($, util, options) {
     return $.Grown('Conn.Builder')({
       name: `Grown.Conn#${PID}`,
       props: {
+        env: () => _environment,
+        cwd: () => $.Grown.cwd,
         pid: () => PID,
       },
       init() {
@@ -175,7 +174,7 @@ function _grownFactory($, util, options) {
         this.once('begin', () => this.emit('start'));
         this.once('listen', () => this.emit('ready'));
 
-        if (options.env === 'development') {
+        if ($.Grown.env === 'development') {
           this.on('failure', e => {
             if (e.code !== 'ERR_STREAM_WRITE_AFTER_END') {
               console.error(`\r========= FAILURE =========\x1b[K\n${e.message}\n`);

@@ -238,7 +238,7 @@ module.exports = (Grown, util) => {
           }
 
           /* istanbul ignore else */
-          if (options.environment.indexOf('dev') === 0) {
+          if (Grown.env === 'development') {
             /* istanbul ignore else */
             if (fs.statSync(cached[_id].file).mtime - cached[_id].mtime) {
               util.clearModules(cached[_id].file);
@@ -281,8 +281,8 @@ module.exports = (Grown, util) => {
     $install(ctx, scope) {
       const defaults = {
         directories: util.flattenArgs(this.view_folders),
-        environment: scope._options('env'),
         fallthrough: this.fallthrough,
+        environment: Grown.env,
       };
 
       const self = this;

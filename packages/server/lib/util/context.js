@@ -5,11 +5,11 @@ const util = require('util');
 
 const STATUS_CODES = require('http').STATUS_CODES;
 
-function die(conn, error, options) {
-  const failure = this._.cleanError(error, options('cwd'));
+function die(conn, error) {
+  const failure = this._.cleanError(error, conn.cwd);
 
   /* istanbul ignore else */
-  if (options('env') !== 'production' && failure.code > 499) {
+  if (conn.env.NODE_ENV !== 'production' && failure.code > 499) {
     process.stderr.write(`${util.format('#%s Failure. %s', conn.pid, error.stack)}\n`);
   }
 
@@ -137,7 +137,7 @@ function buildPubsub() {
   };
 }
 
-function endCallback(err, conn, options) {
+function endCallback(err, conn) {
   return Promise.resolve()
     .then(() => {
       /* istanbul ignore else */
@@ -145,11 +145,11 @@ function endCallback(err, conn, options) {
         return Promise.resolve()
           .then(() => {
             if (err) {
-              conn.end(this._.cleanError(err, options('cwd')));
+              conn.end(this._.cleanError(err, conn.cwd));
             }
           })
           .catch(e => {
-            die.call(this, conn, e, options);
+            die.call(this, conn, e);
           });
       }
 
@@ -157,7 +157,7 @@ function endCallback(err, conn, options) {
       if (conn.res && !conn.halted) {
         /* istanbul ignore else */
         if (err) {
-          die.call(this, conn, err, options);
+          die.call(this, conn, err);
         }
       }
     })
@@ -174,12 +174,12 @@ function endCallback(err, conn, options) {
     })
     .catch(e => {
       if (e.code !== 'ERR_STREAM_WRITE_AFTER_END') {
-        die.call(this, conn, e, options);
+        die.call(this, conn, e);
       }
     });
 }
 
-function doneCallback(err, conn, options) {
+function doneCallback(err, conn) {
   debug('#%s OK. Final handler reached', conn.pid);
 
   const _finish = endCallback.bind(this);
@@ -191,12 +191,12 @@ function doneCallback(err, conn, options) {
         throw err;
       }
 
-      return _finish(null, conn, options);
+      return _finish(null, conn);
     })
     .then(() => debug('#%s Finished.', conn.pid))
-    .catch(e => _finish(e, conn, options))
+    .catch(e => _finish(e, conn))
     .then(() => {
-      this._events.emit('finished', conn, options);
+      this._events.emit('finished', conn);
     });
 }
 
