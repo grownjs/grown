@@ -39,11 +39,15 @@ function loadTheme() {
     delete window.localStorage.theme;
   }
 }
-window.toggle.addEventListener('click', () => {
-  theme = theme === 'light' ? 'dark' : 'light';
-  window.localStorage.theme = theme;
-  loadTheme();
+
+document.addEventListener('DOMContentLoaded', () => {
+  window.toggle.addEventListener('click', () => {
+    theme = theme === 'light' ? 'dark' : 'light';
+    window.localStorage.theme = theme;
+    loadTheme();
+  });
 });
+
 if (!theme) {
   if (isDark) {
     theme = 'dark';
