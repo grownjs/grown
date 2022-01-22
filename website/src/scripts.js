@@ -46,6 +46,14 @@ document.addEventListener('DOMContentLoaded', () => {
     window.localStorage.theme = theme;
     loadTheme();
   });
+
+  window.onbeforeunload = () => {
+    window.localStorage.sidebar = window.sidebar.scrollTop;
+  };
+
+  if (window.localStorage.sidebar) {
+    window.sidebar.scrollTop = window.localStorage.sidebar;
+  }
 });
 
 if (!theme) {
