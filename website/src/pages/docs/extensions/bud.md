@@ -4,8 +4,6 @@ next:
   label: Extensions &rangle; CLI
   link: docs/extensions/cli
 $render: ~/src/lib/layouts/default.pug
-runkit:
-  preamble: !include ~/src/lib/shared/chunks/bud.js
 ---
 
 The foundation of the whole framework is this, it provides the DSL
@@ -37,18 +35,19 @@ const cb = Grown.do(rescue => {
 
 cb();
 
-// ./exts/Test/handler/index.js
-// module.exports = function () {
-//   return 42;
-// };
+fixture`./exts/Test/truth/index.js
+  module.exports = function () {
+    return 42;
+  };
+`;
 
 // load additional definitions
-const Exts = Grown.load(`${__dirname}/exts`);
+const Module = Grown.load(__dirname + '/exts');
 
 // locate the dependency
-assert(Exts.get('Test').handler() === 42);
+assert(Module.get('Test').truth() === 42);
 
-// don't do this!
+// don't do this... yet!
 // new Grown();
 ```
 
@@ -60,6 +59,7 @@ assert(Exts.get('Test').handler() === 42);
 
 - `argv` &mdash; Parsed argv from command-line.
 - `cwd` &mdash; Current working directory.
+- `pkg` &mdash; Current package.json contents.
 - `env` &mdash; Current `process.env.NODE_ENV` value.
 
 ### Public methods <var>static</var>
@@ -67,7 +67,9 @@ assert(Exts.get('Test').handler() === 42);
 - `do(body)` &mdash; Wraps code into promises with `rescue` abilities.
 - `use(module)` &mdash; Register custom extensions from external modules.
 - `new([options])` &mdash; Shortcut for `new Grown(...)` constructor.
+- `def(name, cwd[, opts])` &mdash; Load and register definitions from the given `cwd`.
 - `defn(name, value)` &mdash; Set static values into the `Grown` container, once.
+- `bind(prefix, cwd)` &mdash; Configure custom module resolution through prefixes.
 - `load(cwd[, hooks])` &mdash; Build module definitions from this directory.
   If `hooks` are given, found modules will be passed to them, so they can be
   extended or completely replaced.

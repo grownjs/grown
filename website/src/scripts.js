@@ -71,6 +71,13 @@ loadTheme();
 const prelude = `
 const fs = require('fs-extra');
 const path = require('path');
+const { strip } = require('ansicolor');
+
+const toString = value => String(Buffer.from(value));
+const normalizeText = msg => strip(msg.replace(/[\\r\\n\\b]/g, ''));
+
+process.stdout.write = msg => console.log(normalizeText(toString(msg)));
+
 global.fixture = (str, ...vars) => {
   const buffer = [];
   for (let i = 0; i < str.length; i += 1) {
@@ -80,8 +87,10 @@ global.fixture = (str, ...vars) => {
   const [file, ...result] = buffer.shift().split('\\n');
   fs.outputFileSync(file.replace(/^\\./, prefix || '.'), result.join('\\n'));
 };
+
 global.assert = require('assert');
 global.Grown = require('@grown/bud')();
+
 let prefix;
 `;
 

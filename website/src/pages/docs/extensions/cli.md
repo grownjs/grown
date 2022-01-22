@@ -4,11 +4,9 @@ next:
   label: Extensions &rangle; Conn
   link: docs/extensions/conn
 $render: ~/src/lib/layouts/default.pug
-runkit:
-  preamble: !include ~/src/lib/shared/chunks/cli.js
 ---
 
-Manage your database setup, start or interact with your application, etc.
+It enables a simple DSL to configure command-line tasks, i.e. manage your database setup, start or interact with your application, etc.
 
 ```js
 // require and create a Grown-container
@@ -17,20 +15,21 @@ const Grown = require('@grown/bud')();
 // register extension
 Grown.use(require('@grown/cli'));
 
+fixture`./tasks/example.js
+  module.exports = {
+    description: 'Example task',
+    callback() {
+      console.log('It works.')
+    },
+  };
+`;
+
 // overload definition
 Grown('CLI', {
   task_folders: [
-    `${__dirname}/tasks`,
+    __dirname + '/tasks',
   ],
 });
-
-// e.g. ./tasks/example.js
-// module.exports = {
-//   description: 'Example task',
-//   callback() {
-//     console.log('It works.')
-//   },
-// };
 
 // e.g. `node script.js example -- ls tasks`
 Grown.argv._ = ['example'];
@@ -46,7 +45,7 @@ await Grown.CLI.start(taskName);
 await Grown.CLI.run(taskName);
 ```
 
-> Use this technique if you want to define your own `CLI` behavior, etc.
+> Click <kbd>▷ RUN</kbd> on the code-block to see what happens &mdash; use this technique if you want to define your own `CLI` behavior, etc.
 
 ---
 
@@ -98,7 +97,7 @@ Now you can invoke this task using `grown words` or `node script.js words` depen
 
 Formatting for task descriptions is enouraged to have its body indented with two spaces, to help readability.
 
-See: [built-in tasks](https://github.com/grownjs/grown/tree/master/packages/cli/bin/tasks) from CLI module
+See: [built-in tasks](https://github.com/grownjs/grown/tree/master/packages/cli/bin/tasks) from the CLI module.
 
 ---
 
@@ -110,6 +109,7 @@ See: [built-in tasks](https://github.com/grownjs/grown/tree/master/packages/cli/
 
 ### Private* props <var>static</var>
 
+- `_` &mdash; Utility helpers to deal with simple `status()`, `write()`/`remove()` files and to `parse()` data sources. Parsed data contains: `ok`, `key`, `yaml`, `target`, `remove()` and `serialize()`.
 - `_start` &mdash; Initialization date, e.g. `new Date()`.
 - `_tasks` &mdash; Collected tasks by name.
 
@@ -122,4 +122,4 @@ See: [built-in tasks](https://github.com/grownjs/grown/tree/master/packages/cli/
 - `_showHelp([taskName])` &mdash; Display the usage info for a the given `taskName`.
 - `_onError(errObj)` &mdash; Default error handler.
 - `_onExit(statusCode)` &mdash; Default exit handler.
-- `_exec(argv, callback)` &mdash; Invoke a shell command from the given `argv`, then `callback` when finished.
+- `_exec(argv[, callback])` &mdash; Invoke a shell command from the given `argv`, then `callback` when finished.
