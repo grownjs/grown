@@ -12,7 +12,7 @@ function links(baseURL) {
   target.innerHTML = '<iframe name="external"></iframe>';
 
   target.firstChild.addEventListener('load', () => {
-    target.dataset.label = 'Response:';
+    target.dataset.label = 'response';
   });
 
   [].slice.call(document.querySelectorAll('a>code')).forEach(node => {
@@ -21,7 +21,7 @@ function links(baseURL) {
     node.parentNode.setAttribute('target', 'external');
     node.parentNode.setAttribute('href', baseURL + node.dataset.href);
     node.parentNode.addEventListener('click', () => {
-      target.dataset.label = 'Requesting...';
+      target.dataset.label = '...';
     });
   });
 }
@@ -86,7 +86,7 @@ let prefix;
 `;
 
 [].slice.call(document.querySelectorAll('pre code.lang-js')).forEach(source => {
-  if (!source.innerText.includes('require(')) return;
+  if (!source.innerText.includes('Grown')) return;
 
   const isEndpoint = __runkit__.endpoint;
   const sourceCode = source.innerText;
