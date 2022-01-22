@@ -81,6 +81,8 @@ if (!theme) {
 loadTheme();
 
 const prelude = `
+require('pug');
+const s = require('tiny-dedent');
 const fs = require('fs-extra');
 const path = require('path');
 const { strip } = require('ansicolor');
@@ -97,7 +99,7 @@ global.fixture = (str, ...vars) => {
   }
   const text = buffer.join('');
   const [file, ...result] = buffer.shift().split('\\n');
-  fs.outputFileSync(file.replace(/^\\./, prefix || '.'), result.join('\\n'));
+  fs.outputFileSync(file.replace(/^\\./, prefix || '.'), s(result.join('\\n')));
 };
 
 global.assert = require('assert');
