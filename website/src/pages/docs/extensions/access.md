@@ -61,11 +61,15 @@ server.mount(ctx => {
 });
 ```
 
-> Click <kbd>▷ RUN</kbd> and try loading different URLs like [`/etc`](/etc) or [`/login`](/login) in your browser.
+> Click <kbd>▷ RUN</kbd> on the code-block and then try different URLs like [`/etc`](/etc) or [`/login`](/login) below.
 
 <div id="target"></div>
 
 ---
+
+### Config <var>mixin</var>
+
+- `access_filter(ctx)` &mdash; When given, it'll be used as described below. It must be passed through patching the extension.
 
 ### Methods <var>mixin</var>
 
@@ -81,7 +85,7 @@ server.mount(ctx => {
 
 - `$install(ctx)` &mdash; Used by `server.plug` calls.
 - `$mixins()` &mdash; Extra `Grown.Conn.Builder` definitions.
-- `rules(config)` &mdash; Compile given `config` into access rules.
+- `rules(config)` &mdash; Compile given `config` as access rules and returns a middleware.
 
 ### Private* props <var>static</var>
 

@@ -9,19 +9,15 @@ runkit:
   preamble: !include ~/src/lib/shared/chunks/main.js
 ---
 
-I suggest you installing NodeJS through NVM, using `10.24` or higher is fine.
+**Grown** is an container/web-server, it holds a bunch of extensions for you to use.
 
-See: [NVM installation instructions](https://github.com/creationix/nvm#installation)
-
-Once done, install the main `grown` dependency:
+To begin, make sure you get the main `grown` dependency:
 
 ```bash
 $ npm install grown --save
 ```
 
-## How it works?
-
-On the beginning, starting a new web server is a simple task:
+Then write the following script:
 
 ```js
 // require and create a Grown-container
@@ -40,6 +36,14 @@ server.mount(ctx => {
 server.listen(8080);
 ```
 
-> Once you click <kbd>▷ RUN</kbd> try opening [`this link`](/) in your browser.
+> Click <kbd>▷ RUN</kbd> on the code-block and then open [`this link`](/), it will load below.
 
 <div id="target"></div>
+
+Save the script as `server.js` and execute it right away with `node server`, then open http://localhost:8080 in your browser.
+
+### Highlights
+
+- The `Grown` class/function is the main container, it holds the application modules &mdash; next you'll learn how to extend it.
+- The `server` instance holds a minimal web-server implementation compatible with some express-middleware &mdash; it's not perfect but it works.
+- The `ctx` object holds a bare `req` and `res` implementations &mdash; by extending the container you can plug additional functionality on the web-server.
