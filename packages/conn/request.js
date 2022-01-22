@@ -7,15 +7,6 @@ const accepts = require('accepts');
 module.exports = (Grown, util) => {
   return Grown('Conn.Request', {
     $mixins() {
-      function _accepts(req) {
-        /* istanbul ignore else */
-        if (!_accepts.fn) {
-          _accepts.fn = accepts(req);
-        }
-
-        return _accepts.fn;
-      }
-
       return {
         props: {
           req_headers() {
@@ -76,37 +67,43 @@ module.exports = (Grown, util) => {
             return this.req.query || {};
           },
 
-          accept_charset(charsets) {
-            return _accepts(this.req).charset(charsets);
-          },
           accept_charsets() {
-            return _accepts(this.req).charsets();
-          },
-
-          accept_encoding(encodings) {
-            return _accepts(this.req).encoding(encodings);
+            return this.accepts.charsets();
           },
           accept_encodings() {
-            return _accepts(this.req).encodings();
-          },
-
-          accept_language(languages) {
-            return _accepts(this.req).language(languages);
+            return this.accepts.encodings();
           },
           accept_languages() {
-            return _accepts(this.req).languages();
-          },
-
-          accept_type(types) {
-            return _accepts(this.req).type(types);
+            return this.accepts.languages();
           },
           accept_types() {
-            return _accepts(this.req).types();
+            return this.accepts.types();
+          },
+          accepts() {
+            /* istanbul ignore else */
+            if (!this.accepts.fn) {
+              this.accepts.fn = accepts(this.req);
+            }
+
+            return this.accepts.fn;
           },
         },
         methods: {
-          has_type() {
-            return typeIs(this.req, Array.prototype.slice.call(arguments));
+          has_type(...args) {
+            return typeIs(this.req, ...args);
+          },
+
+          accept_charset(charsets) {
+            return this.accepts.charset(charsets);
+          },
+          accept_encoding(encodings) {
+            return this.accepts.encoding(encodings);
+          },
+          accept_language(languages) {
+            return this.accepts.language(languages);
+          },
+          accept_type(types) {
+            return this.accepts.type(types);
           },
 
           get_req_header(name, defvalue) {
