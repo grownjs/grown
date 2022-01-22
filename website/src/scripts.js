@@ -68,6 +68,23 @@ if (!theme) {
 }
 loadTheme();
 
+const prelude = `
+const fs = require('fs-extra');
+const path = require('path');
+function fixture(str, ...vars) {
+  const buffer = [];
+  for (let i = 0; i < str.length; i += 1) {
+    buffer.push(str[i], vars[i]);
+  }
+  const text = buffer.join('');
+  const [file, ...result] = buffer.shift().split('\\n');
+  fs.outputFileSync(file.replace(/^\\./, prefix || '.'), result.join('\\n'));
+}
+assert = require('assert');
+Grown = require('@grown/bud')();
+let prefix;
+`;
+
 [].slice.call(document.querySelectorAll('pre code.lang-js')).forEach(source => {
   if (!source.innerText.includes('require(')) return;
 
@@ -75,14 +92,14 @@ loadTheme();
   const sourceCode = source.innerText;
   const a = document.createElement('a');
 
-  a.innerText = '► RUN';
+  a.innerText = '▷ RUN';
   a.href = location.href;
   a.onclick = e => {
+    e.preventDefault();
     if (a._locked) return;
-
+    a.innerText = '...';
     a._locked = true;
     delete a.onclick;
-    e.preventDefault();
 
     const el = document.createElement('div');
 
@@ -96,7 +113,7 @@ loadTheme();
       theme: theme === 'dark' ? 'atom-dark' : 'atom-light',
       mode: isEndpoint && 'endpoint',
       title: __runkit__.title || 'Untitled',
-      preamble: (__runkit__.preamble ? __runkit__.preamble.contents || '' : '')
+      preamble: prelude + (__runkit__.preamble || '')
         + (isEndpoint ? '\nexports.endpoint=(req,res)=>{res.end()}' : ''),
       environment: [{ name: 'U_WEBSOCKETS_SKIP', value: 'true' }],
       gutterStyle: 'none',
