@@ -14,13 +14,14 @@ message=Release: $(shell date)
 # environment vars
 ROOT=/
 NODE_ENV=development
+GIT_REVISION=$(shell git rev-parse --short=7 HEAD)
 
 ifneq ($(wildcard .env),)
 include .env
 endif
 
 # export vars
-export NODE_ENV ROOT
+export GIT_REVISION NODE_ENV ROOT
 
 #
 # Targets
