@@ -1,25 +1,36 @@
-/* global target, RunKit, __runkit__ */
+/* global RunKit, __runkit__ */
 
 const activeLocation = location.pathname.replace(/\/$/, '') || '/';
 const linkSelector = `#sidebar a[href$="${activeLocation}"]`;
 const activeLink = document.querySelector(linkSelector);
 
-function links(baseURL) {
-  if (typeof target === 'undefined') return;
+let iframes;
+function loadIframes() {
+  const targets = document.querySelectorAll('[data-external]');
+  iframes = [].slice.call(targets).reduce((memo, cur) => {
+    cur.style.display = 'none';
+    cur.dataset.label = 'ready';
+    cur.innerHTML = `<iframe name="${cur.id}-external"></iframe>`;
 
-  target.style.display = 'block';
-  target.dataset.label = 'ready';
-  target.innerHTML = '<iframe name="external"></iframe>';
+    cur.firstChild.addEventListener('load', () => {
+      cur.dataset.label = 'response';
+    });
 
-  target.firstChild.addEventListener('load', () => {
-    target.dataset.label = 'response';
-  });
+    memo[cur.id] = cur;
+    return memo;
+  }, {});
+}
 
-  [].slice.call(document.querySelectorAll('a>code')).forEach(node => {
+function targetLinks(baseURL, el) {
+  [].slice.call(el.querySelectorAll('a>code')).forEach(node => {
     if (!node.dataset.href) node.dataset.href = node.parentNode.href.replace(location.origin, '');
 
-    node.parentNode.setAttribute('target', 'external');
-    node.parentNode.setAttribute('href', baseURL + node.dataset.href);
+    const [link, anchor] = node.dataset.href.split('#');
+    const target = iframes[anchor || 'target'];
+
+    target.style.display = 'block';
+    node.parentNode.setAttribute('target', `${anchor || 'target'}-external`);
+    node.parentNode.setAttribute('href', baseURL + link);
     node.parentNode.addEventListener('click', () => {
       target.dataset.label = '...';
     });
@@ -41,6 +52,7 @@ function loadTheme() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  loadIframes();
   window.toggle.addEventListener('click', () => {
     theme = theme === 'light' ? 'dark' : 'light';
     window.localStorage.theme = theme;
@@ -97,13 +109,14 @@ let prefix;
 [].slice.call(document.querySelectorAll('pre code.lang-js')).forEach(source => {
   if (!source.innerText.includes('Grown')) return;
 
+  const next = source.parentNode.nextElementSibling;
   const isEndpoint = __runkit__.endpoint;
   const sourceCode = source.innerText;
   const a = document.createElement('a');
 
   a.innerText = '▷ RUN';
   a.href = location.href;
-  a.onclick = e => {
+  a.addEventListener('click', e => {
     e.preventDefault();
     if (a._locked) return;
     a.innerText = '...';
@@ -131,13 +144,15 @@ let prefix;
         source.parentNode.parentNode.removeChild(source.parentNode);
         el.style.position = 'static';
       },
-      onURLChanged: () => notebook.getEndpointURL().then(links),
+      onURLChanged: () => notebook.getEndpointURL()
+        .then(result => targetLinks(result, next)),
     });
 
     notebooks.push(notebook);
-  };
+  });
 
   source.parentNode.appendChild(a);
+  source.parentNode.className = 'fixed';
 });
 
 if (activeLink && activeLocation !== '/') {

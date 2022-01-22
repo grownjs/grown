@@ -19,13 +19,23 @@ pre {
   font-family: 'Source Code Pro', monospace;
   font-weight: 400;
   line-height: 1.4375;
+  &.fixed {
+    margin-bottom: 60px;
+    border-radius: 5px 5px 5px 0;
+  }
   > code {
     font-family: inherit;
   }
   > a {
+    background-color: inherit;
     position: absolute;
-    right: 10px;
-    top: 10px;
+    padding: 5px 10px;
+    left: -1px;
+    bottom: -33px;
+    border-radius: 0 0 5px 5px;
+    border: 1px dashed transparent;
+    border-color: inherit;
+    border-top: 0;
   }
 }
 

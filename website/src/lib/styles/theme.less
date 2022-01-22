@@ -17,6 +17,7 @@ a[href] {
   &:hover {
     color: @light-link-hover;
     text-decoration: underline;
+    text-shadow: 1px 1px 1px @light-bg;
   }
   &[aria-current=page] {
     text-decoration: none;
@@ -206,7 +207,10 @@ html[theme=dark] {
 
   a[href] {
     color: @dark-link-text;
-    &:hover { color: @dark-link-hover; }
+    &:hover {
+      color: @dark-link-hover;
+      text-shadow: 1px 1px 1px @dark-bg;
+    }
     &[aria-current=page] {
       color: @dark-bold;
     }
