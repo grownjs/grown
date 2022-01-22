@@ -282,7 +282,6 @@ module.exports = (Grown, util) => {
       const defaults = {
         directories: util.flattenArgs(this.view_folders),
         fallthrough: this.fallthrough,
-        environment: Grown.env,
       };
 
       const self = this;
