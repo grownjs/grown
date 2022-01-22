@@ -7,7 +7,7 @@ $render: ~/src/lib/layouts/default.pug
 runkit: !include ~/src/lib/shared/runkit/server.yml
 ---
 
-High level props and methods for the current connection, in [Jamrock](https://github.com/grownjs/jamrock) the module `jamrock/connection` resolves to this extension.
+High level props and methods for the current connection, it helps you to reduce the usage of low-level `req` and `res` values.
 
 ```js
 // register extension
@@ -38,7 +38,9 @@ server.mount(ctx => {
 
 > Click <kbd>▷ RUN</kbd> on the code-block and then request the endpoint as `application/json` &mdash; or use [`this link`](/) to perform a regular request below.
 
-<div id="target"></div>
+<div id="target" data-external></div>
+
+---
 
 ## Request
 

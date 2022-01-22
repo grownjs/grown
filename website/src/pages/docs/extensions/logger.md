@@ -17,6 +17,11 @@ const Logger = Grown.use(require('@grown/logger'));
 Logger.getLogger().info('This works?');
 Logger.setLevel('debug');
 
+// access through utils
+Grown.use((_, util) => {
+  util.getLogger().printf('\r{%ok 42%}\n');
+});
+
 // always show, not restricted by level
 Logger.message('OK');
 Logger.error('ERROR');
@@ -26,6 +31,8 @@ server.plug(Grown.Logger);
 
 // use with server
 server.mount(conn => {
+  conn.res.end('DONE');
+
   // shown, because `debug > info`
   conn.logger.info('INFO');
   conn.logger.debug('DEBUG');
@@ -35,9 +42,9 @@ server.mount(conn => {
 });
 ```
 
-> Click <kbd>▷ RUN</kbd> and try requesting through [`this link`](/).
+> Click <kbd>▷ RUN</kbd> on the code-block and then try requesting through [`this link`](/) below.
 
-<div id="target"></div>
+<div id="target" data-external></div>
 
 ### Methods <var>mixin</var>
 

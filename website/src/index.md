@@ -38,7 +38,7 @@ server.listen(8080);
 
 > Click <kbd>▷ RUN</kbd> on the code-block and then open [`this link`](/), it will load below.
 
-<div id="target"></div>
+<div id="target" data-external></div>
 
 Save the script as `server.js` and execute it right away with `node server`, then open http://localhost:8080 in your browser.
 

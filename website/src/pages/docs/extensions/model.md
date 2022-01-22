@@ -45,25 +45,27 @@ Repositories are built by scanning source files in any given directory, e.g.
 // register extension
 Grown.use(require('@grown/model'));
 
-// ./models/Test/index.js
-// module.exports = {
-//   $schema: require('./schema')
-// };
+fixture`./models/Example/index.js
+  module.exports = {
+    $schema: require('./schema')
+  };
+`;
 
-// ./models/Test/schema.json
-// {
-//   "id": "ExampleModel",
-//   "type": "object",
-//   "properties": {
-//     "value": {
-//       "type": "string"
-//     }
-//   }
-// }
+fixture`./models/Example/schema.json
+  {
+    "id": "Example",
+    "type": "object",
+    "properties": {
+      "value": {
+        "type": "string"
+      }
+    }
+  }
+`;
 
 // scan for all model definitions within
 const repo = Grown.Model.DB.bundle({
-  models: `${__dirname}/models`,
+  models: __dirname + '/models',
   database: {
     identifier: 'test',
     config: {
@@ -84,7 +86,7 @@ await repo.connect();
 await repo.sync();
 
 // access model as a RESTful resource
-const TestRepo = API.from(repo.models.ExampleModel);
+const TestRepo = API.from(repo.models.Example);
 
 await TestRepo.create({ value: 'OSOM' });
 
@@ -98,8 +100,9 @@ await repo.disconnect();
 
 In the example above we're using `API` as our RESTful adapter, we can also `plug()` it in our server application, e.g. `server.plug(API)` &mdash; that would mount the `/db` endpoint.
 
-> Repos are built using [`sastre`](https://github.com/tacoss/sastre), where as top-level directories are the model name
-> &mdash; however, upon connection, models are renamed according to its defined `$schema.id` value.
+> Both examples does not work on Runkit, but they should work if you test them locally. 💣
+
+---
 
 ## CLI
 
@@ -110,19 +113,21 @@ In the example above we're using `API` as our RESTful adapter, we can also `plug
 
 > See [json-schema-sequelizer](https://github.com/json-schema-faker/json-schema-sequelizer) for usage info.
 
+---
+
 ## DB
 
 ### Public methods <var>static</var>
 
 - `registered(name)` &mdash; Returns `true` if the named connection is already defined.
 - `register(name, params)` &mdash; Add a named connection to the registry where params is an object with `config`, `refs` and `cwd` options.
-- `bundle(options)` &mdash; Returns a repository built on top of given `models` directory and `database` options as connection.
-
-> Repos has the following methods/props: `disconnect()`, `connect()`, `sync()`, `get(model)`, `connection`, `sequelize`, `schemas`, `models` and `$refs`.
+- `bundle(options)` &mdash; Returns a repository built on top of given `models` directory and `database` options as connection. It have the following methods/props: `disconnect()`, `connect()`, `sync()`, `get(model)`, `connection`, `sequelize`, `schemas`, `models` and `$refs`.
 
 ### Private* props <var>static</var>
 
 - `_registry` &mdash; All registered database connections.
+
+---
 
 ## Entity
 
@@ -143,13 +148,13 @@ In the example above we're using `API` as our RESTful adapter, we can also `plug
 
 > See [json-schema-faker](https://json-schema-faker.js.org/) for usage info.
 
+---
+
 ## Formator
 
 ### Public methods <var>static</var>
 
 - `$install(ctx)` &mdash; Auto-mount endpoint for general usage; requires `prefix`, `database` and `options` to be defined.
-- `from(Model, params, options)` &mdash; Returns a RESTful resource for the given model; requires `database` to be defined.
+- `from(Model, params, options)` &mdash; Returns a RESTful resource for the given model; requires `database` to be defined. RESTful resources have six methods only: `findAll`, `findOne`, `destroy`, `update`, `count` and `create`.
 
-> RESTful resources have six methods only: `findAll`, `findOne`, `destroy`, `update`, `count` and `create`.
->
 > See [formator](https://github.com/pateketrueke/formator) for usage info.

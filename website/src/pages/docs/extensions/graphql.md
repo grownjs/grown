@@ -9,7 +9,7 @@ runkit:
   preamble: !include ~/src/lib/shared/chunks/server.js
 ---
 
-Build high-level endpoints for your API consumers.
+This extension lets you serve an API endpoint made out of your schemas and resolvers.
 
 ```js
 // register extension
@@ -28,13 +28,15 @@ fixture`./resolvers/Test/Query/truth/index.js
 
 // mount our GraphQL API
 server.mount('/', Grown.GraphQL
-  .setup([`${__dirname}/example.gql`],
-    Grown.load(`${__dirname}/resolvers`)));
+  .setup([__dirname + '/example.gql'],
+    Grown.load(__dirname + '/resolvers')));
 ```
 
-> Click <kbd>▷ RUN</kbd> and then ask with your GraphQL client: `query { truth }` &mdash; or try requesting through [`this link`](/?body=query{truth}).
+> Click <kbd>▷ RUN</kbd> on the code-block and then ask with your GraphQL client: `query { truth }` &mdash; or try requesting through [`this link`](/?body=query{truth}) below.
 
-<div id="target"></div>
+<div id="target" data-external></div>
+
+---
 
 ### Public methods <var>static</var>
 

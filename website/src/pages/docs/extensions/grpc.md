@@ -4,44 +4,44 @@ next:
   label: Extensions &rangle; Logger
   link: docs/extensions/logger
 $render: ~/src/lib/layouts/default.pug
-runkit:
-  preamble: !include ~/src/lib/shared/chunks/grpc.js
 ---
 
-Setup micro-services talking through gRPC calls.
+Setup communication through services, all made out of your schemas and handlers.
 
 ```js
 // register extension
 const GRPC = Grown.use(require('@grown/grpc'));
 
-// ./index.proto
-// syntax = "proto3";
-// package API;
-// service Test {
-//   rpc is(Input) returns (Output) {}
-// }
-// message Input {
-//   int32 truth = 1;
-// }
-// message Output {
-//   string reveal = 1;
-// }
+fixture`./index.proto
+  syntax = "proto3";
+  package API;
+  service Test {
+    rpc is(Input) returns (Output) {}
+  }
+  message Input {
+    int32 truth = 1;
+  }
+  message Output {
+    string reveal = 1;
+  }
+`;
 
-// ./handlers/Test/is/index.js
-// module.exports = function ({ request }) {
-//   return {
-//     reveal: request.truth === 42,
-//   };
-// };
+fixture`./handlers/Test/is/index.js
+  module.exports = function ({ request }) {
+    return {
+      reveal: request.truth === 42,
+    };
+  };
+`;
 
-const Gateway = Grown.GRPC.Gateway({
+Grown.GRPC.Gateway({
   include: [
-    GRPC.Loader.scan(`${__dirname}/index.proto`),
+    GRPC.Loader.scan(__dirname + '/index.proto'),
   ],
 });
 
-const API = Grown.load(`${__dirname}/handlers`);
-const gateway = Gateway.setup(API, {
+const API = Grown.load(__dirname + '/handlers');
+const gateway = Grown.GRPC.Gateway.setup(API, {
   timeout: 10,
 }).start();
 
@@ -49,6 +49,10 @@ const result = await gateway.API.Test.is({ truth: 42 });
 
 console.log('GOT:', result);
 ```
+
+> This example does not work on Runkit, but it should work if you test it locally. 💣
+
+---
 
 ## Loader
 
