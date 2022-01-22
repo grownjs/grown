@@ -299,13 +299,13 @@ function _grownFactory($, util, options) {
 
       config: scope._options,
 
-      mount: _mount.bind(scope),
-
-      listen: _listen.bind(scope),
-
       close: () => scope.close(),
 
       clients: () => scope._clients,
+
+      mount: (...args) => _mount.apply(scope, args),
+
+      listen: (...args) => _listen.apply(scope, args),
     },
   };
 }
