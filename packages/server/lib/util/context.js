@@ -125,9 +125,7 @@ function buildPubsub() {
       return this;
     },
 
-    emit(e) {
-      const args = Array.prototype.slice.call(arguments, 1);
-
+    emit(e, ...args) {
       ee(e, true).forEach(fn => {
         fn.apply(null, args);
       });
