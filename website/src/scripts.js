@@ -71,7 +71,7 @@ loadTheme();
 const prelude = `
 const fs = require('fs-extra');
 const path = require('path');
-function fixture(str, ...vars) {
+global.fixture = (str, ...vars) => {
   const buffer = [];
   for (let i = 0; i < str.length; i += 1) {
     buffer.push(str[i], vars[i]);
@@ -79,9 +79,9 @@ function fixture(str, ...vars) {
   const text = buffer.join('');
   const [file, ...result] = buffer.shift().split('\\n');
   fs.outputFileSync(file.replace(/^\\./, prefix || '.'), result.join('\\n'));
-}
-assert = require('assert');
-Grown = require('@grown/bud')();
+};
+global.assert = require('assert');
+global.Grown = require('@grown/bud')();
 let prefix;
 `;
 
