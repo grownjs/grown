@@ -51,7 +51,7 @@ server.mount(ctx => {
 });
 ```
 
-> Click <kbd>► RUN</kbd> and try these links: [`Home`](/), [`About`](/about) and [`Not found`](/not_found).
+> Click <kbd>▷ RUN</kbd> and try these links: [`Home`](/), [`About`](/about) and [`Not found`](/not_found).
 
 <div id="target"></div>
 

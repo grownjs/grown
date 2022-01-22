@@ -40,6 +40,6 @@ server.mount(ctx => {
 server.listen(8080);
 ```
 
-> Once you click <kbd>► RUN</kbd> try opening [`this link`](/) in your browser.
+> Once you click <kbd>▷ RUN</kbd> try opening [`this link`](/) in your browser.
 
 <div id="target"></div>

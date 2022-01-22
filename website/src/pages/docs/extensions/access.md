@@ -61,7 +61,7 @@ server.mount(ctx => {
 });
 ```
 
-> Click <kbd>► RUN</kbd> and try loading different URLs like [`/etc`](/etc) or [`/login`](/login) in your browser.
+> Click <kbd>▷ RUN</kbd> and try loading different URLs like [`/etc`](/etc) or [`/login`](/login) in your browser.
 
 <div id="target"></div>
 

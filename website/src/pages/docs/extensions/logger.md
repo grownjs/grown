@@ -35,7 +35,7 @@ server.mount(conn => {
 });
 ```
 
-> Click <kbd>► RUN</kbd> and try requesting through [`this link`](/).
+> Click <kbd>▷ RUN</kbd> and try requesting through [`this link`](/).
 
 <div id="target"></div>
 
