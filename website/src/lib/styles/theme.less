@@ -167,6 +167,10 @@ ul.reset {
     padding-top: 20px;
     border-top: 1px dashed @light-shadow;
   }
+  li a,
+  p a {
+    text-decoration: underline;
+  }
 }
 
 #target {
@@ -214,6 +218,9 @@ html[theme=dark] {
     box-shadow: 0 0 3px @dark-shadow;
   }
 
+  a > code {
+    background-color: @dark-bg;
+  }
   p > code,
   li > code {
     background-color: @dark-alt-bg;
