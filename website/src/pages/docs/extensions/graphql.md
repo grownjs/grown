@@ -32,7 +32,7 @@ server.mount('/', Grown.GraphQL
     Grown.load(__dirname + '/resolvers')));
 ```
 
-> Click <kbd>▷ RUN</kbd> on the code-block and then ask with your GraphQL client: `query { truth }` &mdash; or try requesting through [`this link`](/?body=query{truth}) below.
+> Click <kbd>▷ RUN</kbd> above and then ask with your GraphQL client: `query { truth }` &mdash; or try requesting through [`this link`](/?body=query{truth}) below.
 
 <div id="target" data-external></div>
 

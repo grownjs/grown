@@ -65,7 +65,7 @@ server.mount(async ctx => {
 });
 ```
 
-> Click <kbd>▷ RUN</kbd> on the code-block and then try these links ([`Home`](/), [`About`](/about), [`Example`](/osom) and [`Not found`](/not_found)) below.
+> Click <kbd>▷ RUN</kbd> above and then try these links ([`Home`](/), [`About`](/about), [`Example`](/osom) and [`Not found`](/not_found)) below.
 
 <div id="target" data-external></div>
 

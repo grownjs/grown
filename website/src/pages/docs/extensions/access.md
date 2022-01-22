@@ -61,7 +61,7 @@ server.mount(ctx => {
 });
 ```
 
-> Click <kbd>▷ RUN</kbd> on the code-block and then try different URLs like [`/etc`](/etc) or [`/login`](/login) below.
+> Click <kbd>▷ RUN</kbd> above and then try different URLs like [`/etc`](/etc) or [`/login`](/login) below.
 
 <div id="target" data-external></div>
 

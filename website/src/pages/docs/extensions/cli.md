@@ -45,7 +45,7 @@ await Grown.CLI.start(taskName);
 await Grown.CLI.run(taskName);
 ```
 
-> Click <kbd>▷ RUN</kbd> on the code-block to see what happens &mdash; use this technique if you want to define your own `CLI` behavior, etc.
+> Click <kbd>▷ RUN</kbd> above to see what happens &mdash; use this technique if you want to define your own `CLI` behavior, etc.
 
 ---
 

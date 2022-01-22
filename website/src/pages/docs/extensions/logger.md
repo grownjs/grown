@@ -42,7 +42,7 @@ server.mount(conn => {
 });
 ```
 
-> Click <kbd>▷ RUN</kbd> on the code-block and then try requesting through [`this link`](/) below.
+> Click <kbd>▷ RUN</kbd> above and then try requesting through [`this link`](/) below.
 
 <div id="target" data-external></div>
 

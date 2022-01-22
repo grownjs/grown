@@ -36,7 +36,7 @@ server.mount(ctx => {
 server.listen(8080);
 ```
 
-> Click <kbd>▷ RUN</kbd> on the code-block and then open [`this link`](/), it will load below.
+> Click <kbd>▷ RUN</kbd> above and then open [`this link`](/), it will load below.
 
 <div id="target" data-external></div>
 

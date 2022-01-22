@@ -36,7 +36,7 @@ server.mount(ctx => {
 });
 ```
 
-> Click <kbd>▷ RUN</kbd> on the code-block and then request the endpoint as `application/json` &mdash; or use [`this link`](/) to perform a regular request below.
+> Click <kbd>▷ RUN</kbd> above and then request the endpoint as `application/json` &mdash; or use [`this link`](/) to perform a regular request below.
 
 <div id="target" data-external></div>
 
