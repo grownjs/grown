@@ -3,13 +3,13 @@
 <head>
   <base href="/">
   <meta charset="utf-8">
-  <link rel="stylesheet" href="styles.css?t=1642859035560">
+  <link rel="stylesheet" href="styles.css?t=1642859037299">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <meta name="HandheldFriendly" content="true">
   <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
-  <title>Grown // Extensions</title>
+  <title>Grown // TypeScript</title>
   <meta name="release" content="579e7a3">
-  <script type="module" src="scripts.js?t=1642859035560"></script>
+  <script type="module" src="scripts.js?t=1642859037299"></script>
   <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Sorts+Mill+Goudy|Source+Code+Pro">
   <style>/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */ /* Tomorrow Comment */ .hljs-comment, .hljs-quote { color: #8e908c; } /* Tomorrow Red */ .hljs-variable, .hljs-template-variable, .hljs-tag, .hljs-name, .hljs-selector-id, .hljs-selector-class, .hljs-regexp, .hljs-deletion { color: #c82829; } /* Tomorrow Orange */ .hljs-number, .hljs-built_in, .hljs-builtin-name, .hljs-literal, .hljs-type, .hljs-params, .hljs-meta, .hljs-link { color: #f5871f; } /* Tomorrow Yellow */ .hljs-attribute { color: #eab700; } /* Tomorrow Green */ .hljs-string, .hljs-symbol, .hljs-bullet, .hljs-addition { color: #718c00; } /* Tomorrow Blue */ .hljs-title, .hljs-section { color: #4271ae; } /* Tomorrow Purple */ .hljs-keyword, .hljs-selector-tag { color: #8959a8; } .hljs { display: block; overflow-x: auto; background: white; color: #4d4d4c; padding: 0.5em; } .hljs-emphasis { font-style: italic; } .hljs-strong { font-weight: bold; }
 html[theme=dark] .hljs-comment, html[theme=dark] .hljs-quote { color: #969896; } html[theme=dark] .hljs-variable, html[theme=dark] .hljs-template-variable, html[theme=dark] .hljs-tag, html[theme=dark] .hljs-name, html[theme=dark] .hljs-selector-id, html[theme=dark] .hljs-selector-class, html[theme=dark] .hljs-regexp, html[theme=dark] .hljs-deletion { color: #cc6666; } html[theme=dark] .hljs-number, html[theme=dark] .hljs-built_in, html[theme=dark] .hljs-builtin-name, html[theme=dark] .hljs-literal, html[theme=dark] .hljs-type, html[theme=dark] .hljs-params, html[theme=dark] .hljs-meta, html[theme=dark] .hljs-link { color: #de935f; } html[theme=dark] .hljs-attribute { color: #f0c674; } html[theme=dark] .hljs-string, html[theme=dark] .hljs-symbol, html[theme=dark] .hljs-bullet, html[theme=dark] .hljs-addition { color: #b5bd68; } html[theme=dark] .hljs-title, html[theme=dark] .hljs-section { color: #81a2be; } html[theme=dark] .hljs-keyword, html[theme=dark] .hljs-selector-tag { color: #b294bb; } html[theme=dark] .hljs { display: block; overflow-x: auto; background: #1d1f21; color: #c5c8c6; padding: 0.5em; } html[theme=dark] .hljs-emphasis { font-style: italic; } html[theme=dark] .hljs-strong { font-weight: bold; }</style>
@@ -23,48 +23,11 @@ html[theme=dark] .hljs-comment, html[theme=dark] .hljs-quote { color: #969896; }
 
           <input class="stork-input" data-stork="docs" placeholder="Search...">
           <div class="stork-output" data-stork="docs-output"></div>
-        </div><a href="/docs/extensions/#nav">&#9776;</a>
+        </div><a href="/docs/testing/typescript/#nav">&#9776;</a>
       </div>
-      <h1>Extensions <small><a href="//github.com/grownjs/jamrock/blob/master/src/pages/docs/extensions.md" target="_blank">&#9998;</a></small></h1>
-      <main class="push"><p>Most functionality can be added through the <code>Grown</code> container, i.e. the <code>load()</code> method will scan and require any modules found within any given folder.</p>
-<pre class="hljs"><code class="lang-js">fixture<span class="hljs-string">`./api/index.js
-  module.exports = Grown =&gt; {
-    return Grown(&#x27;API&#x27;, {
-      include: [
-        Grown.load(__dirname + &#x27;/controllers&#x27;),
-      ],
-    });
-  };
-`</span>;
-
-fixture<span class="hljs-string">`./api/controllers/Test/truth/index.js
-  module.exports = function () {
-    return 42;
-  };
-`</span>;
-
-<span class="hljs-comment">// register an extension</span>
-<span class="hljs-title class_">Grown</span>.<span class="hljs-title function_">use</span>(<span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;./api&#x27;</span>));
-
-<span class="hljs-title function_">assert</span>(<span class="hljs-title class_">Grown</span>.<span class="hljs-property">API</span>.<span class="hljs-property">Test</span>.<span class="hljs-title function_">truth</span>() === <span class="hljs-number">42</span>);
-</code></pre>
-<p>Built-in extensions are registered the same way:</p>
-<pre class="hljs"><code class="lang-js"><span class="hljs-title class_">Grown</span>.<span class="hljs-title function_">use</span>(<span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;@grown/session&#x27;</span>));
-<span class="hljs-title class_">Grown</span>.<span class="hljs-title function_">use</span>(<span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;@grown/router&#x27;</span>));
-<span class="hljs-title class_">Grown</span>.<span class="hljs-title function_">use</span>(<span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;@grown/test&#x27;</span>));
-<span class="hljs-comment">// etc.</span>
-</code></pre>
-<blockquote>
-<p>In the next pages you&#39;ll be guided through the available extensions.</p>
-</blockquote>
-<h3 id="highlights">Highlights</h3>
-<ul>
-<li>Definitions are made of function factories, they return a new <code>Grown</code> extension when used.</li>
-<li>Definitions are then registered on the container through the <code>Grown.use</code> funcion, hence the name.</li>
-<li>Definitions are built using the <a href="https://github.com/grownjs/object-new">object-new</a> DSL for the extensions and the <a href="https://github.com/tacoss/sastre">sastre</a> layout for the modules.</li>
-</ul>
-</main>
-      <nav class="flex gap end"><span class="auto">➯ Next: <a id="next" href="docs/extensions/access">Extensions &rangle; Access</a></span><a id="back" href="/docs/extensions/#" onclick="content.scrollTop=0">&uarr; Back to the top</a>
+      <h1>TypeScript <small><a href="//github.com/grownjs/jamrock/blob/master/src/pages/docs/testing/typescript.md" target="_blank">&#9998;</a></small></h1>
+      <main class="push"></main>
+      <nav class="flex gap end"><a id="back" href="/docs/testing/typescript/#" onclick="content.scrollTop=0">&uarr; Back to the top</a>
       </nav>
     </div>
     <aside class="noscroll" id="sidebar">
@@ -101,57 +64,7 @@ fixture<span class="hljs-string">`./api/controllers/Test/truth/index.js
               <h3 class="reset">Add-ons</h3>
               <ul class="reset">
                 <li>
-                  <a aria-current="page" exact="true" href="./docs/extensions">Extensions</a>
-                  <ul class="pl reset">
-                    <li>
-                      <a href="./docs/extensions/access">Access</a>
-                    </li>
-                    <li>
-                      <a href="./docs/extensions/bud">Bud</a>
-                    </li>
-                    <li>
-                      <a href="./docs/extensions/cli">CLI</a>
-                    </li>
-                    <li>
-                      <a href="./docs/extensions/conn">Conn</a>
-                    </li>
-                    <li>
-                      <a href="./docs/extensions/graphql">GraphQL</a>
-                    </li>
-                    <li>
-                      <a href="./docs/extensions/grpc">GRPC</a>
-                    </li>
-                    <li>
-                      <a href="./docs/extensions/logger">Logger</a>
-                    </li>
-                    <li>
-                      <a href="./docs/extensions/model">Model</a>
-                    </li>
-                    <li>
-                      <a href="./docs/extensions/render">Render</a>
-                    </li>
-                    <li>
-                      <a href="./docs/extensions/repl">REPL</a>
-                    </li>
-                    <li>
-                      <a href="./docs/extensions/router">Router</a>
-                    </li>
-                    <li>
-                      <a href="./docs/extensions/server">Server</a>
-                    </li>
-                    <li>
-                      <a href="./docs/extensions/session">Session</a>
-                    </li>
-                    <li>
-                      <a href="./docs/extensions/static">Static</a>
-                    </li>
-                    <li>
-                      <a href="./docs/extensions/test">Test</a>
-                    </li>
-                    <li>
-                      <a href="./docs/extensions/upload">Upload</a>
-                    </li>
-                  </ul>
+                  <a exact="true" href="./docs/extensions">Extensions</a>
                 </li>
                 <li>
                   <a href="./docs/connection">Connection</a>
@@ -199,7 +112,7 @@ fixture<span class="hljs-string">`./api/controllers/Test/truth/index.js
                   <a href="./docs/testing/modules">Modules</a>
                 </li>
                 <li>
-                  <a href="./docs/testing/typescript">TypeScript</a>
+                  <a aria-current="page" href="./docs/testing/typescript">TypeScript</a>
                 </li>
               </ul>
             </li>

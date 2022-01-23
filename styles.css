@@ -108,6 +108,7 @@ a[href] {
 a[href]:hover {
   color: #9FD366;
   text-decoration: underline;
+  text-shadow: 1px 1px 1px #fafafa;
 }
 a[href][aria-current=page] {
   text-decoration: none;
@@ -202,7 +203,6 @@ ul.reset li a {
 }
 #logo {
   position: relative;
-  margin-bottom: -15px;
   color: #9FD366;
 }
 #logo a {
@@ -215,7 +215,7 @@ ul.reset li a {
   fill: #9FD366;
 }
 #logo small {
-  bottom: 0;
+  bottom: -5px;
   color: inherit;
   font-size: 0.6em;
   position: absolute;
@@ -241,6 +241,10 @@ ul.reset li a {
 #content > main ~ nav {
   padding-top: 20px;
   border-top: 1px dashed rgba(0, 0, 0, 0.2);
+}
+#content li a,
+#content p a {
+  text-decoration: underline;
 }
 #target::before {
   background-color: #fafafa;
@@ -274,6 +278,7 @@ html[theme=dark] a[href] {
 }
 html[theme=dark] a[href]:hover {
   color: #C857E0;
+  text-shadow: 1px 1px 1px #322f3d;
 }
 html[theme=dark] a[href][aria-current=page] {
   color: #ececec;
@@ -281,6 +286,9 @@ html[theme=dark] a[href][aria-current=page] {
 html[theme=dark] kbd {
   background-color: #59405c;
   box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+}
+html[theme=dark] a > code {
+  background-color: #322f3d;
 }
 html[theme=dark] p > code,
 html[theme=dark] li > code {
@@ -518,13 +526,23 @@ pre {
   font-weight: 400;
   line-height: 1.4375;
 }
+pre.fixed {
+  margin-bottom: 60px;
+  border-radius: 5px 5px 5px 0;
+}
 pre > code {
   font-family: inherit;
 }
 pre > a {
+  background-color: inherit;
   position: absolute;
-  right: 10px;
-  top: 10px;
+  padding: 5px 10px;
+  left: -1px;
+  bottom: -33px;
+  border-radius: 0 0 5px 5px;
+  border: 1px dashed transparent;
+  border-color: inherit;
+  border-top: 0;
 }
 kbd {
   border-radius: 3px;
