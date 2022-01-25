@@ -116,7 +116,7 @@ module.exports = (Grown, util) => {
       let req = new url.URL(_url);
 
       const reqInfo = {
-        hostname: req.host,
+        hostname: req.host.replace(/:\d+$/, ''),
         port: req.port || (req.protocol === 'https:' ? 443 : 80),
         path: req.pathname + req.search,
         method: req.method || 'GET',
