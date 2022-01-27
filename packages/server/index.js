@@ -197,6 +197,7 @@ function _grownFactory($, util, options) {
       });
 
       if (options.body && process.env.U_WEBSOCKETS_SKIP) {
+        _mount.call(scope, require('body-parser').urlencoded({ extended: true }));
         _mount.call(scope, require('body-parser').raw({ inflate: true, type: () => true }));
         _mount.call(scope, (req, res, next) => {
           if (req.body instanceof Buffer) {
