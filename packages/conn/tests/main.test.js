@@ -45,13 +45,9 @@ describe('Grown.Conn', () => {
         expect(conn.request_path).to.eql('/');
         expect(conn.query_string).to.eql('');
         expect(conn.query_params).to.eql({});
-        expect(conn.accept_charset).to.eql(['*']);
         expect(conn.accept_charsets).to.eql(['*']);
-        expect(conn.accept_encoding).to.eql(['identity']);
         expect(conn.accept_encodings).to.eql(['identity']);
-        expect(conn.accept_language).to.eql(['*']);
         expect(conn.accept_languages).to.eql(['*']);
-        expect(conn.accept_type).to.eql(['*/*']);
         expect(conn.accept_types).to.eql(['*/*']);
 
         expect(conn.has_type('text')).to.be.false;

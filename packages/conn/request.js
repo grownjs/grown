@@ -68,24 +68,24 @@ module.exports = (Grown, util) => {
           },
 
           accept_charsets() {
-            return this.accepts.charsets();
+            return this.accept.charsets();
           },
           accept_encodings() {
-            return this.accepts.encodings();
+            return this.accept.encodings();
           },
           accept_languages() {
-            return this.accepts.languages();
+            return this.accept.languages();
           },
           accept_types() {
-            return this.accepts.types();
+            return this.accept.types();
           },
-          accepts() {
+          accept() {
             /* istanbul ignore else */
-            if (!this.accepts.fn) {
-              this.accepts.fn = accepts(this.req);
+            if (!this.req._ok) {
+              this.req._ok = accepts(this.req);
             }
 
-            return this.accepts.fn;
+            return this.req._ok;
           },
         },
         methods: {
