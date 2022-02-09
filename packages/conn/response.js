@@ -59,6 +59,8 @@ module.exports = (Grown, util) => {
         body = JSON.stringify(body);
         ctx.content_type = 'application/json';
         ctx.res.setHeader('Content-Length', Buffer.byteLength(body || ''));
+      } else if (!process.proxied && typeof body === 'string') {
+        ctx.res.setHeader('Content-Length', body.length);
       }
 
       ctx.res.setHeader('Content-Type', `${ctx.content_type}; charset=${ctx.resp_charset}`);
@@ -168,9 +170,7 @@ module.exports = (Grown, util) => {
 
     value = value.replace(/\s+/g, ' ').trim();
 
-    return value.length > 99
-      ? `${value.substr(0, 100)}...`
-      : value;
+    return `${value.length > 99 ? value.substr(0, 100) : value} ... length: ${value.length}`;
   }
 
   function _fixURL(location) {
