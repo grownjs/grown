@@ -1,6 +1,6 @@
 {
   "name": "@grown/cache",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "main": "index.js",
   "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
   "license": "MIT",
