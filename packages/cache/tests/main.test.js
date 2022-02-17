@@ -17,7 +17,7 @@ describe('integration', () => {
   });
 
   it('should propagate a cache prop', async () => {
-    await Grown.Cache.default.set('foo', 'BAR');
+    await server.cache.set('foo', 'BAR');
 
     server.mount(async conn => {
       const result = await server.cache.get('foo');

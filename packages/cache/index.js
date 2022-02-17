@@ -10,6 +10,7 @@ module.exports = (Grown, util) => {
   return Grown('Cache', {
     _registry,
 
+    enabled: false,
     connection: 'default',
 
     registered(name) {
@@ -22,18 +23,43 @@ module.exports = (Grown, util) => {
           params.identifier = name;
         }
 
-        const opts = {
-          url: params.use_env_variable && process.env[params.use_env_variable],
-          ...params,
-        };
+        if (this.enabled !== false) {
+          const opts = {
+            url: params.use_env_variable && process.env[params.use_env_variable],
+            ...params,
+          };
 
-        delete opts.use_env_variable;
-        delete opts.identifier;
+          delete opts.use_env_variable;
+          delete opts.identifier;
 
-        this._registry[name] = new Redis(opts);
-        this._registry[name].close = this._registry[name].quit;
+          this._registry[name] = new Redis(opts);
+          this._registry[name].close = this._registry[name].quit;
 
-        util.readOnlyProperty(this, name, () => this._registry[name]);
+          util.readOnlyProperty(this, name, () => this._registry[name]);
+        } else {
+          this[name] = this._registry[name] = {
+            close: () => {
+              delete this._registry[name];
+            },
+            get: k => {
+              return typeof this._registry[name][`@${k}`] !== 'undefined'
+                ? this._registry[name][`@${k}`]
+                : null;
+            },
+            set: (k, v, p, s) => {
+              this._registry[name][`@${k}`] = v;
+
+              if (p === 'ex') {
+                setTimeout(() => {
+                  delete this._registry[name][`@${k}`];
+                }, s * 1000);
+              }
+            },
+            del: k => {
+              delete this._registry[name][`@${k}`];
+            },
+          };
+        }
       }
       return this;
     },
