@@ -33,7 +33,7 @@
   "dependencies": {
     "@types/json-schema": "^7.0.9",
     "debug": "^3.1.0",
-    "formator": "0.0.12",
+    "formator": "^0.0.14",
     "is-my-json-valid": "^2.20.5",
     "json-schema-faker": "^0.5.0-rcv.39",
     "json-schema-sequelizer": "^0.23.1"

@@ -192,7 +192,7 @@ describe('Grown.Model', () => {
         .then(() => repo.sync())
         .then(() => server.request('/db', (err, conn) => conn.res.ok(err, /"Example"/)))
         .then(() => server.request('/db/Example', (err, conn) => conn.res.ok(err, /"primaryKeys"/)))
-        .then(() => server.request('/db/main.js', (err, conn) => expect(conn.res.body).to.contain('export{')));
+        .then(() => server.request('/db/main.js', (err, conn) => expect(conn.res.body).to.contain('var Schema = class extends SvelteComponent')));
     });
   });
 });
