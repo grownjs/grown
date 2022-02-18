@@ -48,19 +48,27 @@ module.exports = (Grown, util) => {
         });
       }
 
+      let type;
+      let length;
       /* istanbul ignore else */
       if (body !== null && Buffer.isBuffer(body)) {
-        debug('#%s Response is a buffer. Sending as %s', ctx.pid, ctx.content_type);
-
-        ctx.res.setHeader('Content-Length', body.length);
+        type = 'buffer';
+        length = body.length;
       } else if (body !== null && typeof body === 'object') {
-        debug('#%s Response is an object. Sending as application/json', ctx.pid);
-
+        type = 'object';
         body = JSON.stringify(body);
+        length = Buffer.byteLength(body || '');
         ctx.content_type = 'application/json';
-        ctx.res.setHeader('Content-Length', Buffer.byteLength(body || ''));
       } else if (!process.proxied && typeof body === 'string') {
-        ctx.res.setHeader('Content-Length', body.length);
+        type = 'string';
+        length = body.length;
+      }
+
+      debug('#%s Response is %s. Sending as %s', ctx.pid, type, ctx.content_type);
+
+      /* istanbul ignore else */
+      if (!process.proxied && typeof body === 'string') {
+        ctx.res.setHeader('Content-Length', length);
       }
 
       ctx.res.setHeader('Content-Type', `${ctx.content_type}; charset=${ctx.resp_charset}`);
