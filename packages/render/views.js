@@ -290,7 +290,7 @@ module.exports = (Grown, util) => {
         try {
           return this._partial(this._buildPartial(src, data), this._cache, defaults);
         } catch (e) {
-          throw new Error(`Failed to render '${src.replace(/\./g, '/')}' template\n${e.message}`);
+          throw new Error(`Failed to render '${src.replace(/\./g, '/')}' template (${e.message})`);
         }
       };
 

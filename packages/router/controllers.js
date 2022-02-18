@@ -42,7 +42,7 @@ module.exports = (Grown, util) => {
               definition: Ctrl,
             };
           } catch (e) {
-            throw new Error(`${controller} controller failed\n${e.message}`);
+            throw new Error(`${controller} controller failed (${e.message})`);
           }
         }
 
