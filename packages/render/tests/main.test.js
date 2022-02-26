@@ -71,7 +71,7 @@ describe('Grown.Render', () => {
   it('should render failures found during layout-rendering', $(conn => {
     return conn.render('sub/h_view', { layout: 'not_found' });
   }, (err, conn) => {
-    conn.res.ok(err, "Failed to render 'not_found' template\nGiven file 'not_found' does not exists");
+    conn.res.ok(err, "Failed to render 'not_found' template (Given file 'not_found' does not exists)");
   }));
 
   it('should render attributes, including #id and .classes as shorthand', $(conn => {
