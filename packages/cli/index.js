@@ -377,6 +377,7 @@ module.exports = (Grown, util) => {
     _,
 
     // shared
+    _task: null,
     _start: null,
     _alias: {},
     _tasks: {},
@@ -437,6 +438,8 @@ module.exports = (Grown, util) => {
           if (!this._tasks[taskName]) {
             throw new Error(`Task ${taskName} is not registered`);
           }
+
+          this._task = taskName;
 
           const task = require(this._tasks[taskName]);
 
