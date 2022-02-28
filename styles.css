@@ -201,20 +201,20 @@ ul.reset li a {
   font-family: monospace;
   white-space: pre;
 }
-#logo {
+.logotype {
   position: relative;
   color: #9FD366;
 }
-#logo a {
+.logotype a {
   display: block;
 }
-#logo svg {
+.logotype svg {
   max-width: 250px;
 }
-#logo svg path {
+.logotype svg path {
   fill: #9FD366;
 }
-#logo small {
+.logotype small {
   bottom: -5px;
   color: inherit;
   font-size: 0.6em;
