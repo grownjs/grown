@@ -321,10 +321,10 @@ html[theme=dark] h3 > var {
 html[theme=dark] ul.reset li a {
   border-color: rgba(255, 255, 255, 0.3);
 }
-html[theme=dark] #logo {
+html[theme=dark] .logotype {
   color: #C857E0;
 }
-html[theme=dark] #logo svg path {
+html[theme=dark] .logotype svg path {
   fill: #C857E0;
 }
 html[theme=dark] #menu {
