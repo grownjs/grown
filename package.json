@@ -1,6 +1,6 @@
 {
   "name": "grown",
-  "version": "1.2.5",
+  "version": "1.2.6",
   "homepage": "https://grown.jamrock.dev",
   "description": "Experimental DSL for web-apps",
   "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
@@ -33,7 +33,7 @@
   },
   "devDependencies": {
     "@grown/model": "^0.0.43",
-    "@grown/test": "^0.0.14",
+    "@grown/test": "^0.0.15",
     "ansi-regex": ">=5.0.1",
     "eslint": "^7.9.0",
     "eslint-config-airbnb-base": "^14.2.0",

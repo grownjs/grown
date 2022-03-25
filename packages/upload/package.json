@@ -1,6 +1,6 @@
 {
   "name": "@grown/upload",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "main": "index.js",
   "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
   "license": "MIT",
