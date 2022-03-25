@@ -92,9 +92,9 @@ module.exports = Grown => {
               throw new Error(`Expecting a function, given '${JSON.stringify(callback)}'`);
             }
 
-            debug('#%s Request %s %s', process.pid, (method || 'GET').toUpperCase(), url);
-
             options = this._fixRequest(url, method, options);
+
+            debug('#%s Request %s %s', process.pid, (method || 'GET').toUpperCase(), options.url);
 
             return ctx.run(options, callback);
           },
