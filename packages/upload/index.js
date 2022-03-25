@@ -16,6 +16,17 @@ module.exports = (Grown, util) => {
         return;
       }
 
+      if (conn.req.headers['content-type'] === 'application/json') {
+        try {
+          conn.req.body = JSON.parse(conn.req.body);
+        } catch (e) {
+          conn.req.body = {};
+        }
+        conn.req._body = true;
+        resolve();
+        return;
+      }
+
       const form = new IncomingForm({
         uploadDir: path.join(Grown.cwd, 'tmp'),
         keepExtensions: true,
