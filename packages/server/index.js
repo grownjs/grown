@@ -86,6 +86,9 @@ function _grownFactory($, util, options) {
       nocache,
       cors,
 
+      tick(ms) {
+        return new Promise(ok => setTimeout(ok, ms));
+      },
       halt(cb) {
         /* istanbul ignore else */
         if (this.res) {
