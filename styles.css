@@ -223,6 +223,7 @@ ul.reset li a {
   font-size: 0.6em;
   position: absolute;
 }
+.action,
 .input {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
   border: 1px dashed rgba(0, 0, 0, 0.1);
@@ -231,10 +232,11 @@ ul.reset li a {
   padding: 5px;
   transition: all 0.2s;
 }
+.action:focus,
 .input:focus {
   outline: none;
 }
-.input:hover {
+.action:hover {
   background-color: #ececec;
 }
 #nav > ul > li {
@@ -342,13 +344,14 @@ html[theme=dark] .logotype {
 html[theme=dark] .logotype svg path {
   fill: #C857E0;
 }
+html[theme=dark] .action,
 html[theme=dark] .input {
   color: #B8B0BB;
   background-color: #322f3d;
   border-color: rgba(255, 255, 255, 0.3);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
 }
-html[theme=dark] .input:hover {
+html[theme=dark] .action:hover {
   background-color: #59405c;
 }
 html[theme=dark] #menu {
