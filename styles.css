@@ -127,7 +127,10 @@ li > code {
   background-color: #ececec;
   white-space: nowrap;
 }
-pre,
+pre {
+  background: #fff;
+  border-radius: 5px 5px 5px 0;
+}
 blockquote {
   background-color: rgba(0, 0, 0, 0.1);
   border-radius: 5px;
@@ -220,6 +223,20 @@ ul.reset li a {
   font-size: 0.6em;
   position: absolute;
 }
+.input {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  border: 1px dashed rgba(0, 0, 0, 0.1);
+  position: relative;
+  background-color: #fafafa;
+  padding: 5px;
+  transition: all 0.2s;
+}
+.input:focus {
+  outline: none;
+}
+.input:hover {
+  background-color: #ececec;
+}
 #nav > ul > li {
   margin-bottom: 1em;
 }
@@ -294,11 +311,8 @@ html[theme=dark] p > code,
 html[theme=dark] li > code {
   background-color: #59405c;
 }
-html[theme=dark] pre,
 html[theme=dark] blockquote {
   background-color: rgba(0, 0, 0, 0.5);
-}
-html[theme=dark] blockquote {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
   border-color: #59405c;
 }
@@ -311,6 +325,7 @@ html[theme=dark] iframe {
 }
 html[theme=dark] pre {
   border: 1px dashed rgba(255, 255, 255, 0.3);
+  background-color: #1d1f21;
 }
 html[theme=dark] hr {
   box-shadow: 0 3px rgba(255, 255, 255, 0.3);
@@ -326,6 +341,15 @@ html[theme=dark] .logotype {
 }
 html[theme=dark] .logotype svg path {
   fill: #C857E0;
+}
+html[theme=dark] .input {
+  color: #B8B0BB;
+  background-color: #322f3d;
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+html[theme=dark] .input:hover {
+  background-color: #59405c;
 }
 html[theme=dark] #menu {
   background-color: #322f3d;
@@ -359,7 +383,6 @@ html[theme=dark] #target::before {
   fill: #322f3d;
 }
 .stork-input {
-  width: 100%;
   border: none;
   position: relative;
   background-color: #fafafa;
