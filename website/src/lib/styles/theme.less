@@ -39,8 +39,12 @@ li > code {
   background-color: @light-alt-bg;
   white-space: nowrap;
 }
+pre {
+  background: @light-hljs-pre;
+  border-radius: 5px 5px 5px 0;
+}
 
-pre, blockquote {
+blockquote {
   background-color: @light-thick;
   border-radius: 5px;
 }
@@ -138,6 +142,23 @@ ul.reset {
   }
 }
 
+.action, .field {
+  box-shadow: 0 1px 3px @light-shadow;
+  border: 1px dashed @light-thick;
+  position: relative;
+  background-color: @light-bg;
+  padding: 5px;
+  transition: all .2s;
+  &:focus {
+    outline: none;
+  }
+}
+.action {
+  &:hover {
+    background-color: @light-alt-bg;
+  }
+}
+
 #nav {
   > ul{
     > li {
@@ -228,10 +249,8 @@ html[theme=dark] {
   li > code {
     background-color: @dark-alt-bg;
   }
-  pre, blockquote {
-    background-color: @dark-shadow;
-  }
   blockquote {
+    background-color: @dark-shadow;
     box-shadow: 0 1px 3px @dark-shadow;
     border-color: @dark-alt-bg;
     > code {
@@ -244,6 +263,7 @@ html[theme=dark] {
   }
   pre {
     border: 1px dashed @dark-thick;
+    background-color: @dark-hljs-pre;
   }
   hr {
     box-shadow: 0 3px @dark-thick;
@@ -263,6 +283,18 @@ html[theme=dark] {
     color: @dark-logo-fill;
     svg path {
       fill: @dark-logo-fill;
+    }
+  }
+
+  .action, .field {
+    color: @dark-fg;
+    background-color: @dark-bg;
+    border-color: @dark-thick;
+    box-shadow: 0 1px 3px @dark-shadow;
+  }
+  .action {
+    &:hover {
+      background-color: @dark-alt-bg;
     }
   }
 
