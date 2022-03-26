@@ -224,7 +224,7 @@ ul.reset li a {
   position: absolute;
 }
 .action,
-.input {
+.field {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
   border: 1px dashed rgba(0, 0, 0, 0.1);
   position: relative;
@@ -233,7 +233,7 @@ ul.reset li a {
   transition: all 0.2s;
 }
 .action:focus,
-.input:focus {
+.field:focus {
   outline: none;
 }
 .action:hover {
@@ -345,7 +345,7 @@ html[theme=dark] .logotype svg path {
   fill: #C857E0;
 }
 html[theme=dark] .action,
-html[theme=dark] .input {
+html[theme=dark] .field {
   color: #B8B0BB;
   background-color: #322f3d;
   border-color: rgba(255, 255, 255, 0.3);
