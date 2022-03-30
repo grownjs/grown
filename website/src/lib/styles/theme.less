@@ -14,6 +14,7 @@ b, strong { color: @light-bold; }
 a[href] {
   text-decoration: none;
   color: @light-link-text;
+
   &:hover {
     color: @light-link-hover;
     text-decoration: underline;
@@ -40,7 +41,7 @@ li > code {
   white-space: nowrap;
 }
 pre {
-  background: @light-hljs-pre;
+  background-color: @light-hljs-pre;
   border-radius: 5px 5px 5px 0;
 }
 
@@ -59,7 +60,6 @@ blockquote {
 blockquote > code,
 a > code {
  padding: 0 .2em;
- background-color: @light-bg;
 }
 p > code,
 li > code {
@@ -110,6 +110,11 @@ pre {
   border: 1px dashed @light-shadow;
 }
 
+i svg {
+  max-width: 90px;
+  fill: currentColor;
+}
+
 ul.reset {
   li a {
     border-bottom: 1px dashed @light-shadow;
@@ -130,6 +135,7 @@ ul.reset {
   }
   svg {
     max-width: 250px;
+    vertical-align: middle;
     path {
       fill: @light-logo-fill;
     }
@@ -148,7 +154,6 @@ ul.reset {
   position: relative;
   background-color: @light-bg;
   padding: 5px;
-  transition: all .2s;
   &:focus {
     outline: none;
   }
@@ -242,9 +247,6 @@ html[theme=dark] {
     box-shadow: 0 0 3px @dark-shadow;
   }
 
-  a > code {
-    background-color: @dark-bg;
-  }
   p > code,
   li > code {
     background-color: @dark-alt-bg;
