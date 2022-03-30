@@ -95,7 +95,7 @@ body {
 }
 i,
 em {
-  color: #87556f;
+  color: #B3C9C8;
 }
 b,
 strong {
@@ -103,7 +103,7 @@ strong {
 }
 a[href] {
   text-decoration: none;
-  color: #322f3d;
+  color: #82CA00;
 }
 a[href]:hover {
   color: #9FD366;
@@ -128,7 +128,7 @@ li > code {
   white-space: nowrap;
 }
 pre {
-  background: #fff;
+  background-color: #fff;
   border-radius: 5px 5px 5px 0;
 }
 blockquote {
@@ -144,7 +144,6 @@ blockquote {
 blockquote > code,
 a > code {
   padding: 0 0.2em;
-  background-color: #fafafa;
 }
 p > code::before,
 li > code::before {
@@ -197,6 +196,10 @@ iframe,
 pre {
   border: 1px dashed rgba(0, 0, 0, 0.2);
 }
+i svg {
+  max-width: 90px;
+  fill: currentColor;
+}
 ul.reset li a {
   border-bottom: 1px dashed rgba(0, 0, 0, 0.2);
 }
@@ -213,6 +216,7 @@ ul.reset li a {
 }
 .logotype svg {
   max-width: 250px;
+  vertical-align: middle;
 }
 .logotype svg path {
   fill: #9FD366;
@@ -230,7 +234,6 @@ ul.reset li a {
   position: relative;
   background-color: #fafafa;
   padding: 5px;
-  transition: all 0.2s;
 }
 .action:focus,
 .field:focus {
@@ -293,7 +296,7 @@ html[theme=dark] strong {
   color: #ececec;
 }
 html[theme=dark] a[href] {
-  color: #A8A0AA;
+  color: #B34EC9;
 }
 html[theme=dark] a[href]:hover {
   color: #C857E0;
@@ -305,9 +308,6 @@ html[theme=dark] a[href][aria-current=page] {
 html[theme=dark] kbd {
   background-color: #59405c;
   box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
-}
-html[theme=dark] a > code {
-  background-color: #322f3d;
 }
 html[theme=dark] p > code,
 html[theme=dark] li > code {
