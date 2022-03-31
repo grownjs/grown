@@ -6,6 +6,7 @@ module.exports = (Grown, util) => {
   const cookieSession = require('cookie-session');
   const cookieParser = require('cookie-parser');
   const connectFlash = require('connect-flash');
+  const csurf = require('csurf');
 
   return Grown('Session', {
     session_options: {
@@ -27,6 +28,7 @@ module.exports = (Grown, util) => {
         ctx.mount('connect-flash', connectFlash());
       }
 
+      ctx.mount(csurf({ cookie: true }));
       ctx.mount('Session#pipe', conn => {
         /* istanbul ignore else */
         if (conn.is_xhr && conn.csrf_token) {
