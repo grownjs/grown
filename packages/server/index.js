@@ -210,15 +210,6 @@ function _grownFactory($, util, options) {
               }
             }
           }
-
-          const _method = req.body._method || req.query._method;
-
-          if (req.method === 'POST' && _method) {
-            req.method = _method;
-
-            delete req.query._method;
-            delete req.body._method;
-          }
           next();
         });
       }
