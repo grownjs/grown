@@ -191,11 +191,6 @@ function _grownFactory($, util, options) {
         if (options.cors && cors.call({ req, res })) return;
         if (options.cache === false) nocache.call({ req, res });
         if (options.trust === 'proxy') trustproxy.call({ req, res });
-        if (req.method === 'POST' && req.query._method) {
-          req.method = req.query._method;
-          delete req.query._method;
-        }
-
         next();
       });
 
@@ -214,6 +209,15 @@ function _grownFactory($, util, options) {
                 scope._events.emit('failure', e, scope._options);
               }
             }
+          }
+
+          const _method = req.body._method || req.query._method;
+
+          if (req.method === 'POST' && _method) {
+            req.method = _method;
+
+            delete req.query._method;
+            delete req.body._method;
           }
           next();
         });
