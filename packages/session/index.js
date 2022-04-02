@@ -6,13 +6,23 @@ module.exports = (Grown, util) => {
   const cookieSession = require('cookie-session');
   const cookieParser = require('cookie-parser');
   const connectFlash = require('connect-flash');
-  const csurf = require('csurf');
 
   return Grown('Session', {
     session_options: {
       secret: process.env.SESSION_SECRET || '__CHANGE_ME__',
       keys: (process.env.SESSION_KEYS || '__CHANGE_ME__').split(/\s+/),
       maxAge: parseInt(process.env.SESSION_MAXAGE || 0, 10) || 86400000,
+    },
+
+    $before_send(e, ctx) {
+      /* istanbul ignore else */
+      if (ctx.is_xhr && ctx.csrf_token) {
+        if (typeof ctx.end === 'function') {
+          ctx.put_resp_header('X-CSRF-Token', ctx.csrf_token);
+        } else {
+          ctx.res.setHeader('X-CSRF-Token', ctx.csrf_token);
+        }
+      }
     },
 
     $install(ctx) {
@@ -27,14 +37,6 @@ module.exports = (Grown, util) => {
       if (this.session_messages !== false) {
         ctx.mount('connect-flash', connectFlash());
       }
-
-      ctx.mount(csurf({ cookie: true }));
-      ctx.mount('Session#pipe', conn => {
-        /* istanbul ignore else */
-        if (conn.is_xhr && conn.csrf_token) {
-          conn.put_resp_header('X-CSRF-Token', conn.csrf_token);
-        }
-      });
     },
 
     $mixins() {
