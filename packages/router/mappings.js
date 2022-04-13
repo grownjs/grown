@@ -99,7 +99,7 @@ module.exports = (Grown, util) => {
       const _router = routeMappings();
 
       // compile fast-routes
-      ctx.once('start', () => this._groupRoutes(ctx, scope._options));
+      ctx.once('ready', () => this._groupRoutes(ctx, scope._options));
 
       ctx.mount('Router.Mappings#pipe', (conn, _options) => {
         try {
