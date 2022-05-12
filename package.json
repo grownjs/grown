@@ -17,7 +17,7 @@
     "index.d.ts"
   ],
   "scripts": {
-    "test": "ts-node --type-check check & (sleep 3; curl 0.0.0.0:8080/die || exit 2)",
+    "test": "ts-node --type-check check & (sleep 5; curl localhost:8080/die || exit 2)",
     "lint": "eslint $(git ls-files | grep -E '(js|pug)$')",
     "pretest": "npm run lint"
   },
@@ -34,25 +34,12 @@
   "devDependencies": {
     "@grown/model": "^0.0.43",
     "@grown/test": "^0.0.15",
-    "ansi-regex": ">=5.0.1",
     "eslint": "^7.9.0",
     "eslint-config-airbnb-base": "^14.2.0",
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-pug": "^1.2.3",
-    "glob-parent": ">=5.1.2",
-    "lerna": "^3.22.1",
-    "lodash": ">=4.17.11",
-    "lodash.template": ">=4.5.0",
-    "mem": ">=4.0.0",
-    "minimist": ">=1.2.2",
-    "normalize-url": ">=4.5.1",
-    "set-value": ">=4.0.1",
-    "ssri": "^8.0.1",
-    "tar": ">=4.4.18",
-    "trim-newlines": ">=3.0.1",
-    "uWebSockets.js": "github:uNetworking/uWebSockets.js#v18.14.0",
-    "ws": ">=7.4.6",
-    "y18n": "^5.0.8"
+    "lerna": "^4.0.0",
+    "uWebSockets.js": "github:uNetworking/uWebSockets.js#v18.14.0"
   },
   "dependencies": {
     "@grown/bud": "^0.0.45",
