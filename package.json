@@ -32,6 +32,7 @@
     "url": "git+https://github.com/grownjs/grown.git"
   },
   "devDependencies": {
+    "uWebSockets.js": "github:uNetworking/uWebSockets.js#v18.14.0",
     "@grown/model": "^0.0.43",
     "@grown/test": "^0.0.15",
     "ansi-regex": ">=5.0.1",
