@@ -58,7 +58,7 @@ install: deps
 	@(((which lerna) > /dev/null 2>&1) || npm i -g lerna) || true
 
 setup: install
-	@npx lerna bootstrap --no-ci
+	@npx lerna bootstrap --no-ci -- --no-package-lock --no-audit
 
 web\:%:
 	@make -C website $*
