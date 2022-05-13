@@ -15,6 +15,11 @@ GIT_REVISION=$(shell git rev-parse --short=7 HEAD)
 
 export NODE_ENV GIT_REVISION
 
+test:
+	@make -s test-ci
+	@make -s test:server U_WEBSOCKETS_SKIP=true
+	@make -s test:server
+
 test-ci:
 	@make -s check test-all
 
@@ -24,9 +29,7 @@ test-all:
 	@make -s $(RUNNER):cache $(RUNNER):logger $(RUNNER):render $(RUNNER):router $(RUNNER):static $(RUNNER):upload
 
 ci: deps
-	@make -s clean setup test-ci
-	@make -s test:server U_WEBSOCKETS_SKIP=true
-	@make -s test:server
+	@make -s clean setup test
 ifdef CI
 	@make -s codecov
 endif
@@ -49,13 +52,13 @@ publish:
 	@make -C website dist deploy
 
 release: install test-ci
-	@lerna publish || true
+	@npx lerna publish || true
 
 install: deps
 	@(((which lerna) > /dev/null 2>&1) || npm i -g lerna) || true
 
 setup: install
-	@lerna bootstrap
+	@npx lerna bootstrap --no-ci
 
 web\:%:
 	@make -C website $*
@@ -64,10 +67,11 @@ dev\:%:
 	@cd packages/$(subst dev:,,$*) && npm run dev
 
 test\:%:
-	@lerna run $(TASK) --scope @grown/$*
+	@npx lerna run $(TASK) --scope @grown/$*
 
 clean: install
-	@lerna clean -y --ignore grown
+	@npx lerna clean -y --ignore grown
+	@sh -c 'rm -f packages/*/package-lock.json'
 
 check: deps
 	@npm run lint

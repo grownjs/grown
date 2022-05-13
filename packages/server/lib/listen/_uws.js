@@ -253,7 +253,7 @@ module.exports = function _uws(ctx, options, callback, protocolName) {
     app.ws('/*', {
       maxPayloadLength: 16 * 1024 * 1024,
       compression: 0,
-      idleTimeout: 10,
+      idleTimeout: 8,
       open: ws => {
         Object.assign(ws, this._.buildPubsub(), {
           address: remoteAddressToString(ws.getRemoteAddress()),

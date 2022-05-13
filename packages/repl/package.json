@@ -19,6 +19,6 @@
     "wargs": "^0.9.5"
   },
   "devDependencies": {
-    "mocha": "^7.2.0"
+    "mocha": "^8.1.3"
   }
 }

@@ -22,7 +22,7 @@
     "watch": "npm run models -- -w",
     "build": "npm run types && npm run models --",
     "pretest": "npm run schema && npm run build",
-    "posttest": "ts-node -r module-alias/register --type-check check",
+    "posttest": "ts-node -r module-alias/register --type-check check.ts",
     "schema": "npm run schema-to:ts",
     "schema-to": "json-schema-to -tw tests/fixtures",
     "schema-to:ts": "npm run schema-to -- -ic index -pb --json --typescript"
@@ -32,22 +32,22 @@
   },
   "dependencies": {
     "@types/json-schema": "^7.0.9",
-    "debug": "^3.1.0",
+    "debug": "^4.1.0",
     "formator": "^0.0.14",
     "is-my-json-valid": "^2.20.5",
     "json-schema-faker": "^0.5.0-rcv.39",
     "json-schema-sequelizer": "^0.24.0"
   },
   "devDependencies": {
-    "chai": "^4.2.0",
+    "chai": "^4.3.6",
     "json-schema-to": "^0.0.29",
     "jsonpointer": ">=5.0.0",
-    "mocha": "^7.2.0",
+    "mocha": "^8.1.3",
     "module-alias": "^2.2.2",
     "nyc": "^15.1.0",
-    "sastre": "^0.2.19",
+    "sastre": "^0.2.20",
     "sqlite3": "^4.1.1",
-    "testdouble": "^3.13.0"
+    "testdouble": "^3.16.1"
   },
   "_moduleAliases": {
     "~/models": "tests/fixtures/models"
