@@ -1,6 +1,6 @@
 {
   "name": "@grown/model",
-  "version": "0.0.47",
+  "version": "0.0.48",
   "main": "index.js",
   "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
   "license": "MIT",
