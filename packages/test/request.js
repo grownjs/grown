@@ -42,8 +42,8 @@ module.exports = Grown => {
         options.body += `\r\n--${_boundary}--`;
       }
 
-      if (options.body && options.headers['content-type'] === 'application/json') {
-        options.body = typeof options.body !== 'string' ? JSON.stringify(options.body) : options.body;
+      if (options.body && !Buffer.isBuffer(options.body) && options.headers['content-type'] === 'application/json') {
+        options.body = Buffer.from(typeof options.body !== 'string' ? JSON.stringify(options.body) : options.body);
       }
 
       if (options.body) {
