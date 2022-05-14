@@ -196,7 +196,7 @@ function _grownFactory($, util, options) {
 
       if (options.body && process.env.U_WEBSOCKETS_SKIP) {
         _mount.call(scope, require('body-parser').urlencoded({ extended: true }));
-        _mount.call(scope, require('body-parser').raw({ inflate: true, type: () => true }));
+        _mount.call(scope, require('body-parser').raw({ inflate: true, type: () => !process.headless }));
         _mount.call(scope, (req, res, next) => {
           if (req.body instanceof Buffer) {
             req.rawBody = req.body.toString();
@@ -204,6 +204,7 @@ function _grownFactory($, util, options) {
             if (req.headers['content-type'] === 'application/json') {
               try {
                 req.body = JSON.parse(req.rawBody);
+                req._body = true;
               } catch (e) {
                 e.message = `Error decoding input (JSON.parse)\n${e.message}`;
                 scope._events.emit('failure', e, scope._options);
