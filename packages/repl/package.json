@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "log-pose": "^0.4.7",
-    "wargs": "^0.9.5"
+    "wargs": "^0.9.6"
   },
   "devDependencies": {
     "mocha": "^8.1.3"
