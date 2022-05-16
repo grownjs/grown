@@ -52,6 +52,7 @@ publish:
 	@make -C website dist deploy
 
 release: install test-ci
+	@rm -f packages/*/package-lock.json package-lock.json
 	@npx lerna publish || true
 
 install: deps
