@@ -94,7 +94,7 @@ module.exports = (Grown, util) => {
       return {
         props: {
           uploaded_files() {
-            return this.req.files || [];
+            return this.req.files || {};
           },
         },
         methods: {
