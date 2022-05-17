@@ -195,10 +195,27 @@ function _grownFactory($, util, options) {
       });
 
       if (options.body && process.env.U_WEBSOCKETS_SKIP) {
-        _mount.call(scope, require('body-parser').urlencoded({ extended: true }));
-        _mount.call(scope, require('body-parser').raw({ inflate: true, type: () => !process.headless }));
+        const urlencoded = require('body-parser').urlencoded({ extended: true });
+        const json = require('body-parser').json({ limit: scope._options('json', '5MB') });
+        const raw = require('body-parser').raw({ inflate: true, type: x => !process.headless && !x._body });
+
         _mount.call(scope, (req, res, next) => {
-          if (req.body instanceof Buffer) {
+          if (!scope._uploads && !req._body && !req.body) {
+            const type = req.headers['content-type'] || '';
+
+            if (type.includes('multipart')) {
+              next(new Error('Missing Grown.Upload'));
+            } else if (type.includes('json')) {
+              json(req, res, next);
+            } else if (type.includes('url')) {
+              urlencoded(req, res, next);
+            } else {
+              raw(req, res, next);
+            }
+            return;
+          }
+
+          if (!req._body && req.body instanceof Buffer) {
             req.rawBody = req.body.toString();
 
             if (req.headers['content-type'] === 'application/json') {
