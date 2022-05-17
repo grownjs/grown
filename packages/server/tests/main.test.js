@@ -378,13 +378,10 @@ describe('Grown.Server', () => {
 
         g.listen(3000, async app => {
           const { data } = await post('http://0.0.0.0:3000', {
-            headers: {
-              'Content-Type': 'application/json',
-            },
             body: '{"x":"y"}',
           });
 
-          expect(data).to.eql('{"x":"y"}');
+          expect(data).to.eql('');
           app.close();
           done();
         });
@@ -397,14 +394,18 @@ describe('Grown.Server', () => {
         });
 
         g.listen(3000, async app => {
-          await post('http://0.0.0.0:3000', {
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: 'OSOM',
-          });
+          try {
+            await post('http://0.0.0.0:3000', {
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: 'OSOM',
+            });
+          } catch (e) {
+            // skip
+          }
 
-          expect(error.message).to.contain('Error decoding input (JSON.parse)');
+          expect(error.message).to.contain('Error decoding input (JSON)');
           app.close();
           done();
         });

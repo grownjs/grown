@@ -168,6 +168,14 @@ function _grownFactory($, util, options) {
     }).new(request);
   };
 
+  function bodyFailure(err, kind) {
+    if (err) {
+      err.message = `Error decoding input (${kind})\n${err.message}`;
+      scope._events.emit('failure', err, scope._options);
+    }
+    return err;
+  }
+
   return {
     init() {
       util.mergeMethodsInto.call(this, this, scope._events);
@@ -197,20 +205,20 @@ function _grownFactory($, util, options) {
       if (options.body && process.env.U_WEBSOCKETS_SKIP) {
         const urlencoded = require('body-parser').urlencoded({ extended: true });
         const json = require('body-parser').json({ limit: scope._options('json', '5MB') });
-        const raw = require('body-parser').raw({ inflate: true, type: x => !process.headless && !x._body });
+        const raw = require('body-parser').raw({ inflate: true, type: () => true });
 
         _mount.call(scope, (req, res, next) => {
-          if (!scope._uploads && !req._body && !req.body) {
+          if (!process.headless && !scope._uploads && !req._body && !req.body) {
             const type = req.headers['content-type'] || '';
 
             if (type.includes('multipart')) {
               next(new Error('Missing Grown.Upload'));
             } else if (type.includes('json')) {
-              json(req, res, next);
+              json(req, res, err => next(bodyFailure(err, 'JSON')));
             } else if (type.includes('url')) {
-              urlencoded(req, res, next);
+              urlencoded(req, res, err => next(bodyFailure(err, 'URL')));
             } else {
-              raw(req, res, next);
+              raw(req, res, err => next(bodyFailure(err, 'RAW')));
             }
             return;
           }
@@ -222,13 +230,16 @@ function _grownFactory($, util, options) {
               try {
                 req.body = JSON.parse(req.rawBody);
                 req._body = true;
+                next();
               } catch (e) {
-                e.message = `Error decoding input (JSON.parse)\n${e.message}`;
-                scope._events.emit('failure', e, scope._options);
+                next(bodyFailure(e, 'JSON.parse'));
               }
+            } else {
+              next();
             }
+          } else {
+            next();
           }
-          next();
         });
       }
     },
