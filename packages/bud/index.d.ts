@@ -42,6 +42,10 @@ declare module '@grown/bud' {
     */
     body?: boolean;
     /**
+    Adjust the limit value for the body-parser's JSON support as fallback
+    */
+    json?: string | number;
+    /**
     Enable CORS for all requests, disabled if `NODE_ENV=production`
     */
     cors?: boolean;
