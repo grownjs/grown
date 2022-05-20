@@ -28,8 +28,8 @@ test-all:
 	@make -s $(RUNNER):repl $(RUNNER):test $(RUNNER):conn $(RUNNER):access $(RUNNER):session
 	@make -s $(RUNNER):cache $(RUNNER):logger $(RUNNER):render $(RUNNER):router $(RUNNER):static $(RUNNER):upload
 
-ci: deps
-	@make -s clean setup test
+ci:
+	@make -s test
 ifdef CI
 	@make -s codecov
 endif
@@ -55,7 +55,7 @@ release: install test-ci
 	@rm -f packages/*/package-lock.json package-lock.json
 	@npx lerna publish || true
 
-install: deps
+install:
 	@(((which lerna) > /dev/null 2>&1) || npm i -g lerna) || true
 
 setup: install
@@ -70,13 +70,13 @@ dev\:%:
 test\:%:
 	@npx lerna run $(TASK) --scope @grown/$*
 
-clean: install
+clean:
 	@npx lerna clean -y --ignore grown
 	@sh -c 'rm -f packages/*/package-lock.json'
 
-check: deps
+check:
 	@npm run lint
 	@echo "Done."
 
-deps: package*.json
-	@(((ls node_modules | grep .) > /dev/null 2>&1) || npm i) || true
+deps:
+	@npm i -g ts-node typescript
