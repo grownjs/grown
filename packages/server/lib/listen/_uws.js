@@ -214,7 +214,7 @@ ServerResponse.prototype.writeHead = function writeHead(statusCode, reason, head
       this._headers[key].forEach(header => {
         this._response.writeHeader(key, String(header));
       });
-    } else {
+    } else if (key !== 'content-length' || !process.proxied) {
       this._response.writeHeader(key, String(this._headers[key]));
     }
     delete this._headers[key];

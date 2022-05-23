@@ -59,7 +59,7 @@ module.exports = (Grown, util) => {
         body = JSON.stringify(body);
         length = Buffer.byteLength(body || '');
         ctx.content_type = 'application/json';
-      } else if (!process.proxied && typeof body === 'string') {
+      } else if (typeof body === 'string') {
         type = 'string';
         length = body.length;
       }
@@ -67,7 +67,7 @@ module.exports = (Grown, util) => {
       debug('#%s Response is %s. Sending as %s', ctx.pid, type, ctx.content_type);
 
       /* istanbul ignore else */
-      if (!process.proxied && typeof body === 'string') {
+      if (!process.proxied && length) {
         ctx.res.setHeader('Content-Length', length);
       }
 
