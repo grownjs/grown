@@ -20,7 +20,17 @@ jobs:
         ports:
           - 5432:5432
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
       - uses: actions/setup-node@v1
+
+      - uses: actions/cache@v3
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
+
       - run: make setup deps
+
       - run: make ci CODECOV_TOKEN=${{ secrets.CODECOV_TOKEN }}
