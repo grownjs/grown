@@ -93,7 +93,7 @@ const DEF_GENERATOR = `
 module.exports = {
   description: USAGE_INFO,
   configure(Grown) {
-    Grown.CLI.define('generate:model', MODEL_GENERATOR, ({ use, files }) => {
+    Grown.CLI.define('generate:model', MODEL_GENERATOR, ({ use, args, files }) => {
       if (Grown.argv.flags.ts) {
         files.push([`${use}/index.ts`, "export {\n  $schema: require('./schema.json'),\n};"]);
       } else {
@@ -117,15 +117,29 @@ module.exports = {
           }
         } else if (target.includes('/')) {
           memo[cur] = { $ref: target.replace('/', '#/definitions/') };
+        } else if (target.includes(':')) {
+          target.split(':').forEach(prop => {
+            if (!memo[cur]) {
+              memo[cur] = { type: prop };
+            } else {
+              memo[cur][prop] = true;
+            }
+          });
         } else {
           memo[cur] = target ? { type: target } : undefined;
         }
         return memo;
       }, {});
 
+      const opts = args.reduce((memo, key) => {
+        memo[key] = true;
+        return memo;
+      }, Grown.argv.data);
+
       files.push([`${use}/schema.json`, JSON.stringify({
         id: path.basename(use),
         type: 'object',
+        options: { ...data.options, ...opts },
         properties: { ...data.properties, ...props },
       }, null, 2)]);
     });
