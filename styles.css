@@ -29,6 +29,7 @@
   margin-right: 5px;
 }
 #toggle {
+  color: inherit;
   border: none;
   background-color: transparent;
 }
