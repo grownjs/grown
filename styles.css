@@ -32,12 +32,6 @@
   border: none;
   background-color: transparent;
 }
-#toggle svg path {
-  fill: #000;
-}
-html[theme=dark] #toggle svg path {
-  fill: #fff;
-}
 @media screen and (max-width: 639px) {
   #nav > ul {
     display: flex;
@@ -543,6 +537,9 @@ html[theme=dark] .stork-highlight {
 *::after,
 *::before {
   box-sizing: inherit;
+}
+svg {
+  fill: currentColor;
 }
 pre {
   white-space: pre-wrap;
