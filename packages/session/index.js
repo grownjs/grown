@@ -29,6 +29,11 @@ module.exports = (Grown, util) => {
       ctx.mount('cookie-parser', cookieParser(this.session_secret, this.cookie_options || {}));
 
       /* istanbul ignore else */
+      if (typeof this.session_store === 'function') {
+        ctx.mount('session-store', this.session_store());
+      }
+
+      /* istanbul ignore else */
       if (this.session_cookies !== false) {
         ctx.mount('cookie-session', cookieSession(this.session_options));
       }
