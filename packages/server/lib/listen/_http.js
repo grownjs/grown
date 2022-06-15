@@ -6,7 +6,7 @@ const WebSocket = require('ws');
 
 const $host = require('./host');
 const {
-  send, sendFile, sendJSON, setStatus,
+  send, sendFile, sendJSON, setStatus, setHeaders,
 } = require('./util');
 
 module.exports = function _http(ctx, options, callback, protocolName) {
@@ -16,6 +16,7 @@ module.exports = function _http(ctx, options, callback, protocolName) {
     res.json = sendJSON.bind(res);
     res.status = setStatus.bind(res);
     res.sendFile = sendFile.bind(res);
+    res._implicitHeader = setHeaders.bind(res);
 
     $host.call(this, ctx.location, req, res);
   };

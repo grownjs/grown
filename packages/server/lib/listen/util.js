@@ -25,6 +25,13 @@ function setStatus(code) {
   return this;
 }
 
+function setHeaders() {
+  if (!this._header && !this.headerSent) {
+    this._header = true;
+    this.writeHead(this.statusCode);
+  }
+}
+
 function send(data) {
   if (typeof data !== 'string') {
     sendJSON(data);
@@ -43,4 +50,5 @@ module.exports = {
   sendFile,
   sendJSON,
   setStatus,
+  setHeaders,
 };

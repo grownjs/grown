@@ -10,7 +10,7 @@ const qs = require('querystring');
 
 const _util = require('util');
 const {
-  send, sendFile, sendJSON, setStatus,
+  send, sendFile, sendJSON, setStatus, setHeaders,
 } = require('./util');
 
 const $host = require('./host');
@@ -186,6 +186,7 @@ ServerResponse.prototype.send = send;
 ServerResponse.prototype.json = sendJSON;
 ServerResponse.prototype.status = setStatus;
 ServerResponse.prototype.sendFile = sendFile;
+ServerResponse.prototype._implicitHeader = setHeaders;
 
 ServerResponse.prototype._transform = function _transform(chunk, encoding, next) {
   this._buffer.push(chunk);
