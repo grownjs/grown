@@ -370,9 +370,9 @@ describe('Grown.Server', () => {
         });
       });
 
-      it('should handle rawBody', done => {
+      it('should handle raw-body', done => {
         g.mount(ctx => {
-          ctx.res.write(ctx.req.rawBody);
+          ctx.res.write(ctx.req.body);
           ctx.res.status(200).end();
         });
 
@@ -381,7 +381,7 @@ describe('Grown.Server', () => {
             body: '{"x":"y"}',
           });
 
-          expect(data).to.eql('');
+          expect(data).to.eql('{"x":"y"}');
           app.close();
           done();
         });

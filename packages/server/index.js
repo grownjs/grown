@@ -147,25 +147,30 @@ function _grownFactory($, util, options) {
   });
 
   // built-in connection
+  scope._middleware = null;
   scope._connection = (request, _extensions) => {
-    const PID = `${process.pid}.${_pid}`;
+    if (!scope._middleware || _extensions) {
+      const PID = `${process.pid}.${_pid}`;
 
-    return $.Grown('Conn.Builder')({
-      name: `Grown.Conn#${PID}`,
-      props: {
-        env: () => _environment,
-        cwd: () => $.Grown.cwd,
-        pid: () => PID,
-      },
-      init() {
-        _pid += 1;
+      scope._middleware = $.Grown('Conn.Builder')({
+        name: `Grown.Conn#${PID}`,
+        props: {
+          env: () => _environment,
+          cwd: () => $.Grown.cwd,
+          pid: () => PID,
+        },
+        init() {
+          _pid += 1;
 
-        return [
-          _extensions,
-          scope._extensions,
-        ];
-      },
-    }).new(request);
+          return [
+            _extensions,
+            scope._extensions,
+          ];
+        },
+      });
+    }
+
+    return scope._middleware.new(request);
   };
 
   function bodyFailure(err, kind) {
@@ -219,23 +224,6 @@ function _grownFactory($, util, options) {
               urlencoded(req, res, err => next(bodyFailure(err, 'URL')));
             } else {
               raw(req, res, err => next(bodyFailure(err, 'RAW')));
-            }
-            return;
-          }
-
-          if (!req._body && req.body instanceof Buffer) {
-            req.rawBody = req.body.toString();
-
-            if (req.headers['content-type'] === 'application/json') {
-              try {
-                req.body = JSON.parse(req.rawBody);
-                req._body = true;
-                next();
-              } catch (e) {
-                next(bodyFailure(e, 'JSON.parse'));
-              }
-            } else {
-              next();
             }
           } else {
             next();

@@ -15,7 +15,7 @@ function die(conn, error) {
 
   try {
     /* istanbul ignore else */
-    if (failure.summary) {
+    if (failure.summary && !conn.res._header) {
       conn.res.setHeader('X-Failure', `${failure.summary} (${failure.message})`);
     }
 
