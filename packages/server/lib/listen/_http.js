@@ -16,7 +16,7 @@ module.exports = function _http(ctx, options, callback, protocolName) {
     res.json = sendJSON.bind(res);
     res.status = setStatus.bind(res);
     res.sendFile = sendFile.bind(res);
-    res._implicitHeader = setHeaders.bind(res);
+    res._implicitHeader = res._implicitHeader || setHeaders.bind(res);
 
     $host.call(this, ctx.location, req, res);
   };
