@@ -71,6 +71,7 @@ test\:%:
 	@npx lerna run $(TASK) --scope @grown/$*
 
 clean:
+	@npx lerna clean -y --scope grown
 	@npx lerna clean -y --ignore grown
 	@sh -c 'rm -f packages/*/package-lock.json'
 
