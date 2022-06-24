@@ -39,7 +39,7 @@
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-pug": "^1.2.3",
     "lerna": "^4.0.0",
-    "uWebSockets.js": "github:uNetworking/uWebSockets.js#v18.14.0"
+    "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.10.0"
   },
   "dependencies": {
     "@grown/bud": "^0.0.49",
