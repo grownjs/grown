@@ -57,10 +57,10 @@ module.exports = (Grown, util) => {
           // expose uploaded files
           conn.req.files = Object.keys(files).reduce((memo, key) => {
             memo[key] = {
-              path: files[key].path,
-              name: files[key].name,
+              name: files[key].name || files[key].originalFilename,
+              path: files[key].path || files[key].filepath,
+              type: files[key].type || files[key].mimetype,
               size: files[key].size,
-              type: files[key].type,
             };
             return memo;
           }, {});
