@@ -108,7 +108,7 @@ module.exports = (Grown, util) => {
 
   function _runCMD(cmd, context, filename, callback) {
     Promise.resolve()
-      .then(() => util.invoke(cmd.includes('await') ? `(async () => {return(\n${cmd}\n)})();` : cmd, context))
+      .then(() => util.invoke(cmd.includes('await') ? `(async () => (\n${cmd}\n))();` : cmd, context))
       .then(value => {
         /* istanbul ignore else */
         if (typeof value === 'undefined') {
