@@ -14,8 +14,6 @@ const RE_NATIVES = new RegExp(`^.+(${
     .join('|')
 })\\.js(?!:).+$`, 'gm');
 
-const RE_INTERPOLATE = /`([^`]+)`/g;
-
 // https://stackoverflow.com/questions/9210542/node-js-require-cache-possible-to-invalidate/14801711#14801711
 function _searchCache(moduleName, callback) {
   const mod = require.resolve(moduleName);
@@ -104,13 +102,8 @@ function cleanError(e, cwd) {
   return _e;
 }
 
-function invoke(value, context, interpolate) {
-  /* istanbul ignore else */
-  if (!interpolate) {
-    return vm.runInNewContext(value, context);
-  }
-
-  return value.replace(RE_INTERPOLATE, ($0, $1) => vm.runInNewContext($1, context));
+function invoke(value, context, filepath) {
+  return vm.runInNewContext(value, context, filepath || 'source.js');
 }
 
 function wrap(callback) {
