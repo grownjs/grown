@@ -34,8 +34,8 @@ function trustproxy() {
     ? header.split(',')[0].trim()
     : header.trim();
 
-  this.req.ips = proxyaddr.all(this.req);
-  this.req.ip = proxyaddr(this.req);
+  this.req.ips = proxyaddr.all(this.req, () => true);
+  this.req.ip = proxyaddr(this.req, () => true);
 }
 
 function nocache() {
