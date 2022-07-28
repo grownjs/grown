@@ -67,7 +67,7 @@ module.exports = (Grown, util) => {
       debug('#%s Response is %s. Sending as %s', ctx.pid, type, ctx.content_type);
 
       /* istanbul ignore else */
-      if (!process.proxied && length) {
+      if (!process.proxied && !ctx.res._halted && length) {
         ctx.res.setHeader('Content-Length', length);
       }
 
