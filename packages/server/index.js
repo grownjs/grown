@@ -1,6 +1,7 @@
 'use strict';
 
 const debug = require('debug')('grown:server');
+const proxyaddr = require('proxy-addr');
 const qs = require('querystring');
 
 const _pkg = require('./package.json');
@@ -26,9 +27,15 @@ function bind(mixins) {
 }
 
 function trustproxy() {
-  this.req.protocol = this.req.headers['x-forwarded-proto'] || this.req.protocol;
-  this.req.port = this.req.headers['x-forwarded-port'] || this.req.port;
-  this.req.ip = this.req.headers['x-forwarded-for'] || this.req.ip;
+  const proto = this.req.connection.encrypted ? 'https' : 'http';
+  const header = this.req.headers['x-forwarded-proto'] || this.req.protocol || proto;
+
+  this.req.protocol = header.includes(',')
+    ? header.split(',')[0].trim()
+    : header.trim();
+
+  this.req.ips = proxyaddr.all(this.req);
+  this.req.ip = proxyaddr(this.req);
 }
 
 function nocache() {
@@ -41,8 +48,8 @@ function cors() {
   this.res.setHeader('Access-Control-Allow-Origin', '*');
   this.res.setHeader('Access-Control-Allow-Headers',
     'Authorization, X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Allow-Request-Method');
-  this.res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
-  this.res.setHeader('Allow', 'GET, POST, OPTIONS, PUT, DELETE');
+  this.res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+  this.res.setHeader('Allow', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
 
   /* istanbul ignore else */
   if (this.req.method === 'OPTIONS') {

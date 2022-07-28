@@ -132,6 +132,7 @@ declare module '@grown/server' {
   */
   type ConnectionInfo = {
     remoteAddress: string;
+    encrypted: boolean;
   };
 
   /**
