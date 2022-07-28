@@ -7,12 +7,14 @@ module.exports = (Grown, util) => {
   const cookieParser = require('cookie-parser');
   const connectFlash = require('connect-flash');
 
+  const defaultOptions = {
+    secret: process.env.SESSION_SECRET || '__CHANGE_ME__',
+    keys: (process.env.SESSION_KEYS || '__CHANGE_ME__').split(/\s+/),
+    maxAge: parseInt(process.env.SESSION_MAXAGE || 0, 10) || 86400000,
+  };
+
   return Grown('Session', {
-    session_options: {
-      secret: process.env.SESSION_SECRET || '__CHANGE_ME__',
-      keys: (process.env.SESSION_KEYS || '__CHANGE_ME__').split(/\s+/),
-      maxAge: parseInt(process.env.SESSION_MAXAGE || 0, 10) || 86400000,
-    },
+    session_options: {},
 
     $before_send(e, ctx) {
       /* istanbul ignore else */
@@ -30,7 +32,7 @@ module.exports = (Grown, util) => {
 
       /* istanbul ignore else */
       if (this.session_cookies !== false) {
-        ctx.mount('cookie-session', cookieSession(this.session_options));
+        ctx.mount('cookie-session', cookieSession({ ...defaultOptions, ...this.session_options }));
       }
 
       /* istanbul ignore else */
