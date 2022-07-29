@@ -125,6 +125,10 @@ function ServerRequest(req, res) {
     remoteAddress: remoteAddressToString(res.getRemoteAddress()),
   };
 
+  Object.defineProperty(this, 'secure', {
+    get: () => this.protocol === 'https',
+  });
+
   Object.keys(req.headers).forEach(key => {
     const prop = key.toLowerCase();
     const value = req.headers[key];

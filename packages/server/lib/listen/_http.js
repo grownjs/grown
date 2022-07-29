@@ -12,6 +12,11 @@ const {
 module.exports = function _http(ctx, options, callback, protocolName) {
   const cb = (req, res) => {
     req.query = req.query || qs.parse(req.url.split('?')[1]);
+
+    Object.defineProperty(req, 'secure', {
+      get: () => req.protocol === 'https',
+    });
+
     res.send = send.bind(res);
     res.json = sendJSON.bind(res);
     res.status = setStatus.bind(res);
