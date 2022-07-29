@@ -34,6 +34,7 @@ function trustproxy() {
     ? header.split(',')[0].trim()
     : header.trim();
 
+  this.req.host = this.req.headers['x-forwarded-host'] || this.req.host || this.req.headers.host;
   this.req.port = this.req.headers['x-forwarded-port'] || this.req.port;
   this.req.ips = proxyaddr.all(this.req, () => true);
   this.req.ip = proxyaddr(this.req, () => true);
@@ -43,6 +44,16 @@ function nocache() {
   this.res.setHeader('Cache-Control', 'private, no-cache, no-store, must-revalidate');
   this.res.setHeader('Expires', '-1');
   this.res.setHeader('Pragma', 'no-cache');
+}
+
+function https() {
+  if (this.req.secure || process.env.NODE_ENV !== 'production') return;
+  if (this.req.method === 'GET' || this.req.method === 'HEAD') {
+    this.res.redirect(301, `https://${this.req.host + (this.req.originalUrl || this.req.url)}`);
+  } else {
+    this.res.status(403).end();
+  }
+  return true;
 }
 
 function cors() {
@@ -96,6 +107,7 @@ function _grownFactory($, util, options) {
     methods: {
       trustproxy,
       nocache,
+      https,
       cors,
 
       tick(ms) {
@@ -216,6 +228,7 @@ function _grownFactory($, util, options) {
         if (options.cors && cors.call({ req, res })) return;
         if (options.cache === false) nocache.call({ req, res });
         if (options.trust === 'proxy') trustproxy.call({ req, res });
+        if (options.https && https.call({ req, res })) return;
         next();
       });
 
