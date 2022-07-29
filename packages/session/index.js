@@ -14,7 +14,9 @@ module.exports = (Grown, util) => {
   };
 
   return Grown('Session', {
-    session_options: {},
+    session_options: {
+      ...defaultOptions,
+    },
 
     $before_send(e, ctx) {
       /* istanbul ignore else */
