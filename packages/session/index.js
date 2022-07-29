@@ -30,7 +30,10 @@ module.exports = (Grown, util) => {
     },
 
     $install(ctx) {
-      ctx.mount('cookie-parser', cookieParser(this.session_secret, this.cookie_options || {}));
+      /* istanbul ignore else */
+      if (this.parse_cookies !== false) {
+        ctx.mount('cookie-parser', cookieParser(this.session_secret || this.session_options.secret, this.cookie_options || {}));
+      }
 
       /* istanbul ignore else */
       if (this.session_cookies !== false) {
