@@ -338,12 +338,12 @@ module.exports = (Grown, util) => {
 
       return {
         methods: {
-          render(src, data) {
+          render(src, data, status) {
             return Promise.resolve()
               .then(() => self.render.call(this, src, data))
               .catch(e => `${e.type || e.name}:\n${e.message}`)
               .then(body => {
-                this.res.status(200);
+                this.res.status(status || 200);
                 this.res._halted = true;
 
                 if (typeof this.end === 'function') {
