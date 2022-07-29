@@ -49,8 +49,8 @@ function cors() {
   this.res.setHeader('Access-Control-Allow-Credentials', 'true');
   this.res.setHeader('Access-Control-Allow-Origin', '*');
   this.res.setHeader('Access-Control-Allow-Headers', [
-     'Authorization, X-API-KEY, Origin, X-Requested-With, X-Forwarded-Port, X-Forwarded-Proto',
-     'Content-Type, Accept',
+    'Authorization, X-API-KEY, Origin, X-Requested-With, X-Forwarded-Port, X-Forwarded-Proto',
+    'Content-Type, Accept',
   ].join(', '));
   this.res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
   this.res.setHeader('Allow', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
