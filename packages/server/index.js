@@ -49,7 +49,8 @@ function nocache() {
 function https() {
   if (this.req.secure || process.env.NODE_ENV !== 'production') return;
   if (this.req.method === 'GET' || this.req.method === 'HEAD') {
-    this.res.redirect(301, `https://${this.req.host + (this.req.originalUrl || this.req.url)}`);
+    this.res.setHeader('Location', `https://${this.req.host + (this.req.originalUrl || this.req.url)}`);
+    this.res.status(301).end();
   } else {
     this.res.status(403).end();
   }
