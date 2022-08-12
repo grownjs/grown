@@ -17,15 +17,13 @@ export NODE_ENV GIT_REVISION
 
 test:
 	@make -s test-ci
-	@make -s test:server U_WEBSOCKETS_SKIP=true
-	@make -s test:server
 
 test-ci:
 	@make -s check test-all
 
 test-all:
 	@make -s $(RUNNER):bud $(RUNNER):cli $(RUNNER):grpc $(RUNNER):graphql $(RUNNER):model
-	@make -s $(RUNNER):repl $(RUNNER):test $(RUNNER):conn $(RUNNER):access $(RUNNER):session
+	@make -s $(RUNNER):repl $(RUNNER):test $(RUNNER):conn $(RUNNER):server $(RUNNER):access $(RUNNER):session
 	@make -s $(RUNNER):cache $(RUNNER):logger $(RUNNER):render $(RUNNER):router $(RUNNER):static $(RUNNER):upload
 
 ci:

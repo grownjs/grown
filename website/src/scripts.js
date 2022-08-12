@@ -139,7 +139,7 @@ let prefix;
       title: __runkit__.title || 'Untitled',
       preamble: prelude + (__runkit__.preamble || '')
         + (isEndpoint ? '\nexports.endpoint=(req,res)=>{res.end()}' : ''),
-      environment: [{ name: 'U_WEBSOCKETS_SKIP', value: 'true' }],
+      environment: [{ name: 'NODE_ENV', value: 'test' }],
       gutterStyle: 'none',
       evaluateOnLoad: true,
       onLoad: () => {

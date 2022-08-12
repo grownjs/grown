@@ -78,7 +78,7 @@ function cors() {
 function _grownFactory($, util, options) {
   debug('#%s Grown v%s - %s', process.pid, _pkg.version, $.Grown.env);
 
-  options = options || {};
+  options = { uws: false, ...options };
 
   const scope = {};
 
@@ -233,7 +233,7 @@ function _grownFactory($, util, options) {
         next();
       });
 
-      if (options.body && process.env.U_WEBSOCKETS_SKIP) {
+      if (!options.uws) {
         const urlencoded = require('body-parser').urlencoded({ extended: true });
         const json = require('body-parser').json({ limit: scope._options('json', '5MB') });
         const raw = require('body-parser').raw({ inflate: true, type: () => true });

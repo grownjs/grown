@@ -38,9 +38,9 @@ declare module '@grown/bud' {
     env?: NodeEnv,
     plug?: Plug | Plug[],
     /**
-    Enable body-parser for all requests (use if U_WEBSOCKETS_SKIP is enabled)
+    Enable uWebSockets.js support
     */
-    body?: boolean;
+    uws?: boolean;
     /**
     Adjust the limit value for the body-parser's JSON support as fallback
     */

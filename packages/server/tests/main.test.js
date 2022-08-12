@@ -9,7 +9,7 @@ const { get, post } = require('httpie');
 let Grown;
 let g;
 
-/* global beforeEach, afterEach, describe, it */
+/* global beforeEach, describe, it */
 
 describe('Grown.Server', () => {
   beforeEach(() => {
@@ -113,179 +113,172 @@ describe('Grown.Server', () => {
       });
     });
 
-    if (!process.env.U_WEBSOCKETS_SKIP) {
-      describe('uWebSockets.js', () => {
-        beforeEach(() => {
-          g = Grown.new();
-        });
+    describe('uWebSockets.js', () => {
+      beforeEach(() => {
+        g = Grown.new({ uws: true });
+      });
 
-        it('should responds with 501 as default', done => {
-          g.listen(3000, async app => {
-            let err;
-            try {
-              await get('http://0.0.0.0:3000');
-            } catch (e) {
-              err = e;
-            }
+      it('should responds with 501 as default', done => {
+        g.listen(3000, async app => {
+          let err;
+          try {
+            await get('http://0.0.0.0:3000');
+          } catch (e) {
+            err = e;
+          }
 
-            expect(err.statusMessage).to.eql('Not Implemented');
-            expect(err.statusCode).to.eql(501);
+          expect(err.statusMessage).to.eql('Not Implemented');
+          expect(err.statusCode).to.eql(501);
 
-            app.close();
-            done();
-          });
-        });
-
-        it('should responds with 200 if ctx.res.status() is called', done => {
-          g.mount(ctx => ctx.res.status(200).end());
-          g.listen(3000, async app => {
-            const { statusCode } = await get('http://0.0.0.0:3000');
-
-            expect(statusCode).to.eql(200);
-            app.close();
-            done();
-          });
-        });
-
-        it('should parse multipart/x-www-form-urlencoded', done => {
-          g.mount(ctx => {
-            ctx.res.write(JSON.stringify(ctx.req.body));
-            ctx.res.status(200).end();
-          });
-
-          g.listen(3000, async app => {
-            const { data } = await post('http://0.0.0.0:3000', {
-              headers: {
-                'Content-Type': 'multipart/x-www-form-urlencoded',
-              },
-              body: 'x=y',
-            });
-
-            expect(data).to.eql('{"x":"y"}');
-            app.close();
-            done();
-          });
-        });
-
-        it('should parse multipart/form-data', done => {
-          g.mount(ctx => {
-            ctx.res.write(JSON.stringify(ctx.req.body));
-            ctx.res.status(200).end();
-          });
-
-          g.listen(3000, async app => {
-            const payload = new FormData();
-            payload.append('foo', 'bar');
-
-            const { data } = await post('http://0.0.0.0:3000', {
-              headers: payload.getHeaders(),
-              body: payload.getBuffer(),
-            });
-
-            expect(data).to.eql('{"foo":"bar"}');
-            app.close();
-            done();
-          });
-        });
-
-        it('should parse application/json', done => {
-          g.mount(ctx => {
-            ctx.res.write(JSON.stringify(ctx.req.body));
-            ctx.res.status(200).end();
-          });
-
-          g.listen(3000, async app => {
-            const { data } = await post('http://0.0.0.0:3000', {
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: '{"a":"b"}',
-            });
-
-            expect(data).to.eql('{"a":"b"}');
-            app.close();
-            done();
-          });
-        });
-
-        it('should handle mount-points', done => {
-          g.mount('/ko', ctx => {
-            ctx.res.write('OK');
-            ctx.res.status(200).end();
-          });
-
-          g.mount(ctx => {
-            ctx.res.write('):');
-            ctx.res.status(200).end();
-          });
-
-          g.listen(3000, async app => {
-            const { data: a } = await get('http://0.0.0.0:3000/ko');
-            const { data: b } = await get('http://0.0.0.0:3000/x');
-
-            expect(a).to.eql('OK');
-            expect(b).to.eql('):');
-            app.close();
-            done();
-          });
-        });
-
-        it('should handle web-sockets', done => {
-          const evts = [];
-
-          g.on('open', ws => {
-            ws.on('message', x => evts.push(x));
-            ws.send('STUFF');
-          });
-
-          g.listen(3000, async app => {
-            const ws = new WebSocket('ws://0.0.0.0:3000');
-
-            ws.on('open', () => {
-              ws.send(JSON.stringify({ foo: 42 }));
-            });
-            ws.on('message', data => {
-              evts.push(data);
-              setTimeout(() => ws.terminate(), 100);
-            });
-
-            ws.on('close', () => evts.push('close'));
-
-            setTimeout(() => {
-              expect(evts).to.eql(['STUFF', '{"foo":42}', 'close']);
-              expect(g.clients()).to.eql([]);
-              app.close();
-              done();
-            }, 200);
-          });
-        });
-
-        it('should fire startup events', done => {
-          const ev = td.func('callback');
-
-          g.on('done', ev);
-          g.on('ready', ev);
-          g.on('listen', ev);
-          g.listen(3000, app => {
-            expect(td.explain(ev).callCount).to.eql(3);
-            app.close();
-            done();
-          });
+          app.close();
+          done();
         });
       });
-    }
+
+      it('should responds with 200 if ctx.res.status() is called', done => {
+        g.mount(ctx => ctx.res.status(200).end());
+        g.listen(3000, async app => {
+          const { statusCode } = await get('http://0.0.0.0:3000');
+
+          expect(statusCode).to.eql(200);
+          app.close();
+          done();
+        });
+      });
+
+      it('should parse multipart/x-www-form-urlencoded', done => {
+        g.mount(ctx => {
+          ctx.res.write(JSON.stringify(ctx.req.body));
+          ctx.res.status(200).end();
+        });
+
+        g.listen(3000, async app => {
+          const { data } = await post('http://0.0.0.0:3000', {
+            headers: {
+              'Content-Type': 'multipart/x-www-form-urlencoded',
+            },
+            body: 'x=y',
+          });
+
+          expect(data).to.eql('{"x":"y"}');
+          app.close();
+          done();
+        });
+      });
+
+      it('should parse multipart/form-data', done => {
+        g.mount(ctx => {
+          ctx.res.write(JSON.stringify(ctx.req.body));
+          ctx.res.status(200).end();
+        });
+
+        g.listen(3000, async app => {
+          const payload = new FormData();
+          payload.append('foo', 'bar');
+
+          const { data } = await post('http://0.0.0.0:3000', {
+            headers: payload.getHeaders(),
+            body: payload.getBuffer(),
+          });
+
+          expect(data).to.eql('{"foo":"bar"}');
+          app.close();
+          done();
+        });
+      });
+
+      it('should parse application/json', done => {
+        g.mount(ctx => {
+          ctx.res.write(JSON.stringify(ctx.req.body));
+          ctx.res.status(200).end();
+        });
+
+        g.listen(3000, async app => {
+          const { data } = await post('http://0.0.0.0:3000', {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: '{"a":"b"}',
+          });
+
+          expect(data).to.eql('{"a":"b"}');
+          app.close();
+          done();
+        });
+      });
+
+      it('should handle mount-points', done => {
+        g.mount('/ko', ctx => {
+          ctx.res.write('OK');
+          ctx.res.status(200).end();
+        });
+
+        g.mount(ctx => {
+          ctx.res.write('):');
+          ctx.res.status(200).end();
+        });
+
+        g.listen(3000, async app => {
+          const { data: a } = await get('http://0.0.0.0:3000/ko');
+          const { data: b } = await get('http://0.0.0.0:3000/x');
+
+          expect(a).to.eql('OK');
+          expect(b).to.eql('):');
+          app.close();
+          done();
+        });
+      });
+
+      it('should handle web-sockets', done => {
+        const evts = [];
+
+        g.on('open', ws => {
+          ws.on('message', x => evts.push(x));
+          ws.send('STUFF');
+        });
+
+        g.listen(3000, async app => {
+          const ws = new WebSocket('ws://0.0.0.0:3000');
+
+          ws.on('open', () => {
+            ws.send(JSON.stringify({ foo: 42 }));
+          });
+          ws.on('message', data => {
+            evts.push(data);
+            setTimeout(() => ws.terminate(), 100);
+          });
+
+          ws.on('close', () => evts.push('close'));
+
+          setTimeout(() => {
+            expect(evts).to.eql(['STUFF', '{"foo":42}', 'close']);
+            expect(g.clients()).to.eql([]);
+            app.close();
+            done();
+          }, 200);
+        });
+      });
+
+      it('should fire startup events', done => {
+        const ev = td.func('callback');
+
+        g.on('done', ev);
+        g.on('ready', ev);
+        g.on('listen', ev);
+        g.listen(3000, app => {
+          expect(td.explain(ev).callCount).to.eql(3);
+          app.close();
+          done();
+        });
+      });
+    });
 
     describe('HTTP(s)', () => {
       beforeEach(() => {
-        process.env.U_WEBSOCKETS_SKIP = 'true';
-        g = Grown.new({ body: true });
+        g = Grown.new();
       });
 
-      afterEach(() => {
-        process.env.U_WEBSOCKETS_SKIP = '';
-      });
-
-      it('should fallback to nodejs modules if U_WEBSOCKETS_SKIP is set', done => {
+      it('should fallback to nodejs modules if uws is not enabled', done => {
         g.mount(ctx => {
           ctx.res.write(JSON.stringify(ctx.req.body));
           ctx.res.status(200).end();
