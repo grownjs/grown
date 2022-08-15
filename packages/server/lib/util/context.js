@@ -35,7 +35,7 @@ function buildSettings(data) {
     try {
       value = this._.getProp(data, key, defvalue);
 
-      if (typeof value === 'function') {
+      if (typeof value === 'function' && !value.length) {
         value = value(data);
       }
     } catch (e) {
