@@ -198,14 +198,6 @@ function _grownFactory($, util, options) {
     return scope._middleware.new(request);
   };
 
-  function bodyFailure(err, kind) {
-    if (err) {
-      err.message = `Error decoding input (${kind})\n${err.message}`;
-      scope._events.emit('failure', err, scope._options);
-    }
-    return err;
-  }
-
   return {
     init() {
       util.mergeMethodsInto.call(this, this, scope._events);
@@ -232,30 +224,6 @@ function _grownFactory($, util, options) {
         if (options.https && https.call({ req, res })) return;
         next();
       });
-
-      if (!options.uws) {
-        const urlencoded = require('body-parser').urlencoded({ extended: true });
-        const json = require('body-parser').json({ limit: scope._options('json', '5MB') });
-        const raw = require('body-parser').raw({ inflate: true, type: () => true });
-
-        _mount.call(scope, (req, res, next) => {
-          if (!process.headless && !scope._uploads && !req._body && !req.body) {
-            const type = req.headers['content-type'] || '';
-
-            if (type.includes('multipart')) {
-              next(new Error('Missing Grown.Upload'));
-            } else if (type.includes('json')) {
-              json(req, res, err => next(bodyFailure(err, 'JSON')));
-            } else if (type.includes('url')) {
-              urlencoded(req, res, err => next(bodyFailure(err, 'URL')));
-            } else {
-              raw(req, res, err => next(bodyFailure(err, 'RAW')));
-            }
-          } else {
-            next();
-          }
-        });
-      }
     },
     methods: {
       run(request, callback) {

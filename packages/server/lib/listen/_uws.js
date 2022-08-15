@@ -115,7 +115,7 @@ function ServerRequest(req, res) {
   this._writableState.objectMode = true;
   this._readableState.objectMode = false;
 
-  this.body = {};
+  this.body = null;
   this.url = req.getUrl() || '/';
   this.query = qs.parse(req.getQuery());
   this.method = req.getMethod().toUpperCase();
@@ -238,6 +238,8 @@ ServerResponse.prototype.removeHeader = function removeHeader(name) {
 };
 
 module.exports = function _uws(ctx, options, callback, protocolName) {
+  const parseConfig = this._options('parse', null);
+
   let app;
   if (protocolName === 'https') {
     app = uWS.SSLApp(options.https);
@@ -283,10 +285,9 @@ module.exports = function _uws(ctx, options, callback, protocolName) {
       const _resp = new ServerResponse(_req, res);
 
       const next = (data, cb, f) => {
-        if (data instanceof Buffer) data = data.toString('utf8');
-        if (typeof data === 'string' && data.length) {
+        if (data && data.length) {
           try {
-            _req.body = cb(data);
+            _req.body = typeof cb === 'function' ? cb(data.toString('utf8')) : data;
           } catch (e) {
             e.message = `Error decoding input${f ? ` (${f})` : ''}\n${e.message}`;
             this._events.emit('failure', e, this._options);
@@ -297,23 +298,29 @@ module.exports = function _uws(ctx, options, callback, protocolName) {
         $host.call(this, ctx.location, _req, _resp);
       };
 
-      const type = req.getHeader('content-type');
+      let type = req.getHeader('content-type') || '';
+      if (parseConfig instanceof RegExp) type = parseConfig.test(_req.url) ? type : '';
+      if (typeof parseConfig === 'function') type = parseConfig(_req) ? type : '';
 
       setStream(_req, next);
       if (this._uploads) {
         prepBody(_req, res, next);
-      } else if (type.includes('/json')) {
-        readBody(_req, res, data => next(data, JSON.parse, 'JSON.parse'));
-      } else if (type.includes('/x-www-form-urlencoded')) {
-        readBody(_req, res, data => next(data, qs.parse, 'qs.parse'));
-      } else if (type.includes('/form-data')) {
-        readBody(_req, res, data => {
-          _req.body = convertFrom(uWS.getParts(data, type));
-          _req._body = true;
-          next();
-        });
+      } else if (parseConfig !== false) {
+        if (type.includes('/json')) {
+          readBody(_req, res, data => next(data, JSON.parse, 'JSON.parse'));
+        } else if (type.includes('/x-www-form-urlencoded')) {
+          readBody(_req, res, data => next(data, qs.parse, 'qs.parse'));
+        } else if (type.includes('/form-data')) {
+          readBody(_req, res, data => {
+            _req.body = convertFrom(uWS.getParts(data, type));
+            _req._body = true;
+            next();
+          });
+        } else {
+          readBody(_req, res, next);
+        }
       } else {
-        prepBody(_req, res, next);
+        next();
       }
     });
 
