@@ -54,9 +54,7 @@ module.exports = function $host(_location, req, res) {
   });
 
   Promise.resolve()
-    .then(() => {
-      this._events.emit('request', conn, this._options);
-    })
+    .then(() => this._events.emit('request', conn, this._options))
     .then(() => this._callback(conn, this._options))
     .catch(e => {
       this._events.emit('failure', e, this._options);
