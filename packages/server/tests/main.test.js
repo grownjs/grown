@@ -288,6 +288,47 @@ describe('Grown.Server', () => {
           done();
         });
       });
+
+      it('should handle raw-body', done => {
+        g.mount(ctx => {
+          ctx.res.write(ctx.req.body);
+          ctx.res.status(200).end();
+        });
+
+        g.listen(3000, async app => {
+          const { data } = await post('http://0.0.0.0:3000', {
+            body: '{"x":"y"}',
+          });
+
+          expect(data).to.eql('{"x":"y"}');
+          app.close();
+          done();
+        });
+      });
+
+      it('should handle errors', done => {
+        let error;
+        g.on('failure', err => {
+          error = err;
+        });
+
+        g.listen(3000, async app => {
+          try {
+            await post('http://0.0.0.0:3000', {
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: 'OSOM',
+            });
+          } catch (e) {
+            // skip
+          }
+
+          expect(error.message).to.contain('Error decoding input (JSON.parse)');
+          app.close();
+          done();
+        });
+      });
     });
 
     describe('HTTP(s)', () => {
