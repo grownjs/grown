@@ -18,6 +18,28 @@ describe('Grown.Server', () => {
     Grown.use(require('../../test'));
   });
 
+  it('can receive options', () => {
+    g = Grown.new({
+      foo: 'bar',
+      baz: ({ buzz }) => buzz,
+      bazzinga: () => process.env.BIZ,
+    });
+    g.plug(Grown.Test);
+
+    let opts;
+    g.mount(conn => {
+      opts = [
+        conn.config('foo'),
+        conn.config('baz')({ buzz: 'OK' }),
+        conn.config('bazzinga', -1),
+      ];
+    });
+
+    return g.request(() => {
+      expect(opts).to.eql(['bar', 'OK', -1]);
+    });
+  });
+
   describe('Integration tests', () => {
     beforeEach(() => {
       g = Grown.new();
