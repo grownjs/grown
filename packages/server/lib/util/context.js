@@ -114,7 +114,7 @@ function buildPubsub() {
 
       function $once() {
         try {
-          cb.apply(null, arguments);
+          return cb.apply(null, arguments);
         } finally {
           ee(e).splice(k, 1);
         }
@@ -126,11 +126,7 @@ function buildPubsub() {
     },
 
     emit(e, ...args) {
-      ee(e, true).forEach(fn => {
-        fn.apply(null, args);
-      });
-
-      return this;
+      return Promise.all(ee(e, true).map(fn => fn.apply(null, args)));
     },
   };
 }

@@ -46,6 +46,23 @@ describe('Grown.Server', () => {
         });
       });
 
+      it('should trigger the request-event', () => {
+        g.once('request', conn => {
+          conn.value = -1;
+          return new Promise(ok => {
+            setTimeout(() => {
+              conn.value = 42;
+              ok();
+            }, 100);
+          });
+        });
+
+        return g.request((err, conn) => {
+          conn.res.ok(err);
+          expect(conn.value).to.eql(42);
+        });
+      });
+
       it('should normalize the request body', () => {
         const opts = {
           body: '"OSOM"',
