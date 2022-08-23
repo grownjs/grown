@@ -2,6 +2,8 @@
 
 /* istanbul ignore file */
 
+const path = require('path');
+
 const USAGE_INFO = `
 
   Tasks for database management
@@ -33,7 +35,7 @@ const USAGE_INFO = `
 
 module.exports = {
   description: USAGE_INFO,
-  callback(Grown) {
+  callback(Grown, util) {
     const [main, use] = Grown.argv._;
 
     /* istanbul ignore else */
@@ -41,58 +43,59 @@ module.exports = {
       throw new Error(`Missing PATH to load, given '${use || ''}'`);
     }
 
-    const path = require('path');
+    return util.load(path.resolve(Grown.cwd, use))
+      .then(extension => {
+        const Models = Grown.use(extension.default);
 
-    const Models = Grown.use(require(path.resolve(Grown.cwd, use)));
-
-    if (!(Grown.Model && Grown.Model.CLI)) {
-      throw new Error('Missing Grown.Model.CLI');
-    }
-
-    const DB = Object.assign(Models, { close: Models.disconnect });
-    const cmd = main || 'migrate';
-
-    let _error;
-
-    function run(cb) {
-      if (cmd === 'migrate' || cmd === 'backup') {
-        return cb(DB);
-      }
-    }
-
-    function fail(e) {
-      Grown.Logger.getLogger()
-        .printf('\r{% error. %s %}\n', (Grown.argv.flags.verbose && e.stack) || e.message);
-    }
-
-    return Promise.resolve()
-      .then(() => run(x => x.connect()))
-      .then(() => {
-        if (cmd === 'migrate' || cmd === 'backup') {
-          // discard cmd and use args!
-          Grown.argv._ = Grown.argv._.slice(2);
-
-          return run(x => Grown.Model.CLI.execute(x, cmd, Grown.argv));
+        if (!(Grown.Model && Grown.Model.CLI)) {
+          throw new Error('Missing Grown.Model.CLI');
         }
 
-        Grown.Logger.getLogger()
-          .printf('\r{% error. Unknown %s action, add --help for usage info %}\n', cmd);
+        const DB = Object.assign(Models, { close: Models.disconnect });
+        const cmd = main || 'migrate';
 
-        process.exit(1);
-      })
-      .catch(e => {
-        fail(e);
-        _error = true;
-      })
-      .then(() => run(x => x.close()))
-      .catch(e => {
-        fail(e);
-        _error = true;
-      })
-      .then(() => {
-        if (_error) {
-          process.exit(1);
+        let _error;
+
+        function run(cb) {
+          if (cmd === 'migrate' || cmd === 'backup') {
+            return cb(DB);
+          }
         }
+
+        function fail(e) {
+          Grown.Logger.getLogger()
+            .printf('\r{% error. %s %}\n', (Grown.argv.flags.verbose && e.stack) || e.message);
+        }
+
+        return Promise.resolve()
+          .then(() => run(x => x.connect()))
+          .then(() => {
+            if (cmd === 'migrate' || cmd === 'backup') {
+              // discard cmd and use args!
+              Grown.argv._ = Grown.argv._.slice(2);
+
+              return run(x => Grown.Model.CLI.execute(x, cmd, Grown.argv));
+            }
+
+            Grown.Logger.getLogger()
+              .printf('\r{% error. Unknown %s action, add --help for usage info %}\n', cmd);
+
+            process.exit(1);
+          })
+          .catch(e => {
+            fail(e);
+            _error = true;
+          })
+          .then(() => run(x => x.close()))
+          .catch(e => {
+            fail(e);
+            _error = true;
+          })
+          .then(() => {
+            if (_error) {
+              process.exit(1);
+            }
+          });
       });
   },
 };

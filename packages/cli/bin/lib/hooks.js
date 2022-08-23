@@ -4,13 +4,13 @@ module.exports = (Grown, util) => ({
   import: {
     description: 'Import symbols into the context, e.g. `.import lib/helpers`',
     callback(ctx) {
-      require('./imports')(Grown, util, ctx);
+      return require('./imports')(Grown, util, ctx);
     },
   },
   models: {
     description: 'Load your database, e.g. `.models path/to/models`',
-    callback(ctx) {
-      const Models = require('./models')(Grown, util, ctx);
+    async callback(ctx) {
+      const Models = await require('./models')(Grown, util, ctx);
 
       return Models.connect()
         .then(() => {

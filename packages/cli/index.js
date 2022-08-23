@@ -38,27 +38,30 @@ module.exports = (Grown, util) => {
   const appPkg = (fs.existsSync(mainPkg) && require(mainPkg)) || {};
   const baseDir = path.resolve(Grown.cwd, path.dirname(appPkg.main || mainPkg));
 
-  function _findAvailableTasks() {
+  // ASYNC
+  async function _findAvailableTasks() {
     /* istanbul ignore else */
     if (!this._start) {
       const taskDirs = util.flattenArgs(this.task_folders || path.join(baseDir, 'tasks'));
       const taskFiles = this._collectTasks(taskDirs, path.join(__dirname, 'bin/tasks'));
 
-      util.extendValues(this._tasks, taskFiles);
-
-      Object.keys(taskFiles).forEach(task => {
-        const fn = require(taskFiles[task]).configure;
-
-        /* istanbul ignore else */
-        if (typeof fn === 'function') fn(Grown);
-
-        for (let i = 1; i <= task.length; i += 1) {
-          /* istanbul ignore else */
-          if (!this._alias[task.substr(0, i)]) this._alias[task.substr(0, i)] = task;
-        }
-      });
-
       this._start = new Date();
+
+      return Promise.all(Object.entries(taskFiles)
+        .map(([task, filepath]) => util.load(filepath)
+          .then(extension => {
+            this._tasks[task] = { filepath, module: extension.default };
+
+            const fn = this._tasks[task].module.configure;
+
+            /* istanbul ignore else */
+            if (typeof fn === 'function') fn(Grown, util);
+
+            for (let i = 1; i <= task.length; i += 1) {
+              /* istanbul ignore else */
+              if (!this._alias[task.substr(0, i)]) this._alias[task.substr(0, i)] = task;
+            }
+          })));
     }
   }
 
@@ -155,7 +158,7 @@ module.exports = (Grown, util) => {
 
         return x;
       }).forEach(x => {
-        const task = require(this._tasks[x]);
+        const task = this._tasks[x].module;
         const desc = (task.description || '').trim().split('\n')[0];
         const pad = new Array((maxLength + 1) - x.length).join(' ');
 
@@ -171,7 +174,7 @@ module.exports = (Grown, util) => {
         throw new Error(`Unknown '${taskName}' task${alias ? `, did you mean '${alias}'?` : ''}`);
       }
 
-      let usageInfo = require(this._tasks[taskName]).description;
+      let usageInfo = this._tasks[taskName].module.description;
       usageInfo = usageInfo.replace(/{bin}/g, this.command_name || 'grown');
 
       /* istanbul ignore else */
@@ -404,9 +407,8 @@ module.exports = (Grown, util) => {
       }
 
       return Promise.resolve()
+        .then(() => this._findAvailableTasks())
         .then(() => {
-          this._findAvailableTasks();
-
           taskName = this._alias[taskName] || taskName;
 
           const promise = Grown.CLI._showTasks(taskName);
@@ -429,9 +431,8 @@ module.exports = (Grown, util) => {
 
     run(taskName) {
       return Promise.resolve()
+        .then(() => this._findAvailableTasks())
         .then(() => {
-          this._findAvailableTasks();
-
           taskName = this._alias[taskName] || taskName;
 
           /* istanbul ignore else */
@@ -441,7 +442,7 @@ module.exports = (Grown, util) => {
 
           this._task = taskName;
 
-          const task = require(this._tasks[taskName]);
+          const task = this._tasks[taskName].module;
 
           /* istanbul ignore else */
           if (this.command_line) {
@@ -451,7 +452,7 @@ module.exports = (Grown, util) => {
           return task.callback(Grown, util);
         })
         .catch(e => {
-          _onError(e, taskName);
+          this._onError(e, taskName);
         });
     },
   });

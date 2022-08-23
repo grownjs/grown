@@ -53,8 +53,8 @@ const START_TASK = `
 
 module.exports = {
   description: USAGE_INFO,
-  configure(Grown) {
-    Grown.CLI.define('server:exec', EXEC_TASK, ({ util }) => {
+  configure(Grown, util) {
+    Grown.CLI.define('server:exec', EXEC_TASK, () => {
       const load = util.flattenArgs(Grown.argv.flags.load).filter(Boolean);
       const run = Grown.argv._.slice(2);
 
@@ -64,15 +64,13 @@ module.exports = {
       }
 
       function locate(mod) {
-        return require(fs.existsSync(mod) ? path.resolve(mod) : mod);
+        return util.load(fs.existsSync(mod) ? path.resolve(mod) : mod);
       }
 
-      load.forEach(src => {
-        Grown.use(locate(src));
-      });
-
       return Promise.resolve()
-        .then(() => run.reduce((prev, task) => prev.then(() => locate(task)(Grown, util)), Promise.resolve()))
+        .then(() => Promise.all(load.map(locate)))
+        .then(exts => exts.forEach(extension => Grown.use(extension.default)))
+        .then(() => run.reduce((prev, task) => prev.then(() => locate(task).then(fn => fn.default(Grown, util))), Promise.resolve()))
         .catch(e => {
           Grown.Logger.getLogger()
             .printf('\r{% error. %s %}\n', (Grown.argv.flags.verbose && e.stack) || e.message);
@@ -107,17 +105,9 @@ module.exports = {
       server.listen(`${_protocol}://${process.env.HOST || '0.0.0.0'}:${process.env.PORT || 8080}`);
     });
   },
-  callback(Grown, util) {
-    const serverFile = path.resolve(Grown.cwd, process.main || Grown.argv.flags.app || 'app.js');
-
-    let serverFactory;
-    try {
-      serverFactory = require(serverFile);
-    } catch (e) {
-      throw new Error(`${e.message} in '${path.relative('.', serverFile)}'`);
-    }
-
-    const server = typeof serverFactory === 'function' ? serverFactory() : serverFactory;
+  async callback(Grown, util) {
+    const serverFactory = await util.load(path.resolve(Grown.cwd, process.main || Grown.argv.flags.app || 'app.js'));
+    const server = typeof serverFactory.default === 'function' ? serverFactory.default() : serverFactory.default;
     const tasks = Grown.CLI.subtasks('server');
 
     /* istanbul ignore else */

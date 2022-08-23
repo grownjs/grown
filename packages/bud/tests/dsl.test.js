@@ -109,6 +109,19 @@ describe('Grown (bud)', () => {
     });
   });
 
+  describe('modules', () => {
+    it('should be able to load ESM modules', () => {
+      let mod;
+      Grown.use((_, util) => {
+        mod = util.load(`${__dirname}/fixtures/mod.mjs`);
+      });
+
+      return mod.then(ext => {
+        expect(ext.truth).to.eql(42);
+      });
+    });
+  });
+
   describe('callable()', () => {
     it('can access its module definition', () => {
       expect(Grown.Dummy).to.be.undefined;

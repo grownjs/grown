@@ -34,9 +34,9 @@
   "devDependencies": {
     "@grown/model": "^0.0.47",
     "@grown/test": "^0.0.17",
-    "eslint": "^7.9.0",
-    "eslint-config-airbnb-base": "^14.2.0",
-    "eslint-plugin-import": "^2.14.0",
+    "eslint": "^7.27.0",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-plugin-import": "^2.18.2",
     "eslint-plugin-pug": "^1.2.3",
     "lerna": "^4.0.0",
     "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.10.0"

@@ -4,6 +4,7 @@ const util = require('util');
 const wargs = require('wargs');
 const $new = require('object-new');
 
+const _importer = require('./loader');
 const objectUtil = require('./object');
 const processUtil = require('./process');
 const helpersUtil = require('./helpers');
@@ -20,6 +21,7 @@ util._extend(module.exports, processUtil);
 util._extend(module.exports, helpersUtil);
 
 // common utils
+module.exports.load = _importer;
 module.exports.extend = util._extend;
 module.exports.inspect = util.inspect;
 module.exports.argvParser = wargs;
