@@ -177,6 +177,19 @@ describe('Grown (bud)', () => {
     });
   });
 
+  describe('#main', () => {
+    it('should help to invoke scripts through', () => {
+      const fn = td.func('callback');
+
+      Grown.main(require.main, fn);
+
+      process.argv[1] = __filename;
+      Grown.main({ url: `file://${__filename}` }, fn);
+
+      expect(td.explain(fn).callCount).to.eql(2);
+    });
+  });
+
   describe('#load', () => {
     it('can load definitions from given directories', () => {
       expect(Grown.load(path.join(__dirname, 'fixtures')).Example.truth).to.eql(42);

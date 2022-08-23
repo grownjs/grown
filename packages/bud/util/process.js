@@ -1,6 +1,7 @@
 'use strict';
 
 const vm = require('vm');
+const url = require('url');
 const cleanStack = require('clean-stack');
 
 const RE_ERR_MESSAGE = /.*Error:.+?\n/;
@@ -177,9 +178,20 @@ function wrap(callback) {
   };
 }
 
+function run(meta, fn) {
+  if (require.main === meta) fn();
+  if (meta && typeof meta.url === 'string') {
+    if (
+      meta.url.startsWith('file:')
+      && require.resolve(process.argv[1]) === url.fileURLToPath(meta.url)
+    ) fn();
+  }
+}
+
 module.exports = {
   clearModules,
   cleanError,
   invoke,
   wrap,
+  run,
 };
