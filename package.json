@@ -1,6 +1,6 @@
 {
   "name": "grown",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "homepage": "https://grown.jamrock.dev",
   "description": "Experimental DSL for web-apps",
   "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
@@ -42,9 +42,9 @@
     "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.10.0"
   },
   "dependencies": {
-    "@grown/bud": "^0.0.52",
-    "@grown/cli": "^0.0.71",
-    "@grown/server": "^0.0.75",
+    "@grown/bud": "^0.0.53",
+    "@grown/cli": "^0.0.72",
+    "@grown/server": "^0.0.76",
     "type-fest": "^1.3.0"
   }
 }
