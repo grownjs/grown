@@ -4,8 +4,20 @@ const path = require('path');
 
 module.exports = (Grown, util) => {
   const JSONSchemaSequelizer = require('json-schema-sequelizer');
+  const { highlight } = require('sql-highlight');
 
   const _registry = Object.create(null);
+
+  function _logging(msg) {
+    if (msg.includes(':')) {
+      const prefix = msg.substr(0, msg.indexOf(':') + 1);
+      const query = msg.substr(msg.indexOf(':') + 2);
+
+      console.debug(`\x1b[1;30m${prefix} ${highlight(query)}`);
+    } else {
+      console.debug(msg);
+    }
+  }
 
   function _decorate(source, target, _schema) {
     /* istanbul ignore else */
@@ -80,6 +92,7 @@ module.exports = (Grown, util) => {
   }
 
   return Grown('Model.DB', {
+    _logging,
     _registry,
     _decorate,
 
@@ -95,6 +108,12 @@ module.exports = (Grown, util) => {
 
         if (!params.config.identifier) {
           params.config.identifier = name;
+        }
+
+        params.config.environment = process.env.NODE_ENV || 'development';
+
+        if (params.config.logging !== false) {
+          params.config.logging = process.env.REMOVE_LOG === 'YES' ? false : this._logging;
         }
 
         const opts = (params.use_env_variable && process.env[params.use_env_variable]) || params.config;
