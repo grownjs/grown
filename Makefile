@@ -51,13 +51,13 @@ publish:
 
 release: install test-ci
 	@rm -f packages/*/package-lock.json package-lock.json
-	@npx lerna publish || true
+	@lerna publish || true
 
 install:
 	@(((which lerna) > /dev/null 2>&1) || npm i -g lerna) || true
 
 setup: install
-	@npx lerna bootstrap --no-ci -- --no-package-lock --no-audit
+	@lerna bootstrap --no-ci -- --no-package-lock --no-audit
 
 web\:%:
 	@make -C website $*
@@ -66,11 +66,11 @@ dev\:%:
 	@cd packages/$(subst dev:,,$*) && npm run dev
 
 test\:%:
-	@npx lerna run $(TASK) --scope @grown/$*
+	@lerna run $(TASK) --scope @grown/$*
 
 clean:
-	@npx lerna clean -y --scope grown
-	@npx lerna clean -y --ignore grown
+	@lerna clean -y --scope grown
+	@lerna clean -y --ignore grown
 	@sh -c 'rm -f packages/*/package-lock.json'
 
 check:
