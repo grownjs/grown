@@ -7,6 +7,14 @@ const fs = require('fs');
 
 module.exports = Grown => {
   function _fixRequest(url, method, options) {
+    if (method && method.charAt() === '/') {
+      ([url, method] = [method, url]);
+    }
+
+    if (url && url.includes(' ')) {
+      ([method, url] = url.split(' '));
+    }
+
     options = options || {};
     options.url = url || options.url || '/';
     options.method = (method || options.method || 'get').toUpperCase();
