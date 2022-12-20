@@ -31,7 +31,6 @@ describe('Grown.GRPC', () => {
   const validProtobuf = path.join(__dirname, 'fixtures/index.proto');
 
   let gateway;
-
   afterEach(() => {
     if (gateway) gateway.stop();
   });

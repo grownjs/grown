@@ -12,7 +12,7 @@ Grown.use(require('..'));
 describe('Grown.Logger', () => {
   let buffer;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     buffer = [];
     Grown.Logger.setLogger({
       write: x => buffer.push(x),

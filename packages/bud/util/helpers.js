@@ -33,45 +33,45 @@ function findFile(src, paths, throws) {
 }
 
 function scanDir(src, callback) {
-  return callback((ctx, hooks) => {
+  return callback(async (ctx, hooks) => {
     const repo = new Resolver(ctx || null, src, hooks);
 
-    Object.keys(repo.values).forEach(key => {
-      /* istanbul ignore else */
-      if (typeof repo.values[key] !== 'symbol') {
-        $new.readOnlyProperty(repo, key, () => repo.get(key));
-      }
+    return repo.resolve(() => {
+      Object.keys(repo.values).forEach(key => {
+        /* istanbul ignore else */
+        if (typeof repo.values[key] !== 'symbol') {
+          $new.readOnlyProperty(repo, key, () => repo.get(key));
+        }
+      });
     });
-
-    return repo;
   });
 }
 
 function define(ctx, name, subDir, options) {
-  const repo = ctx.load(subDir);
+  return ctx.load(subDir).then(repo => {
+    ctx.defn(name, () => repo);
 
-  ctx.defn(name, () => repo);
+    Object.defineProperty(repo, 'typedefs', {
+      get() {
+        const key = name.replace(/s$/, '');
+        const types = repo.typesOf({ declaration: `${key}:${key}` });
+        const models = types.filter(x => x.type);
 
-  Object.defineProperty(repo, 'typedefs', {
-    get() {
-      const key = name.replace(/s$/, '');
-      const types = repo.typesOf({ declaration: `${key}:${key}` });
-      const models = types.filter(x => x.type);
+        return types.map(x => x.chunk)
+          .concat(`/**\nFound modules from \`${path.relative('.', subDir)}\`\n*/`)
+          .concat(`export default interface ${name} {${
+            models.map(x => `\n  ${x.type}: ${x.type}${key};`).join('')
+          }\n}`)
+          .join('\n');
+      },
+    });
 
-      return types.map(x => x.chunk)
-        .concat(`/**\nFound modules from \`${path.relative('.', subDir)}\`\n*/`)
-        .concat(`export default interface ${name} {${
-          models.map(x => `\n  ${x.type}: ${x.type}${key};`).join('')
-        }\n}`)
-        .join('\n');
-    },
+    Object.keys(options || {}).forEach(k => {
+      $new.readOnlyProperty(repo, k, () => options[k]);
+    });
+
+    return repo;
   });
-
-  Object.keys(options || {}).forEach(k => {
-    $new.readOnlyProperty(repo, k, () => options[k]);
-  });
-
-  return repo;
 }
 
 function chain(ctx, middleware) {

@@ -1,5 +1,6 @@
-module.exports = filepath => {
-  return import(filepath).catch(e => {
-    throw new Error(`Cannot load ${filepath}\n${e.message}`);
-  });
+module.exports = async filepath => {
+  let mod = await import(filepath);
+  mod = mod.__esModule ? mod.default : mod;
+  mod = mod.default || mod
+  return mod;
 };

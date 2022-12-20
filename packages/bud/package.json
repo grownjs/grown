@@ -29,8 +29,8 @@
     "dotenv": "^6.2.0",
     "global-or-local": "^0.1.7",
     "is-docker": "^2.2.1",
-    "object-new": "^0.4.1",
-    "sastre": "^0.2.22",
+    "object-new": "^0.4.2",
+    "sastre": "^0.3.2",
     "source-map-support": "^0.5.3",
     "wargs": "^0.9.6"
   },

@@ -11,14 +11,10 @@ module.exports = (Grown, util, ctx) => {
   }
 
   return util.load(path.resolve(Grown.cwd, use))
-    .then(extension => {
-      let container = extension.default;
-      if (typeof container === 'function') {
-        container = container(Grown, util);
-
-        if (container && container.extensions && container.name) {
-          container = { [container.name]: container };
-        }
+    .then(container => (typeof container === 'function' ? container(Grown, util) : container))
+    .then(container => {
+      if (container && container.extensions && container.name) {
+        container = { [container.name]: container };
       }
 
       if (!container || typeof container !== 'object' || Array.isArray(container)) {

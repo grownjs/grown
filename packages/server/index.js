@@ -295,9 +295,9 @@ function _grownFactory($, util, options) {
             }
           } catch (e) {
             if (p.class || p.name) {
-              throw new Error(`${p.class || p.name} definition failed\n${e.stack}`);
+              throw new Error(`${p.class || p.name} definition failed\n${e.message}`);
             } else {
-              throw new Error(`${e.stack}\nGiven '{${Object.keys(p).join(', ')}}'`);
+              throw new Error(`${e.message}\nGiven '{${Object.keys(p).join(', ')}}'`);
             }
           }
         });

@@ -10,7 +10,6 @@ Grown.use(require('..'));
 
 describe('Grown.Conn', () => {
   let server;
-
   beforeEach(() => {
     server = new Grown();
     server.plug(Grown.Conn);

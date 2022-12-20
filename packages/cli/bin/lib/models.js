@@ -10,6 +10,5 @@ module.exports = (Grown, util, ctx) => {
     throw new Error(`Missing models:PATH to load, given '${use || ''}'`);
   }
 
-  return util.load(path.resolve(Grown.cwd, use))
-    .then(extension => Grown.use(extension.default));
+  return Grown.use(util.load(path.resolve(Grown.cwd, use)));
 };

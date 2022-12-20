@@ -4,7 +4,15 @@ const td = require('testdouble');
 
 /* global beforeEach, describe, it */
 
+let Grown;
 describe('Grown.Model', () => {
+  beforeEach(() => {
+    Grown = require('../../bud')();
+    Grown.use(require('../../server'));
+    Grown.use(require('../../test'));
+    Grown.use(require('..'));
+  });
+
   const sqliteMemory = {
     logging: false,
     dialect: 'sqlite',
@@ -21,15 +29,6 @@ describe('Grown.Model', () => {
     },
     required: ['value'],
   };
-
-  let Grown;
-
-  beforeEach(() => {
-    Grown = require('../../bud')();
-    Grown.use(require('../../server'));
-    Grown.use(require('../../test'));
-    Grown.use(require('..'));
-  });
 
   describe('CLI', () => {
     it('should integrate json-schema-sequelizer CLI module', () => {
@@ -88,8 +87,8 @@ describe('Grown.Model', () => {
       };
 
       let container;
-      beforeEach(() => {
-        container = Grown.Model.DB.bundle({
+      beforeEach(async () => {
+        container = await Grown.Model.DB.bundle({
           models: `${__dirname}/fixtures/models`,
           database: {
             config: process.env.CI ? postgresConn : sqliteMemory,
@@ -125,7 +124,6 @@ describe('Grown.Model', () => {
 
   describe('Entity', () => {
     let Model;
-
     beforeEach(() => {
       Model = Grown.Model.Entity.define('X', { connection: sqliteMemory, $schema });
     });
@@ -142,12 +140,16 @@ describe('Grown.Model', () => {
         });
     });
 
-    it('should fail on invalid definitions, e.g. hooks', () => {
+    it('should fail on invalid definitions, e.g. hooks', async () => {
       const WithInvalidHooks = Model({ hooks: { undef() {} } });
 
-      return WithInvalidHooks.connect().catch(e => {
-        expect(e.stack).to.contains('getProxiedHooks');
-      });
+      let error;
+      try {
+        await WithInvalidHooks.connect();
+      } catch (e) {
+        error = e;
+      }
+      expect(error.stack).to.contains('getProxiedHooks');
     });
 
     it('should load hooks if present otherwise', () => {

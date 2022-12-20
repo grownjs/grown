@@ -43,10 +43,8 @@ module.exports = {
       throw new Error(`Missing PATH to load, given '${use || ''}'`);
     }
 
-    return util.load(path.resolve(Grown.cwd, use))
-      .then(extension => {
-        const Models = Grown.use(extension.default);
-
+    return Grown.use(util.load(path.resolve(Grown.cwd, use)))
+      .then(Models => {
         if (!(Grown.Model && Grown.Model.CLI)) {
           throw new Error('Missing Grown.Model.CLI');
         }

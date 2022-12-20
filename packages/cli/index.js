@@ -50,7 +50,7 @@ module.exports = (Grown, util) => {
       return Promise.all(Object.entries(taskFiles)
         .map(([task, filepath]) => util.load(filepath)
           .then(extension => {
-            this._tasks[task] = { filepath, module: extension.default };
+            this._tasks[task] = { filepath, module: extension };
 
             const fn = this._tasks[task].module.configure;
 

@@ -10,7 +10,6 @@ Grown.use(require('..'));
 
 describe('Grown.Access', () => {
   let server;
-
   beforeEach(() => {
     server = new Grown();
     server.mount(conn => conn.req.end());

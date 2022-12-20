@@ -18,7 +18,7 @@
     "test:unit": "npm run test:run tests/*.test.js --",
     "coverage": "nyc -s -x '**/tests/**' -x '**/*.test.js'",
     "models": "sastre tests/fixtures/models",
-    "types": "npm run models -- -ti../main models",
+    "types": "npm run models -- -ti../main.js models",
     "watch": "npm run models -- -w",
     "build": "npm run types && npm run models --",
     "pretest": "npm run schema && npm run build",
@@ -47,7 +47,7 @@
     "module-alias": "^2.2.2",
     "nyc": "^15.1.0",
     "pg": "^8.7.3",
-    "sastre": "^0.2.22",
+    "sastre": "^0.3.2",
     "sqlite3": "^5.0.8",
     "testdouble": "^3.16.1"
   },

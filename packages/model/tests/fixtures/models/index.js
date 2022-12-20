@@ -1,8 +1,8 @@
-require('../generated')(module.exports = Grown => {
-  Grown.use(require('../../..'));
+require('../generated')(module.exports = async (Grown, util) => {
+  require('../../..')(Grown, util);
 
   return Grown('Models', {
-    include: [
+    include: await Promise.all([
       Grown.Model.DB.bundle({
         types: `${Grown.cwd}/tests/fixtures/generated`,
         models: `${Grown.cwd}/tests/fixtures/models`,
@@ -15,6 +15,6 @@ require('../generated')(module.exports = Grown => {
           },
         },
       }),
-    ],
+    ]),
   });
 });

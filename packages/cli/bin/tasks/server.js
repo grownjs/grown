@@ -69,8 +69,8 @@ module.exports = {
 
       return Promise.resolve()
         .then(() => Promise.all(load.map(locate)))
-        .then(exts => exts.forEach(extension => Grown.use(extension.default)))
-        .then(() => run.reduce((prev, task) => prev.then(() => locate(task).then(fn => fn.default(Grown, util))), Promise.resolve()))
+        .then(exts => Promise.all(exts.map(extension => Grown.use(extension))))
+        .then(() => run.reduce((prev, task) => prev.then(() => locate(task).then(fn => fn(Grown, util))), Promise.resolve()))
         .catch(e => {
           Grown.Logger.getLogger()
             .printf('\r{% error. %s %}\n', (Grown.argv.flags.verbose && e.stack) || e.message);
@@ -107,7 +107,7 @@ module.exports = {
   },
   async callback(Grown, util) {
     const serverFactory = await util.load(path.resolve(Grown.cwd, process.main || Grown.argv.flags.app || 'app.js'));
-    const server = typeof serverFactory.default === 'function' ? serverFactory.default() : serverFactory.default;
+    const server = typeof serverFactory === 'function' ? await serverFactory() : serverFactory;
     const tasks = Grown.CLI.subtasks('server');
 
     /* istanbul ignore else */
@@ -138,6 +138,12 @@ module.exports = {
         if (Grown.argv.flags.delete && route.verb !== 'DELETE') return;
 
         found = true;
+
+        const mod = (route.lookup || '%Controller').replace('%', route.handler[0]);
+        const Ctrl = util.getProp(server.constructor, mod, new Error(`${mod} is not defined`));
+
+        if (typeof Ctrl[route.handler[1]] !== 'function') throw new Error(`${mod}.${route.handler[1]} is not a function`);
+
         Grown.Logger.getLogger().printf('\n%s %s  {%gray. (%s: %s) %}', `   ${route.verb}`.substr(-6), route.path, route.as, route.handler.join('#'));
       });
 
@@ -148,7 +154,6 @@ module.exports = {
     } else {
       Grown.Logger.getLogger().printf('\n  {%gray. # without routes %}');
     }
-
     Grown.Logger.getLogger().printf('\n');
   },
 };

@@ -91,7 +91,7 @@ describe('Grown (bud)', () => {
 
   describe('logger', () => {
     it('should fail on missing Logger module', () => {
-      Grown.use((_, util) => {
+      return Grown.use((_, util) => {
         expect(() => util.getLogger()).to.throw('Missing Grown.Logger');
       });
     });
@@ -103,16 +103,16 @@ describe('Grown (bud)', () => {
         },
       });
 
-      Grown.use((_, util) => {
+      return Grown.use((_, util) => {
         expect(util.getLogger()).to.eql(42);
       });
     });
   });
 
   describe('modules', () => {
-    it('should be able to load ESM modules', () => {
+    it('should be able to load ESM modules', async () => {
       let mod;
-      Grown.use((_, util) => {
+      await Grown.use((_, util) => {
         mod = util.load(`${__dirname}/fixtures/mod.mjs`);
       });
 
@@ -133,6 +133,13 @@ describe('Grown (bud)', () => {
       });
 
       expect(Grown.Dummy.new().value).to.eql(42);
+    });
+  });
+
+  describe('#ready', () => {
+    it('should wait until deferred modules are loaded', () => {
+      Grown.use(import('./fixtures/main.mjs'));
+      return Grown.ready(() => expect(Grown.Example.value).to.eql(42));
     });
   });
 
@@ -158,10 +165,11 @@ describe('Grown (bud)', () => {
   });
 
   describe('#def', () => {
-    it('should allow to load custom modules', () => {
+    it('should allow to load custom modules', async () => {
       const test = require('../index')();
 
-      test.def('foo', `${__dirname}/fixtures`, { truth: 42 });
+      await test.def('foo', `${__dirname}/fixtures`, { truth: 42 });
+
       expect(test.foo.truth).to.eql(42);
       expect(test.foo.Example.truth).to.eql(42);
       expect(test.foo.typedefs).to.contain('interface ExampleModule');
@@ -178,21 +186,21 @@ describe('Grown (bud)', () => {
   });
 
   describe('#main', () => {
-    it('should help to invoke scripts through', () => {
+    it('should help to invoke scripts through', async () => {
       const fn = td.func('callback');
 
-      Grown.main(require.main, fn);
+      await Grown.main(require.main, fn);
 
       process.argv[1] = __filename;
-      Grown.main({ url: `file://${__filename}` }, fn);
+      await Grown.main({ url: `file://${__filename}` }, fn);
 
       expect(td.explain(fn).callCount).to.eql(2);
     });
   });
 
   describe('#load', () => {
-    it('can load definitions from given directories', () => {
-      expect(Grown.load(path.join(__dirname, 'fixtures')).Example.truth).to.eql(42);
+    it('can load definitions from given directories', async () => {
+      expect((await Grown.load(path.join(__dirname, 'fixtures'))).Example.truth).to.eql(42);
     });
   });
 

@@ -125,7 +125,7 @@ module.exports = (Grown, util) => {
       return this;
     },
 
-    bundle(options) {
+    async bundle(options) {
       /* istanbul ignore else */
       if (!options || !options.database) {
         throw new TypeError(`Missing database, given '${JSON.stringify(options)}'`);
@@ -146,7 +146,7 @@ module.exports = (Grown, util) => {
       }
 
       // scan and load/define models
-      const $ = Grown.load(options.models, {
+      const $ = await Grown.load(options.models, {
         before: (_name, definition) => {
           if (!definition.$schema) {
             throw new TypeError(`Definition for ${_name}.$schema is missing, given '${JSON.stringify(definition, null, 2)}'`);

@@ -113,9 +113,13 @@ module.exports = (Grown, util) => {
         }
       });
 
+      let mod = this.routes;
+      mod = mod && mod.__esModule ? mod.default : mod;
+      mod = (mod && mod.default) || mod;
+
       /* istanbul ignore else */
-      if (typeof this.routes === 'function') {
-        this.routes(opts => _router.namespace('/', opts));
+      if (typeof mod === 'function') {
+        mod((opts, cb) => _router.namespace('/', opts, cb));
       }
 
       return {
