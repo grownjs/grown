@@ -148,10 +148,17 @@ module.exports = (Grown, util) => {
       // scan and load/define models
       const $ = await Grown.load(options.models, {
         before: (_name, definition) => {
+          /* istanbul ignore else */
+          if (typeof definition.$schema === 'string') {
+            definition.$schema = require(path.join(`${options.models}/${_name}`, definition.$schema));
+          }
+
+          /* istanbul ignore else */
           if (!definition.$schema) {
             throw new TypeError(`Definition for ${_name}.$schema is missing, given '${JSON.stringify(definition, null, 2)}'`);
           }
 
+          /* istanbul ignore else */
           if (definition.$schema.id !== _name) {
             throw new TypeError(`Given ${_name}.$schema.id should be '${_name}', given '${JSON.stringify(definition.$schema, null, 2)}'`);
           }
@@ -160,6 +167,7 @@ module.exports = (Grown, util) => {
           return DB[name].add(definition, true);
         },
         after: (_name, definition) => {
+          /* istanbul ignore else */
           if (DB[name].sequelize._resolved && DB[name].$refs[_name]) {
             return this._decorate(definition, DB[name].models[_name], _name);
           }
