@@ -18,6 +18,6 @@
   },
   "dependencies": {
     "debug": "^4.1.0",
-    "route-mappings": "^0.7.1"
+    "route-mappings": "^0.7.2"
   }
 }
