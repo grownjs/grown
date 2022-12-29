@@ -59,6 +59,7 @@ const DEF_GENERATOR = `
 
   Writes a module definition from the given methods
 
+  --esm    Optional. Ensure generated code as ESM, default is CommonJS
   --use    Optional. Declare a list of dependencies to inject
   --from   Optional. Declare a provider module to import its types
   --args   Optional. Declare the function arguments
@@ -94,10 +95,12 @@ module.exports = {
   description: USAGE_INFO,
   configure(Grown) {
     Grown.CLI.define('generate:model', MODEL_GENERATOR, ({ use, args, files }) => {
+      const mod = Grown.argv.flags.esm ? 'export default' : 'module.exports =';
+
       if (Grown.argv.flags.ts) {
-        files.push([`${use}/index.ts`, "export {\n  $schema: require('./schema.json'),\n};"]);
+        files.push([`${use}/index.ts`, "export {\n  $schema: './schema.json',\n};"]);
       } else {
-        files.push([`${use}/index.js`, "module.exports = {\n  $schema: require('./schema.json'),\n};"]);
+        files.push([`${use}/index.js`, `${mod} {\n  $schema: './schema.json',\n};`]);
       }
 
       let data = {};
@@ -188,6 +191,8 @@ module.exports = {
     });
 
     Grown.CLI.define('generate:def', DEF_GENERATOR, ({ use, args, files }) => {
+      const mod = Grown.argv.flags.esm ? 'export default' : 'module.exports =';
+
       args.forEach(fn => {
         const body = '\n  // TODO\n';
         const prefix = Grown.argv.flags.async ? 'async ' : '';
@@ -214,7 +219,7 @@ module.exports = {
             `export default (${deps}${types}): typeof ${methodName} => ${prefix}function ${methodName}(${argv}) {${body}};`,
           ].filter(Boolean).join('\n')]);
         } else {
-          files.push([path.join(use, `${methodPath}/index.js`), `module.exports = (${deps}) => ${prefix}function ${methodName}(${argv}) {${body}};`]);
+          files.push([path.join(use, `${methodPath}/index.js`), `${mod} (${deps}) => ${prefix}function ${methodName}(${argv}) {${body}};`]);
         }
       });
     });
@@ -291,7 +296,7 @@ module.exports = {
 
       let script = fs.existsSync(use)
         ? fs.readFileSync(use).toString()
-        : `${ts ? 'export default' : 'module.exports ='} {\n};\n`;
+        : `${ts || Grown.argv.flags.esm ? 'export default' : 'module.exports ='} {\n};\n`;
 
       args.forEach(prop => {
         obj[prop] = null;
