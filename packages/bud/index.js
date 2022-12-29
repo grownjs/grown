@@ -28,6 +28,12 @@ const path = require('path');
 
 const util = require('./util');
 
+const _emit = process.emit;
+process.emit = function $emit(...args) {
+  if (args[1].name === 'ExperimentalWarning') return;
+  return _emit.call(this, ...args);
+};
+
 // Grown-container barebones
 module.exports = (cwd, argv) => {
   const _argv = util.argvParser(argv || process.argv.slice(2), {
