@@ -131,8 +131,8 @@ describe('Grown.CLI', () => {
         expect(stderr).to.include('Error: UNHANDLED_REJECTION');
         expect(stdout).to.contain('OSOM');
         expect(stdout).to.contain('example');
-        expect(stdout).to.contain('Done');
-        expect(failure).to.be.null;
+        expect(stdout).not.to.contain('Done');
+        expect(failure).not.to.be.null;
       });
     });
 
