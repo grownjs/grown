@@ -30,11 +30,8 @@ module.exports = (Grown, util) => {
 
         if (!this._controllers[controller]) {
           try {
-            const _controller = this.controller_lookup
-              ? this.controller_lookup.replace('%', controller)
-              : `${controller}Controller`;
-
-            const Ctrl = util.getProp(Grown, _controller,
+            const _controller = (route.lookup || '%Controlller').replace('%', controller);
+            const Ctrl = util.getProp(ctx.constructor, _controller,
               new Error(`${_controller} is not defined`));
 
             this._controllers[controller] = {
