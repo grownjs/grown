@@ -2,6 +2,9 @@ import type { GrownInterface, GrownUtils, Plug } from '@grown/bud';
 
 declare module '@grown/router' {
   interface RouteMappings {
+    /**
+    NAMED ROUTES
+    */
     mappings: UrlMap;
     routes: UrlInfo;
 
@@ -33,16 +36,16 @@ declare module '@grown/router' {
     (opts?: RouteOptions): RouteMappings;
   }
 
-  type ControllerInfo = {
+  interface ControllerInfo {
     instance: any;
     definition: any;
-  };
+  }
 
-  type PipelineInfo = {
+  interface PipelineInfo {
     call: [Object, string];
     name: string;
     type: string;
-  };
+  }
 
   type UrlParam = string | number | { [key: string]: string | number; };
 
@@ -70,6 +73,9 @@ declare module '@grown/router' {
     url: UrlInfo;
   }
 
+  /**
+  SOME INFO
+  */
   interface UrlMap {
     /**
     FIXME MAP
@@ -77,28 +83,32 @@ declare module '@grown/router' {
     @param args List of values to render in the URL template, can be scalars or objects
     */
     (path: string, ...args: UrlParam[]): UrlInfo | string;
+
+    /**
+    NAMED ROUTE
+    */
     [key: string]: UrlInfo;
   }
 
-  type RouteOptions = {
+  interface RouteOptions {
     to?: string;
     as?: string;
-  };
+  }
 
   /**
   ROUTER CLASS
   */
-  type RouterClass = {
+  interface RouterClass extends Plug {
     Controllers: Plug;
     Mappings: Plug;
-  };
+  }
 
   /**
   Router PLUG
   */
-  type RouterPlug = {
+  interface RouterPlug extends Plug {
     Router: RouterClass;
-  };
+  }
 }
 
 declare module '@grown/server' {

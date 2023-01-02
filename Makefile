@@ -78,4 +78,4 @@ check:
 	@echo "Done."
 
 deps:
-	@npm i -g ts-node typescript
+	@npm i -g ts-node typescript tsconfig-paths

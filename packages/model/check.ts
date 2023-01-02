@@ -6,6 +6,7 @@ import mayBe from '~/models/Example/classMethods/mayBe';
 import type { default as Models, Example, UserModel, ExampleModel, ExampleResource } from '~/models';
 
 import { Token, accessType } from '~/models';
+
 const t: Partial<Token> = {
   type: accessType.INVITATION,
 };
@@ -14,7 +15,7 @@ console.log(1, t.type === 'INVITATION');
 const Grown = createContainer();
 
 async function main() {
-  const repo = Grown.use<Repository<Models>>(require('./tests/fixtures/models'));
+  const repo = await Grown.use<Repository<Models>>(import('~/models'));
   const Example: ExampleResource = repo.get('Example');
   const ex = Example.getSchema<Example>().fakeOne();
 

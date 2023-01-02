@@ -104,6 +104,16 @@ declare module '@grown/bud' {
     env: NodeEnv;
 
     /**
+    ASYNC
+    */
+    ready(fn: Function): any;
+
+    /**
+    INIT
+    */
+    main(mod: any, fn: Function): any;
+
+    /**
     LOADS
     */
     load(cwd: string, hooks?: any): any;
@@ -118,14 +128,14 @@ declare module '@grown/bud' {
     /**
     DEFNS
     */
-    defn(name: string, fn: any): any;
-    defn<T>(name: string, fn: any): T;
+    defn(name: string, fn: Function): any;
+    defn<T>(name: string, fn: Function): T;
 
     /**
     EXTENDS
     */
-    use(cb: GrownPlugin): Plug;
-    use<P extends Plug>(cb: GrownPlugin): P;
+    use(cb: GrownPlugin | Promise<any>): Plug | Promise<Plug>;
+    use<P extends Plug>(cb: GrownPlugin | Promise<any>): P | Promise<P>;
 
     /**
     DOES
