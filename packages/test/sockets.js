@@ -28,7 +28,9 @@ module.exports = Grown => {
 
               ws.on = ws.addEventListener.bind(ws);
               ws.off = ws.removeEventListener.bind(ws);
-              ws.emit = ws.dispatchEvent.bind(ws);
+              ws.emit = (e, ...args) => {
+                ws.dispatchEvent({ type: e }, ...args);
+              };
               ws.once = (e, cb) => {
                 const fn = (...args) => {
                   try {
