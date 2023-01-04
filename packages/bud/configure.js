@@ -10,7 +10,9 @@ module.exports = ($, cwd, argv, util) => {
   const deferred = [];
 
   function load(mod, callback) {
-    if (typeof mod === 'function') return callback(mod);
+    /* istanbul ignore else */
+    if (typeof mod === 'function' && mod.constructor.name !== 'AsyncFunction') return callback(mod);
+
     const promise = Promise.resolve(mod).then(result => {
       return callback(result.default || result);
     });
