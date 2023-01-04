@@ -1,12 +1,36 @@
 import type { GrownInterface, GrownUtils, Plug } from '@grown/bud';
 
 declare module '@grown/router' {
+  type PathParam = string | number | string[] | number[];
+
+  type PartialRecord<K extends keyof any, T> = { [P in K]?: T; };
+
+  type ExtractParam<Path, NextPart> = Path extends `*${infer Param}`
+    ? PartialRecord<Param, PathParam> & NextPart
+    : Path extends `:${infer Param}`
+      ? Record<Param, PathParam> & NextPart
+      : NextPart;
+
+  type RouteParams<Path> = Path extends `${infer Segment}/${infer Rest}`
+    ? ExtractParam<Segment, RouteParams<Rest>>
+      : Path extends `${infer Segment}.${infer Rest}`
+        ? ExtractParam<Segment, RouteParams<Rest>>
+        : Path extends `${infer Segment}-${infer Rest}`
+          ? ExtractParam<Segment, RouteParams<Rest>>
+          : Path extends `${infer Segment}+${infer Rest}`
+            ? ExtractParam<Segment, RouteParams<Rest>>
+            : ExtractParam<Path, {}>
+
+  type NestedRoute<Path, T> = Path extends `${infer Segment}.${infer Rest}`
+    ? Record<Segment, NestedRoute<Rest, T>>
+    : Record<Path & string, T>;
+
   interface RouteMappings {
     /**
     NAMED ROUTES
     */
-    mappings: UrlMap;
-    routes: UrlInfo;
+    mappings: RouteMap;
+    routes: Route[];
 
     namespace(path: string, group: RoutesCallback): this;
     resources(path: string, opts?: RouteOptions): this;
@@ -47,8 +71,6 @@ declare module '@grown/router' {
     type: string;
   }
 
-  type UrlParam = string | number | { [key: string]: string | number; };
-
   /**
   Registered routes can be accesed by alias, path or index.
 
@@ -63,31 +85,33 @@ declare module '@grown/router' {
   app.router.mappings.buzz.url();
   ```
   */
-  interface UrlInfo {
+  interface RouteInfo {
+    handler: string[];
+    path: string;
+    verb: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+    as: string;
+  }
+
+  interface Route extends RouteInfo {
     /**
     Renders URL from its template, e.g. `/:foo` will render `/42` if `{ foo: 42 }` is given.
     @param args List of values to render in the URL template, can be scalars or objects
     */
-    (...args: UrlParam[]): string;
-    [key: string]: UrlInfo;
-    url: UrlInfo;
+    url(params?: any): string;
+    url<T>(params?: T): string;
   }
 
   /**
   SOME INFO
   */
-  interface UrlMap {
+  interface RouteMap {
     /**
     FIXME MAP
     @param path Named route to render from, e.g. `foo.bar`
     @param args List of values to render in the URL template, can be scalars or objects
     */
-    (path: string, ...args: UrlParam[]): UrlInfo | string;
-
-    /**
-    NAMED ROUTE
-    */
-    [key: string]: UrlInfo;
+    (path: string, params?: any): string;
+    <T>(path: string, params?: T): string;
   }
 
   interface RouteOptions {
@@ -116,7 +140,7 @@ declare module '@grown/server' {
     /**
     Router CHECK
     */
-    routes: UrlMap;
+    routes: RouteMap;
   }
 }
 

@@ -11,6 +11,7 @@ const USAGE_INFO = `
 
   If no hook is given it'll display server information.
 
+  --types   Optional. Generate type definitions from defined routes
   --grep    Optional. Filter out routes matching the given term
   --get     Optional. Filter out GET routes only
   --post    Optional. Filter out POST routes only
@@ -106,54 +107,94 @@ module.exports = {
     });
   },
   async callback(Grown, util) {
-    const serverFactory = await util.load(path.resolve(Grown.cwd, process.main || Grown.argv.flags.app || 'app.js'));
+    const applicationFile = path.resolve(Grown.cwd, process.main || Grown.argv.flags.app || 'app.js');
+    const serverFactory = await util.load(applicationFile);
+
     const server = typeof serverFactory === 'function' ? await serverFactory() : serverFactory;
     const tasks = Grown.CLI.subtasks('server');
+    const logger = Grown.Logger.getLogger();
 
     /* istanbul ignore else */
     if (tasks[Grown.argv._[1]]) {
       return tasks[Grown.argv._[1]].callback({ util, server });
     }
 
-    Grown.Logger.getLogger().printf('Server info');
+    /* istanbul ignore else */
+    if (!Grown.argv.flags.types) {
+      logger.printf('Server info');
+    }
+
+    const typedefs = [];
+    const types = [];
 
     if (server.router && server.router.routes.length > 0) {
       let found;
-      server.router.routes.forEach(route => {
+      server.router.routes.forEach((route, i) => {
         /* istanbul ignore else */
-        if (
-          typeof Grown.argv.flags.grep === 'string'
-          && !route.handler.concat([route.as, route.path, route.verb]).join(' ').toLowerCase().includes(Grown.argv.flags.grep.toLowerCase())
-        ) return;
+        if (!Grown.argv.flags.types) {
+          /* istanbul ignore else */
+          if (
+            typeof Grown.argv.flags.grep === 'string'
+            && !route.handler.concat([route.as, route.path, route.verb]).join(' ').toLowerCase().includes(Grown.argv.flags.grep.toLowerCase())
+          ) return;
 
-        /* istanbul ignore else */
-        if (Grown.argv.flags.get && route.verb !== 'GET') return;
-        /* istanbul ignore else */
-        if (Grown.argv.flags.post && route.verb !== 'POST') return;
-        /* istanbul ignore else */
-        if (Grown.argv.flags.put && route.verb !== 'PUT') return;
-        /* istanbul ignore else */
-        if (Grown.argv.flags.patch && route.verb !== 'PATCH') return;
-        /* istanbul ignore else */
-        if (Grown.argv.flags.delete && route.verb !== 'DELETE') return;
+          /* istanbul ignore else */
+          if (Grown.argv.flags.get && route.verb !== 'GET') return;
+          /* istanbul ignore else */
+          if (Grown.argv.flags.post && route.verb !== 'POST') return;
+          /* istanbul ignore else */
+          if (Grown.argv.flags.put && route.verb !== 'PUT') return;
+          /* istanbul ignore else */
+          if (Grown.argv.flags.patch && route.verb !== 'PATCH') return;
+          /* istanbul ignore else */
+          if (Grown.argv.flags.delete && route.verb !== 'DELETE') return;
+        }
 
         found = true;
 
-        const mod = (route.lookup || '%Controller').replace('%', route.handler[0]);
+        const parts = route.handler.slice();
+        const action = route.handler.length > 1 ? parts.pop() : 'index';
+        const handler = parts.filter(x => /^[A-Z]/.test(x));
+        const mod = (route.lookup || '%Controller').replace('%', handler.join('.'));
         const Ctrl = util.getProp(server.constructor, mod, new Error(`${mod} is not defined`));
 
-        if (typeof Ctrl[route.handler[1]] !== 'function') throw new Error(`${mod}.${route.handler[1]} is not a function`);
+        /* istanbul ignore else */
+        if (typeof Ctrl[action] !== 'function') {
+          throw new Error(`${mod}.${action} is not a function`);
+        }
 
-        Grown.Logger.getLogger().printf('\n%s %s  {%gray. (%s: %s) %}', `   ${route.verb}`.substr(-6), route.path, route.as, route.handler.join('#'));
+        if (Grown.argv.flags.types) {
+          const suffix = `\n  /**\n  ${route.verb} ${route.path} (${mod}#${action})\n  */`;
+          const params = (route.path.includes(':') && `params: RouteParams<'${route.path}'> | PathParam[]`)
+            || (route.path.includes('*') && `params?: RouteParams<'${route.path}'> | PathParam[]`)
+            || '';
+
+          types.push(`R${i}`);
+          typedefs.push(`type R${i} = NestedRoute<'${route.as}', RouteInfo & {${suffix}\n  url: (${params}) => string }>;\n`);
+        } else {
+          logger.printf('\n%s %s  {%gray. (%s: %s) %}', `   ${route.verb}`.substr(-6), route.path, route.as, `${mod}#${action}`);
+        }
       });
 
       /* istanbul ignore else */
       if (!found) {
-        Grown.Logger.getLogger().printf('\n  {%gray. # no matching routes %}');
+        logger.printf('\n  {%gray. # no matching routes %}');
       }
     } else {
-      Grown.Logger.getLogger().printf('\n  {%gray. # without routes %}');
+      logger.printf('\n  {%gray. # without routes %}');
     }
-    Grown.Logger.getLogger().printf('\n');
+
+    if (Grown.argv.flags.types) {
+      const destFile = typeof Grown.argv.flags.types !== 'string'
+        ? path.join(path.dirname(applicationFile), 'routes.d.ts')
+        : path.resolve(Grown.argv.flags.types);
+
+      const script = `import type { RouteMap, RouteInfo, RouteParams, NestedRoute, PathParam } from '@grown/router';
+\n${typedefs.join('\n')}\nexport type Routes = ${['RouteMap'].concat(types).join(' & ')};\n`;
+
+      Grown.CLI._.write(destFile, script);
+    } else {
+      logger.printf('\n');
+    }
   },
 };
