@@ -30,7 +30,7 @@ module.exports = function $listen(location, params, cb) {
 
   if (typeof location === 'object') {
     _server.location = location;
-    _server.location.host = _server.location.host || '';
+    _server.location.host = _server.location.host || '0.0.0.0';
     _server.location.port = _server.location.port || '80';
     _server.location.protocol = _server.location.protocol || 'http:';
   } else if (!isNaN(location)) {
