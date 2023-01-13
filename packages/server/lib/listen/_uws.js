@@ -175,8 +175,6 @@ function ServerResponse(req, resp) {
     resp.cork(() => {
       resp.writeStatus(`${this.statusCode} ${STATUS_CODES[this.statusCode]}`);
       this.writeHead(this.statusCode, head);
-      this.finished = true;
-
       resp.write(body);
       resp.end();
     });
@@ -208,6 +206,7 @@ ServerResponse.prototype.writeHead = function writeHead(statusCode, reason, head
     reason = undefined;
   }
 
+  this.finished = true;
   this.statusCode = statusCode;
   this.statusMessage = reason || STATUS_CODES[statusCode] || 'unknown';
 
