@@ -8,9 +8,6 @@ const url = require('url');
 const mime = require('mime');
 const send = require('send');
 const path = require('path');
-const https = require('https');
-const http = require('http');
-const fs = require('fs');
 
 module.exports = (Grown, util) => {
   function _finishRequest(ctx, body) {
@@ -112,64 +109,6 @@ module.exports = (Grown, util) => {
     return ctx.send(ctx.resp_body);
   }
 
-  function _fetchBody(_url, filePath) {
-    const options = typeof filePath === 'object' ? filePath : null;
-
-    /* istanbul ignore else */
-    if (options !== null && typeof options !== 'undefined') {
-      filePath = null;
-    }
-
-    return new Promise((resolve, reject) => {
-      let dest;
-      let file;
-      let req = new url.URL(_url);
-
-      const reqInfo = {
-        hostname: req.host.replace(/:\d+$/, ''),
-        port: req.port || (req.protocol === 'https:' ? 443 : 80),
-        path: req.pathname + req.search,
-        method: req.method || 'GET',
-        ...options,
-      };
-
-      const query = reqInfo.query;
-      delete reqInfo.query;
-
-      if (query) {
-        reqInfo.path += reqInfo.path.includes('?') ? '&' : '?';
-        reqInfo.path += new URLSearchParams(query).toString();
-      }
-
-      const body = reqInfo.body;
-      delete reqInfo.body;
-
-      req = (_url.indexOf('https:') !== -1 ? https : http)
-        .request(reqInfo, async response => {
-          /* istanbul ignore else */
-          if (response.statusCode >= 300 && response.statusCode < 400) {
-            response = await this._fetchBody(url.resolve(_url, response.headers.location));
-          }
-
-          if (filePath) {
-            dest = path.resolve(filePath);
-            file = fs.createWriteStream(dest);
-            response.pipe(file);
-            file.on('finish', () => file.close(() => resolve(dest)));
-          } else resolve(response);
-        }).on('error', err => {
-          if (dest) fs.unlinkSync(dest);
-          reject(err);
-        });
-
-      /* istanbul ignore else */
-      if (body) {
-        req.write(body);
-      }
-      req.end();
-    });
-  }
-
   function _cutBody(value) {
     /* istanbul ignore else */
     if (typeof value !== 'string') {
@@ -204,7 +143,6 @@ module.exports = (Grown, util) => {
   return Grown('Conn.Response', {
     _finishRequest,
     _endRequest,
-    _fetchBody,
     _cutBody,
     _fixURL,
 
@@ -380,38 +318,6 @@ module.exports = (Grown, util) => {
             }
 
             return this.send(value);
-          },
-
-          get_buffer(_url, options) {
-            return this.get_file(_url, options)
-              .then(stream => new Promise((resolve, reject) => {
-                const chunks = [];
-                stream.on('data', chunk => chunks.push(chunk));
-                stream.on('error', reject);
-                stream.on('end', () => resolve(Buffer.concat(chunks)));
-              }));
-          },
-
-          get_json(_url, options, encoding) {
-            return this.get_body(_url, options, encoding).then(result => {
-              try {
-                return JSON.parse(result);
-              } catch (e) {
-                return { error: e.message, result };
-              }
-            });
-          },
-
-          get_body(_url, options, encoding) {
-            if (typeof options === 'string') {
-              encoding = options;
-              options = null;
-            }
-            return this.get_buffer(_url, options).then(obj => obj.toString(encoding || 'utf8'));
-          },
-
-          get_file(_url, filePath) {
-            return self._fetchBody(_url, filePath);
           },
 
           send_file(entry, mimeType) {
