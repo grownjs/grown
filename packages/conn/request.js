@@ -158,16 +158,16 @@ module.exports = (Grown, util) => {
           },
 
           accept_charset(charsets) {
-            return this.accepts.charset(charsets);
+            return this.accept.charset(charsets);
           },
           accept_encoding(encodings) {
-            return this.accepts.encoding(encodings);
+            return this.accept.encoding(encodings);
           },
           accept_language(languages) {
-            return this.accepts.language(languages);
+            return this.accept.language(languages);
           },
           accept_type(types) {
-            return this.accepts.type(types);
+            return this.accept.type(types);
           },
 
           get_req_header(name, defvalue) {
