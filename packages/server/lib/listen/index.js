@@ -28,31 +28,22 @@ module.exports = function $listen(location, params, cb) {
   const _protocolName = (typeof params === 'object'
     && (params.cert || params.key || params.ca)) ? 'https' : 'http';
 
+  const _port = _protocolName === 'https' ? 443 : 800;
+
   if (typeof location === 'object') {
-    _server.location = location;
-    _server.location.host = _server.location.host || '0.0.0.0';
-    _server.location.port = _server.location.port || '80';
-    _server.location.protocol = _server.location.protocol || 'http:';
+    _server.location = url.parse(`${location.protocol || 'http'}://${location.host || '0.0.0.0'}:${location.port || _port}`);
   } else if (!isNaN(location)) {
     _server.location = url.parse(`${_protocolName}://0.0.0.0:${location}`);
   } else if (typeof location === 'string') {
     _server.location = url.parse(location.indexOf('://') === -1 ? `http://${location}` : location);
   } else if (!location) {
-    _server.location = url.parse(`${_protocolName}://0.0.0.0:80/`);
+    _server.location = url.parse(`${_protocolName}://0.0.0.0:${_port}/`);
   }
 
-  _server.port = +(_server.location.protocol === 'https:' && (params.cert && params.key)
-    ? (_server.location.port || 443)
-    : (_server.location.port || 80));
-
-  _server.location.host = _server.location.host.split(':')[1]
-    ? _server.location.host
-    : `${_server.location.host}:${_server.port}`;
-
-  _server.host = _server.location.host.split(':')[0];
+  _server.host = _server.location.hostname;
+  _server.port = +_server.location.port;
 
   let _close;
-
   _server.close = () => {
     /* istanbul ignore else */
     if (_close) {
