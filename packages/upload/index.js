@@ -16,17 +16,6 @@ module.exports = (Grown, util) => {
         return;
       }
 
-      if (conn.req.headers['content-type'] === 'application/json') {
-        try {
-          conn.req.body = JSON.parse(conn.req.body);
-        } catch (e) {
-          conn.req.body = {};
-        }
-        conn.req._body = true;
-        resolve();
-        return;
-      }
-
       const form = new IncomingForm({
         uploadDir: path.join(Grown.cwd, 'tmp'),
         keepExtensions: true,
@@ -37,7 +26,7 @@ module.exports = (Grown, util) => {
 
       if (!fs.existsSync(form.uploadDir)) {
         try {
-          fs.mkdirSync(form.uploadDir);
+          fs.mkdirSync(form.uploadDir, { recursive: true });
         } catch (e) {
           throw new Error(`Failed to create directory '${form.uploadDir}'`);
         }
