@@ -69,7 +69,7 @@ module.exports = (Grown, util) => {
     $install(ctx, scope) {
       if (this.save_directory) {
         scope._uploads = true;
-        ctx.mount(conn => conn.upload_files({
+        ctx.mount(conn => this._processForm(conn, {
           maxFileSize: this.max_file_size,
           maxFieldsSize: this.max_field_size,
           uploadDir: this.save_directory,
@@ -78,17 +78,10 @@ module.exports = (Grown, util) => {
     },
 
     $mixins() {
-      const self = this;
-
       return {
         props: {
           uploaded_files() {
             return this.req.files || {};
-          },
-        },
-        methods: {
-          upload_files(opts) {
-            return self._processForm(this, opts || {});
           },
         },
       };
