@@ -319,7 +319,7 @@ module.exports = function _uws(ctx, options, callback, protocolName) {
           readBody(_req, res, next);
         }
       } else {
-        next();
+        prepBody(_req, res, next);
       }
     });
 
