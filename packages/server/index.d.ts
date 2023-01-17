@@ -117,14 +117,16 @@ declare module '@grown/server' {
     FIXME: halt
     */
     halt(): Promise<any>;
+    tick(ms): Promise<void>;
 
     /**
     FIXME: raise
     */
     raise(): void;
-
     cors(): boolean | void;
+    https(): void,
     nocache(): void;
+    trustproxy(): void,
   }
 
   /**
@@ -202,6 +204,13 @@ declare module '@grown/server' {
     */
     create(): PlugClass;
   };
+
+  type ServerConnection = {
+    location: LocationInfo;
+    host: string;
+    port: number;
+    close(): void;
+  };
 }
 
 declare module '@grown/bud' {
@@ -251,7 +260,7 @@ declare module '@grown/bud' {
     Starts listening on the given address or port
     @param addr It can be a port number, or an address to bind
     */
-    listen(addr?: number | string | Location, opts?: ServerOptions): this;
+    listen(addr?: number | string | LocationInfo, opts?: ServerOptions): Promise<ServerConnection>;
     /**
     FIXME: clients
     */
