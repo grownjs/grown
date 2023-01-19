@@ -173,7 +173,7 @@ function ServerResponse(req, resp) {
     });
 
     resp.cork(() => {
-      resp.writeStatus(`${this.statusCode} ${STATUS_CODES[this.statusCode]}`);
+      resp.writeStatus(`${this.statusCode} ${this.statusMessage}`);
       this.writeHead(this.statusCode, head);
       resp.write(body);
       resp.end();
