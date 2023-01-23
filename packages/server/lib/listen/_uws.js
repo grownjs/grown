@@ -6,7 +6,6 @@ const { STATUS_CODES, IncomingMessage } = require('http');
 const { Transform, Readable } = require('stream');
 
 const uWS = require('uWebSockets.js');
-const qs = require('querystring');
 
 const _util = require('util');
 const {
@@ -117,7 +116,7 @@ function ServerRequest(req, res) {
 
   this.body = null;
   this.url = req.getUrl() || '/';
-  this.query = qs.parse(req.getQuery());
+  this.query = Object.fromEntries(new URLSearchParams(req.getQuery()));
   this.method = req.getMethod().toUpperCase();
   this.headers = _util._extend({}, req.headers);
   this.rawHeaders = [];
@@ -308,7 +307,7 @@ module.exports = function _uws(ctx, options, callback, protocolName) {
         if (type.includes('/json')) {
           readBody(_req, res, data => next(data, JSON.parse, 'JSON.parse'));
         } else if (type.includes('/x-www-form-urlencoded')) {
-          readBody(_req, res, data => next(data, qs.parse, 'qs.parse'));
+          readBody(_req, res, data => next(data, qs => Object.fromEntries(new URLSearchParams(qs)), 'URLSearchParams'));
         } else if (type.includes('/form-data')) {
           readBody(_req, res, data => {
             _req.body = convertFrom(uWS.getParts(data, type));

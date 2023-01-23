@@ -1,7 +1,6 @@
 'use strict';
 
 const debug = require('debug')('grown:http');
-const qs = require('querystring');
 const WebSocket = require('ws');
 
 const $host = require('./host');
@@ -24,7 +23,7 @@ module.exports = function _http(ctx, options, callback, protocolName) {
   };
 
   const cb = (req, res) => {
-    req.query = req.query || qs.parse(req.url.split('?')[1]);
+    req.query = req.query || Object.fromEntries(new URLSearchParams(req.url.split('?')[1]));
 
     Object.defineProperty(req, 'secure', {
       get: () => req.protocol === 'https',

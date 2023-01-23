@@ -3,7 +3,6 @@
 const debug = require('debug')('grown:conn:response');
 
 const statusCodes = require('http').STATUS_CODES;
-const qs = require('querystring');
 const url = require('url');
 const mime = require('mime');
 const send = require('send');
@@ -127,7 +126,7 @@ module.exports = (Grown, util) => {
 
     /* istanbul ignore else */
     if (_uri.query) {
-      _query = qs.stringify(qs.parse(_uri.query));
+      _query = new URLSearchParams(_uri.query).toString();
     }
 
     return [

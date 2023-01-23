@@ -1,5 +1,3 @@
-const qs = require('querystring');
-
 module.exports = (Grown, util) => {
   function _callback() {
   }
@@ -57,7 +55,7 @@ module.exports = (Grown, util) => {
         }
 
         if (!req.query) {
-          req.query = qs.parse(searchQuery || '');
+          req.query = Object.fromEntries(new URLSearchParams(searchQuery || ''));
         }
 
         if (!middleware[type]) {
