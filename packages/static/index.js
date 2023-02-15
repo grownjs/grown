@@ -5,10 +5,13 @@ const path = require('path');
 module.exports = (Grown, util) => {
   const serveStatic = require('serve-static');
 
-  function _middleware(cb) {
+  function _middleware(cb, prefix) {
     return (req, res, next) => {
-      let called;
+      if (prefix && prefix !== '/' && req.url.indexOf(prefix) !== 0) {
+        return next();
+      }
 
+      let called;
       return new Promise(ok => {
         cb(req, res, err => {
           called = true;
@@ -59,7 +62,7 @@ module.exports = (Grown, util) => {
           });
 
           if (typeof opts.at === 'string' && opts.at.charAt() === '/') {
-            ctx.mount(`[at:${opts.at}]`, this._middleware(serveStatic(opts.from, _opts)), opts.filter || this.filter);
+            ctx.mount(`[at:${opts.at}]`, this._middleware(serveStatic(opts.from, _opts), opts.at), opts.filter || this.filter);
           } else {
             ctx.mount(`[from:${path.relative(_cwd, opts.from) || '.'}]`, this._middleware(serveStatic(opts.from, _opts)), opts.filter || this.filter);
           }
