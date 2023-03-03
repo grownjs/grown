@@ -171,12 +171,16 @@ function ServerResponse(req, resp) {
       head[key.toLowerCase()] = this._headers[key];
     });
 
-    resp.cork(() => {
-      resp.writeStatus(`${this.statusCode} ${this.statusMessage}`);
-      this.writeHead(this.statusCode, head);
-      resp.write(body);
-      resp.end();
-    });
+    try {
+      resp.cork(() => {
+        resp.writeStatus(`${this.statusCode} ${this.statusMessage}`);
+        this.writeHead(this.statusCode, head);
+        resp.write(body);
+        resp.end();
+      });
+    } catch (e) {
+      console.error('E_RESP', e);
+    }
   });
 }
 
