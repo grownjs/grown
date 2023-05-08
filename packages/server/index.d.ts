@@ -206,7 +206,7 @@ declare module '@grown/server' {
   };
 
   type ServerConnection = {
-    location: LocationInfo;
+    location: URL;
     host: string;
     port: number;
     close(): void;
@@ -260,7 +260,9 @@ declare module '@grown/bud' {
     Starts listening on the given address or port
     @param addr It can be a port number, or an address to bind
     */
+    listen(fn: (ctx: ServerConnection) => void): Promise<ServerConnection>;
     listen(addr?: number | string | LocationInfo, opts?: ServerOptions): Promise<ServerConnection>;
+    listen(addr: number | string | LocationInfo, fn: (ctx: ServerConnection) => void): Promise<ServerConnection>;
     /**
     FIXME: clients
     */
