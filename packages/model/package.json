@@ -9,6 +9,11 @@
     "*.d.ts",
     "*.js"
   ],
+  "exports": {
+    ".": "./index.js",
+    "./db": "./db.js",
+    "./cli": "./cli.js"
+  },
   "scripts": {
     "dev": "npm run test:unit -- -w",
     "test": "npm run coverage -- npm run test:unit --",
