@@ -27,7 +27,7 @@
     "clean-stack": "^2.0.0",
     "debug": "^4.1.0",
     "dotenv": "^6.2.0",
-    "global-or-local": "^0.1.7",
+    "global-or-local": "^0.1.8",
     "is-docker": "^2.2.1",
     "object-new": "^0.4.2",
     "sastre": "^0.3.4",
