@@ -85,7 +85,6 @@ function cleanError(e, cwd) {
   if (typeof e === 'object') {
     _e.errors = e.errors || [];
     _e.call = e.pipeline;
-    _e.name = e.name || 'Error';
     _e.code = e.statusCode || 500;
   }
 
