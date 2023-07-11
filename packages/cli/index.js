@@ -205,7 +205,15 @@ module.exports = (Grown, util) => {
 
         if (keys.includes(Grown.argv._[1]) && tasks[Grown.argv._[1]].usage) {
           usageInfo = tasks[Grown.argv._[1]].usage.replace(/{bin}/g, this.command_name || 'grown');
-          logger.printf('\n  {% green %s %} %s {% gray ─ %s %}\n', taskName, Grown.argv._[1], usageInfo.trim());
+
+          const key = `${taskName}:${Grown.argv._[1]}`;
+          const parts = usageInfo.split(/(?=\n\n)/);
+
+          if (this._options[key]) {
+            parts.splice(parts.length - 2, 0, this._options[key].replace(/\s+$/, ''));
+          }
+
+          logger.printf('\n  {% green %s %} %s {% gray ─ %s %}\n', taskName, Grown.argv._[1], parts.join('').trim());
         } else {
           const genInfo = keys.reduce((memo, key) => {
             memo.push(`${`${key}          `.substr(0, max + 2)} # ${tasks[key].usage.trim().split('\n')[0].trim()}`);
@@ -394,10 +402,15 @@ module.exports = (Grown, util) => {
     _alias: {},
     _tasks: {},
     _groups: {},
+    _options: {},
     _defined: [],
 
     subtasks(group) {
       return this._groups[group];
+    },
+
+    options(task, options) {
+      this._options[task] = options;
     },
 
     define(type, usage, callback) {
