@@ -152,27 +152,31 @@ module.exports = {
 
         found = true;
 
-        const parts = route.handler.slice();
-        const action = route.handler.length > 1 ? parts.pop() : 'index';
-        const handler = parts.filter(x => /^[A-Z]/.test(x));
-        const mod = (route.lookup || '%Controller').replace('%', handler.join('.'));
-        const Ctrl = util.getProp(server.constructor, mod, new Error(`${mod} is not defined`));
+        if (route.handler) {
+          const parts = route.handler.slice();
+          const action = route.handler.length > 1 ? parts.pop() : 'index';
+          const handler = parts.filter(x => /^[A-Z]/.test(x));
+          const mod = (route.lookup || '%Controller').replace('%', handler.join('.'));
+          const Ctrl = util.getProp(server.constructor, mod, new Error(`${mod} is not defined`));
 
-        /* istanbul ignore else */
-        if (typeof Ctrl[action] !== 'function') {
-          throw new Error(`${mod}.${action} is not a function`);
-        }
+          /* istanbul ignore else */
+          if (typeof Ctrl[action] !== 'function') {
+            throw new Error(`${mod}.${action} is not a function`);
+          }
 
-        if (Grown.argv.flags.types) {
-          const suffix = `\n  /**\n  ${route.verb} ${route.path} (${mod}#${action})\n  */`;
-          const params = (route.path.includes(':') && `params: RouteParams<'${route.path}'> | PathParam[]`)
-            || (route.path.includes('*') && `params?: RouteParams<'${route.path}'> | PathParam[]`)
-            || '';
+          if (Grown.argv.flags.types) {
+            const suffix = `\n  /**\n  ${route.verb} ${route.path} (${mod}#${action})\n  */`;
+            const params = (route.path.includes(':') && `params: RouteParams<'${route.path}'> | PathParam[]`)
+              || (route.path.includes('*') && `params?: RouteParams<'${route.path}'> | PathParam[]`)
+              || '';
 
-          types.push(`R${i}`);
-          typedefs.push(`type R${i} = NestedRoute<'${route.as}', RouteInfo & {${suffix}\n  url: (${params}) => string }>;\n`);
+            types.push(`R${i}`);
+            typedefs.push(`type R${i} = NestedRoute<'${route.as}', RouteInfo & {${suffix}\n  url: (${params}) => string }>;\n`);
+          } else {
+            logger.printf('\n%s %s  {%gray. (%s: %s) %}', `   ${route.verb}`.substr(-6), route.path, route.as, `${mod}#${action}`);
+          }
         } else {
-          logger.printf('\n%s %s  {%gray. (%s: %s) %}', `   ${route.verb}`.substr(-6), route.path, route.as, `${mod}#${action}`);
+          logger.printf('\n%s %s  {%gray. (%s: %s) %}', `   ${route.verb}`.substr(-6), route.path, route.as, route.controller || '?');
         }
       });
 
