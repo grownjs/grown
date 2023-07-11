@@ -4,7 +4,7 @@
 
 const USAGE_INFO = `
 
-  Load and save database snapshots
+  Manage database snapshots
 
   PATH  Entry file exporting models
 

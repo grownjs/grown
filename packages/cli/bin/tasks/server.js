@@ -7,7 +7,7 @@ const fs = require('fs');
 
 const USAGE_INFO = `
 
-  Application server tasks
+  Manage the application server
 
   If no hook is given it'll display server information.
 
