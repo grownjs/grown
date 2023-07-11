@@ -10,7 +10,7 @@ const RE_NO_SPACES = / +at /g;
 const RE_SRC_FILE = /[/.].+?:\d+:\d+/;
 
 const RE_NATIVES = new RegExp(`^.+(${
-  Object.keys(process.binding('natives'))
+  Object.keys(typeof Bun === 'undefined' ? process.binding('natives') : {})
     .concat('bootstrap_node', 'node')
     .join('|')
 })\\.js(?!:).+$`, 'gm');
