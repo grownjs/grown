@@ -47,6 +47,15 @@ module.exports = (Grown, util) => {
 
       this._start = new Date();
 
+      this._defined.forEach(([task, desc, cb]) => {
+        this._tasks[task] = { module: { callback: cb } };
+
+        for (let i = 1; i <= task.length; i += 1) {
+          /* istanbul ignore else */
+          if (!this._alias[task.substr(0, i)]) this._alias[task.substr(0, i)] = task;
+        }
+      });
+
       return Promise.all(Object.entries(taskFiles)
         .map(([task, filepath]) => util.load(filepath)
           .then(extension => {
@@ -385,16 +394,21 @@ module.exports = (Grown, util) => {
     _alias: {},
     _tasks: {},
     _groups: {},
+    _defined: [],
 
     subtasks(group) {
       return this._groups[group];
     },
 
     define(type, usage, callback) {
-      const [group, kind] = type.split(':');
+      if (type.includes(':')) {
+        const [group, kind] = type.split(':');
 
-      this._groups[group] = this._groups[group] || {};
-      this._groups[group][kind] = { usage, callback };
+        this._groups[group] = this._groups[group] || {};
+        this._groups[group][kind] = { usage, callback };
+      } else {
+        this._defined.push([type, usage, callback]);
+      }
     },
 
     start(taskName) {
