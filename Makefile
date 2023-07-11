@@ -57,7 +57,7 @@ install:
 	@(((which lerna) > /dev/null 2>&1) || npm i -g lerna) || true
 
 setup: install
-	@lerna bootstrap --no-ci -- --no-package-lock --no-audit
+	@npm i --no-audit
 
 web\:%:
 	@make -C website $*
