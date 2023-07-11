@@ -35,7 +35,7 @@ process.emit = function $emit(...args) {
 };
 
 // Grown-container barebones
-module.exports = (cwd, argv) => {
+module.exports = Object.assign((cwd, argv) => {
   const _argv = util.argvParser(argv || process.argv.slice(2), {
     boolean: ['V', 'd', 's', 'help'],
     string: ['p', 'h', 'a', 'e'],
@@ -80,4 +80,4 @@ module.exports = (cwd, argv) => {
   require('./configure')($, _cwd, _argv, util);
 
   return Grown;
-};
+}, util);

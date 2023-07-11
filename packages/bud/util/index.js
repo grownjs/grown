@@ -39,3 +39,9 @@ module.exports.getLogger = () => ({
   error() {},
   message() {},
 });
+
+const IS_LOCKED = Symbol('$$locked');
+
+module.exports.lock = obj => Object.assign(obj, IS_LOCKED, { value: 1 });
+module.exports.locked = obj => obj && IS_LOCKED in obj;
+module.exports.unlocked = obj => typeof obj === 'function' && !obj[IS_LOCKED];

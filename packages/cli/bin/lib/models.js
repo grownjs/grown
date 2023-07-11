@@ -11,5 +11,5 @@ module.exports = (Grown, util, ctx) => {
   }
 
   return util.load(path.resolve(Grown.cwd, use))
-    .then(container => typeof container === 'function' && !Object.isFrozen(container) ? container(Grown, util) : container);
+    .then(container => (util.unlocked(container) ? container(Grown, util) : container));
 };
