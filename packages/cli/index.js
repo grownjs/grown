@@ -48,7 +48,7 @@ module.exports = (Grown, util) => {
       this._start = new Date();
 
       this._defined.forEach(([task, desc, cb]) => {
-        this._tasks[task] = { module: { callback: cb } };
+        this._tasks[task] = { module: { description: desc, callback: cb } };
 
         for (let i = 1; i <= task.length; i += 1) {
           /* istanbul ignore else */
