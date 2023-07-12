@@ -1,6 +1,6 @@
 {
   "name": "grown",
-  "version": "1.4.13",
+  "version": "1.4.14",
   "homepage": "https://grown.jamrock.dev",
   "description": "Experimental DSL for web-apps",
   "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
@@ -43,7 +43,7 @@
   },
   "dependencies": {
     "@grown/bud": "^0.0.62",
-    "@grown/cli": "^0.0.82",
+    "@grown/cli": "^0.0.83",
     "@grown/server": "^0.0.80",
     "type-fest": "^1.3.0"
   }

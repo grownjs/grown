@@ -1,6 +1,6 @@
 {
   "name": "@grown/cli",
-  "version": "0.0.82",
+  "version": "0.0.83",
   "main": "index.js",
   "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
   "license": "MIT",
