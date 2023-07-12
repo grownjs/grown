@@ -55,8 +55,5 @@
     "sastre": "^0.3.10",
     "sqlite3": "^5.0.8",
     "testdouble": "^3.16.1"
-  },
-  "_moduleAliases": {
-    "~/models": "tests/fixtures/models"
   }
 }

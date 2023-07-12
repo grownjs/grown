@@ -65,5 +65,8 @@
     "@grown/cli": "^0.0.84",
     "@grown/server": "^0.0.80",
     "type-fest": "^1.3.0"
+  },
+  "_moduleAliases": {
+    "~/models": "packages/model/tests/fixtures/models"
   }
 }
