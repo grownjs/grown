@@ -21,6 +21,25 @@
     "lint": "eslint $(git ls-files | grep -E '(js|pug)$')",
     "pretest": "npm run lint"
   },
+  "workspaces": [
+    "packages/access",
+    "packages/bud",
+    "packages/cache",
+    "packages/cli",
+    "packages/conn",
+    "packages/graphql",
+    "packages/grpc",
+    "packages/logger",
+    "packages/model",
+    "packages/render",
+    "packages/repl",
+    "packages/router",
+    "packages/server",
+    "packages/session",
+    "packages/static",
+    "packages/test",
+    "packages/upload"
+  ],
   "publishConfig": {
     "access": "public"
   },
