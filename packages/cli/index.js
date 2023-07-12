@@ -57,6 +57,9 @@ module.exports = (Grown, util) => {
       });
 
       let _main = Grown.app;
+
+      if (Grown.app) delete Grown.app;
+
       util.readOnlyProperty(Grown, 'app', () => {
         /* istanbul ignore else */
         if (!_main) _main = path.resolve(Grown.argv.flags.app || this._findApplication());
