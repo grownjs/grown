@@ -74,7 +74,6 @@ function cleanError(e, cwd) {
   }
 
   let _e;
-
   if (!(e instanceof Error)) {
     _e = new Error(e);
   } else {
@@ -83,6 +82,7 @@ function cleanError(e, cwd) {
 
   /* istanbul ignore else */
   if (typeof e === 'object') {
+    _e.message = e.message || '';
     _e.errors = e.errors || [];
     _e.call = e.pipeline;
     _e.code = e.statusCode || 500;
@@ -99,11 +99,15 @@ function cleanError(e, cwd) {
     .filter(line => RE_SRC_FILE.test(line))
     .join('\n    ')}`;
 
+  if (_e.message && !_e.stack.includes(_e.message)) {
+    _e.stack = _e.stack.replace(_e.name, `${_e.name}: ${_e.message}`);
+  }
+
   return _e;
 }
 
-function invoke(value, context, filepath) {
-  return vm.runInNewContext(value, context, filepath || 'source.js');
+function invoke(value, context, options) {
+  return vm.runInNewContext(value, context, options);
 }
 
 function wrap(callback) {

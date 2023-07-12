@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "log-pose": "^0.4.7",
+    "rustybun": "^0.2.0",
     "wargs": "^0.9.6"
   },
   "devDependencies": {

@@ -1,3 +1,4 @@
 **/public
 **/runkit.pug
+packages/repl/readline.js
 packages/bud/util/loader.js

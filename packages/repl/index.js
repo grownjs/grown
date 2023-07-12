@@ -18,7 +18,7 @@ module.exports = (Grown, util) => {
   const Logger = require('log-pose');
   const _utils = require('log-pose/lib/utils.js');
 
-  const REPL = require('repl');
+  const REPL = require(typeof Bun !== 'undefined' ? './bun' : 'repl');
 
   function _initializeContext(target) {
     util.readOnlyProperty(target, '$', () => Grown);
@@ -27,25 +27,33 @@ module.exports = (Grown, util) => {
   function _startREPL() {
     let fd;
     let ws;
-
     try {
-      fd = fs.openSync(logFile, 'a');
-      ws = fs.createWriteStream(logFile, { fd });
+      if (typeof Bun === 'undefined') {
+        fd = fs.openSync(logFile, 'a+');
+        ws = fs.createWriteStream(logFile, { fd });
 
-      ws.on('error', err => {
-        throw err;
-      });
+        ws.on('error', err => {
+          throw err;
+        });
+      }
     } catch (e) {
       // do nothing
     }
 
-    const repl = REPL.start({
+    const opts = {
+      logFile,
+      logger: Logger.getLogger(),
       replMode: REPL.REPL_MODE_STRICT,
       stdout: process.stdout,
       stdin: process.stdin,
       eval: this._runCMD,
       prompt: '',
-    });
+    };
+
+    const repl = typeof Bun !== 'undefined'
+      // eslint-disable-next-line new-cap
+      ? new REPL.default(opts, util.invoke)
+      : REPL.start(opts);
 
     repl.on('reset', this._initializeContext);
     this._initializeContext(repl.context);
@@ -72,7 +80,7 @@ module.exports = (Grown, util) => {
       // do nothing
     }
 
-    repl.addListener('line', code => {
+    repl.on('line', code => {
       if (code && code !== '.history') {
         if (ws && repl.history[1] !== code) {
           ws.write(`${code}\n`);
@@ -107,7 +115,7 @@ module.exports = (Grown, util) => {
   }
 
   function _runCMD(cmd, context, filename, callback) {
-    Promise.resolve()
+    return Promise.resolve()
       .then(() => util.invoke(cmd.includes('await') ? `(async () => (\n${cmd}\n))();` : cmd, context))
       .then(value => {
         /* istanbul ignore else */
@@ -258,13 +266,10 @@ module.exports = (Grown, util) => {
           repl.setPrompt(_utils.style('{% gray.pointer %}'));
         })
         .then(() => {
-          logger.info('\r{% log Type %} {% bold .help %} {% gray to list all available commands %}\n');
+          logger.info('\r{% log Type %} {% bold .help %} {% gray. to list all available commands %}\n');
 
           repl.resume();
-
-          setTimeout(() => {
-            repl.displayPrompt();
-          });
+          repl.displayPrompt();
         })
         .catch(e => {
           onError(e);
