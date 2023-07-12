@@ -30,7 +30,7 @@
     "global-or-local": "^0.1.8",
     "is-docker": "^2.2.1",
     "object-new": "^0.4.2",
-    "sastre": "^0.3.8",
+    "sastre": "^0.3.10",
     "source-map-support": "^0.5.3",
     "wargs": "^0.9.6"
   },
