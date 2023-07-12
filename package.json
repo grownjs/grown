@@ -1,6 +1,6 @@
 {
   "name": "grown",
-  "version": "1.4.15",
+  "version": "1.4.16",
   "homepage": "https://grown.jamrock.dev",
   "description": "Experimental DSL for web-apps",
   "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
