@@ -7,7 +7,7 @@ const fs = require('fs');
 
 const USAGE_INFO = `
 
-  Manage the application server
+  Your application routes
 
   If no hook is given it'll display server information.
 
@@ -107,8 +107,7 @@ module.exports = {
     });
   },
   async callback(Grown, util) {
-    const applicationFile = path.resolve(Grown.cwd, process.main || Grown.argv.flags.app || 'app.js');
-    const serverFactory = await util.load(applicationFile);
+    const serverFactory = await util.load(Grown.app);
 
     const server = typeof serverFactory === 'function' ? await serverFactory() : serverFactory;
     const tasks = Grown.CLI.subtasks('server');
@@ -190,7 +189,7 @@ module.exports = {
 
     if (Grown.argv.flags.types) {
       const destFile = typeof Grown.argv.flags.types !== 'string'
-        ? path.join(path.dirname(applicationFile), 'routes.d.ts')
+        ? path.join(path.dirname(Grown.app), 'routes.d.ts')
         : path.resolve(Grown.argv.flags.types);
 
       const script = `import type { RouteMap, RouteInfo, RouteParams, NestedRoute, PathParam } from '@grown/router';

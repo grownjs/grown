@@ -56,6 +56,13 @@ module.exports = (Grown, util) => {
         }
       });
 
+      let _main = Grown.app;
+      util.readOnlyProperty(Grown, 'app', () => {
+        /* istanbul ignore else */
+        if (!_main) _main = path.resolve(Grown.argv.flags.app || this._findApplication());
+        return _main;
+      });
+
       return Promise.all(Object.entries(taskFiles)
         .map(([task, filepath]) => util.load(filepath)
           .then(extension => {
@@ -76,10 +83,16 @@ module.exports = (Grown, util) => {
 
   function _findApplication() {
     const files = [
-      'server.js',
-      'index.js',
-      'main.js',
-      'app.js',
+      'server',
+      'index',
+      'main',
+      'app',
+    ];
+
+    const exts = [
+      'mjs',
+      'cjs',
+      'js',
     ];
 
     let mainFile;
@@ -90,10 +103,14 @@ module.exports = (Grown, util) => {
     }
 
     for (let i = 0; i < files.length; i += 1) {
-      /* istanbul ignore else */
-      if (fs.existsSync(files[i])) {
-        mainFile = files[i];
-        break;
+      for (let j = 0; j < exts.length; j += 1) {
+        const target = `${files[i]}.${exts[j]}`;
+
+        /* istanbul ignore else */
+        if (fs.existsSync(target)) {
+          mainFile = target;
+          break;
+        }
       }
     }
 
@@ -136,11 +153,6 @@ module.exports = (Grown, util) => {
 
     /* istanbul ignore else */
     if (taskName && !Grown.argv.flags.help) {
-      /* istanbul ignore else */
-      if (!Grown.argv.flags.app && taskName === 'server') {
-        process.main = process.main || this._findApplication();
-      }
-
       return Promise.resolve()
         .then(() => (process.silent ? this.run(taskName) : logger(taskName, () => this.run(taskName))))
         .catch(e => this._onError(e, taskName));
