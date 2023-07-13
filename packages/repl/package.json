@@ -16,6 +16,8 @@
   },
   "dependencies": {
     "log-pose": "^0.4.7",
+    "rewrite-exports": "^0.0.28",
+    "rewrite-imports": "^3.0.0",
     "rustybun": "^0.2.0",
     "wargs": "^0.9.6"
   },

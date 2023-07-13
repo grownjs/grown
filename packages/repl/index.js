@@ -4,6 +4,8 @@ const wargs = require('wargs');
 const path = require('path');
 const fs = require('fs');
 
+const { createLoader } = require('./shared');
+
 module.exports = (Grown, util) => {
   const logDir = path.join(Grown.cwd, 'logs');
 
@@ -18,7 +20,8 @@ module.exports = (Grown, util) => {
   const Logger = require('log-pose');
   const _utils = require('log-pose/lib/utils.js');
 
-  const REPL = require(typeof Bun !== 'undefined' ? './bun' : 'repl');
+  // eslint-disable-next-line no-nested-ternary
+  const REPL = require(typeof Bun !== 'undefined' ? './bun' : typeof Deno !== 'undefined' ? './deno' : 'repl');
 
   function _initializeContext(target) {
     util.readOnlyProperty(target, '$', () => Grown);
@@ -28,7 +31,7 @@ module.exports = (Grown, util) => {
     let fd;
     let ws;
     try {
-      if (typeof Bun === 'undefined') {
+      if (typeof Bun === 'undefined' && typeof Deno === 'undefined') {
         fd = fs.openSync(logFile, 'a+');
         ws = fs.createWriteStream(logFile, { fd });
 
@@ -47,13 +50,18 @@ module.exports = (Grown, util) => {
       stdout: process.stdout,
       stdin: process.stdin,
       eval: this._runCMD,
+      load: util.invoke,
       prompt: '',
     };
 
-    const repl = typeof Bun !== 'undefined'
-      // eslint-disable-next-line new-cap
-      ? new REPL.default(opts, util.invoke)
-      : REPL.start(opts);
+    const repl = REPL.start ? REPL.start(opts) : new (REPL.default || REPL)(opts);
+
+    if (repl.commands && repl.commands.load) {
+      repl.commands.load.action = file => {
+        createLoader(file, repl.context);
+        repl.displayPrompt();
+      };
+    }
 
     repl.on('reset', this._initializeContext);
     this._initializeContext(repl.context);
@@ -115,8 +123,10 @@ module.exports = (Grown, util) => {
   }
 
   function _runCMD(cmd, context, filename, callback) {
+    const code = cmd.replace(/(?:let|var|const)\s/g, '');
+
     return Promise.resolve()
-      .then(() => util.invoke(cmd.includes('await') ? `(async () => (\n${cmd}\n))();` : cmd, context))
+      .then(() => util.invoke(`(async()=>{return ${code}})()`, context))
       .then(value => {
         /* istanbul ignore else */
         if (typeof value === 'undefined') {
@@ -243,7 +253,7 @@ module.exports = (Grown, util) => {
             util.extend(ctx, wargs(value));
             repl.pause();
 
-            Promise.resolve()
+            return Promise.resolve()
               .then(() => fn.call(null, ctx, util))
               .catch(onError)
               .then(() => {
@@ -260,14 +270,13 @@ module.exports = (Grown, util) => {
           const load = util.flattenArgs(Grown.argv.flags.load).filter(Boolean);
 
           if (load.length > 0) {
-            load.forEach(x => repl.commands.load.action.call(repl, x));
+            return Promise.all(load.map(x => repl.commands.load.action.call(repl, x)));
           }
-
-          repl.setPrompt(_utils.style('{% gray.pointer %}'));
         })
         .then(() => {
           logger.info('\r{% log Type %} {% bold .help %} {% gray. to list all available commands %}\n');
 
+          repl.setPrompt(_utils.style('{% gray.pointer %}'));
           repl.resume();
           repl.displayPrompt();
         })

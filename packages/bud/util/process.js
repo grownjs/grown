@@ -5,15 +5,16 @@ const url = require('url');
 const cleanStack = require('clean-stack');
 
 const RE_ERR_MESSAGE = /.*Error:.+?\n/;
-const RE_NODE_MODULES = /\/.+?node_modules\//g;
 const RE_NO_SPACES = / +at /g;
 const RE_SRC_FILE = /[/.].+?:\d+:\d+/;
+const RE_NO_FILE = /file:(?:\/\/)?/g;
+const RE_LOCS = /^.+\((.+?)\)$/gm;
 
 const RE_NATIVES = new RegExp(`^.+(${
-  Object.keys(typeof Bun === 'undefined' ? process.binding('natives') : {})
-    .concat('bootstrap_node', 'node')
+  Object.keys(typeof Bun === 'undefined' ? process.binding('natives') : [])
+    .concat('bootstrap_node', 'node', 'ext:.+')
     .join('|')
-})\\.js(?!:).+$`, 'gm');
+})\\.[jt]s.+$`, 'gm');
 
 // https://stackoverflow.com/questions/9210542/node-js-require-cache-possible-to-invalidate/14801711#14801711
 function _searchCache(moduleName, callback) {
@@ -61,12 +62,13 @@ function cleanError(e, cwd) {
     .replace(/^.+(es6-promise|bluebird|internal|evalmachine).+$/gm)
     .replace(/^[ ]*at \/.*node_modules.*$/gm, '')
     .replace(RE_ERR_MESSAGE, '')
-    .replace(RE_NATIVES, '');
+    .replace(RE_NATIVES, '')
+    .replace(RE_LOCS, '$1');
 
   /* istanbul ignore else */
   if (_stack) {
+    _stack = _stack.replace(RE_NO_FILE, '');
     _stack = _stack.replace(RE_NO_SPACES, '');
-    _stack = _stack.replace(RE_NODE_MODULES, '~');
 
     while (_stack.indexOf(cwd) > -1) {
       _stack = _stack.replace(cwd, '.');
