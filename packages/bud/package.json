@@ -1,6 +1,6 @@
 {
   "name": "@grown/bud",
-  "version": "0.0.63",
+  "version": "0.0.64",
   "main": "index.js",
   "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
   "license": "MIT",
