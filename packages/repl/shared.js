@@ -25,7 +25,8 @@ function createLoader(file, context) {
 
 async function createProxy(userInput, context, source, cb) {
   const code = userInput.replace(/(?:let|var|const)\s/g, '');
-  const fn = new AsyncFunction('self', `with (self) return ${code}`);
+  const call = userInput.indexOf('throw ') === 0 ? '' : 'return';
+  const fn = new AsyncFunction('self', `with (self) ${call} ${code}`);
   const ctx = new Proxy(context, {
     set: (obj, prop, value) => {
       context[prop] = value;

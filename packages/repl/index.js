@@ -124,9 +124,10 @@ module.exports = (Grown, util) => {
 
   function _runCMD(cmd, context, filename, callback) {
     const code = cmd.replace(/(?:let|var|const)\s/g, '');
+    const call = cmd.indexOf('throw ') === 0 ? '' : 'return';
 
     return Promise.resolve()
-      .then(() => util.invoke(`(async()=>{return ${code}})()`, context))
+      .then(() => util.invoke(`(async()=>{${call} ${code}})()`, context))
       .then(value => {
         /* istanbul ignore else */
         if (typeof value === 'undefined') {
