@@ -1,5 +1,5 @@
 import fs from 'fs';
-import readline from 'rustybun';
+import RustyBun from 'rustybun';
 
 import {
   createProxy,
@@ -7,15 +7,15 @@ import {
   createPrompter,
 } from './shared';
 
-export class Prompter extends readline {
-  constructor(prompt, logFile) {
+export class Prompter extends RustyBun {
+  constructor(options) {
     super();
     this.closing = false,
-    this.prompt = prompt;
-    this.#historyfd = fs.openSync(logFile, 'a+');
-    this.#historypath = logFile;
-    this.loadHistory(logFile);
-  }s
+    this.prompt = options.prompt;
+    this.#historyfd = fs.openSync(options.logFile, 'a+');
+    this.#historypath = options.logFile;
+    this.loadHistory(options.logFile);
+  }
 
   input() {
     const input = this.readline(this.prompt);
@@ -49,6 +49,7 @@ export class Prompter extends readline {
   }
 
   prompt;
+  closing;
   #historyfd;
   #historypath;
 }
@@ -58,6 +59,6 @@ export default class REPL {
     options.eval = createProxy;
     options.load = createLoader;
 
-    return createPrompter(new Prompter(options.prompt, options.logFile), options);
+    return createPrompter(new Prompter(options), options);
   }
 }

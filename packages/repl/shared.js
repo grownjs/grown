@@ -107,9 +107,9 @@ function createPrompter(prompter, options) {
       }
     }
 
-    $: do {
+    do {
       if (prompter.paused) {
-        await new Promise(ok => process.nextTick(ok));
+        await new Promise(ok => setTimeout(ok));
         continue;
       }
 
@@ -121,15 +121,13 @@ function createPrompter(prompter, options) {
 
         switch (command) {
           case 'exit': doExit(); break;
-          case 'help': showHelp(); continue $;
-          case 'clear': doReset(console.clear()); continue $;
-          case 'save': saveLogs(userInput.substr(command.length + 2)); continue $;
-          case 'load': loadScript(userInput.substr(command.length + 2)); continue $;
-          default: await handleCommand(command, userInput.substr(command.length + 2)); continue $;
+          case 'help': showHelp(); break;
+          case 'clear': doReset(console.clear()); break;
+          case 'save': saveLogs(userInput.substr(command.length + 2)); break;
+          case 'load': loadScript(userInput.substr(command.length + 2)); break;
+          default: await handleCommand(command, userInput.substr(command.length + 2)); break;
         }
-      }
-
-      try {
+      } else {
         await options.eval(userInput, context, 'REPL', (err, value) => {
           if (context._error = err) {
             options.logger.info('\r{% error. %s %}\n', err.stack || err.message);
@@ -137,21 +135,19 @@ function createPrompter(prompter, options) {
             console.log(context._ = value);
           }
         });
-      } catch (e) {
-        options.logger.info('\r{% error. %s %}\n', e.stack || e.message);
       }
     } while (true);
   }
 
-  process.nextTick(loop);
+  setTimeout(loop);
 
   return Object.defineProperties({
     on: (e, fn) => events.set(e, fn),
     pause: () => { prompter.paused = true; },
     resume: () => { prompter.paused = false; },
     setPrompt: input => { prompter.prompt = input; },
-    displayPrompt: () => setTimeout(() => prompter.input()),
     defineCommand: (name, opts) => commands.set(name, opts),
+    displayPrompt: () => options.stdout.write(prompter.prompt),
   }, {
     context: {
       get: () => context,
