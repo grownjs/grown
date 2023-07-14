@@ -109,7 +109,7 @@ function createPrompter(prompter, options) {
 
     do {
       if (prompter.paused) {
-        await new Promise(ok => setTimeout(ok));
+        await new Promise(ok => process.nextTick(ok));
         continue;
       }
 
@@ -139,7 +139,7 @@ function createPrompter(prompter, options) {
     } while (true);
   }
 
-  setTimeout(loop);
+  process.nextTick(loop);
 
   return Object.defineProperties({
     on: (e, fn) => events.set(e, fn),
