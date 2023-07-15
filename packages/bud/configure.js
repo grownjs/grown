@@ -34,6 +34,7 @@ module.exports = ($, cwd, argv, util) => {
   $('Grown.def', (name, _cwd, opts) => util.define($.Grown, name, _cwd, opts), false);
   $('Grown.defn', (name, fn) => $(`Grown.${name}`, fn, false), false);
   $('Grown.do', cb => util.wrap(cb), false);
+  $('Grown._', () => util, false);
 
   // exposes helper for aliasing
   Object.defineProperty($.Grown, 'bind', { value: require('global-or-local').bind });
