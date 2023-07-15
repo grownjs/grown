@@ -76,7 +76,7 @@ declare module '@grown/model' {
     '$refs': { [key: string]: ModelDefinition };
     disconnect(): Promise<ResourceRepositoryOf<DB>>;
     connect(): Promise<ResourceRepositoryOf<DB>>;
-    sync(opts: SyncOptions): Promise<ResourceRepositoryOf<DB>>;
+    sync(opts?: SyncOptions): Promise<ResourceRepositoryOf<DB>>;
     get(name: keyof DB): ModelInterface;
     get<M extends Model>(name: keyof DB): ModelStatic<M>;
   }
