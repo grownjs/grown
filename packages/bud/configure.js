@@ -29,7 +29,7 @@ module.exports = ($, cwd, argv, util) => {
   // methods
   $('Grown.use', mod => load(mod, cb => cb($.Grown, util)), false);
   $('Grown.main', (mod, fn) => $.Grown.ready(() => util.run(mod, fn)), false);
-  $('Grown.ready', cb => Promise.all(deferred).then(() => cb && cb($.Grown, util)), false);
+  $('Grown.ready', cb => Promise.all(deferred).then(() => cb && cb($.Grown, util)).then(() => $.Grown), false);
   $('Grown.load', (_cwd, hooks) => util.scanDir(_cwd, def => def($.Grown, hooks || {})), false);
   $('Grown.def', (name, _cwd, opts) => util.define($.Grown, name, _cwd, opts), false);
   $('Grown.defn', (name, fn) => $(`Grown.${name}`, fn, false), false);
