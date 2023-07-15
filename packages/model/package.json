@@ -41,7 +41,7 @@
     "formator": "^0.0.14",
     "is-my-json-valid": "^2.20.5",
     "json-schema-faker": "^0.5.0-rcv.44",
-    "json-schema-sequelizer": "^0.25.1",
+    "json-schema-sequelizer": "^0.25.2",
     "sql-highlight": "^4.2.1"
   },
   "devDependencies": {
