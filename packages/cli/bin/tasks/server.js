@@ -153,6 +153,12 @@ module.exports = {
 
         found = true;
 
+        const params = (route.path.includes(':') && `params: RouteParams<'${route.path}'> | PathParam[]`)
+          || (route.path.includes('*') && `params?: RouteParams<'${route.path}'> | PathParam[]`)
+          || '';
+
+        const typedef = suffix => `type R${i} = NestedRoute<'${route.as}', RouteInfo & {${suffix}\n  url: (${params}) => string }>;\n`;
+
         if (route.handler) {
           const parts = route.handler.slice();
           const action = route.handler.length > 1 ? parts.pop() : 'index';
@@ -167,15 +173,17 @@ module.exports = {
 
           if (Grown.argv.flags.types) {
             const suffix = `\n  /**\n  ${route.verb} ${route.path} (${mod}#${action})\n  */`;
-            const params = (route.path.includes(':') && `params: RouteParams<'${route.path}'> | PathParam[]`)
-              || (route.path.includes('*') && `params?: RouteParams<'${route.path}'> | PathParam[]`)
-              || '';
 
             types.push(`R${i}`);
-            typedefs.push(`type R${i} = NestedRoute<'${route.as}', RouteInfo & {${suffix}\n  url: (${params}) => string }>;\n`);
+            typedefs.push(typedef(suffix));
           } else {
             logger.printf('\n%s %s  {%gray. (%s: %s) %}', `   ${route.verb}`.substr(-6), route.path, route.as, `${mod}#${action}`);
           }
+        } else if (Grown.argv.flags.types) {
+          const suffix = `\n  /**\n  ${route.verb} ${route.path}\n  */`;
+
+          types.push(`R${i}`);
+          typedefs.push(typedef(suffix));
         } else {
           logger.printf('\n%s %s  {%gray. (%s: %s) %}', `   ${route.verb}`.substr(-6), route.path, route.as, route.controller || '?');
         }
