@@ -13,7 +13,7 @@ module.exports = (Grown, util) => {
       const prefix = msg.substr(0, msg.indexOf(':') + 1);
       const query = msg.substr(msg.indexOf(':') + 2);
 
-      console.debug(`\x1b[1;30m${prefix} ${highlight(query)}`);
+      console.debug(`\x1b[1;33m${prefix}\x1b[0m ${highlight(query)}`);
     } else {
       console.debug(msg);
     }
