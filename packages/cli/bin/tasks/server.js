@@ -121,6 +121,8 @@ module.exports = {
     /* istanbul ignore else */
     if (!Grown.argv.flags.types) {
       logger.printf('Server info');
+    } else {
+      logger.printf('Generating types from routes...');
     }
 
     const typedefs = [];
