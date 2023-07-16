@@ -1,6 +1,6 @@
 {
   "name": "@grown/repl",
-  "version": "0.0.28",
+  "version": "0.0.29",
   "main": "index.js",
   "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
   "license": "MIT",
