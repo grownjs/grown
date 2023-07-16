@@ -493,9 +493,7 @@ module.exports = (Grown, util) => {
 
           return task.callback(Grown, util);
         })
-        .catch(e => {
-          this._onError(e, taskName);
-        });
+        .catch(e => this._onError(e, taskName));
     },
   });
 };

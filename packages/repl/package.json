@@ -15,7 +15,7 @@
     "access": "public"
   },
   "dependencies": {
-    "log-pose": "^0.4.7",
+    "log-pose": "^0.4.8",
     "rewrite-exports": "^0.0.28",
     "rewrite-imports": "^3.0.0",
     "rustybun": "^0.2.0",
