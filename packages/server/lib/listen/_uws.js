@@ -118,7 +118,7 @@ function ServerRequest(req, res) {
   this.url = req.getUrl() || '/';
   this.query = Object.fromEntries(new URLSearchParams(req.getQuery()));
   this.method = req.getMethod().toUpperCase();
-  this.headers = _util._extend({}, req.headers);
+  this.headers = { ...req.headers };
   this.rawHeaders = [];
   this.connection = {
     remoteAddress: remoteAddressToString(res.getRemoteAddress()),

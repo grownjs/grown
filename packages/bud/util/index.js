@@ -16,13 +16,13 @@ const buildMiddleware = require('./plug/middleware');
 module.exports = { ...$new };
 
 // merge all helpers
-util._extend(module.exports, objectUtil);
-util._extend(module.exports, processUtil);
-util._extend(module.exports, helpersUtil);
+Object.assign(module.exports, objectUtil);
+Object.assign(module.exports, processUtil);
+Object.assign(module.exports, helpersUtil);
 
 // common utils
 module.exports.load = _importer;
-module.exports.extend = util._extend;
+module.exports.extend = Object.assign;
 module.exports.inspect = util.inspect;
 module.exports.argvParser = wargs;
 
